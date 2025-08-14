@@ -12,12 +12,6 @@ export default function Arrow({ rotation }: { rotation: number }) {
       </defs>
 
       <g transform="matrix(1.3333334 0 0 1.3333334 0 0)">
-        <path
-          d="M0 0L105.75 0L105.75 104.25L0 104.25z"
-          stroke="none"
-          fill="#FFFFFF"
-          fill-rule="evenodd"
-        />
         <g transform="matrix(0.125 0 0 0.125 0 0)">
           <g>
             <g>

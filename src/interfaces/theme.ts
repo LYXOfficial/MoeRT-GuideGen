@@ -9,5 +9,5 @@ export default interface Theme {
 }
 export interface Component{
   displayName: string;
-  component: React.ReactElement;
+  component: React.FC<any>;
 }

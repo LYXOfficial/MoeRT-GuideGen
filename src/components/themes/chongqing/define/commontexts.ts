@@ -3,7 +3,7 @@ const commonTexts=[
   ["换乘","Transfer"],
   ["出口","Exit"],
   ["出入口","Entrance"],
-  ["开往","To"]
+  ["方向","To "]
 ];
 
 export default commonTexts;

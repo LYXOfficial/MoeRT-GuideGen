@@ -4,8 +4,9 @@ const colors = {
   "facilitybackground": "#434343", // 标识灰色 PT 432C
   "facilityforeground": "#000000",
   "exitbackground": "#FFC72C", // 标识黄色 PT 012C
-  "exitforeground": "#ffffff",
+  "exitforeground": "#000000",
   "border": "#e5e7eb",
+  "specline": "#afafaf",
 
   // 线路颜色
   "lineloop": "#F2A900",      // 130C 柠檬黄

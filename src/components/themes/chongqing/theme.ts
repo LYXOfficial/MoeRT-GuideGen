@@ -12,6 +12,7 @@ import StationName from "./StationName.tsx"
 
 import colors from "./define/colors.ts";
 import type Theme from "../../../interfaces/theme.ts"
+import SpecLine from "./SpecLine.tsx";
 
 const theme:Theme = {
   colors: {
@@ -23,35 +24,39 @@ const theme:Theme = {
   components: [
     {
       displayName: "themes.chongqing.LineNum",
-      component: <LineNum />,
+      component: LineNum,
     },
     {
       displayName: "themes.chongqing.LineText",
-      component: <LineText />,
+      component: LineText,
     },
     {
       displayName: "themes.chongqing.Arrow",
-      component: <Arrow />,
+      component: Arrow,
     },
     {
       displayName: "themes.chongqing.Icon",
-      component: <Icon />,
+      component: Icon,
     },
     {
       displayName: "themes.chongqing.NumAlphabet",
-      component: <NumAlphabet />,
+      component: NumAlphabet,
     },
     {
       displayName: "themes.chongqing.Spacing",
-      component: <Spacing />,
+      component: Spacing,
     },
     {
       displayName: "themes.chongqing.StationName",
-      component: <StationName />,
+      component: StationName,
     },
     {
       displayName: "themes.chongqing.Text",
-      component: <Text />,
+      component: Text,
+    },
+    {
+      displayName: "themes.chongqing.SpecLine",
+      component: SpecLine,
     }
   ]
 };
