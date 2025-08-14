@@ -1,0 +1,16 @@
+@import "./blueaka.css";
+body {
+  height: 100vh;
+  width: 100%;
+}
+#root{
+  height: 100%;
+  width: 100%;
+}
+
+.font-sans {
+  font-family: Blueaka, sans-serif !important;
+}
+::selection {
+  background: #a4c4f494;
+}

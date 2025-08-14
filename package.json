@@ -10,10 +10,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@douyinfe/semi-icons": "^2.85.0",
     "@douyinfe/semi-ui": "^2.85.0",
+    "i18next": "^25.3.4",
+    "i18next-browser-languagedetector": "^8.2.0",
+    "i18next-http-backend": "^3.0.2",
     "prettier": "^3.6.2",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "react-i18next": "^15.6.1",
     "scss": "^0.2.4",
     "vite-plugin-windicss": "^1.9.4",
     "windicss": "^3.5.6"
