@@ -5,7 +5,7 @@ export interface SpecLineProps {
   background?: string;
 }
 export const SpecLineDefaultProps = {
-  foreground: colors.specline,
+  foreground: colors["specline"],
   background: "transparent",
 };
 

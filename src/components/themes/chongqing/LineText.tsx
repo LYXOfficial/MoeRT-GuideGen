@@ -9,7 +9,7 @@ export interface LineTextProps {
 }
 
 export const lineTextDefaultProps: LineTextProps = {
-  lineColor: colors.line1,
+  lineColor: colors["line1"],
   chinese: "号线",
   english: "Line",
   align: "left",

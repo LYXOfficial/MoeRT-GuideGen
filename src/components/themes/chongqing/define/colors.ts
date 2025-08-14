@@ -2,7 +2,7 @@ const colors = {
   "background": "#ffffff",
   "foreground": "#000000",
   "facilitybackground": "#434343", // 标识灰色 PT 432C
-  "facilityforeground": "#000000",
+  "facilityforeground": "#ffffff",
   "exitbackground": "#FFC72C", // 标识黄色 PT 012C
   "exitforeground": "#000000",
   "border": "#e5e7eb",

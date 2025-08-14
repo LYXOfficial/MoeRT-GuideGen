@@ -1,8 +1,8 @@
 import Header from "./components/Header";
-import GuideBoard from "./components/GuideBoard";
 import Editor from "./components/Editor";
 import "./utils/i18n"
 import { useTranslation } from "react-i18next";
+import GuideBoardCols from "./components/GuideBoard";
 
 function App() {
   const { t } = useTranslation();
@@ -11,7 +11,7 @@ function App() {
       <link rel="icon" href="/favicon.ico" />
       <title>{t("title")}</title>
       <Header/>
-      <GuideBoard />
+      <GuideBoardCols />
       <Editor />
     </div>
   );

@@ -16,8 +16,8 @@ export interface ArrowProps {
 }
 export const arrowDefaultProps: ArrowProps = {
   type: "up",
-  foreground: colors.foreground,
-  background: colors.background,
+  foreground: colors["foreground"],
+  background: colors["background"],
 };
 
 export default function Arrow({

@@ -8,8 +8,8 @@ export interface NumAlphabetProps {
 }
 export const numAlphabetDefaultProps: NumAlphabetProps = {
   text: "2",
-  foreground: colors.foreground,
-  background: colors.background,
+  foreground: colors["foreground"],
+  background: colors["background"],
   type: "fit",
 };
 

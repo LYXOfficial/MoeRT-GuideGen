@@ -12,7 +12,7 @@ export interface LineNumProps {
 
 export const lineNumDefaultProps: LineNumProps = {
   num: "1",
-  lineColor: colors.line1,
+  lineColor: colors["line1"],
   customChinese: "号线",
   customEnglish: "Line",
   showText: true,

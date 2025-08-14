@@ -12,8 +12,8 @@ export const textDefaultProps: TextProps = {
   align: "left",
   chinese: "乘车",
   english: "Train",
-  foreground: colors.foreground,
-  background: colors.background,
+  foreground: colors["foreground"],
+  background: colors["background"],
 };
 
 export default function Text({

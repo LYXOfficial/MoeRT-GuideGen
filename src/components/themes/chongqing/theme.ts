@@ -9,10 +9,11 @@ import NumAlphabet from "./NumAlphabet.tsx";
 import Spacing from "./Spacing.tsx";
 import Text from "./Text.tsx";
 import StationName from "./StationName.tsx"
+import SpecLine from "./SpecLine.tsx";
+import Blank from "./Blank.tsx";
 
 import colors from "./define/colors.ts";
 import type Theme from "../../../interfaces/theme.ts"
-import SpecLine from "./SpecLine.tsx";
 
 const theme:Theme = {
   colors: {
@@ -57,6 +58,10 @@ const theme:Theme = {
     {
       displayName: "themes.chongqing.SpecLine",
       component: SpecLine,
+    },
+    {
+      displayName: "themes.chongqing.Blank",
+      component: Blank,
     }
   ]
 };
