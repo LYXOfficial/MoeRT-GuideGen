@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import ComponentsList from "./ComponentsList";
-import GuideBoardCols, { type GuideBoardRef, type GuideItem } from "./GuideBoard";
+import GuideBoardCols, { type GuideBoardRef } from "./GuideBoard";
+import type { GuideItem } from "../interfaces/guide";
 import {
   DndContext,
   type DragEndEvent,

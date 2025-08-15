@@ -23,6 +23,7 @@ import DraggableItem from "./DraggableItem";
 import themes from "./themes/themereg.ts";
 import colors from "./themes/chongqing/define/colors.ts";
 import type { PropForm } from "../interfaces/editor.ts";
+import type { GuideItem } from "../interfaces/guide";
 
 export interface GuideBoardRef {
   addItemToRow: (rowId: string, item: GuideItem) => void;
@@ -31,13 +32,7 @@ export interface GuideBoardRef {
   getItemIndex: (rowId: string, itemId: string) => number;
 }
 
-// 定义 GuideItem 类型
-export interface GuideItem {
-  id: string;
-  type: string;
-  props: Record<string, any>;
-  element: React.ReactNode;
-}
+
 
 const currentTheme = 0;
 const DEFAULT_WIDTH = 512;
