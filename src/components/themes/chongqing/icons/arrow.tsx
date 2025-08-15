@@ -7,7 +7,7 @@ export default function Arrow({ rotation }: { rotation: number }) {
     >
       <defs>
         <clipPath id="a1">
-          <path clip-rule="evenodd" d="M0 0L848 0L848 831.9999L0 831.9999z" />
+          <path clipRule="evenodd" d="M0 0L848 0L848 831.9999L0 831.9999z" />
         </clipPath>
       </defs>
 
@@ -17,37 +17,37 @@ export default function Arrow({ rotation }: { rotation: number }) {
             <g>
               <g>
                 <g></g>
-                <g clip-path="url(#1)">
+                <g clipPath="url(#a1)">
                   <path
                     transform="matrix(6.0141845 0 0 5.9856114 -3139.4043 -1807.6547)"
                     d="M522 397L592 326L592 303L522 373z"
                     stroke="currentColor"
-                    stroke-width="0"
-                    stroke-linecap="round"
+                    strokeWidth="0"
+                    strokeLinecap="round"
                     fill="currentColor"
-                    fill-rule="evenodd"
-                    stroke-opacity="0"
+                    fillRule="evenodd"
+                    strokeOpacity="0"
                   />
                 </g>
                 <path
                   transform="matrix(6.0141845 0 0 5.9856114 -3139.4043 -1807.6547)"
                   d="M583 325L583 440L601 440L601 325L583 325z"
                   stroke="currentColor"
-                  stroke-width="0"
-                  stroke-linecap="round"
+                  strokeWidth="0"
+                  strokeLinecap="round"
                   fill="currentColor"
-                  fill-rule="evenodd"
-                  stroke-opacity="0"
+                  fillRule="evenodd"
+                  strokeOpacity="0"
                 />
                 <path
                   transform="matrix(6.0141845 0 0 5.9856114 -3139.4043 -1807.6547)"
                   d="M662 397L592 326L592 303L662 373z"
                   stroke="currentColor"
-                  stroke-width="0"
-                  stroke-linecap="round"
+                  strokeWidth="0"
+                  strokeLinecap="round"
                   fill="currentColor"
-                  fill-rule="evenodd"
-                  stroke-opacity="0"
+                  fillRule="evenodd"
+                  strokeOpacity="0"
                 />
               </g>
             </g>

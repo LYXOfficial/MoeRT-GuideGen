@@ -7,6 +7,7 @@ const colors = {
   "exitforeground": "#000000",
   "border": "#e5e7eb",
   "specline": "#afafaf",
+  "noentry": "#ff0000",
 
   // 线路颜色
   "lineloop": "#F2A900",      // 130C 柠檬黄

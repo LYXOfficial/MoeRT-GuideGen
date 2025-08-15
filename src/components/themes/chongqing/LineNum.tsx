@@ -1,5 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import colors from "./define/colors";
+import type { EditorConfig } from "../../../interfaces/editor";
+import { ColorPicker, Input, Select, Switch } from "@douyinfe/semi-ui";
 
 export interface LineNumProps {
   num: string;
@@ -11,15 +13,67 @@ export interface LineNumProps {
 }
 
 export const lineNumDefaultProps: LineNumProps = {
-  num: "1",
-  lineColor: colors["line1"],
+  num: "6",
+  lineColor: colors["line6"],
   customChinese: "号线",
   customEnglish: "Line",
   showText: true,
   align: "left",
 };
 
-export default function LineNum({
+export const lineNumEditorConfig: EditorConfig = {
+  forms: [
+    {
+      key: "lineColor",
+      label: "themes.chongqing.components.LineNum.props.lineColor",
+      element: (
+        <ColorPicker
+          alpha={false}
+          onChange={() => {}}
+          usePopover={true}
+          width={200}
+          height={200}
+          style={{
+            border: "1px solid #ccc"
+          }}
+          value={ColorPicker.colorStringToValue(lineNumDefaultProps.lineColor!)}
+        />
+      ),
+    },
+    {
+      key: "num",
+      label: "themes.chongqing.components.LineNum.props.num",
+      element: <Input />,
+    },
+    {
+      key: "customChinese",
+      label: "themes.chongqing.components.LineNum.props.customChinese",
+      element: <Input />,
+    },
+    {
+      key: "customEnglish",
+      label: "themes.chongqing.components.LineNum.props.customEnglish",
+      element: <Input />,
+    },
+    {
+      key: "showText",
+      label: "themes.chongqing.components.LineNum.props.showText",
+      element: <Switch />,
+    },
+    {
+      key: "align",
+      label: "themes.chongqing.components.LineNum.props.align.displayName",
+      element: (
+        <Select>
+          <Select.Option value="left">left</Select.Option>
+          <Select.Option value="right">right</Select.Option>
+        </Select>
+      ),
+    },
+  ],
+};
+
+function LineNum({
   num = lineNumDefaultProps.num,
   lineColor = lineNumDefaultProps.lineColor,
   customChinese = lineNumDefaultProps.customChinese,
@@ -81,7 +135,7 @@ export default function LineNum({
     <div className="h-64px mr-5px ml-5px" style={{ width: svgWidth }}>
       <svg width={svgWidth} height={64}>
         {/* 矩形 */}
-        <rect width={15} height={48} x={rectX} y={12} fill={lineColor} />
+        <rect width={15} height={52} x={rectX} y={12} fill={lineColor} />
 
         {/* 数字 */}
         <text
@@ -109,3 +163,7 @@ export default function LineNum({
     </div>
   );
 }
+
+LineNum.getEditorConfig = () => lineNumEditorConfig;
+
+export default LineNum;

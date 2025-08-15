@@ -1,3 +1,147 @@
 {
-    "title": "MoeRT-GuideGen"
+  "title": "MoeRT-GuideGen",
+  "componentsList": {
+    "title": "组件列表",
+    "drag": "拖拽到右侧添加组件"
+  },
+  "board": {
+    "emptyRowHint": "拖拽组件到此行",
+    "width": "宽度"
+  },
+  "editor": {
+    "title": "编辑组件",
+    "delete": "删除组件"
+  },
+  "themes": {
+    "chongqing": {
+      "displayName": "重庆轨道交通风格",
+      "components": {
+        "Arrow": {
+          "displayName": "箭头",
+          "props": {
+            "type": {
+              "displayName": "方向",
+              "up": "上",
+              "down": "下",
+              "left": "左",
+              "right": "右",
+              "up-left": "左上",
+              "up-right": "右上",
+              "down-left": "左下",
+              "down-right": "右下"
+            },
+            "background": "背景色",
+            "foreground": "前景色"
+          }
+        },
+        "Blank": {
+          "displayName": "空格",
+          "props": {
+            "width": "宽度",
+            "background": "背景色",
+            "foreground": "前景色"
+          }
+        },
+        "Icon": {
+          "displayName": "图标",
+          "props": {
+            "icon": {
+              "displayName": "图标",
+              "noentry": "禁止通行",
+              "train": "乘车",
+              "metro": "地铁",
+              "monorail": "单轨",
+              "ct": "重庆铁路集团",
+              "crt": "重庆轨道交通",
+              "cr": "国铁",
+              "exit": "出口",
+              "elevator": "无障碍电梯",
+              "waitingroom": "等候室",
+              "toilet": "卫生间",
+              "ticket": "售票/加值",
+              "checkin": "自助检票"
+            },
+            "lineColor": "线路颜色",
+            "showText": "是否显示文字"
+          }
+        },
+        "LineNum": {
+          "displayName": "数字线路",
+          "props": {
+            "num": "线路编号",
+            "customChinese": "自定义中文文本",
+            "customEnglish": "自定义英文文本",
+            "align": {
+              "displayName": "对齐方式",
+              "left": "左",
+              "right": "右"
+            },
+            "lineColor": "线路颜色",
+            "showText": "是否显示后面的文本"
+          }
+        },
+        "LineText": {
+          "displayName": "文字线路",
+          "props": {
+            "chinese": "中文名",
+            "english": "英文名",
+            "align": {
+              "displayName": "对齐方式",
+              "left": "左",
+              "right": "右"
+            },
+            "lineColor": "线路颜色"
+          }
+        },
+        "NumAlphabet": {
+          "displayName": "数字/字母",
+          "props": {
+            "text": "文本",
+            "background": "背景色",
+            "foreground": "前景色",
+            "type": {
+              "displayName": "宽度类型",
+              "fit": "最窄",
+              "block": "块"
+            }
+          }
+        },
+        "Spacing": {
+          "displayName": "间距",
+          "props": {
+            "background": "背景色"
+          }
+        },
+        "SpecLine": {
+          "displayName": "分割线",
+          "props": {
+            "background": "背景色",
+            "foreground": "前景色"
+          }
+        },
+        "StationName": {
+          "displayName": "站点名称",
+          "props": {
+            "chinese": "中文名",
+            "english": "英文名"
+          }
+        },
+        "Text": {
+          "displayName": "文本",
+          "props": {
+            "chinese": "中文文本",
+            "english": "英文文本",
+            "align": {
+              "displayName": "对齐方式",
+              "left": "左",
+              "right": "右",
+              "center": "中"
+            },
+            "background": "背景色",
+            "foreground": "前景色"
+          }
+        }
+      }
+    }
+  }
 }

@@ -1,5 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import colors from "./define/colors";
+import { ColorPicker, Input, Select } from "@douyinfe/semi-ui";
+import type { EditorConfig } from "../../../interfaces/editor";
 
 export interface LineTextProps {
   lineColor: string;
@@ -9,13 +11,57 @@ export interface LineTextProps {
 }
 
 export const lineTextDefaultProps: LineTextProps = {
-  lineColor: colors["line1"],
-  chinese: "号线",
-  english: "Line",
+  lineColor: colors["linebitong"],
+  chinese: "璧铜线",
+  english: "Bitong Line",
   align: "left",
 };
 
-export default function LineText({
+export const lineTextEditorConfig: EditorConfig = {
+  forms: [
+    {
+      key: "lineColor",
+      label: "themes.chongqing.components.LineText.props.lineColor",
+      element: (
+        <ColorPicker
+          alpha={false}
+          onChange={() => {}}
+          usePopover={true}
+          style={{
+            border: "1px solid #ccc",
+          }}
+          value={ColorPicker.colorStringToValue(
+            lineTextDefaultProps.lineColor!
+          )}
+          width={200}
+          height={200}
+        />
+      ),
+    },
+    {
+      key: "chinese",
+      label: "themes.chongqing.components.LineText.props.chinese",
+      element: <Input />,
+    },
+    {
+      key: "english",
+      label: "themes.chongqing.components.LineText.props.english",
+      element: <Input />,
+    },
+    {
+      key: "align",
+      label: "themes.chongqing.components.LineText.props.align.displayName",
+      element: (
+        <Select>
+          <Select.Option value="left">left</Select.Option>
+          <Select.Option value="right">right</Select.Option>
+        </Select>
+      ),
+    },
+  ],
+};
+
+function LineText({
   lineColor = lineTextDefaultProps.lineColor,
   chinese = lineTextDefaultProps.chinese,
   english = lineTextDefaultProps.english,
@@ -58,7 +104,7 @@ export default function LineText({
     <div className="h-64px ml-5px mr-5px" style={{ width: svgWidth }}>
       <svg className="h-full" width={svgWidth} height={64}>
         {/* 矩形 */}
-        <rect width={rectWidth} height={48} x={rectX} y={12} fill={lineColor} />
+        <rect width={rectWidth} height={52} x={rectX} y={12} fill={lineColor} />
 
         {/* 文字组 */}
         <g
@@ -77,3 +123,6 @@ export default function LineText({
     </div>
   );
 }
+
+LineText.getEditorConfig = () => lineTextEditorConfig;
+export default LineText;

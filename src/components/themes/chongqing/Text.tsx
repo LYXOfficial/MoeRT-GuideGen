@@ -1,5 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import colors from "./define/colors";
+import type { EditorConfig } from "../../../interfaces/editor";
+import { Input, Select, ColorPicker } from "@douyinfe/semi-ui";
 
 export interface TextProps {
   chinese: string;
@@ -14,6 +16,66 @@ export const textDefaultProps: TextProps = {
   english: "Train",
   foreground: colors["foreground"],
   background: colors["background"],
+};
+
+export const textEditorConfig: EditorConfig = {
+  forms: [
+    {
+      key: "chinese",
+      label: "themes.chongqing.components.Text.props.chinese",
+      element: <Input />,
+    },
+    {
+      key: "english",
+      label: "themes.chongqing.components.Text.props.english",
+      element: <Input />,
+    },
+    {
+      key: "align",
+      label: "themes.chongqing.components.Text.props.align.displayName",
+      element: (
+        <Select>
+          <Select.Option value="left">left</Select.Option>
+          <Select.Option value="center">center</Select.Option>
+          <Select.Option value="right">right</Select.Option>
+        </Select>
+      ),
+    },
+    {
+      key: "foreground",
+      label: "themes.chongqing.components.Text.props.foreground",
+      element: (
+        <ColorPicker
+          alpha={false}
+          onChange={() => {}}
+          usePopover={true}
+          width={200}
+          height={200}
+          style={{
+            border: "1px solid #ccc"
+          }}
+          value={ColorPicker.colorStringToValue(textDefaultProps.foreground!)}
+        />
+      ),
+    },
+    {
+      key: "background",
+      label: "themes.chongqing.components.Text.props.background",
+      element: (
+        <ColorPicker
+          alpha={false}
+          onChange={() => {}}
+          usePopover={true}
+          width={200}
+          height={200}
+          style={{
+            border: "1px solid #ccc"
+          }}
+          value={ColorPicker.colorStringToValue(textDefaultProps.background!)}
+        />
+      ),
+    },
+  ],
 };
 
 export default function Text({
@@ -78,3 +140,6 @@ export default function Text({
     </div>
   );
 }
+
+// 添加静态方法
+Text.getEditorConfig = () => textEditorConfig;

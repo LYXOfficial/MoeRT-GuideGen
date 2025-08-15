@@ -10,4 +10,5 @@ export default interface Theme {
 export interface Component{
   displayName: string;
   component: React.FC<any>;
+  defaultProps: any;
 }

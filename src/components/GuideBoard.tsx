@@ -1,20 +1,46 @@
-import LineNum from "./themes/chongqing/LineNum";
-import LineText from "./themes/chongqing/LineText.tsx";
-import Arrow from "./themes/chongqing/Arrow.tsx";
+import { useDroppable } from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  horizontalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import {
+  InputNumber,
+  Button,
+  Typography,
+  ColorPicker,
+} from "@douyinfe/semi-ui";
+import React, {
+  useState,
+  useImperativeHandle,
+  forwardRef,
+  useRef,
+  useEffect,
+  Children,
+} from "react";
+import { useTranslation } from "react-i18next";
+import DraggableItem from "./DraggableItem";
 import themes from "./themes/themereg.ts";
-import Text from "./themes/chongqing/Text.tsx";
-import StationName from "./themes/chongqing/StationName.tsx";
-import Spacing from "./themes/chongqing/Spacing.tsx";
 import colors from "./themes/chongqing/define/colors.ts";
-import NumAlphabet from "./themes/chongqing/NumAlphabet.tsx";
-import SpecLine from "./themes/chongqing/SpecLine.tsx";
-import Blank from "./themes/chongqing/Blank.tsx";
+import type { PropForm } from "../interfaces/editor.ts";
+
+export interface GuideBoardRef {
+  addItemToRow: (rowId: string, item: GuideItem) => void;
+  removeItemFromRow: (rowId: string, itemId: string) => GuideItem | null;
+  reorderRow: (rowId: string, oldIndex: number, newIndex: number) => void;
+  getItemIndex: (rowId: string, itemId: string) => number;
+}
+
+// 定义 GuideItem 类型
+export interface GuideItem {
+  id: string;
+  type: string;
+  props: Record<string, any>;
+  element: React.ReactNode;
+}
 
 const currentTheme = 0;
-
-export function GuideBoard({ children }: { children: React.ReactNode }) {
-  return <div className="h-64px w-full flex align-center">{children}</div>;
-}
+const DEFAULT_WIDTH = 512;
 export function LineEnd() {
   return (
     <span
@@ -23,74 +49,395 @@ export function LineEnd() {
     />
   );
 }
-export default function GuideBoardCols() {
+export function GuideBoard({
+  children,
+  id,
+}: {
+  children: React.ReactNode;
+  id: string;
+}) {
+  const { setNodeRef, isOver } = useDroppable({ id });
+
+  // 判断是否有内容
+  const hasContent = Children.count(children) > 0;
+
   return (
     <div
-      className="m-auto w-768px border-2px border-solid flex flex-col"
+      ref={setNodeRef}
+      data-row={id}
+      className="min-h-64px overflow-x-hidden h-64px w-full flex align-center relative transition-colors duration-200 ease-in-out"
       style={{
-        borderColor: themes[currentTheme][1].colors.defaultBorder,
-        backgroundColor: themes[currentTheme][1].colors.defaultBackground,
-        color: themes[currentTheme][1].colors.defaultForeground,
-        fontFamily: themes[currentTheme][1].fontFamily,
+        transition: "all 200ms ease",
+        background: isOver ? "#e6f7ff" : undefined, // 拖拽时高亮
       }}
     >
-      <GuideBoard>
-        <Arrow type="left" foreground="white" background={colors.line1} />
-        <Text
-          chinese="朝天门方向"
-          foreground="white"
-          english="To Chaotianmen"
-          background={colors.line1}
-        />
-        <Spacing background={colors.line1} />
-        <NumAlphabet
-          text="1"
-          type="block"
-          foreground="black"
-          background="white"
-        />
-        <Spacing background={colors.line1} />
-        <Text
-          chinese="璧山方向"
-          foreground="white"
-          english="To Bishan"
-          align="right"
-          background={colors.line1}
-        />
-        <Arrow type="right" foreground="white" background={colors.line1} />
-      </GuideBoard>
-      <LineEnd />
-      <GuideBoard>
-        <Arrow type="up" />
-        <Text chinese="乘车" english="Train" />
-        <LineNum num="5" lineColor={colors["line5"]} showText={false} />
-        <LineNum num="18" lineColor={colors["line18"]} />
-        <LineText
-          chinese="江跳线"
-          english="Jiangtiao Line"
-          lineColor={colors["linejiangtiao"]}
-        />
-        <Spacing />
-        <StationName chinese="跳磴" english="Tiaodeng" />
-        <Spacing />
-        <NumAlphabet text="2" type="fit" />
-        <Text chinese="出入口" english="Entrance" />
-      </GuideBoard>
-      <LineEnd />
-      <GuideBoard>
-        <Arrow type="up-left" background={colors.facilitybackground} foreground={colors.facilityforeground} />
-        <Text chinese="售票/加值" english="Ticketing/Top-up" background={colors.facilitybackground} foreground={colors.facilityforeground} />
-        <Blank background={colors.facilitybackground} />
-        <Spacing />
-        <LineText chinese="空港线" english="Konggang Line" lineColor={colors.linekonggang} align="right"/>
-        <Text chinese="换乘" english="Transfer" align="right" />
-        <Arrow type="up-right"/>
-        <Spacing />
-        <Blank background={colors.exitbackground} />
-        <NumAlphabet text="5/1/4" foreground={colors.exitforeground} background={colors.exitbackground}/>
-        <Text chinese="出口" english="Exit" foreground={colors.exitforeground} background={colors.exitbackground} />
-        <Arrow type="down" foreground={colors.exitforeground} background={colors.exitbackground} />
-      </GuideBoard>
+      {hasContent ? (
+        children
+      ) : (
+        <div
+          style={{
+            flex: 1,
+            minHeight: 40,
+            opacity: 0.3,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          ()
+        </div>
+      )}
     </div>
   );
 }
+
+const GuideBoardCols = forwardRef<GuideBoardRef>((_, ref) => {
+  const { t } = useTranslation();
+  // 动态行数组，每行是 DraggableItem[]
+  const [rows, setRows] = useState<GuideItem[][]>([[]]);
+  const [boardWidth, setBoardWidth] = useState(DEFAULT_WIDTH);
+  const [editingItem, setEditingItem] = useState<{
+    item: GuideItem;
+    position: { x: number; y: number };
+  } | null>(null);
+  const boardContentRef = useRef<HTMLDivElement>(null);
+
+  // 处理点击外部关闭编辑框
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (editingItem && !(event.target as Element).closest(".editing-popup")) {
+        setEditingItem(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [editingItem]);
+
+  // imperativeHandle 相关方法
+  useImperativeHandle(ref, () => ({
+    addItemToRow: (rowId: string, item: GuideItem, insertIndex?: number) => {
+      setRows(prev => {
+        const idx = Number(rowId.replace("row", "")) - 1;
+        if (idx < 0 || idx >= prev.length) return prev;
+        const newRows = prev.map(arr => [...arr]);
+        if (insertIndex !== undefined) {
+          newRows[idx].splice(insertIndex, 0, item);
+        } else {
+          newRows[idx].push(item);
+        }
+        return newRows;
+      });
+    },
+    removeItemFromRow: (rowId, itemId) => {
+      let removed: GuideItem | null = null;
+      setRows(prev => {
+        const idx = Number(rowId.replace("row", "")) - 1;
+        if (idx < 0 || idx >= prev.length) return prev;
+        const newRows = prev.map(arr => [...arr]);
+        const itemIdx = newRows[idx].findIndex(i => i.id === itemId);
+        if (itemIdx !== -1) {
+          removed = { ...newRows[idx][itemIdx] };
+          newRows[idx].splice(itemIdx, 1);
+        }
+        return newRows;
+      });
+      return removed;
+    },
+    reorderRow: (rowId, oldIndex, newIndex) => {
+      setRows(prev => {
+        const idx = Number(rowId.replace("row", "")) - 1;
+        if (idx < 0 || idx >= prev.length) return prev;
+        if (oldIndex === newIndex) return prev;
+        const newRows = [...prev];
+        newRows[idx] = arrayMove(newRows[idx], oldIndex, newIndex);
+
+        return newRows;
+      });
+    },
+    getItemIndex: (rowId, itemId) => {
+      const idx = Number(rowId.replace("row", "")) - 1;
+      if (idx < 0 || idx >= rows.length) return -1;
+      return rows[idx].findIndex(i => i.id === itemId);
+    },
+  }));
+
+  // 添加一行
+  const handleAddRow = (idx: number) => {
+    setRows(prev => {
+      const newRows = [...prev];
+      newRows.splice(idx + 1, 0, []);
+      return newRows;
+    });
+  };
+
+  // 删除某一行
+  const handleRemoveRow = (idx: number) => {
+    setRows(prev =>
+      prev.length > 1 ? prev.filter((_, i) => i !== idx) : prev
+    );
+  };
+
+  return (
+    <div className="flex flex-col items-center">
+      {/* GuideBoard 区域 */}
+      <div
+        className="border-2px pl-1px pr-1px border-solid flex flex-col"
+        ref={boardContentRef}
+        style={{
+          width: boardWidth,
+          borderColor: themes[currentTheme][1].colors.defaultBorder,
+          backgroundColor: themes[currentTheme][1].colors.defaultBackground,
+          color: themes[currentTheme][1].colors.defaultForeground,
+          fontFamily: themes[currentTheme][1].fontFamily,
+          transition: "width 0.2s cubic-bezier(0.4,0,0.2,1)",
+        }}
+      >
+        {rows.map((row, idx) => (
+          <React.Fragment key={`row-wrap-${idx}`}>
+            <div className="flex items-center">
+              <div className="flex-grow overflow-x-hidden w-calc(100%-10px)">
+                <SortableContext
+                  id={`row${idx + 1}`}
+                  items={row.map(i => i.id)}
+                  strategy={horizontalListSortingStrategy}
+                >
+                  <GuideBoard id={`row${idx + 1}`}>
+                    {row.length > 0 ? (
+                      row.map(item => (
+                        <DraggableItem
+                          key={item.id}
+                          id={item.id}
+                          data={{ type: "guide-item", rowId: `row${idx + 1}` }}
+                          onClick={e => {
+                            const rect = (
+                              e.currentTarget as HTMLElement
+                            ).getBoundingClientRect();
+                            setEditingItem({
+                              item,
+                              position: {
+                                x: rect.right,
+                                y: rect.top,
+                              },
+                            });
+                          }}
+                        >
+                          {React.isValidElement(item.element)
+                            ? React.cloneElement(item.element, {
+                                ...item.props,
+                              })
+                            : item.element}
+                        </DraggableItem>
+                      ))
+                    ) : (
+                      // 虚拟占位项
+                      <div
+                        key={`empty-${idx}`}
+                        id={`empty-${idx}`}
+                        style={{
+                          flex: 1,
+                          minHeight: 40,
+                          opacity: 0.2,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          pointerEvents: "none", // 不影响拖拽
+                        }}
+                      >
+                        {t("board.emptyRowHint")}
+                      </div>
+                    )}
+                  </GuideBoard>
+                </SortableContext>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 4,
+                  marginLeft: 8,
+                  marginRight: -48,
+                }}
+              >
+                {idx > 0 && (
+                  <Button
+                    type="danger"
+                    size="small"
+                    onClick={() => handleRemoveRow(idx)}
+                  >
+                    -
+                  </Button>
+                )}
+                <Button
+                  type="primary"
+                  size="small"
+                  onClick={() => handleAddRow(idx)}
+                >
+                  +
+                </Button>
+              </div>
+            </div>
+            {idx < rows.length - 1 && <LineEnd />}
+          </React.Fragment>
+        ))}
+      </div>
+      {/* 宽度调节器，居中显示 */}
+      <div
+        style={{
+          width: boardWidth,
+          margin: "24px auto 0",
+          display: "flex",
+          justifyContent: "center",
+          gap: 16,
+        }}
+      >
+        <InputNumber
+          min={256}
+          max={1024}
+          step={32}
+          value={boardWidth}
+          onChange={val => {
+            let num = Number(val);
+            if (isNaN(num)) num = 256;
+            if (num < 256) num = 256;
+            if (num > 1024) num = 1024;
+            setBoardWidth(num);
+          }}
+          style={{ width: 120 }}
+          suffix="px"
+          size="large"
+        />
+      </div>
+      {/* 编辑悬浮框 */}
+      {editingItem && (
+        <div
+          className="editing-popup"
+          onClick={e => e.stopPropagation()}
+          style={{
+            position: "fixed",
+            left: editingItem.position.x,
+            top: editingItem.position.y,
+            zIndex: 1000,
+            padding: "16px",
+            backgroundColor: "white",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+            borderRadius: "4px",
+          }}
+        >
+          <Typography.Title heading={6}>{t("editor.title")}</Typography.Title>
+          {(() => {
+            // 从主题组件注册表中获取组件
+            const ComponentClass = themes[currentTheme][1].components.find(
+              item => item.displayName === editingItem.item.type
+            )?.component;
+            if (!(ComponentClass as any).getEditorConfig) return null;
+
+            // 每次渲染时重新生成配置，以确保使用最新的props值
+            const config = (ComponentClass as any).getEditorConfig(
+              editingItem.item.props,
+              (newProps: any) => {
+                setRows(prev =>
+                  prev.map(row =>
+                    row.map(item =>
+                      item.id === editingItem.item.id
+                        ? { ...item, props: { ...item.props, ...newProps } }
+                        : item
+                    )
+                  )
+                );
+              }
+            );
+
+            return (
+              <>
+                {config.forms.map((form: PropForm, index: number) => (
+                  <div key={index} className="flex flex-col gap-1">
+                    <Typography.Text
+                      type="tertiary"
+                      size="small"
+                      className="mt-5px"
+                    >
+                      {t(form.label)}
+                    </Typography.Text>
+                    {React.cloneElement(form.element as any, {
+                      value:
+                        form.element.type === ColorPicker
+                          ? ColorPicker.colorStringToValue(
+                              editingItem.item.props[form.key]
+                            )
+                          : editingItem.item.props[form.key],
+                      onChange: (value: any) => {
+                        setEditingItem({
+                          ...editingItem,
+                          item: {
+                            ...editingItem.item,
+                            props: {
+                              ...editingItem.item.props,
+                              [form.key]:
+                                form.element.type === ColorPicker
+                                  ? value.hex
+                                  : value,
+                            },
+                          },
+                        });
+                        setRows(prev =>
+                          prev.map(row =>
+                            row.map(item => {
+                              return item.id === editingItem.item.id
+                                ? {
+                                    ...item,
+                                    props: {
+                                      ...item.props,
+                                      [form.key]:
+                                        form.element.type === ColorPicker
+                                          ? value.hex
+                                          : value,
+                                    },
+                                  }
+                                : item;
+                            })
+                          )
+                        );
+                      },
+                    })}
+                  </div>
+                ))}
+                {/* 添加删除按钮 */}
+                <div className="mt-4 pt-4 border-t border-solid border-gray-200">
+                  <Button
+                    type="danger"
+                    theme="outline"
+                    onClick={() => {
+                      // 查找组件所在的行
+                      const rowIndex = rows.findIndex(row =>
+                        row.some(item => item.id === editingItem.item.id)
+                      );
+                      if (rowIndex !== -1) {
+                        // 过滤掉要删除的组件
+                        setRows(prev =>
+                          prev.map((row, idx) =>
+                            idx === rowIndex
+                              ? row.filter(item => item.id !== editingItem.item.id)
+                              : row
+                          )
+                        );
+                        // 关闭编辑框
+                        setEditingItem(null);
+                      }
+                    }}
+                    block
+                  >
+                    {t("editor.delete")}
+                  </Button>
+                </div>
+              </>
+            );
+          })()}
+        </div>
+      )}
+    </div>
+  );
+});
+
+export default GuideBoardCols;

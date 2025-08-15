@@ -1,5 +1,7 @@
+import { ColorPicker, Select } from "@douyinfe/semi-ui";
 import colors from "./define/colors";
 import ArrowIcon from "./icons/arrow";
+import type { EditorConfig } from "../../../interfaces/editor";
 
 export interface ArrowProps {
   type:
@@ -20,7 +22,62 @@ export const arrowDefaultProps: ArrowProps = {
   background: colors["background"],
 };
 
-export default function Arrow({
+export const arrowEditorConfig: EditorConfig = {
+  forms: [
+    {
+      key: "type",
+      label: "themes.chongqing.components.Arrow.props.type.displayName",
+      element: (
+        <Select>
+          <Select.Option value="up">Up</Select.Option>
+          <Select.Option value="down">Down</Select.Option>
+          <Select.Option value="left">Left</Select.Option>
+          <Select.Option value="right">Right</Select.Option>
+          <Select.Option value="up-left">Left-Up</Select.Option>
+          <Select.Option value="up-right">Right-Up</Select.Option>
+          <Select.Option value="down-left">Left-Down</Select.Option>
+          <Select.Option value="down-right">Right-Down</Select.Option>
+        </Select>
+      ),
+    },
+    {
+      key: "foreground",
+      label: "themes.chongqing.components.Arrow.props.foreground",
+      element: (
+        <ColorPicker
+          alpha={false}
+          onChange={() => {}}
+          usePopover={true}
+          width={200}
+          height={200}
+          style={{
+            border: "1px solid #ccc"
+          }}
+          value={ColorPicker.colorStringToValue(arrowDefaultProps.foreground!)}
+        />
+      ),
+    },
+    {
+      key: "background",
+      label: "themes.chongqing.components.Arrow.props.background",
+      element: (
+        <ColorPicker
+          alpha={false}
+          onChange={() => {}}
+          usePopover={true}
+          width={200}
+          height={200}
+          style={{
+            border: "1px solid #ccc"
+          }}
+          value={ColorPicker.colorStringToValue(arrowDefaultProps.background!)}
+        />
+      ),
+    },
+  ],
+};
+
+function Arrow({
   type = arrowDefaultProps.type,
   foreground = arrowDefaultProps.foreground,
   background = arrowDefaultProps.background,
@@ -52,3 +109,7 @@ export default function Arrow({
     </div>
   );
 }
+
+Arrow.getEditorConfig = () => arrowEditorConfig;
+
+export default Arrow;

@@ -1,5 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import colors from "./define/colors";
+import type { EditorConfig } from "../../../interfaces/editor";
+import { ColorPicker, Input, Select } from "@douyinfe/semi-ui";
 export interface NumAlphabetProps {
   text: string;
   foreground?: string;
@@ -12,8 +14,65 @@ export const numAlphabetDefaultProps: NumAlphabetProps = {
   background: colors["background"],
   type: "fit",
 };
+export const numAlphabetEditorConfig: EditorConfig = {
+  forms: [
+    {
+      key: "text",
+      label: "themes.chongqing.components.NumAlphabet.props.text",
+      element: <Input />,
+    },
+    {
+      key: "type",
+      label: "themes.chongqing.components.NumAlphabet.props.type.displayName",
+      element: (
+        <Select>
+            <Select.Option value="block">Block</Select.Option>
+            <Select.Option value="fit">Fit</Select.Option>
+        </Select>
+      ),
+    },
+    {
+      key: "foreground",
+      label: "themes.chongqing.components.NumAlphabet.props.foreground",
+      element: (
+        <ColorPicker
+          alpha={false}
+          onChange={() => {}}
+          usePopover={true}
+          width={200}
+          height={200}
+          style={{
+            border: "1px solid #ccc",
+          }}
+          value={ColorPicker.colorStringToValue(
+            numAlphabetDefaultProps.foreground!
+          )}
+        />
+      ),
+    },
+    {
+      key: "background",
+      label: "themes.chongqing.components.NumAlphabet.props.background",
+      element: (
+        <ColorPicker
+          alpha={false}
+          onChange={() => {}}
+          usePopover={true}
+          width={200}
+          height={200}
+          style={{
+            border: "1px solid #ccc",
+          }}
+          value={ColorPicker.colorStringToValue(
+            numAlphabetDefaultProps.background!
+          )}
+        />
+      ),
+    },
+  ],
+};
 
-export default function NumAlphabet({
+function NumAlphabet({
   text = numAlphabetDefaultProps.text,
   foreground = numAlphabetDefaultProps.foreground,
   background = numAlphabetDefaultProps.background,
@@ -68,3 +127,7 @@ export default function NumAlphabet({
     </div>
   );
 }
+
+NumAlphabet.getEditorConfig = () => numAlphabetEditorConfig;
+
+export default NumAlphabet;
