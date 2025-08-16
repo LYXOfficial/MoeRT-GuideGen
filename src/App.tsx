@@ -1,8 +1,8 @@
-import Header from "./components/Header";
-import "./utils/i18n"
+import "./utils/i18n";
 import { useTranslation } from "react-i18next";
 import Editor from "./components/Editor";
 import { useEffect, useState } from "react";
+import { Toast } from "@douyinfe/semi-ui";
 
 function App() {
   const { t } = useTranslation();
@@ -34,8 +34,8 @@ function App() {
     <div className="h-full flex flex-col">
       <link rel="icon" href="/favicon.ico" />
       <title>{t("title")}</title>
-      <Header guideHeight={guideHeight}/>
-      <Editor/>
+      <Editor guideHeight={guideHeight} />
+      <Toast />
     </div>
   );
 }

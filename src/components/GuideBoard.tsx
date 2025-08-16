@@ -19,12 +19,25 @@ import themes from "./themes/themereg.ts";
 import type { PropForm } from "../interfaces/editor.ts";
 import type { GuideItem } from "../interfaces/guide";
 
+export interface BoardState {
+  rows: Array<Array<GuideItem>>;
+  config: {
+    width: number;
+    showSpecLine: boolean;
+  };
+}
+
 export interface GuideBoardRef {
   addItemToRow: (rowId: string, item: GuideItem) => void;
   removeItemFromRow: (rowId: string, itemId: string) => GuideItem | null;
   reorderRow: (rowId: string, oldIndex: number, newIndex: number) => void;
   getItemIndex: (rowId: string, itemId: string) => number;
   clearBoard: () => void;
+  getState: () => BoardState;
+  restoreState: (state: {
+    rows: Array<Array<Pick<GuideItem, "id" | "type" | "props">>>;
+    config: BoardState["config"];
+  }) => void;
 }
 
 const DEFAULT_WIDTH = 512;
@@ -80,10 +93,11 @@ export function GuideBoard({
 
 interface GuideBoardProps {
   currentTheme: number;
+  onConfigChange?: () => void;
 }
 
 const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
-  ({ currentTheme }, ref) => {
+  ({ currentTheme, onConfigChange }, ref) => {
     const { t } = useTranslation();
     // 动态行数组，每行是 DraggableItem[]
     const [rows, setRows] = useState<GuideItem[][]>([[]]);
@@ -117,6 +131,42 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
     useImperativeHandle(ref, () => ({
       clearBoard: () => {
         setRows([[]]);
+      },
+      getState: () => ({
+        rows: rows,
+        config: {
+          width: boardWidth,
+          showSpecLine: showDividers,
+        },
+      }),
+      restoreState: state => {
+        const restoredRows = state.rows.map(row =>
+          row
+            .map(item => {
+              // 直接从当前主题中获取组件
+              const Component = themes[currentTheme][1].components.find(
+                comp => comp.displayName === item.type
+              )?.component;
+              
+              if (!Component || (typeof Component !== "function" && typeof Component !== "object")) {
+                console.warn(`Component ${item.type} not found in current theme`);
+                return null;
+              }
+
+              return {
+                ...item,
+                element: React.createElement(Component as React.ElementType, {
+                  key: item.id,
+                  currentTheme, // 确保传入当前主题
+                  ...item.props,
+                }),
+              } as GuideItem;
+            })
+            .filter((item): item is GuideItem => item !== null)
+        );
+        setRows(restoredRows);
+        setBoardWidth(state.config.width);
+        setShowDividers(state.config.showSpecLine);
       },
       addItemToRow: (rowId: string, item: GuideItem, insertIndex?: number) => {
         setRows(prev => {
@@ -242,7 +292,7 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
                           style={{
                             flex: 1,
                             minHeight: 40,
-                            opacity: .6,
+                            opacity: 0.6,
                             color:
                               themes[currentTheme][1].colors.defaultForeground,
                             display: "flex",
@@ -319,6 +369,7 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
                 if (num < 256) num = 256;
                 if (num > 1024) num = 1024;
                 setBoardWidth(num);
+                if (onConfigChange) onConfigChange();
               }}
               style={{ width: 120 }}
               suffix="px"
@@ -332,7 +383,10 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
             <Switch
               disabled={rows.length === 1}
               checked={showDividers}
-              onChange={setShowDividers}
+              onChange={val => {
+                setShowDividers(val);
+                if (onConfigChange) onConfigChange();
+              }}
             />
           </div>
         </div>

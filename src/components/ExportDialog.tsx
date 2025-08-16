@@ -5,6 +5,7 @@ import { Toast } from "@douyinfe/semi-ui";
 import { useEffect, useState } from "react";
 import html2canvas from "html2canvas";
 import { IconImage } from "@douyinfe/semi-icons";
+import { useTranslation } from "react-i18next";
 
 interface ExportDialogProps {
   visible: boolean;
@@ -17,6 +18,7 @@ export const ExportDialog = ({
   onCancel,
   guideHeight,
 }: ExportDialogProps) => {
+  const { t } = useTranslation();
   const [width, setWidth] = useState(512);
   const [height, setHeight] = useState(0);
   const [baseWidth, setBaseWidth] = useState(512);
@@ -42,7 +44,7 @@ export const ExportDialog = ({
   const handleExport = async () => {
     const guide = document.querySelector(".guide-board") as HTMLElement;
     if (!guide) {
-      Toast.error("找不到指示牌元素");
+      Toast.error(t("exportDialog.error.noElement"));
       return;
     }
 
@@ -69,19 +71,19 @@ export const ExportDialog = ({
 
       // 3. 创建链接并下载
       const link = document.createElement("a");
-      link.download = `MoeRT_GuideGen_${Date.now()}.png`;
+      link.download = `MoeRT_GuideGen_Image_${Date.now()}.png`;
       link.href = canvas.toDataURL("image/png");
       link.click();
 
       Toast.success({
-        content: "导出成功！",
+        content: t("exportDialog.success"),
         duration: 3,
       });
       onCancel();
     } catch (error) {
       Toast.error({
         content:
-          "导出失败：" +
+          t("exportDialog.error.exportFailed") +
           (error instanceof Error ? error.message : String(error)),
         duration: 3,
       });
@@ -96,14 +98,14 @@ export const ExportDialog = ({
 
   return (
     <Modal
-      title="导出指示牌"
+      title={t("exportDialog.title")}
       visible={visible}
       onCancel={onCancel}
       closeOnEsc={true}
       footer={null}
     >
       <Form className="mb-20px">
-        <Form.Label>宽度 (像素)</Form.Label>
+        <Form.Label>{t("exportDialog.width")}</Form.Label>
         <Input
           value={width}
           onChange={val => setWidth(Number(val) || baseWidth)}
@@ -111,19 +113,19 @@ export const ExportDialog = ({
           max={baseWidth * 4}
           style={{ width: "100%" }}
         />
-        <Form.Label>高度 (像素)</Form.Label>
+        <Form.Label>{t("exportDialog.height")}</Form.Label>
         <Input
           value={height}
           disabled
-          suffix="保持等比例"
+          suffix={t("exportDialog.keepRatio")}
           style={{ width: "100%" }}
         />
         <div style={{ marginTop: 20, textAlign: "right" }}>
           <Button type="tertiary" onClick={onCancel} style={{ marginRight: 8 }}>
-            取消
+            {t("exportDialog.cancel")}
           </Button>
           <Button type="primary" onClick={handleExport} icon={<IconImage />}>
-            导出
+            {t("exportDialog.export")}
           </Button>
         </div>
       </Form>

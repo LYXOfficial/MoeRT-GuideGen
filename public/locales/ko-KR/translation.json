@@ -1,0 +1,433 @@
+{
+  "title": "MoeRT 가이드 생성기",
+  "componentsList": {
+    "title": "컴포넌트 목록",
+    "drag": "오른쪽으로 드래그하여 컴포넌트 추가",
+    "theme": "테마",
+    "themeChange": {
+      "title": "테마 전환 확인",
+      "confirm": "테마를 전환하면 현재 캔버스가 지워집니다. 계속하시겠습니까?",
+      "dialog": {
+        "confirm": "확인",
+        "cancel": "취소"
+      }
+    }
+  },
+  "board": {
+    "emptyRowHint": "이 행에 컴포넌트를 드래그",
+    "width": "너비",
+    "showDividers": "구분선 표시"
+  },
+  "exportDialog": {
+    "title": "표지판 내보내기",
+    "width": "너비 (픽셀)",
+    "height": "높이 (픽셀)",
+    "keepRatio": "비율 유지",
+    "export": "내보내기",
+    "cancel": "취소",
+    "error": {
+      "noElement": "표지판 요소를 찾을 수 없음",
+      "exportFailed": "내보내기 실패: "
+    },
+    "success": "내보내기 성공!"
+  },
+  "saves": {
+    "export_image": "이미지로 내보내기",
+    "save_project": "프로젝트를 로컬에 저장",
+    "load_project": "프로젝트 가져오기",
+    "autosave": {
+      "success": "자동 저장 성공",
+      "error": "자동 저장 실패"
+    },
+    "import": {
+      "success": "가져오기 성공",
+      "error": "가져오기 실패",
+      "unsupportedVersion": "지원되지 않는 버전"
+    },
+    "export": {
+      "success": "아카이브가 내보내졌습니다"
+    }
+  },
+  "editor": {
+    "title": "컴포넌트 편집",
+    "delete": "컴포넌트 삭제"
+  },
+  "themes": {
+    "chongqing": {
+      "displayName": "충칭 궤도교통 스타일",
+      "components": {
+        "Arrow": {
+          "displayName": "화살표",
+          "props": {
+            "type": {
+              "displayName": "방향",
+              "up": "위",
+              "down": "아래",
+              "left": "왼쪽",
+              "right": "오른쪽",
+              "up-left": "왼쪽 위",
+              "up-right": "오른쪽 위",
+              "down-left": "왼쪽 아래",
+              "down-right": "오른쪽 아래"
+            },
+            "background": "배경색",
+            "foreground": "전경색"
+          }
+        },
+        "Blank": {
+          "displayName": "빈 공간",
+          "props": {
+            "width": "너비",
+            "background": "배경색",
+            "foreground": "전경색"
+          }
+        },
+        "Icon": {
+          "displayName": "아이콘",
+          "props": {
+            "icon": {
+              "displayName": "아이콘",
+              "noentry": "통행 금지",
+              "train": "승차",
+              "metro": "지하철",
+              "monorail": "모노레일",
+              "ct": "충칭철도그룹",
+              "crt": "충칭 궤도교통",
+              "cr": "중국철로",
+              "exit": "출구",
+              "elevator": "무장애 엘리베이터",
+              "waitingroom": "대기실",
+              "toilet": "화장실",
+              "ticket": "매표/충전",
+              "checkin": "셀프 개찰"
+            },
+            "lineColor": "노선 색상"
+          }
+        },
+        "LineNum": {
+          "displayName": "노선 번호",
+          "props": {
+            "num": "노선 번호",
+            "customChinese": "사용자 정의 중국어 텍스트",
+            "customEnglish": "사용자 정의 영어 텍스트",
+            "align": {
+              "displayName": "정렬",
+              "left": "왼쪽",
+              "right": "오른쪽"
+            },
+            "lineColor": "노선 색상",
+            "showText": "뒤의 텍스트 표시"
+          }
+        },
+        "LineText": {
+          "displayName": "노선 텍스트",
+          "props": {
+            "chinese": "중국어 이름",
+            "english": "영어 이름",
+            "align": {
+              "displayName": "정렬",
+              "left": "왼쪽",
+              "right": "오른쪽"
+            },
+            "lineColor": "노선 색상"
+          }
+        },
+        "NumAlphabet": {
+          "displayName": "숫자/알파벳",
+          "props": {
+            "text": "텍스트",
+            "background": "배경색",
+            "foreground": "전경색",
+            "type": {
+              "displayName": "너비 유형",
+              "fit": "최소",
+              "block": "블록"
+            }
+          }
+        },
+        "Spacing": {
+          "displayName": "간격",
+          "props": {
+            "background": "배경색"
+          }
+        },
+        "SpecLine": {
+          "displayName": "구분선",
+          "props": {
+            "background": "배경색",
+            "foreground": "전경색"
+          }
+        },
+        "StationName": {
+          "displayName": "역명",
+          "props": {
+            "chinese": "중국어 이름",
+            "english": "영어 이름"
+          }
+        },
+        "Text": {
+          "displayName": "텍스트",
+          "props": {
+            "chinese": "중국어 텍스트",
+            "english": "영어 텍스트",
+            "align": {
+              "displayName": "정렬",
+              "left": "왼쪽",
+              "right": "오른쪽",
+              "center": "중앙"
+            },
+            "background": "배경색",
+            "foreground": "전경색"
+          }
+        }
+      },
+      "colors": {
+        "foreground": "전경색",
+        "background": "배경색",
+        "exitforeground": "출구 전경색",
+        "exitbackground": "출구 배경색",
+        "facilityforeground": "시설 전경색",
+        "facilitybackground": "시설 배경색",
+        "specline": "구분선",
+        "border": "테두리색",
+        "noentry": "통행 금지",
+        "lineloop": "환선",
+        "line1": "1호선",
+        "line2": "2호선",
+        "line3": "3호선",
+        "line4": "4호선",
+        "line5": "5호선",
+        "line6": "6호선",
+        "line7": "7호선",
+        "line8": "8호선",
+        "line9": "9호선",
+        "line10": "10호선",
+        "line11": "11호선",
+        "line12": "12호선",
+        "line13": "13호선",
+        "line14": "14호선",
+        "line15": "15호선",
+        "line16": "16호선",
+        "line17": "17호선",
+        "line18": "18호선",
+        "line19": "19호선",
+        "line20": "20호선",
+        "line21": "21호선",
+        "line22": "22호선",
+        "line23": "23호선",
+        "line24": "24호선",
+        "line25": "25호선",
+        "line26": "26호선",
+        "line27": "27호선",
+        "line28": "28호선",
+        "line29": "29호선",
+        "lineinternationalexpo": "국제박람원선",
+        "linekonggang": "공항선",
+        "linejiangtiao": "강도선",
+        "linebitong": "벽동선",
+        "lineyongchuan": "영천선",
+        "lineqiwan": "기만선",
+        "linedazhu": "대족선",
+        "linenanchuan": "남천선",
+        "linechangfu": "장부선",
+        "trainrapid": "쾌속열차",
+        "trainexpress": "직행쾌속열차"
+      }
+    },
+    "chengdu": {
+      "displayName": "청두 지하철 스타일",
+      "components": {
+        "Arrow": {
+          "displayName": "화살표",
+          "props": {
+            "type": {
+              "displayName": "방향",
+              "up": "위",
+              "down": "아래",
+              "left": "왼쪽",
+              "right": "오른쪽",
+              "up-left": "왼쪽 위",
+              "up-right": "오른쪽 위",
+              "down-left": "왼쪽 아래",
+              "down-right": "오른쪽 아래"
+            },
+            "background": "배경색",
+            "foreground": "전경색"
+          }
+        },
+        "Blank": {
+          "displayName": "빈 공간",
+          "props": {
+            "width": "너비",
+            "background": "배경색",
+            "foreground": "전경색"
+          }
+        },
+        "Icon": {
+          "displayName": "아이콘",
+          "props": {
+            "icon": {
+              "displayName": "아이콘",
+              "noentry": "통행 금지",
+              "train": "승차",
+              "metro": "지하철",
+              "monorail": "모노레일",
+              "cdrt": "청두 지하철",
+              "exit": "출구",
+              "elevator": "무장애 엘리베이터",
+              "waitingroom": "대기실",
+              "toilet": "화장실",
+              "ticket": "매표/충전",
+              "checkin": "셀프 개찰"
+            },
+            "lineColor": "노선 색상"
+          }
+        },
+        "LineNum": {
+          "displayName": "노선 번호",
+          "props": {
+            "num": "노선 번호",
+            "customChinese": "사용자 정의 중국어 텍스트",
+            "customEnglish": "사용자 정의 영어 텍스트",
+            "align": {
+              "displayName": "정렬",
+              "left": "왼쪽",
+              "right": "오른쪽"
+            },
+            "lineColor": "노선 색상",
+            "showText": "뒤의 텍스트 표시"
+          }
+        },
+        "LineText": {
+          "displayName": "노선 텍스트",
+          "props": {
+            "chinese": "중국어 이름",
+            "english": "영어 이름",
+            "align": {
+              "displayName": "정렬",
+              "left": "왼쪽",
+              "right": "오른쪽"
+            },
+            "lineColor": "노선 색상"
+          }
+        },
+        "NumAlphabet": {
+          "displayName": "숫자/알파벳",
+          "props": {
+            "text": "텍스트",
+            "background": "배경색",
+            "foreground": "전경색",
+            "type": {
+              "displayName": "너비 유형",
+              "fit": "최소",
+              "block": "블록"
+            }
+          }
+        },
+        "Spacing": {
+          "displayName": "간격",
+          "props": {
+            "background": "배경색"
+          }
+        },
+        "SpecLine": {
+          "displayName": "구분선",
+          "props": {
+            "background": "배경색",
+            "foreground": "전경색"
+          }
+        },
+        "StationName": {
+          "displayName": "역명",
+          "props": {
+            "chinese": "중국어 이름",
+            "english": "영어 이름"
+          }
+        },
+        "Text": {
+          "displayName": "텍스트",
+          "props": {
+            "chinese": "중국어 텍스트",
+            "english": "영어 텍스트",
+            "align": {
+              "displayName": "정렬",
+              "left": "왼쪽",
+              "right": "오른쪽",
+              "center": "중앙"
+            },
+            "background": "배경색",
+            "foreground": "전경색"
+          }
+        },
+        "StationId": {
+          "displayName": "역 번호",
+          "props": {
+            "color": "노선 색상",
+            "lineNum": "노선 번호",
+            "stationNum": "역 번호"
+          }
+        }
+      },
+      "colors": {
+        "foreground": "전경색",
+        "background": "배경색",
+        "exitforeground": "출구 전경색",
+        "exitbackground": "출구 배경색",
+        "specline": "구분선",
+        "border": "테두리색",
+        "noentry": "통행 금지",
+        "line1": "1호선",
+        "line2": "2호선",
+        "line3": "3호선",
+        "line4": "4호선",
+        "line5": "5호선",
+        "line6": "6호선",
+        "line7": "7호선",
+        "line8": "8호선",
+        "line9": "9호선",
+        "line10": "10호선",
+        "line11": "11호선",
+        "line12": "12호선",
+        "line13": "13호선",
+        "line14": "14호선",
+        "line15": "15호선",
+        "line16": "16호선",
+        "line17": "17호선",
+        "line18": "18호선",
+        "line19": "19호선",
+        "line20": "20호선",
+        "line21": "21호선",
+        "line22": "22호선",
+        "line23": "23호선",
+        "line24": "24호선",
+        "line25": "25호선",
+        "line26": "26호선",
+        "line27": "27호선",
+        "line28": "28호선",
+        "line29": "29호선",
+        "line30": "30호선",
+        "line32": "32호선",
+        "line33": "33호선",
+        "linet2": "트램 롱 2호선",
+        "lines1": "S1/신도금당선",
+        "lines2": "S2/금당공항선",
+        "lines3": "S3/자양선",
+        "lines4": "S4/용천역회주선",
+        "lines5": "S5/미산인수선",
+        "lines6": "S6/신진포강선",
+        "lines7": "S7/신진남선",
+        "lines8": "S8/신진안인선",
+        "lines9": "S9/온강도강언선",
+        "lines10": "S10/신도광한선",
+        "lines11": "S11/덕양라강선",
+        "lines12": "S12/성화정양선",
+        "lines13": "S13/용천천부공항선",
+        "lines14": "S14/천부간양선",
+        "lines15": "S15/동남환선",
+        "lines16": "S16/미산청신선",
+        "lines17": "S17/자양서선",
+        "lines18": "S18/신진북선"
+      }
+    }
+  }
+}

@@ -75,8 +75,9 @@ export default function ComponentsList({ currentTheme, onThemeChange }: Componen
   const [themeChangeVisible, setThemeChangeVisible] = useState(false);
   const [nextTheme, setNextTheme] = useState(0);
 
-  // 处理主题选择
+  // 处理主题选择 - 添加防抖逻辑
   const handleThemeSelect = (themeIndex: number) => {
+    console.log('Select 触发主题变化:', currentTheme, '->', themeIndex);
     if (themeIndex !== currentTheme) {
       setNextTheme(themeIndex);
       setThemeChangeVisible(true);
@@ -92,17 +93,17 @@ export default function ComponentsList({ currentTheme, onThemeChange }: Componen
   return (
     <div className="w-300px border-r border-gray-200 p-4 overflow-y-auto h-full">
       <div className="mb-4">
-        <Typography.Text className="font-sans block mb-2">
+        <Typography.Title heading={4} className="font-sans block">
           {t("componentsList.theme")}
-        </Typography.Text>
+        </Typography.Title>
         <Select
           value={currentTheme}
           onChange={value => handleThemeSelect(value as number)}
-          className="w-full"
+          className="w-full mt-2"
           size="large"
         >
           {themes.map(([name], index) => (
-            <Select.Option key={index} value={index}>
+            <Select.Option key={index} value={index} className="font-sans">
               {t(`${name}.displayName`)}
             </Select.Option>
           ))}

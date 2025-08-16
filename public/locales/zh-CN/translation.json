@@ -18,6 +18,36 @@
     "width": "宽度",
     "showDividers": "显示分隔线"
   },
+  "exportDialog": {
+    "title": "导出指示牌",
+    "width": "宽度 (像素)",
+    "height": "高度 (像素)",
+    "keepRatio": "保持等比例",
+    "export": "导出",
+    "cancel": "取消",
+    "error": {
+      "noElement": "找不到指示牌元素",
+      "exportFailed": "导出失败："
+    },
+    "success": "导出成功！"
+  },
+  "saves": {
+    "export_image": "导出为图片",
+    "save_project": "保存项目到本地",
+    "load_project": "导入项目",
+    "autosave": {
+      "success": "自动保存成功",
+      "error": "自动保存失败"
+    },
+    "import": {
+      "success": "导入成功",
+      "error": "导入失败",
+      "unsupportedVersion": "不支持的存档版本"
+    },
+    "export": {
+      "success": "存档已导出"
+    }
+  },
   "editor": {
     "title": "编辑组件",
     "delete": "删除组件"

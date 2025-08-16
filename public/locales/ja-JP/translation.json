@@ -1,0 +1,433 @@
+{
+  "title": "MoeRT ガイドジェネレーター",
+  "componentsList": {
+    "title": "コンポーネントリスト",
+    "drag": "右側にドラッグしてコンポーネントを追加",
+    "theme": "テーマ",
+    "themeChange": {
+      "title": "テーマ切替確認",
+      "confirm": "テーマを切り替えると現在のキャンバスがクリアされます。続行しますか？",
+      "dialog": {
+        "confirm": "確認",
+        "cancel": "キャンセル"
+      }
+    }
+  },
+  "board": {
+    "emptyRowHint": "この行にコンポーネントをドラッグ",
+    "width": "幅",
+    "showDividers": "区切り線を表示"
+  },
+  "exportDialog": {
+    "title": "標識をエクスポート",
+    "width": "幅（ピクセル）",
+    "height": "高さ（ピクセル）",
+    "keepRatio": "縦横比を維持",
+    "export": "エクスポート",
+    "cancel": "キャンセル",
+    "error": {
+      "noElement": "標識要素が見つかりません",
+      "exportFailed": "エクスポート失敗："
+    },
+    "success": "エクスポート成功！"
+  },
+  "saves": {
+    "export_image": "画像としてエクスポート",
+    "save_project": "プロジェクトをローカルに保存",
+    "load_project": "プロジェクトをインポート",
+    "autosave": {
+      "success": "自動保存成功",
+      "error": "自動保存失敗"
+    },
+    "import": {
+      "success": "インポート成功",
+      "error": "インポート失敗",
+      "unsupportedVersion": "サポートされていないバージョン"
+    },
+    "export": {
+      "success": "アーカイブがエクスポートされました"
+    }
+  },
+  "editor": {
+    "title": "コンポーネントを編集",
+    "delete": "コンポーネントを削除"
+  },
+  "themes": {
+    "chongqing": {
+      "displayName": "重慶軌道交通スタイル",
+      "components": {
+        "Arrow": {
+          "displayName": "矢印",
+          "props": {
+            "type": {
+              "displayName": "方向",
+              "up": "上",
+              "down": "下",
+              "left": "左",
+              "right": "右",
+              "up-left": "左上",
+              "up-right": "右上",
+              "down-left": "左下",
+              "down-right": "右下"
+            },
+            "background": "背景色",
+            "foreground": "前景色"
+          }
+        },
+        "Blank": {
+          "displayName": "空白",
+          "props": {
+            "width": "幅",
+            "background": "背景色",
+            "foreground": "前景色"
+          }
+        },
+        "Icon": {
+          "displayName": "アイコン",
+          "props": {
+            "icon": {
+              "displayName": "アイコン",
+              "noentry": "通行禁止",
+              "train": "乗車",
+              "metro": "地下鉄",
+              "monorail": "モノレール",
+              "ct": "重慶鉄道集団",
+              "crt": "重慶軌道交通",
+              "cr": "中国鉄道",
+              "exit": "出口",
+              "elevator": "バリアフリーエレベーター",
+              "waitingroom": "待合室",
+              "toilet": "トイレ",
+              "ticket": "券売機/チャージ",
+              "checkin": "セルフ改札"
+            },
+            "lineColor": "路線色"
+          }
+        },
+        "LineNum": {
+          "displayName": "路線番号",
+          "props": {
+            "num": "路線番号",
+            "customChinese": "カスタム中国語テキスト",
+            "customEnglish": "カスタム英語テキスト",
+            "align": {
+              "displayName": "配置",
+              "left": "左",
+              "right": "右"
+            },
+            "lineColor": "路線色",
+            "showText": "後ろのテキストを表示"
+          }
+        },
+        "LineText": {
+          "displayName": "路線テキスト",
+          "props": {
+            "chinese": "中国語名",
+            "english": "英語名",
+            "align": {
+              "displayName": "配置",
+              "left": "左",
+              "right": "右"
+            },
+            "lineColor": "路線色"
+          }
+        },
+        "NumAlphabet": {
+          "displayName": "数字/アルファベット",
+          "props": {
+            "text": "テキスト",
+            "background": "背景色",
+            "foreground": "前景色",
+            "type": {
+              "displayName": "幅タイプ",
+              "fit": "最小",
+              "block": "ブロック"
+            }
+          }
+        },
+        "Spacing": {
+          "displayName": "間隔",
+          "props": {
+            "background": "背景色"
+          }
+        },
+        "SpecLine": {
+          "displayName": "区切り線",
+          "props": {
+            "background": "背景色",
+            "foreground": "前景色"
+          }
+        },
+        "StationName": {
+          "displayName": "駅名",
+          "props": {
+            "chinese": "中国語名",
+            "english": "英語名"
+          }
+        },
+        "Text": {
+          "displayName": "テキスト",
+          "props": {
+            "chinese": "中国語テキスト",
+            "english": "英語テキスト",
+            "align": {
+              "displayName": "配置",
+              "left": "左",
+              "right": "右",
+              "center": "中央"
+            },
+            "background": "背景色",
+            "foreground": "前景色"
+          }
+        }
+      },
+      "colors": {
+        "foreground": "前景色",
+        "background": "背景色",
+        "exitforeground": "出口前景色",
+        "exitbackground": "出口背景色",
+        "facilityforeground": "施設前景色",
+        "facilitybackground": "施設背景色",
+        "specline": "区切り線",
+        "border": "ボーダー色",
+        "noentry": "通行禁止",
+        "lineloop": "環状線",
+        "line1": "1号線",
+        "line2": "2号線",
+        "line3": "3号線",
+        "line4": "4号線",
+        "line5": "5号線",
+        "line6": "6号線",
+        "line7": "7号線",
+        "line8": "8号線",
+        "line9": "9号線",
+        "line10": "10号線",
+        "line11": "11号線",
+        "line12": "12号線",
+        "line13": "13号線",
+        "line14": "14号線",
+        "line15": "15号線",
+        "line16": "16号線",
+        "line17": "17号線",
+        "line18": "18号線",
+        "line19": "19号線",
+        "line20": "20号線",
+        "line21": "21号線",
+        "line22": "22号線",
+        "line23": "23号線",
+        "line24": "24号線",
+        "line25": "25号線",
+        "line26": "26号線",
+        "line27": "27号線",
+        "line28": "28号線",
+        "line29": "29号線",
+        "lineinternationalexpo": "国博線",
+        "linekonggang": "空港線",
+        "linejiangtiao": "江跳線",
+        "linebitong": "璧銅線",
+        "lineyongchuan": "永川線",
+        "lineqiwan": "綦万線",
+        "linedazhu": "大足線",
+        "linenanchuan": "南川線",
+        "linechangfu": "長涪線",
+        "trainrapid": "快速車",
+        "trainexpress": "直快車"
+      }
+    },
+    "chengdu": {
+      "displayName": "成都地下鉄スタイル",
+      "components": {
+        "Arrow": {
+          "displayName": "矢印",
+          "props": {
+            "type": {
+              "displayName": "方向",
+              "up": "上",
+              "down": "下",
+              "left": "左",
+              "right": "右",
+              "up-left": "左上",
+              "up-right": "右上",
+              "down-left": "左下",
+              "down-right": "右下"
+            },
+            "background": "背景色",
+            "foreground": "前景色"
+          }
+        },
+        "Blank": {
+          "displayName": "空白",
+          "props": {
+            "width": "幅",
+            "background": "背景色",
+            "foreground": "前景色"
+          }
+        },
+        "Icon": {
+          "displayName": "アイコン",
+          "props": {
+            "icon": {
+              "displayName": "アイコン",
+              "noentry": "通行禁止",
+              "train": "乗車",
+              "metro": "地下鉄",
+              "monorail": "モノレール",
+              "cdrt": "成都地下鉄",
+              "exit": "出口",
+              "elevator": "バリアフリーエレベーター",
+              "waitingroom": "待合室",
+              "toilet": "トイレ",
+              "ticket": "券売機/チャージ",
+              "checkin": "セルフ改札"
+            },
+            "lineColor": "路線色"
+          }
+        },
+        "LineNum": {
+          "displayName": "路線番号",
+          "props": {
+            "num": "路線番号",
+            "customChinese": "カスタム中国語テキスト",
+            "customEnglish": "カスタム英語テキスト",
+            "align": {
+              "displayName": "配置",
+              "left": "左",
+              "right": "右"
+            },
+            "lineColor": "路線色",
+            "showText": "後ろのテキストを表示"
+          }
+        },
+        "LineText": {
+          "displayName": "路線テキスト",
+          "props": {
+            "chinese": "中国語名",
+            "english": "英語名",
+            "align": {
+              "displayName": "配置",
+              "left": "左",
+              "right": "右"
+            },
+            "lineColor": "路線色"
+          }
+        },
+        "NumAlphabet": {
+          "displayName": "数字/アルファベット",
+          "props": {
+            "text": "テキスト",
+            "background": "背景色",
+            "foreground": "前景色",
+            "type": {
+              "displayName": "幅タイプ",
+              "fit": "最小",
+              "block": "ブロック"
+            }
+          }
+        },
+        "Spacing": {
+          "displayName": "間隔",
+          "props": {
+            "background": "背景色"
+          }
+        },
+        "SpecLine": {
+          "displayName": "区切り線",
+          "props": {
+            "background": "背景色",
+            "foreground": "前景色"
+          }
+        },
+        "StationName": {
+          "displayName": "駅名",
+          "props": {
+            "chinese": "中国語名",
+            "english": "英語名"
+          }
+        },
+        "Text": {
+          "displayName": "テキスト",
+          "props": {
+            "chinese": "中国語テキスト",
+            "english": "英語テキスト",
+            "align": {
+              "displayName": "配置",
+              "left": "左",
+              "right": "右",
+              "center": "中央"
+            },
+            "background": "背景色",
+            "foreground": "前景色"
+          }
+        },
+        "StationId": {
+          "displayName": "駅番号",
+          "props": {
+            "color": "路線色",
+            "lineNum": "路線番号",
+            "stationNum": "駅番号"
+          }
+        }
+      },
+      "colors": {
+        "foreground": "前景色",
+        "background": "背景色",
+        "exitforeground": "出口前景色",
+        "exitbackground": "出口背景色",
+        "specline": "区切り線",
+        "border": "ボーダー色",
+        "noentry": "通行禁止",
+        "line1": "1号線",
+        "line2": "2号線",
+        "line3": "3号線",
+        "line4": "4号線",
+        "line5": "5号線",
+        "line6": "6号線",
+        "line7": "7号線",
+        "line8": "8号線",
+        "line9": "9号線",
+        "line10": "10号線",
+        "line11": "11号線",
+        "line12": "12号線",
+        "line13": "13号線",
+        "line14": "14号線",
+        "line15": "15号線",
+        "line16": "16号線",
+        "line17": "17号線",
+        "line18": "18号線",
+        "line19": "19号線",
+        "line20": "20号線",
+        "line21": "21号線",
+        "line22": "22号線",
+        "line23": "23号線",
+        "line24": "24号線",
+        "line25": "25号線",
+        "line26": "26号線",
+        "line27": "27号線",
+        "line28": "28号線",
+        "line29": "29号線",
+        "line30": "30号線",
+        "line32": "32号線",
+        "line33": "33号線",
+        "linet2": "路面電車蓉2号線",
+        "lines1": "S1/新都金堂線",
+        "lines2": "S2/金堂空港線",
+        "lines3": "S3/資陽線",
+        "lines4": "S4/龍泉驛淮州線",
+        "lines5": "S5/眉山任寿線",
+        "lines6": "S6/新津蒲江線",
+        "lines7": "S7/新津南線",
+        "lines8": "S8/新津安仁線",
+        "lines9": "S9/温江都江堰線",
+        "lines10": "S10/新都広漢線",
+        "lines11": "S11/徳陽羅江線",
+        "lines12": "S12/成華旌陽線",
+        "lines13": "S13/龍泉天府空港線",
+        "lines14": "S14/天府簡陽線",
+        "lines15": "S15/東南環状線",
+        "lines16": "S16/眉山青神線",
+        "lines17": "S17/資陽西線",
+        "lines18": "S18/新津北線"
+      }
+    }
+  }
+}

@@ -1,0 +1,433 @@
+{
+  "title": "MoeRT-GuideGen",
+  "componentsList": {
+    "title": "Component List",
+    "drag": "Drag to the right to add components",
+    "theme": "Theme",
+    "themeChange": {
+      "title": "Switch Theme Confirmation",
+      "confirm": "Switching themes will clear the current canvas. Are you sure you want to continue?",
+      "dialog": {
+        "confirm": "Confirm",
+        "cancel": "Cancel"
+      }
+    }
+  },
+  "board": {
+    "emptyRowHint": "Drag components to this row",
+    "width": "Width",
+    "showDividers": "Show dividers"
+  },
+  "exportDialog": {
+    "title": "Export Sign",
+    "width": "Width (pixels)",
+    "height": "Height (pixels)",
+    "keepRatio": "Keep aspect ratio",
+    "export": "Export",
+    "cancel": "Cancel",
+    "error": {
+      "noElement": "Sign element not found",
+      "exportFailed": "Export failed: "
+    },
+    "success": "Export successful!"
+  },
+  "saves": {
+    "export_image": "Export as Image",
+    "save_project": "Save Project Locally",
+    "load_project": "Import Project",
+    "autosave": {
+      "success": "Auto-save successful",
+      "error": "Auto-save failed"
+    },
+    "import": {
+      "success": "Import successful",
+      "error": "Import failed",
+      "unsupportedVersion": "Unsupported save version"
+    },
+    "export": {
+      "success": "Archive exported"
+    }
+  },
+  "editor": {
+    "title": "Edit Component",
+    "delete": "Delete Component"
+  },
+  "themes": {
+    "chongqing": {
+      "displayName": "Chongqing Rail Transit Style",
+      "components": {
+        "Arrow": {
+          "displayName": "Arrow",
+          "props": {
+            "type": {
+              "displayName": "Direction",
+              "up": "Up",
+              "down": "Down",
+              "left": "Left",
+              "right": "Right",
+              "up-left": "Up-Left",
+              "up-right": "Up-Right",
+              "down-left": "Down-Left",
+              "down-right": "Down-Right"
+            },
+            "background": "Background Color",
+            "foreground": "Foreground Color"
+          }
+        },
+        "Blank": {
+          "displayName": "Blank Space",
+          "props": {
+            "width": "Width",
+            "background": "Background Color",
+            "foreground": "Foreground Color"
+          }
+        },
+        "Icon": {
+          "displayName": "Icon",
+          "props": {
+            "icon": {
+              "displayName": "Icon",
+              "noentry": "No Entry",
+              "train": "Train",
+              "metro": "Metro",
+              "monorail": "Monorail",
+              "ct": "Chongqing Railway Group",
+              "crt": "Chongqing Rail Transit",
+              "cr": "China Railway",
+              "exit": "Exit",
+              "elevator": "Accessible Elevator",
+              "waitingroom": "Waiting Room",
+              "toilet": "Restroom",
+              "ticket": "Ticketing/Top-up",
+              "checkin": "Self-service Check-in"
+            },
+            "lineColor": "Line Color"
+          }
+        },
+        "LineNum": {
+          "displayName": "Line Number",
+          "props": {
+            "num": "Line Number",
+            "customChinese": "Custom Chinese Text",
+            "customEnglish": "Custom English Text",
+            "align": {
+              "displayName": "Alignment",
+              "left": "Left",
+              "right": "Right"
+            },
+            "lineColor": "Line Color",
+            "showText": "Show Text Behind"
+          }
+        },
+        "LineText": {
+          "displayName": "Line Text",
+          "props": {
+            "chinese": "Chinese Name",
+            "english": "English Name",
+            "align": {
+              "displayName": "Alignment",
+              "left": "Left",
+              "right": "Right"
+            },
+            "lineColor": "Line Color"
+          }
+        },
+        "NumAlphabet": {
+          "displayName": "Number/Letter",
+          "props": {
+            "text": "Text",
+            "background": "Background Color",
+            "foreground": "Foreground Color",
+            "type": {
+              "displayName": "Width Type",
+              "fit": "Fit",
+              "block": "Block"
+            }
+          }
+        },
+        "Spacing": {
+          "displayName": "Spacing",
+          "props": {
+            "background": "Background Color"
+          }
+        },
+        "SpecLine": {
+          "displayName": "Divider Line",
+          "props": {
+            "background": "Background Color",
+            "foreground": "Foreground Color"
+          }
+        },
+        "StationName": {
+          "displayName": "Station Name",
+          "props": {
+            "chinese": "Chinese Name",
+            "english": "English Name"
+          }
+        },
+        "Text": {
+          "displayName": "Text",
+          "props": {
+            "chinese": "Chinese Text",
+            "english": "English Text",
+            "align": {
+              "displayName": "Alignment",
+              "left": "Left",
+              "right": "Right",
+              "center": "Center"
+            },
+            "background": "Background Color",
+            "foreground": "Foreground Color"
+          }
+        }
+      },
+      "colors": {
+        "foreground": "Foreground",
+        "background": "Background",
+        "exitforeground": "Exit Foreground",
+        "exitbackground": "Exit Background",
+        "facilityforeground": "Facility Foreground",
+        "facilitybackground": "Facility Background",
+        "specline": "Divider Line",
+        "border": "Border",
+        "noentry": "No Entry",
+        "lineloop": "Loop Line",
+        "line1": "Line 1",
+        "line2": "Line 2",
+        "line3": "Line 3",
+        "line4": "Line 4",
+        "line5": "Line 5",
+        "line6": "Line 6",
+        "line7": "Line 7",
+        "line8": "Line 8",
+        "line9": "Line 9",
+        "line10": "Line 10",
+        "line11": "Line 11",
+        "line12": "Line 12",
+        "line13": "Line 13",
+        "line14": "Line 14",
+        "line15": "Line 15",
+        "line16": "Line 16",
+        "line17": "Line 17",
+        "line18": "Line 18",
+        "line19": "Line 19",
+        "line20": "Line 20",
+        "line21": "Line 21",
+        "line22": "Line 22",
+        "line23": "Line 23",
+        "line24": "Line 24",
+        "line25": "Line 25",
+        "line26": "Line 26",
+        "line27": "Line 27",
+        "line28": "Line 28",
+        "line29": "Line 29",
+        "lineinternationalexpo": "International Expo Line",
+        "linekonggang": "Airport Line",
+        "linejiangtiao": "Jiangjin-Tiaoshi Line",
+        "linebitong": "Bishan-Tongliang Line",
+        "lineyongchuan": "Yongchuan Line",
+        "lineqiwan": "Qijiang-Wansheng Line",
+        "linedazhu": "Dazu Line",
+        "linenanchuan": "Nanchuan Line",
+        "linechangfu": "Changshou-Fuling Line",
+        "trainrapid": "Rapid Train",
+        "trainexpress": "Express Train"
+      }
+    },
+    "chengdu": {
+      "displayName": "Chengdu Metro Style",
+      "components": {
+        "Arrow": {
+          "displayName": "Arrow",
+          "props": {
+            "type": {
+              "displayName": "Direction",
+              "up": "Up",
+              "down": "Down",
+              "left": "Left",
+              "right": "Right",
+              "up-left": "Up-Left",
+              "up-right": "Up-Right",
+              "down-left": "Down-Left",
+              "down-right": "Down-Right"
+            },
+            "background": "Background Color",
+            "foreground": "Foreground Color"
+          }
+        },
+        "Blank": {
+          "displayName": "Blank Space",
+          "props": {
+            "width": "Width",
+            "background": "Background Color",
+            "foreground": "Foreground Color"
+          }
+        },
+        "Icon": {
+          "displayName": "Icon",
+          "props": {
+            "icon": {
+              "displayName": "Icon",
+              "noentry": "No Entry",
+              "train": "Train",
+              "metro": "Metro",
+              "monorail": "Monorail",
+              "cdrt": "Chengdu Metro",
+              "exit": "Exit",
+              "elevator": "Accessible Elevator",
+              "waitingroom": "Waiting Room",
+              "toilet": "Restroom",
+              "ticket": "Ticketing/Top-up",
+              "checkin": "Self-service Check-in"
+            },
+            "lineColor": "Line Color"
+          }
+        },
+        "LineNum": {
+          "displayName": "Line Number",
+          "props": {
+            "num": "Line Number",
+            "customChinese": "Custom Chinese Text",
+            "customEnglish": "Custom English Text",
+            "align": {
+              "displayName": "Alignment",
+              "left": "Left",
+              "right": "Right"
+            },
+            "lineColor": "Line Color",
+            "showText": "Show Text Behind"
+          }
+        },
+        "LineText": {
+          "displayName": "Line Text",
+          "props": {
+            "chinese": "Chinese Name",
+            "english": "English Name",
+            "align": {
+              "displayName": "Alignment",
+              "left": "Left",
+              "right": "Right"
+            },
+            "lineColor": "Line Color"
+          }
+        },
+        "NumAlphabet": {
+          "displayName": "Number/Letter",
+          "props": {
+            "text": "Text",
+            "background": "Background Color",
+            "foreground": "Foreground Color",
+            "type": {
+              "displayName": "Width Type",
+              "fit": "Fit",
+              "block": "Block"
+            }
+          }
+        },
+        "Spacing": {
+          "displayName": "Spacing",
+          "props": {
+            "background": "Background Color"
+          }
+        },
+        "SpecLine": {
+          "displayName": "Divider Line",
+          "props": {
+            "background": "Background Color",
+            "foreground": "Foreground Color"
+          }
+        },
+        "StationName": {
+          "displayName": "Station Name",
+          "props": {
+            "chinese": "Chinese Name",
+            "english": "English Name"
+          }
+        },
+        "Text": {
+          "displayName": "Text",
+          "props": {
+            "chinese": "Chinese Text",
+            "english": "English Text",
+            "align": {
+              "displayName": "Alignment",
+              "left": "Left",
+              "right": "Right",
+              "center": "Center"
+            },
+            "background": "Background Color",
+            "foreground": "Foreground Color"
+          }
+        },
+        "StationId": {
+          "displayName": "Station ID",
+          "props": {
+            "color": "Line Color",
+            "lineNum": "Line Number",
+            "stationNum": "Station Number"
+          }
+        }
+      },
+      "colors": {
+        "foreground": "Foreground",
+        "background": "Background",
+        "exitforeground": "Exit Foreground",
+        "exitbackground": "Exit Background",
+        "specline": "Divider Line",
+        "border": "Border",
+        "noentry": "No Entry",
+        "line1": "Line 1",
+        "line2": "Line 2",
+        "line3": "Line 3",
+        "line4": "Line 4",
+        "line5": "Line 5",
+        "line6": "Line 6",
+        "line7": "Line 7",
+        "line8": "Line 8",
+        "line9": "Line 9",
+        "line10": "Line 10",
+        "line11": "Line 11",
+        "line12": "Line 12",
+        "line13": "Line 13",
+        "line14": "Line 14",
+        "line15": "Line 15",
+        "line16": "Line 16",
+        "line17": "Line 17",
+        "line18": "Line 18",
+        "line19": "Line 19",
+        "line20": "Line 20",
+        "line21": "Line 21",
+        "line22": "Line 22",
+        "line23": "Line 23",
+        "line24": "Line 24",
+        "line25": "Line 25",
+        "line26": "Line 26",
+        "line27": "Line 27",
+        "line28": "Line 28",
+        "line29": "Line 29",
+        "line30": "Line 30",
+        "line32": "Line 32",
+        "line33": "Line 33",
+        "linet2": "Tram Rong Line 2",
+        "lines1": "S1/Xindu-Jintang Line",
+        "lines2": "S2/Jintang Airport Line",
+        "lines3": "S3/Ziyang Line",
+        "lines4": "S4/Longquanyi-Huaizhou Line",
+        "lines5": "S5/Meishan-Renshou Line",
+        "lines6": "S6/Xinjin-Pujiang Line",
+        "lines7": "S7/Xinjin South Line",
+        "lines8": "S8/Xinjin-Anren Line",
+        "lines9": "S9/Wenjiang-Dujiangyan Line",
+        "lines10": "S10/Xindu-Guanghan Line",
+        "lines11": "S11/Deyang-Luojiang Line",
+        "lines12": "S12/Chenghua-Jingyang Line",
+        "lines13": "S13/Longquan-Tianfu Airport Line",
+        "lines14": "S14/Tianfu-Jianyang Line",
+        "lines15": "S15/Southeast Ring Line",
+        "lines16": "S16/Meishan-Qingshen Line",
+        "lines17": "S17/Ziyang West Line",
+        "lines18": "S18/Xinjin North Line"
+      }
+    }
+  }
+}
