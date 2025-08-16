@@ -425,6 +425,7 @@ export default function Editor({ guideHeight = 0 }: EditorProps) {
             />
           </div>
         </div>
+        <img className="love-salt-kawaii-qwq fixed opacity-30 -right-50px bottom-0 -z-1 w-600px" src="/imgs/salt.png"/>
       </div>
       <DragOverlay
         dropAnimation={{
