@@ -13,8 +13,8 @@ export const spacingEditorConfig: EditorConfig = {
   forms: [
     {
       key: "background",
-      label: "themes.chongqing.components.Spacing.props.background",
-      element: <CustomColorPicker currentTheme={0} />,
+      label: "themes.chengdu.components.Spacing.props.background",
+      element: <CustomColorPicker currentTheme={1} />,
     },
   ],
 };

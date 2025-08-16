@@ -3,6 +3,9 @@ export default interface Theme {
     defaultBackground: string;
     defaultForeground: string;
     defaultBorder: string;
+    colors: {
+      [key: string]: string;
+    };
   };
   fontFamily: string;
   components: Component[];

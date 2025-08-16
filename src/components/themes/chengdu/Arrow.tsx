@@ -27,7 +27,7 @@ export const arrowEditorConfig: EditorConfig = {
   forms: [
     {
       key: "type",
-      label: "themes.chongqing.components.Arrow.props.type.displayName",
+      label: "themes.chengdu.components.Arrow.props.type.displayName",
       element: (
         <Select>
           <Select.Option value="up">Up</Select.Option>
@@ -43,13 +43,13 @@ export const arrowEditorConfig: EditorConfig = {
     },
     {
       key: "foreground",
-      label: "themes.chongqing.components.Arrow.props.foreground",
-      element: <CustomColorPicker currentTheme={0} />,
+      label: "themes.chengdu.components.Arrow.props.foreground",
+      element: <CustomColorPicker currentTheme={1} />,
     },
     {
       key: "background",
-      label: "themes.chongqing.components.Arrow.props.background",
-      element: <CustomColorPicker currentTheme={0} />,
+      label: "themes.chengdu.components.Arrow.props.background",
+      element: <CustomColorPicker currentTheme={1} />,
     },
   ],
 };

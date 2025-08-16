@@ -15,6 +15,7 @@ import themes from "./themes/themereg";
 export default function Editor() {
   const guideBoardRef = useRef<GuideBoardRef>(null);
   const [activeItem, setActiveItem] = useState<GuideItem | null>(null);
+  const [currentTheme, setCurrentTheme] = useState(0);
 
   const handleDragStart = (event: DragStartEvent) => {
     const draggedItem = event.active.data.current?.item as GuideItem;
@@ -158,10 +159,16 @@ export default function Editor() {
       onDragOver={handleDragOver}
       collisionDetection={closestCenter}
     >
-      <div className="flex">
-        <ComponentsList />
+      <div className="flex h-0 flex-1">
+        <ComponentsList 
+          currentTheme={currentTheme} 
+          onThemeChange={(theme) => {
+            setCurrentTheme(theme);
+            guideBoardRef.current?.clearBoard();
+          }} 
+        />
         <div className="m-auto">
-          <GuideBoardCols ref={guideBoardRef} />
+          <GuideBoardCols ref={guideBoardRef} currentTheme={currentTheme} />
         </div>
       </div>
       <DragOverlay
@@ -178,7 +185,7 @@ export default function Editor() {
               background: "white",
               cursor: "grabbing",
               opacity: 0.9,
-              fontFamily: themes[0][1].fontFamily,
+              fontFamily: themes[currentTheme][1].fontFamily,
             }}
           >
             {activeItem.element}

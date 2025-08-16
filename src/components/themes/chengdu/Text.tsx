@@ -13,8 +13,8 @@ export interface TextProps {
 }
 export const textDefaultProps: TextProps = {
   align: "left",
-  chinese: "乘车",
-  english: "Train",
+  chinese: "换乘",
+  english: "Transfer",
   foreground: colors["foreground"],
   background: colors["background"],
 };
@@ -23,17 +23,17 @@ export const textEditorConfig: EditorConfig = {
   forms: [
     {
       key: "chinese",
-      label: "themes.chongqing.components.Text.props.chinese",
+      label: "themes.chengdu.components.Text.props.chinese",
       element: <Input />,
     },
     {
       key: "english",
-      label: "themes.chongqing.components.Text.props.english",
+      label: "themes.chengdu.components.Text.props.english",
       element: <Input />,
     },
     {
       key: "align",
-      label: "themes.chongqing.components.Text.props.align.displayName",
+      label: "themes.chengdu.components.Text.props.align.displayName",
       element: (
         <Select>
           <Select.Option value="left">left</Select.Option>
@@ -44,13 +44,13 @@ export const textEditorConfig: EditorConfig = {
     },
     {
       key: "foreground",
-      label: "themes.chongqing.components.Text.props.foreground",
-      element: <CustomColorPicker currentTheme={0} />,
+      label: "themes.chengdu.components.Text.props.foreground",
+      element: <CustomColorPicker currentTheme={1} />,
     },
     {
       key: "background",
-      label: "themes.chongqing.components.Text.props.background",
-      element: <CustomColorPicker currentTheme={0} />,
+      label: "themes.chengdu.components.Text.props.background",
+      element: <CustomColorPicker currentTheme={1} />,
     },
   ],
 };

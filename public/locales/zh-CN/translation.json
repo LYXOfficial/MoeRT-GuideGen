@@ -2,11 +2,21 @@
   "title": "MoeRT-GuideGen",
   "componentsList": {
     "title": "组件列表",
-    "drag": "拖拽到右侧添加组件"
+    "drag": "拖拽到右侧添加组件",
+    "theme": "主题",
+    "themeChange": {
+      "title": "切换主题确认",
+      "confirm": "切换主题将会清空当前画布，确定要继续吗？",
+      "dialog": {
+        "confirm": "确定",
+        "cancel": "取消"
+      }
+    }
   },
   "board": {
     "emptyRowHint": "拖拽组件到此行",
-    "width": "宽度"
+    "width": "宽度",
+    "showDividers": "显示分隔线"
   },
   "editor": {
     "title": "编辑组件",
@@ -61,8 +71,7 @@
               "ticket": "售票/加值",
               "checkin": "自助检票"
             },
-            "lineColor": "线路颜色",
-            "showText": "是否显示文字"
+            "lineColor": "线路颜色"
           }
         },
         "LineNum": {
@@ -141,6 +150,253 @@
             "foreground": "前景色"
           }
         }
+      },
+      "colors": {
+        "foreground": "前景色",
+        "background": "背景色",
+        "exitforeground": "出口前景色",
+        "exitbackground": "出口背景色",
+        "facilityforeground": "设施前景色",
+        "facilitybackground": "设施背景色",
+        "specline": "分隔线",
+        "border": "边框色",
+        "noentry": "禁止通行",
+        "lineloop": "环线",
+        "line1": "1号线",
+        "line2": "2号线",
+        "line3": "3号线",
+        "line4": "4号线",
+        "line5": "5号线",
+        "line6": "6号线",
+        "line7": "7号线",
+        "line8": "8号线",
+        "line9": "9号线",
+        "line10": "10号线",
+        "line11": "11号线",
+        "line12": "12号线",
+        "line13": "13号线",
+        "line14": "14号线",
+        "line15": "15号线",
+        "line16": "16号线",
+        "line17": "17号线",
+        "line18": "18号线",
+        "line19": "19号线",
+        "line20": "20号线",
+        "line21": "21号线",
+        "line22": "22号线",
+        "line23": "23号线",
+        "line24": "24号线",
+        "line25": "25号线",
+        "line26": "26号线",
+        "line27": "27号线",
+        "line28": "28号线",
+        "line29": "29号线",
+        "lineinternationalexpo": "国博线",
+        "linekonggang": "空港线",
+        "linejiangtiao": "江跳线",
+        "linebitong": "璧铜线",
+        "lineyongchuan": "永川线",
+        "lineqiwan": "綦万线",
+        "linedazhu": "大足线",
+        "linenanchuan": "南川线",
+        "linechangfu": "长涪线",
+        "trainrapid": "快速车",
+        "trainexpress": "直快车"
+      }
+    },
+    "chengdu": {
+      "displayName": "成都地铁风格",
+      "components": {
+        "Arrow": {
+          "displayName": "箭头",
+          "props": {
+            "type": {
+              "displayName": "方向",
+              "up": "上",
+              "down": "下",
+              "left": "左",
+              "right": "右",
+              "up-left": "左上",
+              "up-right": "右上",
+              "down-left": "左下",
+              "down-right": "右下"
+            },
+            "background": "背景色",
+            "foreground": "前景色"
+          }
+        },
+        "Blank": {
+          "displayName": "空格",
+          "props": {
+            "width": "宽度",
+            "background": "背景色",
+            "foreground": "前景色"
+          }
+        },
+        "Icon": {
+          "displayName": "图标",
+          "props": {
+            "icon": {
+              "displayName": "图标",
+              "noentry": "禁止通行",
+              "train": "乘车",
+              "metro": "地铁",
+              "monorail": "单轨",
+              "cdrt": "成都地铁",
+              "exit": "出口",
+              "elevator": "无障碍电梯",
+              "waitingroom": "等候室",
+              "toilet": "卫生间",
+              "ticket": "售票/加值",
+              "checkin": "自助检票"
+            },
+            "lineColor": "线路颜色"
+          }
+        },
+        "LineNum": {
+          "displayName": "数字线路",
+          "props": {
+            "num": "线路编号",
+            "customChinese": "自定义中文文本",
+            "customEnglish": "自定义英文文本",
+            "align": {
+              "displayName": "对齐方式",
+              "left": "左",
+              "right": "右"
+            },
+            "lineColor": "线路颜色",
+            "showText": "是否显示后面的文本"
+          }
+        },
+        "LineText": {
+          "displayName": "文字线路",
+          "props": {
+            "chinese": "中文名",
+            "english": "英文名",
+            "align": {
+              "displayName": "对齐方式",
+              "left": "左",
+              "right": "右"
+            },
+            "lineColor": "线路颜色"
+          }
+        },
+        "NumAlphabet": {
+          "displayName": "数字/字母",
+          "props": {
+            "text": "文本",
+            "background": "背景色",
+            "foreground": "前景色",
+            "type": {
+              "displayName": "宽度类型",
+              "fit": "最窄",
+              "block": "块"
+            }
+          }
+        },
+        "Spacing": {
+          "displayName": "间距",
+          "props": {
+            "background": "背景色"
+          }
+        },
+        "SpecLine": {
+          "displayName": "分割线",
+          "props": {
+            "background": "背景色",
+            "foreground": "前景色"
+          }
+        },
+        "StationName": {
+          "displayName": "站点名称",
+          "props": {
+            "chinese": "中文名",
+            "english": "英文名"
+          }
+        },
+        "Text": {
+          "displayName": "文本",
+          "props": {
+            "chinese": "中文文本",
+            "english": "英文文本",
+            "align": {
+              "displayName": "对齐方式",
+              "left": "左",
+              "right": "右",
+              "center": "中"
+            },
+            "background": "背景色",
+            "foreground": "前景色"
+          }
+        },
+        "StationId": {
+          "displayName": "站点编号",
+          "props": {
+            "color": "线路色",
+            "lineNum": "线路编号",
+            "stationNum": "站点编号"
+          }
+        }
+      },
+      "colors": {
+        "foreground": "前景色",
+        "background": "背景色",
+        "exitforeground": "出口前景色",
+        "exitbackground": "出口背景色",
+        "specline": "分隔线",
+        "border": "边框色",
+        "noentry": "禁止通行",
+        "line1": "1号线",
+        "line2": "2号线",
+        "line3": "3号线",
+        "line4": "4号线",
+        "line5": "5号线",
+        "line6": "6号线",
+        "line7": "7号线",
+        "line8": "8号线",
+        "line9": "9号线",
+        "line10": "10号线",
+        "line11": "11号线",
+        "line12": "12号线",
+        "line13": "13号线",
+        "line14": "14号线",
+        "line15": "15号线",
+        "line16": "16号线",
+        "line17": "17号线",
+        "line18": "18号线",
+        "line19": "19号线",
+        "line20": "20号线",
+        "line21": "21号线",
+        "line22": "22号线",
+        "line23": "23号线",
+        "line24": "24号线",
+        "line25": "25号线",
+        "line26": "26号线",
+        "line27": "27号线",
+        "line28": "28号线",
+        "line29": "29号线",
+        "line30": "30号线",
+        "line32": "32号线",
+        "line33": "33号线",
+        "linet2": "有轨电车蓉2号线",
+        "lines1": "S1/新都金堂线",
+        "lines2": "S2/金堂空港线",
+        "lines3": "S3/资阳线",
+        "lines4": "S4/龙泉驿淮州线",
+        "lines5": "S5/眉山任寿线",
+        "lines6": "S6/新津蒲江线",
+        "lines7": "S7/新津南线",
+        "lines8": "S8/新津安仁线",
+        "lines9": "S9/温江都江堰线",
+        "lines10": "S10/新都广汉线",
+        "lines11": "S11/德阳罗江线",
+        "lines12": "S12/成华旌阳线",
+        "lines13": "S13/龙泉天府机场线",
+        "lines14": "S14/天府简阳线",
+        "lines15": "S15/东南环线",
+        "lines16": "S16/眉山青神线",
+        "lines17": "S17/资阳西线",
+        "lines18": "S18/新津北线"
       }
     }
   }

@@ -19,12 +19,12 @@ export const numAlphabetEditorConfig: EditorConfig = {
   forms: [
     {
       key: "text",
-      label: "themes.chongqing.components.NumAlphabet.props.text",
+      label: "themes.chengdu.components.NumAlphabet.props.text",
       element: <Input />,
     },
     {
       key: "type",
-      label: "themes.chongqing.components.NumAlphabet.props.type.displayName",
+      label: "themes.chengdu.components.NumAlphabet.props.type.displayName",
       element: (
         <Select>
           <Select.Option value="block">Block</Select.Option>
@@ -34,13 +34,13 @@ export const numAlphabetEditorConfig: EditorConfig = {
     },
     {
       key: "foreground",
-      label: "themes.chongqing.components.NumAlphabet.props.foreground",
-      element: <CustomColorPicker currentTheme={0} />,
+      label: "themes.chengdu.components.NumAlphabet.props.foreground",
+      element: <CustomColorPicker currentTheme={1} />,
     },
     {
       key: "background",
-      label: "themes.chongqing.components.NumAlphabet.props.background",
-      element: <CustomColorPicker currentTheme={0} />,
+      label: "themes.chengdu.components.NumAlphabet.props.background",
+      element: <CustomColorPicker currentTheme={1} />,
     },
   ],
 };

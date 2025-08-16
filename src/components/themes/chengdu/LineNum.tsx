@@ -14,8 +14,8 @@ export interface LineNumProps {
 }
 
 export const lineNumDefaultProps: LineNumProps = {
-  num: "6",
-  lineColor: colors["line6"],
+  num: "3",
+  lineColor: colors["line3"],
   customChinese: "号线",
   customEnglish: "Line",
   showText: true,
@@ -26,32 +26,32 @@ export const lineNumEditorConfig: EditorConfig = {
   forms: [
     {
       key: "lineColor",
-      label: "themes.chongqing.components.LineNum.props.lineColor",
-      element: <CustomColorPicker currentTheme={0} />,
+      label: "themes.chengdu.components.LineNum.props.lineColor",
+      element: <CustomColorPicker currentTheme={1} />,
     },
     {
       key: "num",
-      label: "themes.chongqing.components.LineNum.props.num",
+      label: "themes.chengdu.components.LineNum.props.num",
       element: <Input />,
     },
     {
       key: "customChinese",
-      label: "themes.chongqing.components.LineNum.props.customChinese",
+      label: "themes.chengdu.components.LineNum.props.customChinese",
       element: <Input />,
     },
     {
       key: "customEnglish",
-      label: "themes.chongqing.components.LineNum.props.customEnglish",
+      label: "themes.chengdu.components.LineNum.props.customEnglish",
       element: <Input />,
     },
     {
       key: "showText",
-      label: "themes.chongqing.components.LineNum.props.showText",
+      label: "themes.chengdu.components.LineNum.props.showText",
       element: <Switch />,
     },
     {
       key: "align",
-      label: "themes.chongqing.components.LineNum.props.align.displayName",
+      label: "themes.chengdu.components.LineNum.props.align.displayName",
       element: (
         <Select>
           <Select.Option value="left">left</Select.Option>

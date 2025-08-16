@@ -1,6 +1,6 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import type { ReactElement } from "react";
+import { useRef, useState, type ReactElement } from "react";
 import Spacing from "./themes/chongqing/Spacing";
 
 export default function DraggableItem({
@@ -43,17 +43,45 @@ export default function DraggableItem({
     margin: "0 -1px"
   };
 
+  const [mouseDownTime, setMouseDownTime] = useState<number>(0);
+  const mouseDownRef = useRef<{ x: number; y: number } | null>(null);
+
+  const [hasMoved, setHasMoved] = useState(false);
+
   return (
     <div 
       ref={setNodeRef} 
       style={style} 
       {...attributes} 
       {...listeners}
+      onMouseDown={(e) => {
+        setMouseDownTime(Date.now());
+        mouseDownRef.current = { x: e.clientX, y: e.clientY };
+        setHasMoved(false);
+      }}
+      onMouseMove={(e) => {
+        if (mouseDownRef.current) {
+          const moveDistance = Math.sqrt(
+            Math.pow(e.clientX - mouseDownRef.current.x, 2) + 
+            Math.pow(e.clientY - mouseDownRef.current.y, 2)
+          );
+          if (moveDistance > 5) {
+            setHasMoved(true);
+          }
+        }
+      }}
       onMouseUp={(e) => {
-        if (!isDragging) {
+        const mouseUpTime = Date.now();
+        const timeElapsed = mouseUpTime - mouseDownTime;
+        
+        // 只有在没有移动且时间短的情况下才触发点击
+        if (!hasMoved && timeElapsed < 200 && !isDragging) {
           e.stopPropagation();
           onClick?.(e);
         }
+        
+        mouseDownRef.current = null;
+        setHasMoved(false);
       }}
       className={onClick ? 'hover:outline-blue-500 hover:outline-2 hover:outline-dashed' : ''}
     >

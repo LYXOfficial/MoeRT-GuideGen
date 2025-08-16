@@ -25,53 +25,53 @@ const theme: Theme = {
   fontFamily: "Frutiger, Helvetica, sans-serif",
   components: [
     {
-      displayName: "themes.chongqing.components.LineNum",
+      displayName: "themes.chengdu.components.LineNum",
       component: LineNum,
       defaultProps: lineNumDefaultProps,
     },
     {
-      displayName: "themes.chongqing.components.LineText",
+      displayName: "themes.chengdu.components.LineText",
       component: LineText,
       defaultProps: lineTextDefaultProps,
     },
     {
-      displayName: "themes.chongqing.components.Arrow",
+      displayName: "themes.chengdu.components.Arrow",
       component: Arrow,
       defaultProps: arrowDefaultProps,
     },
     {
-      displayName: "themes.chongqing.components.Icon",
+      displayName: "themes.chengdu.components.Icon",
       component: Icon,
       // defaultProps: iconDefaultProps
       defaultProps: {},
     },
     {
-      displayName: "themes.chongqing.components.Text",
+      displayName: "themes.chengdu.components.Text",
       component: Text,
       defaultProps: textDefaultProps,
     },
     {
-      displayName: "themes.chongqing.components.NumAlphabet",
+      displayName: "themes.chengdu.components.NumAlphabet",
       component: NumAlphabet,
       defaultProps: numAlphabetDefaultProps,
     },
     {
-      displayName: "themes.chongqing.components.StationName",
+      displayName: "themes.chengdu.components.StationName",
       component: StationName,
       defaultProps: stationNameDefaultProps,
     },
     {
-      displayName: "themes.chongqing.components.SpecLine",
+      displayName: "themes.chengdu.components.SpecLine",
       component: SpecLine,
       defaultProps: specLineDefaultProps,
     },
     {
-      displayName: "themes.chongqing.components.Spacing",
+      displayName: "themes.chengdu.components.Spacing",
       component: Spacing,
       defaultProps: spacingDefaultProps,
     },
     {
-      displayName: "themes.chongqing.components.Blank",
+      displayName: "themes.chengdu.components.Blank",
       component: Blank,
       defaultProps: blankDefaultProps,
     },

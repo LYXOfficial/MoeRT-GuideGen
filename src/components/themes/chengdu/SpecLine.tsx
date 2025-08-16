@@ -15,13 +15,13 @@ export const specLineEditorConfig: EditorConfig = {
   forms: [
     {
       key: "foreground",
-      label: "themes.chongqing.components.SpecLine.props.foreground",
-      element: <CustomColorPicker currentTheme={0} />,
+      label: "themes.chengdu.components.SpecLine.props.foreground",
+      element: <CustomColorPicker currentTheme={1} />,
     },
     {
       key: "background",
-      label: "themes.chongqing.components.SpecLine.props.background",
-      element: <CustomColorPicker currentTheme={0} />,
+      label: "themes.chengdu.components.SpecLine.props.background",
+      element: <CustomColorPicker currentTheme={1} />,
     },
   ],
 };

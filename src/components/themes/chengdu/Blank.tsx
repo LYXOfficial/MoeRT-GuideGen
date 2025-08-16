@@ -15,13 +15,13 @@ export const blankEditorConfig: EditorConfig = {
   forms: [
     {
       key: "width",
-      label: "themes.chongqing.components.Blank.props.width",
+      label: "themes.chengdu.components.Blank.props.width",
       element: <InputNumber />,
     },
     {
       key: "background",
-      label: "themes.chongqing.components.Blank.props.background",
-      element: <CustomColorPicker currentTheme={0} />,
+      label: "themes.chengdu.components.Blank.props.background",
+      element: <CustomColorPicker currentTheme={1} />,
     },
   ],
 };

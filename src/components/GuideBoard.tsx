@@ -4,12 +4,7 @@ import {
   SortableContext,
   horizontalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import {
-  InputNumber,
-  Button,
-  Typography,
-  ColorPicker,
-} from "@douyinfe/semi-ui";
+import { InputNumber, Button, Typography, Switch } from "@douyinfe/semi-ui";
 import React, {
   useState,
   useImperativeHandle,
@@ -21,7 +16,6 @@ import React, {
 import { useTranslation } from "react-i18next";
 import DraggableItem from "./DraggableItem";
 import themes from "./themes/themereg.ts";
-import colors from "./themes/chongqing/define/colors.ts";
 import type { PropForm } from "../interfaces/editor.ts";
 import type { GuideItem } from "../interfaces/guide";
 
@@ -30,17 +24,15 @@ export interface GuideBoardRef {
   removeItemFromRow: (rowId: string, itemId: string) => GuideItem | null;
   reorderRow: (rowId: string, oldIndex: number, newIndex: number) => void;
   getItemIndex: (rowId: string, itemId: string) => number;
+  clearBoard: () => void;
 }
 
-
-
-const currentTheme = 0;
 const DEFAULT_WIDTH = 512;
-export function LineEnd() {
+export function LineEnd({ currentTheme }: { currentTheme: number }) {
   return (
     <span
       className="w-calc(100%-20px) mt-2px mb-2px ml-10px mr-10px box-border h-1px"
-      style={{ backgroundColor: colors.border }}
+      style={{ backgroundColor: themes[currentTheme][1].colors.colors.border }}
     />
   );
 }
@@ -86,353 +78,388 @@ export function GuideBoard({
   );
 }
 
-const GuideBoardCols = forwardRef<GuideBoardRef>((_, ref) => {
-  const { t } = useTranslation();
-  // 动态行数组，每行是 DraggableItem[]
-  const [rows, setRows] = useState<GuideItem[][]>([[]]);
-  const [boardWidth, setBoardWidth] = useState(DEFAULT_WIDTH);
-  const [editingItem, setEditingItem] = useState<{
-    item: GuideItem;
-    position: { x: number; y: number };
-  } | null>(null);
-  const boardContentRef = useRef<HTMLDivElement>(null);
+interface GuideBoardProps {
+  currentTheme: number;
+}
 
-  // 处理点击外部关闭编辑框
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (editingItem && !(event.target as Element).closest(".editing-popup")) {
-        setEditingItem(null);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [editingItem]);
+const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
+  ({ currentTheme }, ref) => {
+    const { t } = useTranslation();
+    // 动态行数组，每行是 DraggableItem[]
+    const [rows, setRows] = useState<GuideItem[][]>([[]]);
+    const [boardWidth, setBoardWidth] = useState(DEFAULT_WIDTH);
+    const [showDividers, setShowDividers] = useState(true);
+    const [editingItem, setEditingItem] = useState<{
+      item: GuideItem;
+      position: { x: number; y: number };
+    } | null>(null);
+    const boardContentRef = useRef<HTMLDivElement>(null);
 
-  // imperativeHandle 相关方法
-  useImperativeHandle(ref, () => ({
-    addItemToRow: (rowId: string, item: GuideItem, insertIndex?: number) => {
-      setRows(prev => {
-        const idx = Number(rowId.replace("row", "")) - 1;
-        if (idx < 0 || idx >= prev.length) return prev;
-        const newRows = prev.map(arr => [...arr]);
-        if (insertIndex !== undefined) {
-          newRows[idx].splice(insertIndex, 0, item);
-        } else {
-          newRows[idx].push(item);
+    // 处理点击外部关闭编辑框
+    useEffect(() => {
+      const handleClickOutside = (event: MouseEvent) => {
+        // 判断点击是否在编辑弹窗或 ColorPicker 的弹窗内
+        if (
+          editingItem &&
+          !(event.target as Element).closest(".editing-popup") &&
+          !(event.target as Element).closest(".semi-colorPicker-popover")
+        ) {
+          setEditingItem(null);
         }
-        return newRows;
-      });
-    },
-    removeItemFromRow: (rowId, itemId) => {
-      let removed: GuideItem | null = null;
-      setRows(prev => {
+      };
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }, [editingItem]);
+
+    // imperativeHandle 相关方法
+    useImperativeHandle(ref, () => ({
+      clearBoard: () => {
+        setRows([[]]);
+      },
+      addItemToRow: (rowId: string, item: GuideItem, insertIndex?: number) => {
+        setRows(prev => {
+          const idx = Number(rowId.replace("row", "")) - 1;
+          if (idx < 0 || idx >= prev.length) return prev;
+          const newRows = prev.map(arr => [...arr]);
+          if (insertIndex !== undefined) {
+            newRows[idx].splice(insertIndex, 0, item);
+          } else {
+            newRows[idx].push(item);
+          }
+          return newRows;
+        });
+      },
+      removeItemFromRow: (rowId, itemId) => {
+        let removed: GuideItem | null = null;
+        setRows(prev => {
+          const idx = Number(rowId.replace("row", "")) - 1;
+          if (idx < 0 || idx >= prev.length) return prev;
+          const newRows = prev.map(arr => [...arr]);
+          const itemIdx = newRows[idx].findIndex(i => i.id === itemId);
+          if (itemIdx !== -1) {
+            removed = { ...newRows[idx][itemIdx] };
+            newRows[idx].splice(itemIdx, 1);
+          }
+          return newRows;
+        });
+        return removed;
+      },
+      reorderRow: (rowId, oldIndex, newIndex) => {
+        setRows(prev => {
+          const idx = Number(rowId.replace("row", "")) - 1;
+          if (idx < 0 || idx >= prev.length) return prev;
+          if (oldIndex === newIndex) return prev;
+          const newRows = [...prev];
+          newRows[idx] = arrayMove(newRows[idx], oldIndex, newIndex);
+
+          return newRows;
+        });
+      },
+      getItemIndex: (rowId, itemId) => {
         const idx = Number(rowId.replace("row", "")) - 1;
-        if (idx < 0 || idx >= prev.length) return prev;
-        const newRows = prev.map(arr => [...arr]);
-        const itemIdx = newRows[idx].findIndex(i => i.id === itemId);
-        if (itemIdx !== -1) {
-          removed = { ...newRows[idx][itemIdx] };
-          newRows[idx].splice(itemIdx, 1);
-        }
-        return newRows;
-      });
-      return removed;
-    },
-    reorderRow: (rowId, oldIndex, newIndex) => {
+        if (idx < 0 || idx >= rows.length) return -1;
+        return rows[idx].findIndex(i => i.id === itemId);
+      },
+    }));
+
+    // 添加一行
+    const handleAddRow = (idx: number) => {
       setRows(prev => {
-        const idx = Number(rowId.replace("row", "")) - 1;
-        if (idx < 0 || idx >= prev.length) return prev;
-        if (oldIndex === newIndex) return prev;
         const newRows = [...prev];
-        newRows[idx] = arrayMove(newRows[idx], oldIndex, newIndex);
-
+        newRows.splice(idx + 1, 0, []);
         return newRows;
       });
-    },
-    getItemIndex: (rowId, itemId) => {
-      const idx = Number(rowId.replace("row", "")) - 1;
-      if (idx < 0 || idx >= rows.length) return -1;
-      return rows[idx].findIndex(i => i.id === itemId);
-    },
-  }));
+    };
 
-  // 添加一行
-  const handleAddRow = (idx: number) => {
-    setRows(prev => {
-      const newRows = [...prev];
-      newRows.splice(idx + 1, 0, []);
-      return newRows;
-    });
-  };
+    // 删除某一行
+    const handleRemoveRow = (idx: number) => {
+      setRows(prev =>
+        prev.length > 1 ? prev.filter((_, i) => i !== idx) : prev
+      );
+    };
 
-  // 删除某一行
-  const handleRemoveRow = (idx: number) => {
-    setRows(prev =>
-      prev.length > 1 ? prev.filter((_, i) => i !== idx) : prev
-    );
-  };
-
-  return (
-    <div className="flex flex-col items-center">
-      {/* GuideBoard 区域 */}
-      <div
-        className="border-2px pl-1px pr-1px border-solid flex flex-col"
-        ref={boardContentRef}
-        style={{
-          width: boardWidth,
-          borderColor: themes[currentTheme][1].colors.defaultBorder,
-          backgroundColor: themes[currentTheme][1].colors.defaultBackground,
-          color: themes[currentTheme][1].colors.defaultForeground,
-          fontFamily: themes[currentTheme][1].fontFamily,
-          transition: "width 0.2s cubic-bezier(0.4,0,0.2,1)",
-        }}
-      >
-        {rows.map((row, idx) => (
-          <React.Fragment key={`row-wrap-${idx}`}>
-            <div className="flex items-center">
-              <div className="flex-grow overflow-x-hidden w-calc(100%-10px)">
-                <SortableContext
-                  id={`row${idx + 1}`}
-                  items={row.map(i => i.id)}
-                  strategy={horizontalListSortingStrategy}
-                >
-                  <GuideBoard id={`row${idx + 1}`}>
-                    {row.length > 0 ? (
-                      row.map(item => (
-                        <DraggableItem
-                          key={item.id}
-                          id={item.id}
-                          data={{ type: "guide-item", rowId: `row${idx + 1}` }}
-                          onClick={e => {
-                            const rect = (
-                              e.currentTarget as HTMLElement
-                            ).getBoundingClientRect();
-                            setEditingItem({
-                              item,
-                              position: {
-                                x: rect.right,
-                                y: rect.top,
-                              },
-                            });
-                          }}
-                        >
-                          {React.isValidElement(item.element)
-                            ? React.cloneElement(item.element, {
-                                ...item.props,
-                              })
-                            : item.element}
-                        </DraggableItem>
-                      ))
-                    ) : (
-                      // 虚拟占位项
-                      <div
-                        key={`empty-${idx}`}
-                        id={`empty-${idx}`}
-                        style={{
-                          flex: 1,
-                          minHeight: 40,
-                          opacity: 0.2,
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          pointerEvents: "none", // 不影响拖拽
-                        }}
-                      >
-                        {t("board.emptyRowHint")}
-                      </div>
-                    )}
-                  </GuideBoard>
-                </SortableContext>
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 4,
-                  marginLeft: 8,
-                  marginRight: -48,
-                }}
-              >
-                {idx > 0 && (
-                  <Button
-                    type="danger"
-                    size="small"
-                    onClick={() => handleRemoveRow(idx)}
-                  >
-                    -
-                  </Button>
-                )}
-                <Button
-                  type="primary"
-                  size="small"
-                  onClick={() => handleAddRow(idx)}
-                >
-                  +
-                </Button>
-              </div>
-            </div>
-            {idx < rows.length - 1 && <LineEnd />}
-          </React.Fragment>
-        ))}
-      </div>
-      {/* 宽度调节器，居中显示 */}
-      <div
-        style={{
-          width: boardWidth,
-          margin: "24px auto 0",
-          display: "flex",
-          justifyContent: "center",
-          gap: 16,
-        }}
-      >
-        <InputNumber
-          min={256}
-          max={1024}
-          step={32}
-          value={boardWidth}
-          onChange={val => {
-            let num = Number(val);
-            if (isNaN(num)) num = 256;
-            if (num < 256) num = 256;
-            if (num > 1024) num = 1024;
-            setBoardWidth(num);
-          }}
-          style={{ width: 120 }}
-          suffix="px"
-          size="large"
-        />
-      </div>
-      {/* 编辑悬浮框 */}
-      {editingItem && (
+    return (
+      <div className="flex flex-col items-center">
+        {/* GuideBoard 区域 */}
         <div
-          className="editing-popup"
-          onClick={e => e.stopPropagation()}
+          className="border-2px pl-1px pr-1px border-solid flex flex-col guide-board"
+          ref={boardContentRef}
           style={{
-            position: "fixed",
-            left: editingItem.position.x,
-            top: editingItem.position.y,
-            zIndex: 1000,
-            padding: "16px",
-            backgroundColor: "white",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
-            borderRadius: "4px",
+            width: boardWidth,
+            borderColor: themes[currentTheme][1].colors.defaultBorder,
+            backgroundColor: themes[currentTheme][1].colors.defaultBackground,
+            color: themes[currentTheme][1].colors.defaultForeground,
+            fontFamily: themes[currentTheme][1].fontFamily,
+            transition: "width 0.2s cubic-bezier(0.4,0,0.2,1)",
           }}
         >
-          <Typography.Title heading={6}>{t("editor.title")}</Typography.Title>
-          {(() => {
-            // 从主题组件注册表中获取组件
-            const ComponentClass = themes[currentTheme][1].components.find(
-              item => item.displayName === editingItem.item.type
-            )?.component;
-            if (!(ComponentClass as any).getEditorConfig) return null;
-
-            // 每次渲染时重新生成配置，以确保使用最新的props值
-            const config = (ComponentClass as any).getEditorConfig(
-              editingItem.item.props,
-              (newProps: any) => {
-                setRows(prev =>
-                  prev.map(row =>
-                    row.map(item =>
-                      item.id === editingItem.item.id
-                        ? { ...item, props: { ...item.props, ...newProps } }
-                        : item
-                    )
-                  )
-                );
-              }
-            );
-
-            return (
-              <>
-                {config.forms.map((form: PropForm, index: number) => (
-                  <div key={index} className="flex flex-col gap-1">
-                    <Typography.Text
-                      type="tertiary"
-                      size="small"
-                      className="mt-5px"
-                    >
-                      {t(form.label)}
-                    </Typography.Text>
-                    {React.cloneElement(form.element as any, {
-                      value:
-                        form.element.type === ColorPicker
-                          ? ColorPicker.colorStringToValue(
-                              editingItem.item.props[form.key]
-                            )
-                          : editingItem.item.props[form.key],
-                      onChange: (value: any) => {
-                        setEditingItem({
-                          ...editingItem,
-                          item: {
-                            ...editingItem.item,
-                            props: {
-                              ...editingItem.item.props,
-                              [form.key]:
-                                form.element.type === ColorPicker
-                                  ? value.hex
-                                  : value,
-                            },
-                          },
-                        });
-                        setRows(prev =>
-                          prev.map(row =>
-                            row.map(item => {
-                              return item.id === editingItem.item.id
-                                ? {
-                                    ...item,
-                                    props: {
-                                      ...item.props,
-                                      [form.key]:
-                                        form.element.type === ColorPicker
-                                          ? value.hex
-                                          : value,
-                                    },
-                                  }
-                                : item;
-                            })
-                          )
-                        );
-                      },
-                    })}
-                  </div>
-                ))}
-                {/* 添加删除按钮 */}
-                <div className="mt-4 pt-4 border-t border-solid border-gray-200">
-                  <Button
-                    type="danger"
-                    theme="outline"
-                    onClick={() => {
-                      // 查找组件所在的行
-                      const rowIndex = rows.findIndex(row =>
-                        row.some(item => item.id === editingItem.item.id)
-                      );
-                      if (rowIndex !== -1) {
-                        // 过滤掉要删除的组件
-                        setRows(prev =>
-                          prev.map((row, idx) =>
-                            idx === rowIndex
-                              ? row.filter(item => item.id !== editingItem.item.id)
-                              : row
-                          )
-                        );
-                        // 关闭编辑框
-                        setEditingItem(null);
-                      }
-                    }}
-                    block
+          {rows.map((row, idx) => (
+            <React.Fragment key={`row-wrap-${idx}`}>
+              <div className="flex items-center">
+                <div className="w-full overflow-x-hidden">
+                  <SortableContext
+                    id={`row${idx + 1}`}
+                    items={row.map(i => i.id)}
+                    strategy={horizontalListSortingStrategy}
                   >
-                    {t("editor.delete")}
+                    <GuideBoard id={`row${idx + 1}`}>
+                      {row.length > 0 ? (
+                        row.map(item => (
+                          <DraggableItem
+                            key={item.id}
+                            id={item.id}
+                            data={{
+                              type: "guide-item",
+                              rowId: `row${idx + 1}`,
+                            }}
+                            onClick={e => {
+                              const rect = (
+                                e.currentTarget as HTMLElement
+                              ).getBoundingClientRect();
+                              setEditingItem({
+                                item,
+                                position: {
+                                  x: rect.right,
+                                  y: rect.top,
+                                },
+                              });
+                            }}
+                          >
+                            {React.isValidElement(item.element)
+                              ? React.cloneElement(item.element, {
+                                  ...item.props,
+                                })
+                              : item.element}
+                          </DraggableItem>
+                        ))
+                      ) : (
+                        // 虚拟占位项
+                        <div
+                          key={`empty-${idx}`}
+                          id={`empty-${idx}`}
+                          style={{
+                            flex: 1,
+                            minHeight: 40,
+                            opacity: .6,
+                            color:
+                              themes[currentTheme][1].colors.defaultForeground,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            pointerEvents: "none", // 不影响拖拽
+                          }}
+                        >
+                          {t("board.emptyRowHint")}
+                        </div>
+                      )}
+                    </GuideBoard>
+                  </SortableContext>
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 4,
+                    marginLeft: 8,
+                    marginRight: -48,
+                  }}
+                >
+                  {idx > 0 && (
+                    <Button
+                      type="danger"
+                      size="small"
+                      onClick={() => handleRemoveRow(idx)}
+                      className="operation-btn"
+                    >
+                      -
+                    </Button>
+                  )}
+                  <Button
+                    type="primary"
+                    size="small"
+                    onClick={() => handleAddRow(idx)}
+                    className="operation-btn"
+                  >
+                    +
                   </Button>
                 </div>
-              </>
-            );
-          })()}
+              </div>
+              {showDividers && idx < rows.length - 1 && (
+                <LineEnd currentTheme={currentTheme} />
+              )}
+            </React.Fragment>
+          ))}
         </div>
-      )}
-    </div>
-  );
-});
+        {/* 主题选择器和宽度调节器，居中显示 */}
+        <div
+          style={{
+            width: boardWidth,
+            margin: "24px auto 0",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: 24,
+          }}
+        >
+          <div className="flex items-center gap-2">
+            <Typography.Text className="font-sans">
+              {t("board.width")}
+            </Typography.Text>
+            <InputNumber
+              min={256}
+              max={1024}
+              step={32}
+              className="font-sans"
+              value={boardWidth}
+              onChange={val => {
+                let num = Number(val);
+                if (isNaN(num)) num = 256;
+                if (num < 256) num = 256;
+                if (num > 1024) num = 1024;
+                setBoardWidth(num);
+              }}
+              style={{ width: 120 }}
+              suffix="px"
+              size="large"
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <Typography.Text className="font-sans">
+              {t("board.showDividers")}
+            </Typography.Text>
+            <Switch
+              disabled={rows.length === 1}
+              checked={showDividers}
+              onChange={setShowDividers}
+            />
+          </div>
+        </div>
+        {/* 编辑悬浮框 */}
+        {editingItem && (
+          <div
+            className="editing-popup"
+            onClick={e => e.stopPropagation()}
+            style={{
+              position: "fixed",
+              left: editingItem.position.x,
+              top: editingItem.position.y,
+              zIndex: 1000,
+              padding: "16px",
+              backgroundColor: "white",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+              borderRadius: "16px",
+              width: 200,
+              fontFamily: themes[currentTheme][1].fontFamily,
+            }}
+          >
+            <Typography.Title heading={6}>{t("editor.title")}</Typography.Title>
+            {(() => {
+              // 从主题组件注册表中获取组件
+              const ComponentClass = themes[currentTheme][1].components.find(
+                item => item.displayName === editingItem.item.type
+              )?.component;
+              if (!(ComponentClass as any).getEditorConfig) return null;
+
+              // 每次渲染时重新生成配置，以确保使用最新的props值
+              const config = (ComponentClass as any).getEditorConfig(
+                editingItem.item.props,
+                (newProps: any) => {
+                  setRows(prev =>
+                    prev.map(row =>
+                      row.map(item =>
+                        item.id === editingItem.item.id
+                          ? { ...item, props: { ...item.props, ...newProps } }
+                          : item
+                      )
+                    )
+                  );
+                }
+              );
+
+              return (
+                <>
+                  {config.forms.map((form: PropForm, index: number) => (
+                    <div key={index} className="flex flex-col gap-1">
+                      <Typography.Text
+                        type="tertiary"
+                        size="small"
+                        className="mt-5px"
+                      >
+                        {t(form.label)}
+                      </Typography.Text>
+                      {React.cloneElement(form.element as any, {
+                        checked: editingItem.item.props[form.key],
+                        value: editingItem.item.props[form.key],
+                        onChange: (value: any) => {
+                          setEditingItem({
+                            ...editingItem,
+                            item: {
+                              ...editingItem.item,
+                              props: {
+                                ...editingItem.item.props,
+                                [form.key]: value,
+                              },
+                            },
+                          });
+                          setRows(prev =>
+                            prev.map(row =>
+                              row.map(item => {
+                                return item.id === editingItem.item.id
+                                  ? {
+                                      ...item,
+                                      props: {
+                                        ...item.props,
+                                        [form.key]: value,
+                                      },
+                                    }
+                                  : item;
+                              })
+                            )
+                          );
+                        },
+                      })}
+                    </div>
+                  ))}
+                  {/* 添加删除按钮 */}
+                  <div className="mt-4 pt-4 border-t border-solid border-gray-200">
+                    <Button
+                      type="danger"
+                      theme="outline"
+                      onClick={() => {
+                        // 查找组件所在的行
+                        const rowIndex = rows.findIndex(row =>
+                          row.some(item => item.id === editingItem.item.id)
+                        );
+                        if (rowIndex !== -1) {
+                          // 过滤掉要删除的组件
+                          setRows(prev =>
+                            prev.map((row, idx) =>
+                              idx === rowIndex
+                                ? row.filter(
+                                    item => item.id !== editingItem.item.id
+                                  )
+                                : row
+                            )
+                          );
+                          // 关闭编辑框
+                          setEditingItem(null);
+                        }
+                      }}
+                      block
+                    >
+                      {t("editor.delete")}
+                    </Button>
+                  </div>
+                </>
+              );
+            })()}
+          </div>
+        )}
+      </div>
+    );
+  }
+);
 
 export default GuideBoardCols;

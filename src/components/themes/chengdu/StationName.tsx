@@ -8,20 +8,20 @@ export interface StationNameProps {
   english: string;
 }
 export const stationNameDefaultProps: StationNameProps = {
-  chinese: "红旗河沟",
-  english: "Hongqihegou",
+  chinese: "驷马桥",
+  english: "Simaqiao",
 };
 
 export const stationNameEditorConfig: EditorConfig = {
   forms: [
     {
       key: "chinese",
-      label: "themes.chongqing.components.StationName.props.chinese",
+      label: "themes.chengdu.components.StationName.props.chinese",
       element: <Input />,
     },
     {
       key: "english",
-      label: "themes.chongqing.components.StationName.props.english",
+      label: "themes.chengdu.components.StationName.props.english",
       element: <Input />,
     },
   ],
@@ -81,7 +81,7 @@ function StationName({
             </text>
           </g>
         </svg>
-      </div>
+      </div>{" "}
     </div>
   );
 }

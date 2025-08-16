@@ -12,9 +12,9 @@ export interface LineTextProps {
 }
 
 export const lineTextDefaultProps: LineTextProps = {
-  lineColor: colors["linebitong"],
-  chinese: "璧铜线",
-  english: "Bitong Line",
+  lineColor: colors["lines11"],
+  chinese: "德阳罗江线",
+  english: "Deyang-Luojiang Line",
   align: "left",
 };
 
@@ -22,22 +22,22 @@ export const lineTextEditorConfig: EditorConfig = {
   forms: [
     {
       key: "lineColor",
-      label: "themes.chongqing.components.LineText.props.lineColor",
-      element: <CustomColorPicker currentTheme={0} />,
+      label: "themes.chengdu.components.LineText.props.lineColor",
+      element: <CustomColorPicker currentTheme={1} />,
     },
     {
       key: "chinese",
-      label: "themes.chongqing.components.LineText.props.chinese",
+      label: "themes.chengdu.components.LineText.props.chinese",
       element: <Input />,
     },
     {
       key: "english",
-      label: "themes.chongqing.components.LineText.props.english",
+      label: "themes.chengdu.components.LineText.props.english",
       element: <Input />,
     },
     {
       key: "align",
-      label: "themes.chongqing.components.LineText.props.align.displayName",
+      label: "themes.chengdu.components.LineText.props.align.displayName",
       element: (
         <Select>
           <Select.Option value="left">left</Select.Option>

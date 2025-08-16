@@ -42,7 +42,7 @@ const colors = {
   "line29": "#EF3340",        // 178C
 
   // 支线及特殊线路
-  "lineinternationexpo": "#F67599", // PT 2935C
+  "lineinternationalexpo": "#F67599", // PT 2935C
   "linekonggang": "#003DA5",        // PT 2935C
   "linejiangtiao": "#0077C8",       // 3005C 江跳线
   "linebitong": "#005EB8",          // PT 2935C
@@ -50,6 +50,7 @@ const colors = {
   "lineqiwan": "#005EB8",           // PT 2935C
   "linedazhu": "#005EB8",           // PT 2935C
   "linenanchuan": "#005EB8",        // PT 2935C
+  "linechangfu": "#005EB8",        // PT 2935C
 
   // 列车类型
   "trainrapid": "#3D0C54",   // 快速车 2935C
