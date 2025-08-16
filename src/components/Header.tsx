@@ -56,7 +56,7 @@ export default function Header({ guideHeight = 0, onImport, onExport }: HeaderPr
       <header className="h-12 flex items-center font-sans p-3 border-b border-gray-300">
         <img src="/favicon.ico" className="h-8 mr-2" />
         <span className="text-xl font-bold">{t("title")}</span>
-        <div className="flex items-center ml-auto gap-2">
+        <div className="flex items-center ml-auto gap-4">
           <Popover
             content={languageSelector}
             trigger="hover"
