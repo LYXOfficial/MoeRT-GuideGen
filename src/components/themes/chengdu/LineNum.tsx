@@ -88,23 +88,25 @@ function LineNum({
         const numBBox = numRef.current.getBBox()
         const textBBox = textRef.current?.getBBox() ?? { width: 0 }
         const rectWidth = 15
-        const margin = align === 'left' ? 10 : 5
+        const margin = 5
+        const textGap = 3  // 数字和文字之间的间隙
 
         const totalWidth =
           rectWidth +
           numBBox.width +
-          (showText ? margin + textBBox.width : margin / 2)
+          (showText ? margin + textBBox.width + textGap : margin)
 
         if (align === 'left') {
           setRectX(0)
           setNumX(rectWidth + 5)
-          setTextOffsetX(rectWidth + numBBox.width + margin)
+          setTextOffsetX(rectWidth + numBBox.width + margin + textGap)  // 添加间隙
           setTextAnchor('start')
         } else if (align === 'right') {
           setRectX(totalWidth - rectWidth)
-          setNumX(totalWidth - rectWidth - numBBox.width - 5)
-          setTextOffsetX(totalWidth - rectWidth - numBBox.width - margin)
-          setTextAnchor('end')
+          // 在数字和文字之间留一个小间隙
+          setNumX(totalWidth - rectWidth - margin - textBBox.width - textGap - numBBox.width)
+          setTextOffsetX(totalWidth - rectWidth - margin - textBBox.width)
+          setTextAnchor('start')
         }
 
         setSvgWidth(totalWidth)
@@ -124,43 +126,86 @@ function LineNum({
     <div style={{ backgroundColor: colors.background }}>
       <div className="h-64px mr-5px ml-5px" style={{ width: svgWidth }}>
         <svg width={svgWidth} height={64}>
-          {/* 矩形 */}
-          <rect width={15} height={52} x={rectX} y={12} fill={lineColor} />
-
-          {/* 数字 */}
-          <text
-            ref={numRef}
-            x={numX}
-            y={isChinese ? 48 : 52}
-            fontSize={isChinese ? 42 : 56}
-            style={{ letterSpacing: '-3px' }}
-            fill={colors.foreground}
-          >
-            {num}
-          </text>
-
-          {/* 文字组 */}
-          {showText && (
-            <g ref={textRef} transform={`translate(${textOffsetX},0)`}>
+          {align === 'right' ? (
+            // 右对齐顺序：数字、文字、色块
+            <>
+              {/* 数字 */}
               <text
-                x={0}
-                y={32}
-                fontSize={20}
-                textAnchor={textAnchor}
+                ref={numRef}
+                x={numX}
+                y={isChinese ? 48 : 52}
+                fontSize={isChinese ? 42 : 56}
+                style={{ letterSpacing: '-3px' }}
                 fill={colors.foreground}
               >
-                {customChinese ?? (isChinese ? '线' : '号线')}
+                {num}
               </text>
+              {/* 文字组 */}
+              {showText && (
+                <g ref={textRef} transform={`translate(${textOffsetX},0)`}>
+                  <text
+                    x={0}
+                    y={32}
+                    fontSize={20}
+                    textAnchor={textAnchor}
+                    fill={colors.foreground}
+                  >
+                    {customChinese ?? (isChinese ? '线' : '号线')}
+                  </text>
+                  <text
+                    x={0}
+                    y={48}
+                    fontSize={14}
+                    textAnchor={textAnchor}
+                    fill={colors.foreground}
+                  >
+                    {customEnglish}
+                  </text>
+                </g>
+              )}
+              {/* 色块 */}
+              <rect width={15} height={52} x={rectX} y={12} fill={lineColor} />
+            </>
+          ) : (
+            // 左对齐顺序：色块、数字、文字
+            <>
+              {/* 色块 */}
+              <rect width={15} height={52} x={rectX} y={12} fill={lineColor} />
+              {/* 数字 */}
               <text
-                x={0}
-                y={48}
-                fontSize={14}
-                textAnchor={textAnchor}
+                ref={numRef}
+                x={numX}
+                y={isChinese ? 48 : 52}
+                fontSize={isChinese ? 42 : 56}
+                style={{ letterSpacing: '-3px' }}
                 fill={colors.foreground}
               >
-                {customEnglish}
+                {num}
               </text>
-            </g>
+              {/* 文字组 */}
+              {showText && (
+                <g ref={textRef} transform={`translate(${textOffsetX},0)`}>
+                  <text
+                    x={0}
+                    y={32}
+                    fontSize={20}
+                    textAnchor={textAnchor}
+                    fill={colors.foreground}
+                  >
+                    {customChinese ?? (isChinese ? '线' : '号线')}
+                  </text>
+                  <text
+                    x={0}
+                    y={48}
+                    fontSize={14}
+                    textAnchor={textAnchor}
+                    fill={colors.foreground}
+                  >
+                    {customEnglish}
+                  </text>
+                </g>
+              )}
+            </>
           )}
         </svg>
       </div>
