@@ -49,21 +49,32 @@ const DraggableComponentItem: React.FC<ComponentItemProps> = ({
       ref={setNodeRef}
       {...attributes}
       {...listeners}
-      className={`cursor-grab w-full touch-none ${isDragging ? 'opacity-50' : ''}`}
+      className={`cursor-grab select-none w-full touch-none ${isDragging ? 'opacity-50' : ''}`}
       style={{
         transform: transform
           ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
           : undefined
       }}
     >
-      <Card className="mb-2 hover:shadow-lg transition-shadow" shadows="hover">
+      <Card
+        className="mb-2 hover:shadow-lg transition-shadow"
+        shadows="hover"
+        style={{
+          backgroundColor: themes[currentTheme][1].colors.defaultBackground
+        }}
+      >
         <div
           className="h-16 flex items-center justify-center"
           style={{ fontFamily: themes[currentTheme][1].fontFamily }}
         >
           <Component {...props} />
         </div>
-        <Typography.Text className="text-center block mt-2 font-sans">
+        <Typography.Text
+          className="text-center block mt-2 font-sans"
+          style={{
+            color: themes[currentTheme][1].colors.defaultForeground
+          }}
+        >
           {t(`${name}.displayName`)}
         </Typography.Text>
       </Card>

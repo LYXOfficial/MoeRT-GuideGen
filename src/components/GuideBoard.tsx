@@ -68,7 +68,7 @@ export function GuideBoard({
       className="min-h-64px overflow-x-hidden h-64px w-full flex align-center relative transition-colors duration-200 ease-in-out"
       style={{
         transition: 'all 200ms ease',
-        background: isOver ? '#e6f7ff' : undefined // 拖拽时高亮
+        background: isOver ? '#e6f7ff88' : undefined // 拖拽时高亮
       }}
     >
       {hasContent ? (
@@ -240,7 +240,7 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
       <div className="flex flex-col items-center">
         {/* GuideBoard 区域 */}
         <div
-          className="border-2px pl-1px pr-1px border-solid flex flex-col guide-board"
+          className="border-2px pl-1px pr-1px border-solid flex flex-col guide-board select-none"
           ref={boardContentRef}
           style={{
             width: boardWidth,

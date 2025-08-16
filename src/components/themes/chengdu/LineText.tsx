@@ -13,8 +13,8 @@ export interface LineTextProps {
 
 export const lineTextDefaultProps: LineTextProps = {
   lineColor: colors.lines11,
-  chinese: '德阳罗江线',
-  english: 'Deyang-Luojiang Line',
+  chinese: '德阳线',
+  english: 'Deyang Line',
   align: 'left'
 }
 
