@@ -80,5 +80,5 @@ const theme: Theme = {
 
 export default theme
 
-//todo:站编号胶囊,保存
-//fixs:拖动追加bug，体验优化，空白组件（spacing blank）提示，导出字体
+//todo:站编号胶囊,方向，重庆环线方向指示,北上广港样式
+//fixs:拖动体验优化，空白组件（spacing blank）提示，导出字体
