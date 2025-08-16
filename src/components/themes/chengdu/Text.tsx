@@ -1,94 +1,94 @@
-import { useRef, useState, useEffect } from "react";
-import colors from "./define/colors";
-import type { EditorConfig } from "../../../interfaces/editor";
-import { Input, Select } from "@douyinfe/semi-ui";
-import CustomColorPicker from "../../CustomColorPicker";
+import { useRef, useState, useEffect } from 'react'
+import colors from './define/colors'
+import type { EditorConfig } from '../../../interfaces/editor'
+import { Input, Select } from '@douyinfe/semi-ui'
+import CustomColorPicker from '../../CustomColorPicker'
 
 export interface TextProps {
-  chinese: string;
-  english: string;
-  align?: "left" | "center" | "right";
-  foreground?: string;
-  background?: string;
+  chinese: string
+  english: string
+  align?: 'left' | 'center' | 'right'
+  foreground?: string
+  background?: string
 }
 export const textDefaultProps: TextProps = {
-  align: "left",
-  chinese: "换乘",
-  english: "Transfer",
-  foreground: colors["foreground"],
-  background: colors["background"],
-};
+  align: 'left',
+  chinese: '换乘',
+  english: 'Transfer',
+  foreground: colors.foreground,
+  background: colors.background
+}
 
 export const textEditorConfig: EditorConfig = {
   forms: [
     {
-      key: "chinese",
-      label: "themes.chengdu.components.Text.props.chinese",
-      element: <Input />,
+      key: 'chinese',
+      label: 'themes.chengdu.components.Text.props.chinese',
+      element: <Input />
     },
     {
-      key: "english",
-      label: "themes.chengdu.components.Text.props.english",
-      element: <Input />,
+      key: 'english',
+      label: 'themes.chengdu.components.Text.props.english',
+      element: <Input />
     },
     {
-      key: "align",
-      label: "themes.chengdu.components.Text.props.align.displayName",
+      key: 'align',
+      label: 'themes.chengdu.components.Text.props.align.displayName',
       element: (
         <Select>
           <Select.Option value="left">left</Select.Option>
           <Select.Option value="center">center</Select.Option>
           <Select.Option value="right">right</Select.Option>
         </Select>
-      ),
+      )
     },
     {
-      key: "foreground",
-      label: "themes.chengdu.components.Text.props.foreground",
-      element: <CustomColorPicker currentTheme={1} />,
+      key: 'foreground',
+      label: 'themes.chengdu.components.Text.props.foreground',
+      element: <CustomColorPicker currentTheme={1} />
     },
     {
-      key: "background",
-      label: "themes.chengdu.components.Text.props.background",
-      element: <CustomColorPicker currentTheme={1} />,
-    },
-  ],
-};
+      key: 'background',
+      label: 'themes.chengdu.components.Text.props.background',
+      element: <CustomColorPicker currentTheme={1} />
+    }
+  ]
+}
 
 export default function Text({
   chinese = textDefaultProps.chinese,
   english = textDefaultProps.english,
   align = textDefaultProps.align,
   foreground = textDefaultProps.foreground,
-  background = textDefaultProps.background,
+  background = textDefaultProps.background
 }: TextProps) {
-  const textGroupRef = useRef<SVGGElement>(null);
-  const [svgWidth, setSvgWidth] = useState(0);
+  const textGroupRef = useRef<SVGGElement>(null)
+  const [svgWidth, setSvgWidth] = useState(0)
 
   useEffect(() => {
-    let mounted = true;
+    let mounted = true
 
     const measure = () => {
       if (textGroupRef.current) {
-        const bbox = textGroupRef.current.getBBox();
-        setSvgWidth(bbox.width);
+        const bbox = textGroupRef.current.getBBox()
+        setSvgWidth(bbox.width)
       }
-    };
+    }
 
-    (async () => {
-      await document.fonts.ready; // 等字体加载完成
-      if (mounted) measure();
-    })();
+    ;(async () => {
+      await document.fonts.ready // 等字体加载完成
+      if (mounted) measure()
+    })()
 
     return () => {
-      mounted = false;
-    };
-  }, [chinese, english]);
+      mounted = false
+    }
+  }, [chinese, english])
 
   // 对齐时的起始 x 坐标
-  let groupX = 0;
-  if (align === "center") groupX = svgWidth / 2;
-  if (align === "right") groupX = svgWidth;
+  let groupX = 0
+  if (align === 'center') groupX = svgWidth / 2
+  if (align === 'right') groupX = svgWidth
 
   return (
     <div style={{ backgroundColor: background }}>
@@ -98,11 +98,11 @@ export default function Text({
             ref={textGroupRef}
             transform={`translate(${groupX}, 0)`}
             textAnchor={
-              align === "center"
-                ? "middle"
-                : align === "right"
-                  ? "end"
-                  : "start"
+              align === 'center'
+                ? 'middle'
+                : align === 'right'
+                  ? 'end'
+                  : 'start'
             }
           >
             <text x={0} y={32} fontSize={20} fill={foreground}>
@@ -115,8 +115,8 @@ export default function Text({
         </svg>
       </div>
     </div>
-  );
+  )
 }
 
 // 添加静态方法
-Text.getEditorConfig = () => textEditorConfig;
+Text.getEditorConfig = () => textEditorConfig

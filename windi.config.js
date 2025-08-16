@@ -1,7 +1,7 @@
 module.exports = {
   theme: {
     fontFamily: {
-      "sans": ["Blueaka", "sans-serif"],
-    },
-  },
-};
+      sans: ['Blueaka', 'sans-serif']
+    }
+  }
+}

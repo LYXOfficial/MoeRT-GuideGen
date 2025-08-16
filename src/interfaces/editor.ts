@@ -1,23 +1,25 @@
 export interface PropForm {
-  key: string;
-  label: string;
-  element: React.ReactElement;
+  key: string
+  label: string
+  element: React.ReactElement
 }
 
 export interface EditorConfig {
-  forms: PropForm[];
+  forms: PropForm[]
 }
 
 export interface SaveData {
-  version: number;
+  version: number
   config: {
-    width: number;
-    showSpecLine: boolean;
-    theme: string;
-  };
-  rows: Array<Array<{
-    id: string;
-    type: string;
-    props: Record<string, any>;
-  }>>;
+    width: number
+    showSpecLine: boolean
+    theme: string
+  }
+  rows: Array<
+    Array<{
+      id: string
+      type: string
+      props: Record<string, any>
+    }>
+  >
 }

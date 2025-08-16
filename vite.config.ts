@@ -4,9 +4,9 @@ import WindiCSS from 'vite-plugin-windicss'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(),WindiCSS(),],
+  plugins: [react(), WindiCSS()],
   server: {
     host: '0.0.0.0',
-    allowedHosts: ['s8.ywit.xyz'],
+    allowedHosts: ['s8.ywit.xyz']
   }
 })

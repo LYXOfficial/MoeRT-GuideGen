@@ -1,35 +1,35 @@
-import type { EditorConfig } from "../../../interfaces/editor";
-import colors from "./define/colors";
-import CustomColorPicker from "../../CustomColorPicker";
+import type { EditorConfig } from '../../../interfaces/editor'
+import colors from './define/colors'
+import CustomColorPicker from '../../CustomColorPicker'
 
 export interface SpacingProps {
-  background?: string;
+  background?: string
 }
 export const spacingDefaultProps: SpacingProps = {
-  background: colors["background"],
-};
+  background: colors.background
+}
 
 export const spacingEditorConfig: EditorConfig = {
   forms: [
     {
-      key: "background",
-      label: "themes.chongqing.components.Spacing.props.background",
-      element: <CustomColorPicker currentTheme={0} />,
-    },
-  ],
-};
+      key: 'background',
+      label: 'themes.chongqing.components.Spacing.props.background',
+      element: <CustomColorPicker currentTheme={0} />
+    }
+  ]
+}
 
 function Spacing({
-  background = spacingDefaultProps.background,
+  background = spacingDefaultProps.background
 }: SpacingProps) {
   return (
     <div
       className="flex-1 w-full h-full"
       style={{ backgroundColor: background }}
     ></div>
-  );
+  )
 }
 
-Spacing.getEditorConfig = () => spacingEditorConfig;
+Spacing.getEditorConfig = () => spacingEditorConfig
 
-export default Spacing;
+export default Spacing

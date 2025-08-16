@@ -3,12 +3,13 @@ body {
   height: 100vh;
   width: 100%;
 }
-#root{
+#root {
   height: 100%;
   width: 100%;
 }
 
-.font-sans,.editing-popup * {
+.font-sans,
+.editing-popup * {
   font-family: Blueaka, sans-serif !important;
 }
 ::selection {

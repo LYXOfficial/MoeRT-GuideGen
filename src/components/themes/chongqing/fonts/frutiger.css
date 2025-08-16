@@ -1,5 +1,5 @@
 @font-face {
-  font-family: 'Frutiger';
-  src: url('/fonts/Frutiger-Normal.ttf') format('truetype');
+  font-family: "Frutiger";
+  src: url("/fonts/Frutiger-Normal.ttf") format("truetype");
   unicode-range: U+30-39;
 }

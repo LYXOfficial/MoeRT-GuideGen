@@ -1,58 +1,58 @@
-import { useRef, useState, useEffect } from "react";
-import type { EditorConfig } from "../../../interfaces/editor";
-import { Input } from "@douyinfe/semi-ui";
-import colors from "./define/colors";
+import { useRef, useState, useEffect } from 'react'
+import type { EditorConfig } from '../../../interfaces/editor'
+import { Input } from '@douyinfe/semi-ui'
+import colors from './define/colors'
 
 export interface StationNameProps {
-  chinese: string;
-  english: string;
+  chinese: string
+  english: string
 }
 export const stationNameDefaultProps: StationNameProps = {
-  chinese: "驷马桥",
-  english: "Simaqiao",
-};
+  chinese: '驷马桥',
+  english: 'Simaqiao'
+}
 
 export const stationNameEditorConfig: EditorConfig = {
   forms: [
     {
-      key: "chinese",
-      label: "themes.chengdu.components.StationName.props.chinese",
-      element: <Input />,
+      key: 'chinese',
+      label: 'themes.chengdu.components.StationName.props.chinese',
+      element: <Input />
     },
     {
-      key: "english",
-      label: "themes.chengdu.components.StationName.props.english",
-      element: <Input />,
-    },
-  ],
-};
+      key: 'english',
+      label: 'themes.chengdu.components.StationName.props.english',
+      element: <Input />
+    }
+  ]
+}
 
 function StationName({
   chinese = stationNameDefaultProps.chinese,
-  english = stationNameDefaultProps.english,
+  english = stationNameDefaultProps.english
 }: StationNameProps) {
-  const textGroupRef = useRef<SVGGElement>(null);
-  const [svgWidth, setSvgWidth] = useState(0);
+  const textGroupRef = useRef<SVGGElement>(null)
+  const [svgWidth, setSvgWidth] = useState(0)
 
   useEffect(() => {
-    let mounted = true;
+    let mounted = true
 
     const measure = () => {
       if (textGroupRef.current) {
-        const bbox = textGroupRef.current.getBBox();
-        setSvgWidth(bbox.width);
+        const bbox = textGroupRef.current.getBBox()
+        setSvgWidth(bbox.width)
       }
-    };
+    }
 
     // 等字体加载完再测量
     document.fonts.ready.then(() => {
-      if (mounted) measure();
-    });
+      if (mounted) measure()
+    })
 
     return () => {
-      mounted = false;
-    };
-  }, [chinese, english]);
+      mounted = false
+    }
+  }, [chinese, english])
 
   return (
     <div style={{ backgroundColor: colors.background }}>
@@ -81,11 +81,11 @@ function StationName({
             </text>
           </g>
         </svg>
-      </div>{" "}
+      </div>{' '}
     </div>
-  );
+  )
 }
 
-StationName.getEditorConfig = () => stationNameEditorConfig;
+StationName.getEditorConfig = () => stationNameEditorConfig
 
-export default StationName;
+export default StationName

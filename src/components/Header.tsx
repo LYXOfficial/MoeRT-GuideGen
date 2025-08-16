@@ -1,18 +1,28 @@
-import { IconGithubLogo, IconImage, IconImport, IconUpload, IconLanguage } from "@douyinfe/semi-icons";
-import { Popover, List } from "@douyinfe/semi-ui";
-import { useTranslation } from "react-i18next";
-import { useState } from "react";
-import { ExportDialog } from "./ExportDialog";
+import {
+  IconGithubLogo,
+  IconImage,
+  IconImport,
+  IconUpload,
+  IconLanguage
+} from '@douyinfe/semi-icons'
+import { Popover, List } from '@douyinfe/semi-ui'
+import { useTranslation } from 'react-i18next'
+import { useState } from 'react'
+import { ExportDialog } from './ExportDialog'
 
 interface HeaderProps {
-  guideHeight?: number;
-  onImport?: () => void;
-  onExport?: () => void;
+  guideHeight?: number
+  onImport?: () => void
+  onExport?: () => void
 }
 
-export default function Header({ guideHeight = 0, onImport, onExport }: HeaderProps) {
-  const { t, i18n } = useTranslation();
-  const [exportDialogVisible, setExportDialogVisible] = useState(false);
+export default function Header({
+  guideHeight = 0,
+  onImport,
+  onExport
+}: HeaderProps) {
+  const { t, i18n } = useTranslation()
+  const [exportDialogVisible, setExportDialogVisible] = useState(false)
 
   // 语言选项
   const languages = [
@@ -21,22 +31,23 @@ export default function Header({ guideHeight = 0, onImport, onExport }: HeaderPr
     { code: 'en-US', name: 'English', flag: '🇺🇸' },
     { code: 'ja-JP', name: '日本語', flag: '🇯🇵' },
     { code: 'ko-KR', name: '한국어', flag: '🇰🇷' }
-  ];
+  ]
 
   // 获取当前语言信息
-  const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0];
+  const currentLanguage =
+    languages.find((lang) => lang.code === i18n.language) || languages[0]
 
   // 切换语言
   const handleLanguageChange = (languageCode: string) => {
-    i18n.changeLanguage(languageCode);
-  };
+    i18n.changeLanguage(languageCode)
+  }
 
   // 语言选择器内容
   const languageSelector = (
     <div className="p-2">
       <List
         dataSource={languages}
-        renderItem={language => (
+        renderItem={(language) => (
           <List.Item
             className={`cursor-pointer px-3 py-2 rounded hover:bg-gray-100 flex items-center gap-2 font-sans ${
               language.code === i18n.language ? 'bg-blue-50 text-blue-600' : ''
@@ -49,13 +60,13 @@ export default function Header({ guideHeight = 0, onImport, onExport }: HeaderPr
         )}
       />
     </div>
-  );
+  )
 
   return (
     <>
       <header className="h-12 flex items-center font-sans p-3 border-b border-gray-300">
         <img src="/favicon.ico" className="h-8 mr-2" />
-        <span className="text-xl font-bold">{t("title")}</span>
+        <span className="text-xl font-bold">{t('title')}</span>
         <div className="flex items-center ml-auto gap-4">
           <Popover
             content={languageSelector}
@@ -73,21 +84,21 @@ export default function Header({ guideHeight = 0, onImport, onExport }: HeaderPr
           <a
             className="transition duration-300 hover:text-blue-400 flex items-center"
             onClick={() => setExportDialogVisible(true)}
-            title={t("saves.export_image")}
+            title={t('saves.export_image')}
           >
             <IconImage size="extra-large" />
           </a>
           <a
             className="transition duration-300 hover:text-blue-400 flex items-center"
             onClick={onExport}
-            title={t("saves.save_project")}
+            title={t('saves.save_project')}
           >
             <IconImport size="extra-large" />
           </a>
           <a
             className="transition duration-300 hover:text-blue-400 flex items-center"
             onClick={onImport}
-            title={t("saves.load_project")}
+            title={t('saves.load_project')}
           >
             <IconUpload size="extra-large" />
           </a>
@@ -100,11 +111,11 @@ export default function Header({ guideHeight = 0, onImport, onExport }: HeaderPr
           </a>
         </div>
       </header>
-      <ExportDialog 
+      <ExportDialog
         visible={exportDialogVisible}
         onCancel={() => setExportDialogVisible(false)}
         guideHeight={guideHeight}
       />
     </>
-  );
+  )
 }

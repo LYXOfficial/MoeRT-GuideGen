@@ -1,34 +1,34 @@
-import type { EditorConfig } from "../../../interfaces/editor";
-import colors from "./define/colors";
-import CustomColorPicker from "../../CustomColorPicker";
+import type { EditorConfig } from '../../../interfaces/editor'
+import colors from './define/colors'
+import CustomColorPicker from '../../CustomColorPicker'
 
 export interface SpecLineProps {
-  foreground?: string;
-  background?: string;
+  foreground?: string
+  background?: string
 }
 export const specLineDefaultProps = {
-  foreground: colors["specline"],
-  background: colors["background"],
-};
+  foreground: colors.specline,
+  background: colors.background
+}
 
 export const specLineEditorConfig: EditorConfig = {
   forms: [
     {
-      key: "foreground",
-      label: "themes.chongqing.components.SpecLine.props.foreground",
-      element: <CustomColorPicker currentTheme={0} />,
+      key: 'foreground',
+      label: 'themes.chongqing.components.SpecLine.props.foreground',
+      element: <CustomColorPicker currentTheme={0} />
     },
     {
-      key: "background",
-      label: "themes.chongqing.components.SpecLine.props.background",
-      element: <CustomColorPicker currentTheme={0} />,
-    },
-  ],
-};
+      key: 'background',
+      label: 'themes.chongqing.components.SpecLine.props.background',
+      element: <CustomColorPicker currentTheme={0} />
+    }
+  ]
+}
 
 function SpecLine({
   background = specLineDefaultProps.background,
-  foreground = specLineDefaultProps.foreground,
+  foreground = specLineDefaultProps.foreground
 }: SpecLineProps) {
   return (
     <svg
@@ -39,9 +39,9 @@ function SpecLine({
     >
       <path d="M 0 10 L 2 10 L 2 54 L 0 54 Z" fill={foreground} />
     </svg>
-  );
+  )
 }
 
-SpecLine.getEditorConfig = () => specLineEditorConfig;
+SpecLine.getEditorConfig = () => specLineEditorConfig
 
-export default SpecLine;
+export default SpecLine
