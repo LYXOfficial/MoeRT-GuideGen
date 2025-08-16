@@ -10,7 +10,7 @@ export interface NumAlphabetProps {
   type?: "block" | "fit";
 }
 export const numAlphabetDefaultProps: NumAlphabetProps = {
-  text: "2",
+  text: "A",
   foreground: colors["foreground"],
   background: colors["background"],
   type: "fit",

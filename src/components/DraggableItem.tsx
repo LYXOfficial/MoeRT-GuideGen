@@ -1,7 +1,6 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { useRef, useState, type ReactElement } from "react";
-import Spacing from "./themes/chongqing/Spacing";
+import { useRef, useState } from "react";
 
 export default function DraggableItem({
   id,
@@ -25,7 +24,6 @@ export default function DraggableItem({
     id,
     data
   });
-
   const style = {
     transform: CSS.Transform.toString(transform),
     transition: transition || 'transform 200ms ease, opacity 200ms ease',
@@ -35,7 +33,7 @@ export default function DraggableItem({
     cursor: "grab",
     background: isDragging ? "#f0f0f0" : "transparent",
     zIndex: isDragging ? 9999 : 1,
-    flex: (children as ReactElement).type === Spacing ? "1" : "0 0 auto",
+    flex: (children as any).type.name === "Spacing" ? "1" : "0 0 auto",
     opacity: isDragging ? 0.5 : 1,
     touchAction: "none",
     position: "relative" as const,
