@@ -1,6 +1,94 @@
 import colors from "./define/colors";
 import type { EditorConfig } from "../../../interfaces/editor";
 import CustomColorPicker from "../../CustomColorPicker";
+import { Input, Button, Typography } from '@douyinfe/semi-ui';
+
+// LineArrayEditor 组件，专门用于 StationNumber
+function LineArrayEditor({ value=stationNumberDefaultProps.lines, onChange }: { value?: any, onChange?: (value: any) => void }) {
+  const lines = Array.isArray(value) ? value : [];
+
+  const handleLineChange = (index: number, field: string, newValue: string) => {
+    const newLines = lines.map((line: any, i: number) => 
+      i === index ? { ...line, [field]: newValue } : line
+    );
+    onChange?.(newLines);
+  };
+
+  const handleAddLine = () => {
+    if (lines.length >= 4) return; // 最多4个线路
+    const newLine = {
+      lineNum: "1",
+      stationNum: "01",
+      color: colors.line1, 
+    };
+    onChange?.([...lines, newLine]);
+  };
+
+  const handleRemoveLine = (index: number) => {
+    const newLines = lines.filter((_: any, i: number) => i !== index);
+    onChange?.(newLines);
+  };
+
+  return (
+    <div className="space-y-3">
+      {lines.map((line: any, index: number) => (
+        <div key={index} className="border border-solid border-gray-300 p-3 rounded">
+          {/* 第一行：颜色选择器 */}
+          <div className="mb-2">
+            <CustomColorPicker
+              currentTheme={1}
+              value={line.color || colors.line1}
+              onChange={(color) => handleLineChange(index, 'color', color)}
+            />
+          </div>
+          
+          {/* 第二行：线路编号 */}
+          <div className="flex items-center mb-2">
+            <Typography.Text size="small" className="w-16 mr-2">线路号</Typography.Text>
+            <Input
+              size="small"
+              value={line.lineNum}
+              onChange={(val) => handleLineChange(index, 'lineNum', val)}
+              placeholder="如: 1"
+            />
+          </div>
+          
+          {/* 第三行：站点编号 */}
+          <div className="flex items-center">
+            <Typography.Text size="small" className="w-16 mr-2">站点号</Typography.Text>
+            <Input
+              size="small"
+              value={line.stationNum}
+              onChange={(val) => handleLineChange(index, 'stationNum', val)}
+              placeholder="如: 01"
+            />
+          </div>
+        </div>
+      ))}
+      
+      {/* 底部增减按钮 */}
+      <div className="flex gap-2 align-center justify-center">
+        <Button
+          type="primary"
+          size="small"
+          onClick={handleAddLine}
+          disabled={lines.length >= 4}
+        >
+          +
+        </Button>
+        {lines.length > 0 && (
+          <Button
+            type="danger"
+            size="small"
+            onClick={() => handleRemoveLine(lines.length - 1)}
+          >
+            -
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export interface StationNumberProps {
   lines: Line[];
@@ -19,21 +107,17 @@ export const stationNumberDefaultProps: StationNumberProps = {
       stationNum: "01",
       color: colors.line1,
     },
-    {
-      lineNum: "2",
-      stationNum: "02",
-      color: colors.line2,
-    },
-    {
-      lineNum: "S3",
-      stationNum: "03",
-      color: colors.lines3,
-    },
   ],
 };
 
 export const stationNumberEditorConfig: EditorConfig = {
-  forms: [],
+  forms: [
+    {
+      key: 'lines',
+      label: 'themes.chengdu.components.StationNumber.props.lines',
+      element: <LineArrayEditor />,
+    },
+  ],
 };
 
 export default function StationNumber({

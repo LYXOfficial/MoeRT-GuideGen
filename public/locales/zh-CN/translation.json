@@ -111,7 +111,9 @@
               "ticket": "售票/加值",
               "checkin": "自助检票"
             },
-            "lineColor": "线路颜色"
+            "rotation": "旋转角度",
+            "background": "背景色",
+            "foreground": "前景色"
           }
         },
         "LineNum": {
@@ -390,7 +392,8 @@
           "props": {
             "color": "线路色",
             "lineNum": "线路编号",
-            "stationNum": "站点编号"
+            "stationNum": "站点编号",
+            "lines": "线路列表"
           }
         },
         "Direction": {

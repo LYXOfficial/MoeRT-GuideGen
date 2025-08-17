@@ -27,6 +27,7 @@
     "react-draggable": "^4.5.0",
     "react-i18next": "^15.6.1",
     "scss": "^0.2.4",
+    "vite-plugin-svgr": "^4.3.0",
     "vite-plugin-windicss": "^1.9.4",
     "windicss": "^3.5.6"
   },

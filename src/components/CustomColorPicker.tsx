@@ -46,7 +46,7 @@ const CustomColorPicker: React.FC<CustomColorPickerProps> = ({
     <div className="flex gap-2 items-center w-full">
       <SemiColorPicker
         alpha={false}
-        value={SemiColorPicker.colorStringToValue(colorPickerValue || "")}
+        value={SemiColorPicker.colorStringToValue(colorPickerValue || "#ffffff")}
         onChange={handleColorPickerChange}
         usePopover={true}
         eyeDropper={true}
