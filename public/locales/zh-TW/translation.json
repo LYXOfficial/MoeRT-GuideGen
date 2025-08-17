@@ -48,6 +48,11 @@
       "success": "存檔已匯出"
     }
   },
+  "loading": {
+    "message": "正在載入應用程式...",
+    "fonts": "正在載入字型...",
+    "archive": "正在載入存檔..."
+  },
   "editor": {
     "title": "編輯元件",
     "delete": "刪除元件"

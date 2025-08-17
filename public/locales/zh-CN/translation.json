@@ -48,6 +48,11 @@
       "success": "存档已导出"
     }
   },
+  "loading": {
+    "message": "正在加载应用...",
+    "fonts": "正在加载字体...",
+    "archive": "正在加载存档..."
+  },
   "editor": {
     "title": "编辑组件",
     "delete": "删除组件"

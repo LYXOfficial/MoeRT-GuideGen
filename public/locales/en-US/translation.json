@@ -48,6 +48,11 @@
       "success": "Archive exported"
     }
   },
+  "loading": {
+    "message": "Loading application...",
+    "fonts": "Loading fonts...",
+    "archive": "Loading archive..."
+  },
   "editor": {
     "title": "Edit Component",
     "delete": "Delete Component"

@@ -32,7 +32,7 @@ function SpecLine({
 }: SpecLineProps) {
   return (
     <svg
-      className="z-10"
+      className="z-100"
       height={64}
       width={2}
       style={{ backgroundColor: background }}

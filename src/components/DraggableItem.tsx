@@ -32,7 +32,7 @@ export default function DraggableItem({
     alignItems: 'center',
     cursor: 'grab',
     background: isDragging ? '#f0f0f0' : 'transparent',
-    zIndex: isDragging ? 9999 : 1,
+    zIndex: isDragging ? 9999 : (children as any).type.name === 'SpecLine' ? 10 : 1,
     flex: (children as any).type.name === 'Spacing' ? '1' : '0 0 auto',
     opacity: isDragging ? 0.5 : 1,
     touchAction: 'none',

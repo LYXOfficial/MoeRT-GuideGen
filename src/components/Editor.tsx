@@ -17,10 +17,11 @@ import Header from './Header'
 import { useTranslation } from 'react-i18next'
 
 interface EditorProps {
-  guideHeight?: number
+  guideHeight?: number;
+  onArchiveLoaded?: () => void;
 }
 
-export default function Editor({ guideHeight = 0 }: EditorProps) {
+export default function Editor({ guideHeight = 0, onArchiveLoaded }: EditorProps) {
   const { t } = useTranslation()
   const guideBoardRef = useRef<GuideBoardRef>(null)
   const [activeItem, setActiveItem] = useState<GuideItem | null>(null)
@@ -28,6 +29,26 @@ export default function Editor({ guideHeight = 0 }: EditorProps) {
   const [isImporting, setIsImporting] = useState(false) // 添加导入状态标志
   const lastChangeRef = useRef(Date.now())
   const autoSaveIntervalMs = 2000 // 自动保存间隔
+
+  // 添加全局鼠标位置跟踪
+  const mousePositionRef = useRef({ x: 0, y: 0 })
+  
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      mousePositionRef.current = { x: e.clientX, y: e.clientY }
+    }
+    
+    document.addEventListener('mousemove', handleMouseMove)
+    return () => document.removeEventListener('mousemove', handleMouseMove)
+  }, [])
+
+  // 拖拽指示器状态
+  const [dropIndicator, setDropIndicator] = useState<{
+    show: boolean;
+    x: number;
+    y: number;
+    height: number;
+  }>({ show: false, x: 0, y: 0, height: 0 })
 
   // 导出存档
   const exportSaveData = () => {
@@ -221,9 +242,13 @@ export default function Editor({ guideHeight = 0 }: EditorProps) {
         await new Promise((resolve) => setTimeout(resolve, 100))
         prevThemeRef.current = currentTheme
         setIsInitialized(true)
+        // 通知App组件档案加载完成
+        onArchiveLoaded?.()
       } catch (err) {
         console.error('初始化失败：', err)
         setIsInitialized(true)
+        // 即使失败也要通知加载完成
+        onArchiveLoaded?.()
       }
     }
 
@@ -235,7 +260,7 @@ export default function Editor({ guideHeight = 0 }: EditorProps) {
         clearTimeout(configChangeTimeoutRef.current)
       }
     }
-  }, [])
+  }, [onArchiveLoaded])
 
   // 设置自动保存定时器 - 单独的 useEffect
   useEffect(() => {
@@ -261,16 +286,17 @@ export default function Editor({ guideHeight = 0 }: EditorProps) {
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
     setActiveItem(null)
+    setDropIndicator({ show: false, x: 0, y: 0, height: 0 }) // 隐藏指示器
 
     if (!over) return
 
     const draggedItem = active.data.current?.item
     const sourceRowId = active.data.current?.rowId
 
-    const overId = over.id.toString()
+    // 获取准确的 overRowId
     let overRowId = over.data.current?.rowId
-    if (!overRowId && overId.startsWith('row')) {
-      overRowId = overId
+    if (!overRowId && over.id.toString().startsWith('row')) {
+      overRowId = over.id.toString()
     }
     if (!overRowId) return
 
@@ -280,15 +306,52 @@ export default function Editor({ guideHeight = 0 }: EditorProps) {
       const rowNumber = overRowId.match(/^row(\d+)/)
       if (!rowNumber) return
 
+      const targetRowId = `row${rowNumber[1]}`
+      
+      // 计算插入位置
+      const rowContainer = document.querySelector(`[data-row="${targetRowId}"]`)
+      let insertIndex: number | undefined = undefined
+      
+      if (rowContainer) {
+        // 使用全局鼠标位置
+        const pointerX = mousePositionRef.current.x
+
+        const children = Array.from(rowContainer.children).filter(child => {
+          const element = child as HTMLElement
+          // 过滤掉空占位符、拖拽相关元素和隐藏元素
+          const id = element.getAttribute('id') || ''
+          return !element.classList.contains('sortable-ghost') && 
+                 !element.classList.contains('sortable-chosen') &&
+                 !element.classList.contains('sortable-placeholder') &&
+                 element.style.display !== 'none' &&
+                 !id.startsWith('empty-') &&
+                 element.tagName !== 'SCRIPT' &&
+                 element.tagName !== 'STYLE'
+        }) as HTMLElement[]
+
+        if (children.length > 0 && pointerX > 0) {
+          // 找到合适的插入位置
+          insertIndex = children.length // 默认插入到最后
+          for (let i = 0; i < children.length; i++) {
+            const rect = children[i].getBoundingClientRect()
+            if (pointerX < rect.left + rect.width / 2) {
+              insertIndex = i
+              break
+            }
+          }
+        }
+      }
+
       const newItem: GuideItem = {
         ...draggedItem,
         id: newId
       }
 
-      guideBoardRef.current?.addItemToRow(`row${rowNumber[1]}`, newItem)
+      guideBoardRef.current?.addItemToRow(targetRowId, newItem, insertIndex)
       lastChangeRef.current = Date.now()
       return
     }
+    
     // 行内和跨行拖拽
     if (sourceRowId && overRowId) {
       if (sourceRowId === overRowId) {
@@ -317,14 +380,49 @@ export default function Editor({ guideHeight = 0 }: EditorProps) {
         const rowNumber = overRowId.match(/^row(\d+)/)
         if (!rowNumber) return
 
+        const targetRowId = `row${rowNumber[1]}`
+        
+        // 计算插入位置 - 注意这里需要在移除源元素之前计算位置
+        const rowContainer = document.querySelector(`[data-row="${targetRowId}"]`)
+        let insertIndex: number | undefined = undefined
+        
+        if (rowContainer) {
+          // 使用全局鼠标位置
+          const pointerX = mousePositionRef.current.x
+
+          const children = Array.from(rowContainer.children).filter(child => {
+            const element = child as HTMLElement
+            // 过滤掉空占位符、拖拽相关元素和隐藏元素
+            const id = element.getAttribute('id') || ''
+            return !element.classList.contains('sortable-ghost') && 
+                   !element.classList.contains('sortable-chosen') &&
+                   !element.classList.contains('sortable-placeholder') &&
+                   element.style.display !== 'none' &&
+                   !id.startsWith('empty-') &&
+                   element.tagName !== 'SCRIPT' &&
+                   element.tagName !== 'STYLE'
+          }) as HTMLElement[]
+
+          if (children.length > 0 && pointerX > 0) {
+            // 找到合适的插入位置
+            insertIndex = children.length // 默认插入到最后
+            for (let i = 0; i < children.length; i++) {
+              const rect = children[i].getBoundingClientRect()
+              if (pointerX < rect.left + rect.width / 2) {
+                insertIndex = i
+                break
+              }
+            }
+          }
+        }
+
+        // 先移除源元素，再插入到目标位置
         const item = guideBoardRef.current?.removeItemFromRow(
           sourceRowId,
           active.id.toString()
         )
         if (item) {
-          guideBoardRef.current?.addItemToRow(`row${rowNumber[1]}`, {
-            ...item
-          })
+          guideBoardRef.current?.addItemToRow(targetRowId, item, insertIndex)
           lastChangeRef.current = Date.now()
         }
       }
@@ -332,33 +430,110 @@ export default function Editor({ guideHeight = 0 }: EditorProps) {
   }
   const handleDragOver = (event: DragOverEvent) => {
     const { active, over } = event
-    if (!over) return
+    if (!over) {
+      setDropIndicator({ show: false, x: 0, y: 0, height: 0 })
+      return
+    }
 
     const draggedItem = active.data.current?.item
     const sourceRowId = active.data.current?.rowId
-    const overRowId = over.id.toString().split('-')[0]
+    
+    // 获取准确的 overRowId
+    let overRowId = over.data.current?.rowId
+    if (!overRowId && over.id.toString().startsWith('row')) {
+      overRowId = over.id.toString()
+    }
+    
+    // 如果不是在有效的行上，隐藏指示器
+    if (!overRowId) {
+      setDropIndicator({ show: false, x: 0, y: 0, height: 0 })
+      return
+    }
 
-    // 如果是从组件列表拖入，我们不需要预览重排序
-    if (!sourceRowId || !draggedItem) return
+    // 如果是从组件列表拖入，显示指示器
+    if (!sourceRowId && draggedItem) {
+      const rowNumber = overRowId.match(/^row(\d+)/)
+      if (!rowNumber) {
+        setDropIndicator({ show: false, x: 0, y: 0, height: 0 })
+        return
+      }
+
+      const targetRowId = `row${rowNumber[1]}`
+      const rowContainer = document.querySelector(`[data-row="${targetRowId}"]`)
+      
+      if (rowContainer) {
+        const rowRect = rowContainer.getBoundingClientRect()
+        const guideBoardRect = document.querySelector('.guide-board')?.getBoundingClientRect()
+        
+        if (guideBoardRect) {
+          // 使用全局鼠标位置
+          const pointerX = mousePositionRef.current.x
+
+          // 计算插入位置
+          const children = Array.from(rowContainer.children).filter(child => {
+            const element = child as HTMLElement
+            // 过滤掉空占位符、拖拽相关元素和隐藏元素
+            const id = element.getAttribute('id') || ''
+            return !element.classList.contains('sortable-ghost') && 
+                   !element.classList.contains('sortable-chosen') &&
+                   !element.classList.contains('sortable-placeholder') &&
+                   element.style.display !== 'none' &&
+                   !id.startsWith('empty-') &&
+                   element.tagName !== 'SCRIPT' &&
+                   element.tagName !== 'STYLE'
+          }) as HTMLElement[]
+          
+          let insertX = rowRect.left + 10 // 默认在行首，留一点边距
+
+          if (children.length > 0) {
+            // 找到合适的插入位置
+            let foundPosition = false
+            for (let i = 0; i < children.length; i++) {
+              const rect = children[i].getBoundingClientRect()
+              if (pointerX < rect.left + rect.width / 2) {
+                insertX = rect.left
+                foundPosition = true
+                break
+              }
+            }
+            // 如果没有找到位置，插入到最后
+            if (!foundPosition) {
+              const lastChild = children[children.length - 1]
+              insertX = lastChild.getBoundingClientRect().right
+            }
+          } else {
+            // 空行的情况，显示在行的中间
+            insertX = rowRect.left + rowRect.width / 2
+          }
+
+          setDropIndicator({
+            show: true,
+            x: insertX - guideBoardRect.left,
+            y: rowRect.top - guideBoardRect.top,
+            height: rowRect.height
+          })
+        }
+      }
+      return
+    }
+
+    // 如果没有源行ID或拖拽项，隐藏指示器
+    if (!sourceRowId || !draggedItem) {
+      setDropIndicator({ show: false, x: 0, y: 0, height: 0 })
+      return
+    }
 
     // 确保 overRowId 是正确的格式
     const rowNumber = overRowId.match(/^row(\d+)/)
-    if (!rowNumber) return
+    if (!rowNumber) {
+      setDropIndicator({ show: false, x: 0, y: 0, height: 0 })
+      return
+    }
 
     const targetRowId = `row${rowNumber[1]}`
 
-    // 获取鼠标位置
-    let pointerX = 0
-    if ('clientX' in event.activatorEvent) {
-      pointerX = event.activatorEvent.clientX as number
-    } else if (
-      'touches' in event.activatorEvent &&
-      (event.activatorEvent.touches as Array<any>).length > 0
-    ) {
-      pointerX = (event.activatorEvent.touches as Array<any>)[0].clientX
-    } else {
-      return
-    }
+    // 使用全局鼠标位置
+    const pointerX = mousePositionRef.current.x
 
     // 获取拖拽元素在源行中的索引
     const oldIndex = guideBoardRef.current?.getItemIndex(
@@ -366,11 +541,72 @@ export default function Editor({ guideHeight = 0 }: EditorProps) {
       active.id.toString()
     )
 
-    if (typeof oldIndex !== 'number' || oldIndex === -1) return
+    if (typeof oldIndex !== 'number' || oldIndex === -1) {
+      setDropIndicator({ show: false, x: 0, y: 0, height: 0 })
+      return
+    }
 
-    // 只在同一行内进行预览重排序
-    if (sourceRowId === targetRowId) {
-      // 获取当前行所有元素的 DOMRect
+    // 跨行拖拽，显示指示器
+    if (sourceRowId !== targetRowId) {
+      const rowContainer = document.querySelector(`[data-row="${targetRowId}"]`)
+      if (rowContainer) {
+        const rowRect = rowContainer.getBoundingClientRect()
+        const guideBoardRect = document.querySelector('.guide-board')?.getBoundingClientRect()
+        
+        if (guideBoardRect) {
+          // 使用全局鼠标位置
+          const pointerX = mousePositionRef.current.x
+          
+          // 计算插入位置
+          const children = Array.from(rowContainer.children).filter(child => {
+            const element = child as HTMLElement
+            // 过滤掉空占位符、拖拽相关元素和隐藏元素
+            const id = element.getAttribute('id') || ''
+            return !element.classList.contains('sortable-ghost') && 
+                   !element.classList.contains('sortable-chosen') &&
+                   !element.classList.contains('sortable-placeholder') &&
+                   element.style.display !== 'none' &&
+                   !id.startsWith('empty-') &&
+                   element.tagName !== 'SCRIPT' &&
+                   element.tagName !== 'STYLE'
+          }) as HTMLElement[]
+          
+          let insertX = rowRect.left + 10 // 默认在行首，留一点边距
+
+          if (children.length > 0) {
+            // 找到合适的插入位置
+            let foundPosition = false
+            for (let i = 0; i < children.length; i++) {
+              const rect = children[i].getBoundingClientRect()
+              // 检查鼠标是否在当前元素的左半部分
+              if (pointerX < rect.left + rect.width / 2) {
+                insertX = rect.left
+                foundPosition = true
+                break
+              }
+            }
+            // 如果没有找到位置，插入到最后一个元素后面
+            if (!foundPosition) {
+              const lastChild = children[children.length - 1]
+              insertX = lastChild.getBoundingClientRect().right
+            }
+          } else {
+            // 空行的情况，显示在行的中间
+            insertX = rowRect.left + rowRect.width / 2
+          }
+
+          setDropIndicator({
+            show: true,
+            x: insertX - guideBoardRect.left,
+            y: rowRect.top - guideBoardRect.top,
+            height: rowRect.height
+          })
+        }
+      }
+    } else {
+      // 同行内拖拽，隐藏指示器，继续预览重排序
+      setDropIndicator({ show: false, x: 0, y: 0, height: 0 })
+      
       const rowContainer = document.querySelector(`[data-row="${targetRowId}"]`)
       if (!rowContainer) return
 
@@ -417,15 +653,30 @@ export default function Editor({ guideHeight = 0 }: EditorProps) {
               guideBoardRef.current?.clearBoard()
             }}
           />
-          <div className="m-auto">
+          <div className="m-auto relative">
             <GuideBoardCols
               ref={guideBoardRef}
               currentTheme={currentTheme}
               onConfigChange={handleConfigChange}
             />
+            {/* 拖拽指示器 */}
+            {dropIndicator.show && (
+              <div
+                className="absolute pointer-events-none"
+                style={{
+                  left: dropIndicator.x,
+                  top: dropIndicator.y,
+                  width: 2,
+                  height: dropIndicator.height,
+                  backgroundColor: '#66ccff',
+                  borderRadius: 1,
+                  zIndex:114514
+                }}
+              />
+            )}
           </div>
         </div>
-        <img className="love-salt-kawaii-qwq fixed opacity-30 -right-50px bottom-0 -z-1 w-600px" src="/imgs/salt.png"/>
+        <img className="love-salt-kawaii-qwq fixed opacity-30 -right-50px bottom-0 -z-1 w-600px select-none" src="/imgs/salt.png"/>
       </div>
       <DragOverlay
         dropAnimation={{

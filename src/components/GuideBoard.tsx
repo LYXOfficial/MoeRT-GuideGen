@@ -28,7 +28,7 @@ export interface BoardState {
 }
 
 export interface GuideBoardRef {
-  addItemToRow: (rowId: string, item: GuideItem) => void
+  addItemToRow: (rowId: string, item: GuideItem, insertIndex?: number) => void
   removeItemFromRow: (rowId: string, itemId: string) => GuideItem | null
   reorderRow: (rowId: string, oldIndex: number, newIndex: number) => void
   getItemIndex: (rowId: string, itemId: string) => number
@@ -227,6 +227,10 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
         newRows.splice(idx + 1, 0, [])
         return newRows
       })
+      // 配置变更时触发保存
+      if (onConfigChange) {
+        onConfigChange()
+      }
     }
 
     // 删除某一行
@@ -234,6 +238,10 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
       setRows((prev) =>
         prev.length > 1 ? prev.filter((_, i) => i !== idx) : prev
       )
+      // 配置变更时触发保存
+      if (onConfigChange) {
+        onConfigChange()
+      }
     }
 
     return (
