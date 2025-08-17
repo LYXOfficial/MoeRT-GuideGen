@@ -11,6 +11,11 @@
         "confirm": "確認",
         "cancel": "取消"
       }
+    },
+    "clearCanvas": {
+      "button": "清空畫布",
+      "title": "確認清空畫布",
+      "confirm": "此操作將清空目前畫布上的所有內容，且無法撤銷，確定要繼續嗎？"
     }
   },
   "board": {

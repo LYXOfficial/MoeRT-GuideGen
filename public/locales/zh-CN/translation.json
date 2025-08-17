@@ -11,6 +11,11 @@
         "confirm": "确定",
         "cancel": "取消"
       }
+    },
+    "clearCanvas": {
+      "button": "清空画板",
+      "title": "确认清空画板",
+      "confirm": "此操作将清空当前画板上的所有内容，且无法撤销，确定要继续吗？"
     }
   },
   "board": {
@@ -183,6 +188,22 @@
             },
             "background": "背景色",
             "foreground": "前景色"
+          }
+        },
+        "DirectionLoop": {
+          "displayName": "方向（环线）",
+          "props": {
+            "background": "背景色",
+            "foreground": "前景色",
+            "tochinese": "开往（中文）",
+            "toenglish": "开往（英文）",
+            "tipchinese": "上方提示（中文）",
+            "tipenglish": "上方提示（英文）",
+            "align": {
+              "displayName": "对齐",
+              "left": "左",
+              "right": "右"
+            }
           }
         }
       },
@@ -364,12 +385,28 @@
             "foreground": "前景色"
           }
         },
-        "StationId": {
+        "StationNumber": {
           "displayName": "站点编号",
           "props": {
             "color": "线路色",
             "lineNum": "线路编号",
             "stationNum": "站点编号"
+          }
+        },
+        "Direction": {
+          "displayName": "方向",
+          "props": {
+            "background": "背景色",
+            "foreground": "前景色",
+            "tochinese": "开往（中文）",
+            "toenglish": "开往（英文）",
+            "viachinese": "经（中文）",
+            "viaenglish": "经（英文）",
+            "align": {
+              "displayName": "对齐",
+              "left": "左",
+              "right": "右"
+            }
           }
         }
       },

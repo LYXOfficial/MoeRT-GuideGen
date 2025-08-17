@@ -55,5 +55,5 @@ export default function Arrow({ rotation }: { rotation: number }) {
         </g>
       </g>
     </svg>
-  )
+  );
 }

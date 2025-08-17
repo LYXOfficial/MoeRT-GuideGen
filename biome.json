@@ -9,15 +9,11 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "experimentalScannerIgnores": [
-      "*.lock"
-    ],
-    "includes": [
-      "**"
-    ]
+    "experimentalScannerIgnores": ["*.lock"],
+    "includes": ["**"]
   },
   "formatter": {
-    "enabled": true,
+    "enabled": false,
     "formatWithErrors": false,
     "indentStyle": "space",
     "indentWidth": 2,
@@ -98,7 +94,7 @@
       "cssModules": true
     },
     "formatter": {
-      "enabled": true,
+      "enabled": false,
       "indentStyle": "space"
     },
     "linter": {

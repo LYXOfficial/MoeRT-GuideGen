@@ -1,33 +1,33 @@
-import { Select } from '@douyinfe/semi-ui'
-import colors from './define/colors'
-import ArrowIcon from './icons/arrow'
-import type { EditorConfig } from '../../../interfaces/editor'
-import CustomColorPicker from '../../CustomColorPicker'
+import { Select } from "@douyinfe/semi-ui";
+import colors from "./define/colors";
+import ArrowIcon from "./icons/arrow";
+import type { EditorConfig } from "../../../interfaces/editor";
+import CustomColorPicker from "../../CustomColorPicker";
 
 export interface ArrowProps {
   type:
-    | 'up'
-    | 'down'
-    | 'left'
-    | 'right'
-    | 'up-left'
-    | 'up-right'
-    | 'down-left'
-    | 'down-right'
-  foreground?: string
-  background?: string
+    | "up"
+    | "down"
+    | "left"
+    | "right"
+    | "up-left"
+    | "up-right"
+    | "down-left"
+    | "down-right";
+  foreground?: string;
+  background?: string;
 }
 export const arrowDefaultProps: ArrowProps = {
-  type: 'up',
+  type: "up",
   foreground: colors.foreground,
-  background: colors.background
-}
+  background: colors.background,
+};
 
 export const arrowEditorConfig: EditorConfig = {
   forms: [
     {
-      key: 'type',
-      label: 'themes.chengdu.components.Arrow.props.type.displayName',
+      key: "type",
+      label: "themes.chengdu.components.Arrow.props.type.displayName",
       element: (
         <Select>
           <Select.Option value="up">Up</Select.Option>
@@ -39,25 +39,25 @@ export const arrowEditorConfig: EditorConfig = {
           <Select.Option value="down-left">Left-Down</Select.Option>
           <Select.Option value="down-right">Right-Down</Select.Option>
         </Select>
-      )
+      ),
     },
     {
-      key: 'foreground',
-      label: 'themes.chengdu.components.Arrow.props.foreground',
-      element: <CustomColorPicker currentTheme={1} />
+      key: "foreground",
+      label: "themes.chengdu.components.Arrow.props.foreground",
+      element: <CustomColorPicker currentTheme={1} />,
     },
     {
-      key: 'background',
-      label: 'themes.chengdu.components.Arrow.props.background',
-      element: <CustomColorPicker currentTheme={1} />
-    }
-  ]
-}
+      key: "background",
+      label: "themes.chengdu.components.Arrow.props.background",
+      element: <CustomColorPicker currentTheme={1} />,
+    },
+  ],
+};
 
 function Arrow({
   type = arrowDefaultProps.type,
   foreground = arrowDefaultProps.foreground,
-  background = arrowDefaultProps.background
+  background = arrowDefaultProps.background,
 }: ArrowProps) {
   return (
     <div
@@ -66,27 +66,27 @@ function Arrow({
     >
       <ArrowIcon
         rotation={
-          type === 'up'
+          type === "up"
             ? 0
-            : type === 'down'
+            : type === "down"
               ? 180
-              : type === 'left'
+              : type === "left"
                 ? 270
-                : type === 'right'
+                : type === "right"
                   ? 90
-                  : type === 'up-left'
+                  : type === "up-left"
                     ? 315
-                    : type === 'up-right'
+                    : type === "up-right"
                       ? 45
-                      : type === 'down-left'
+                      : type === "down-left"
                         ? 225
                         : 135
         }
       />
     </div>
-  )
+  );
 }
 
-Arrow.getEditorConfig = () => arrowEditorConfig
+Arrow.getEditorConfig = () => arrowEditorConfig;
 
-export default Arrow
+export default Arrow;

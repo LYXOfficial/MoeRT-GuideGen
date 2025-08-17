@@ -11,6 +11,11 @@
         "confirm": "Confirm",
         "cancel": "Cancel"
       }
+    },
+    "clearCanvas": {
+      "button": "Clear Canvas",
+      "title": "Confirm Clear Canvas",
+      "confirm": "This action will clear all content on the current canvas and cannot be undone. Are you sure you want to continue?"
     }
   },
   "board": {

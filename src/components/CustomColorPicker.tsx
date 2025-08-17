@@ -1,52 +1,52 @@
-import React, { useCallback } from 'react'
-import { ColorPicker as SemiColorPicker, Select } from '@douyinfe/semi-ui'
-import themes from './themes/themereg'
-import { useTranslation } from 'react-i18next'
+import React, { useCallback } from "react";
+import { ColorPicker as SemiColorPicker, Select } from "@douyinfe/semi-ui";
+import themes from "./themes/themereg";
+import { useTranslation } from "react-i18next";
 interface CustomColorPickerProps {
-  value?: string
-  onChange?: (value: string) => void
-  currentTheme: number
+  value?: string;
+  onChange?: (value: string) => void;
+  currentTheme: number;
 }
 
 const CustomColorPicker: React.FC<CustomColorPickerProps> = ({
   value,
   onChange,
-  currentTheme
+  currentTheme,
 }) => {
-  const colors = themes[currentTheme][1].colors.colors
-  const { t } = useTranslation()
+  const colors = themes[currentTheme][1].colors.colors;
+  const { t } = useTranslation();
   // ColorPicker 的内部值
-  const [colorPickerValue, setColorPickerValue] = React.useState(value)
+  const [colorPickerValue, setColorPickerValue] = React.useState(value);
 
   // 当外部 value 改变时，更新 ColorPicker
   React.useEffect(() => {
-    setColorPickerValue(value)
-  }, [value])
+    setColorPickerValue(value);
+  }, [value]);
 
   const handleColorPickerChange = useCallback(
     ({ hex }: { hex: string }) => {
-      setColorPickerValue(hex)
-      onChange?.(hex)
+      setColorPickerValue(hex);
+      onChange?.(hex);
     },
     [onChange]
-  )
+  );
 
   const handleSelectChange = useCallback(
     (value: any) => {
       if (value in colors) {
-        const newColor = colors[value]
-        setColorPickerValue(newColor)
-        onChange?.(newColor)
+        const newColor = colors[value];
+        setColorPickerValue(newColor);
+        onChange?.(newColor);
       }
     },
     [onChange]
-  )
+  );
 
   return (
     <div className="flex gap-2 items-center w-full">
       <SemiColorPicker
         alpha={false}
-        value={SemiColorPicker.colorStringToValue(colorPickerValue || '')}
+        value={SemiColorPicker.colorStringToValue(colorPickerValue || "")}
         onChange={handleColorPickerChange}
         usePopover={true}
         eyeDropper={true}
@@ -55,7 +55,7 @@ const CustomColorPicker: React.FC<CustomColorPickerProps> = ({
         value={
           Object.entries(colors).find(
             ([_, v]) => v === colorPickerValue
-          )?.[0] || ''
+          )?.[0] || ""
         }
         onChange={handleSelectChange}
         placeholder="选择颜色变量"
@@ -74,7 +74,7 @@ const CustomColorPicker: React.FC<CustomColorPickerProps> = ({
         ))}
       </Select>
     </div>
-  )
-}
+  );
+};
 
-export default CustomColorPicker
+export default CustomColorPicker;
