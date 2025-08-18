@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect, useCallback } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import ComponentsList from "./ComponentsList";
 import GuideBoardCols, { type GuideBoardRef } from "./GuideBoard";
 import type { GuideItem } from "../interfaces/guide";
@@ -301,6 +301,50 @@ export default function Editor({
     if (!overRowId && over.id.toString().startsWith("row")) {
       overRowId = over.id.toString();
     }
+
+    // 检查是否是拖拽到 TwoRowContainer 内部行
+    const isTwoRowContainerTarget = over.data.current?.type === 'two-row-container-row';
+    const twoRowTargetId = over.data.current?.rowId;
+
+    // 从组件列表拖入到 TwoRowContainer 内部行
+    if (draggedItem && !sourceRowId && isTwoRowContainerTarget && twoRowTargetId) {
+      console.log('拖拽到 TwoRowContainer 内部行:', { draggedItem, twoRowTargetId });
+      
+      // 阻止拖拽 TwoRowContainer 到自身内部
+      if (draggedItem.type === "TwoRowContainer") return;
+
+      const newId = `${draggedItem.type || "item"}-${Math.random().toString(36).substring(2)}`;
+      const themeComponents = themes[currentTheme][1].components;
+      const componentInfo = themeComponents.find(c => c.displayName === draggedItem.type);
+      if (!componentInfo) {
+        console.log('未找到组件信息:', draggedItem.type);
+        return;
+      }
+
+      const newItem: GuideItem = {
+        id: newId,
+        type: draggedItem.type,
+        props: { ...componentInfo.defaultProps },
+        element: React.createElement(componentInfo.component, {
+          ...componentInfo.defaultProps,
+          id: newId,
+          currentTheme,
+        }),
+      };
+
+      // 找到对应的 TwoRowContainer 并更新其 children
+      const containerMatch = twoRowTargetId.match(/^(.+)-(top|bottom)$/);
+      if (containerMatch) {
+        const containerId = containerMatch[1];
+        const targetRow = containerMatch[2] as 'top' | 'bottom';
+        
+        console.log('更新 TwoRowContainer:', { containerId, targetRow, newItem });
+        guideBoardRef.current?.updateTwoRowContainerChildren(containerId, newItem, targetRow);
+        lastChangeRef.current = Date.now();
+      }
+      return;
+    }
+
     if (!overRowId) return;
 
     // 从组件列表拖入
@@ -453,6 +497,36 @@ export default function Editor({
     let overRowId = over.data.current?.rowId;
     if (!overRowId && over.id.toString().startsWith("row")) {
       overRowId = over.id.toString();
+    }
+
+    // 检查是否是 TwoRowContainer 内部行
+    const isTwoRowContainerTarget = over.data.current?.type === 'two-row-container-row';
+    const twoRowTargetId = over.data.current?.rowId;
+
+    // 处理拖拽到 TwoRowContainer 内部行的情况
+    if (!sourceRowId && draggedItem && isTwoRowContainerTarget && twoRowTargetId) {
+      // 阻止拖拽 TwoRowContainer 到自身内部
+      if (draggedItem.type === "TwoRowContainer") {
+        setDropIndicator({ show: false, x: 0, y: 0, height: 0 });
+        return;
+      }
+
+      // 找到 TwoRowContainer 内部行的位置并显示指示器
+      const targetElement = document.querySelector(`[id="${twoRowTargetId}"]`);
+      if (targetElement) {
+        const targetRect = targetElement.getBoundingClientRect();
+        const guideBoardRect = document.querySelector(".guide-board")?.getBoundingClientRect();
+        
+        if (guideBoardRect) {
+          setDropIndicator({
+            show: true,
+            x: targetRect.left - guideBoardRect.left + 10,
+            y: targetRect.top - guideBoardRect.top,
+            height: targetRect.height,
+          });
+        }
+      }
+      return;
     }
 
     // 如果不是在有效的行上，隐藏指示器
