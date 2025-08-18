@@ -6,7 +6,7 @@ import {
   IconLanguage,
   IconDeleteStroked,
 } from "@douyinfe/semi-icons";
-import { Popover, List, Modal } from "@douyinfe/semi-ui";
+import { Popover, List, Modal, Slider } from "@douyinfe/semi-ui";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { ExportDialog } from "./ExportDialog";
@@ -15,12 +15,18 @@ interface HeaderProps {
   guideHeight?: number;
   onImport?: () => void;
   onExport?: () => void;
+  zoom?: number;
+  onZoomChange?: (zoom: number) => void;
+  disableZoom?: boolean;
 }
 
 export default function Header({
   guideHeight = 0,
   onImport,
   onExport,
+  zoom = 1,
+  onZoomChange,
+  disableZoom = false,
 }: HeaderProps) {
   const { t, i18n } = useTranslation();
   const [exportDialogVisible, setExportDialogVisible] = useState(false);
@@ -68,6 +74,31 @@ export default function Header({
       <header className="h-12 flex items-center font-sans p-3 border-b border-gray-300">
         <img src="/favicon.ico" className="h-8 mr-2" />
         <span className="text-xl font-bold">{t("title")}</span>
+        
+        {/* 缩放滑块 */}
+        <div className="ml-6 flex items-center gap-2">
+          <span className="text-sm text-gray-600">缩放:</span>
+          <div className="w-32">
+            <Slider
+              min={0.5}
+              max={4}
+              step={0.1}
+              value={zoom}
+              disabled={disableZoom}
+              onChange={(value) => {
+                if (typeof value === 'number') {
+                  onZoomChange?.(value);
+                }
+              }}
+              showBoundary={false}
+              tipFormatter={(value) => `${Math.round((typeof value === 'number' ? value : 1) * 100)}%`}
+            />
+          </div>
+          <span className="text-xs text-gray-500 w-8 text-center">
+            {Math.round(zoom * 100)}%
+          </span>
+        </div>
+
         <div className="flex items-center ml-auto gap-4">
           <Popover
             content={languageSelector}
@@ -82,6 +113,24 @@ export default function Header({
               <IconLanguage size="extra-large" />
             </a>
           </Popover>
+          <a
+            className="transition duration-300 hover:text-red-500 flex items-center"
+            onClick={() => {
+              Modal.confirm({
+                title: t("saves.clear_local_title"),
+                content: t("saves.clear_local_confirm"),
+                onOk: () => {
+                  // 标记清理状态，避免 Editor 在重载前再次自动保存
+                  localStorage.setItem("guide-clearing", "1");
+                  localStorage.removeItem("guide-autosave");
+                  location.reload();
+                },
+              });
+            }}
+            title={t("saves.clear_local_button")}
+          >
+            <IconDeleteStroked size="extra-large" />
+          </a>
           <a
             className="transition duration-300 hover:text-blue-400 flex items-center"
             onClick={() => setExportDialogVisible(true)}
@@ -109,22 +158,6 @@ export default function Header({
             title="GitHub"
           >
             <IconGithubLogo size="extra-large" />
-          </a>
-          <a
-            className="transition duration-300 hover:text-red-500 flex items-center"
-            onClick={() => {
-              Modal.confirm({
-                title: t("saves.clear_local_title"),
-                content: t("saves.clear_local_confirm"),
-                onOk: () => {
-                  localStorage.removeItem("guide-autosave");
-                  location.reload();
-                },
-              });
-            }}
-            title={t("saves.clear_local_button")}
-          >
-            <IconDeleteStroked size="extra-large" />
           </a>
         </div>
       </header>

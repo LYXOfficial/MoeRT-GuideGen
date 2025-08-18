@@ -13,6 +13,7 @@ import React, {
   useEffect,
   Children,
 } from "react";
+import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import DraggableItem from "./DraggableItem";
 import themes from "./themes/themereg.ts";
@@ -97,11 +98,12 @@ export function GuideBoard({
 
 interface GuideBoardProps {
   currentTheme: number;
+  zoom?: number;
   onConfigChange?: () => void;
 }
 
 const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
-  ({ currentTheme, onConfigChange }, ref) => {
+  ({ currentTheme, zoom = 1, onConfigChange }, ref) => {
     const { t } = useTranslation();
     // 动态行数组，每行是 DraggableItem[]
     const [rows, setRows] = useState<GuideItem[][]>([[]]);
@@ -135,6 +137,12 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
 
     // 检查并调整编辑弹窗位置
     useEffect(() => {
+      // 通知外层当前是否在编辑（用于禁用缩放等）
+      try {
+        const evt = new CustomEvent('guide-editing-change', { detail: { isEditing: !!editingItem } });
+        window.dispatchEvent(evt);
+      } catch {}
+
       if (editingItem && popupRef.current) {
         const popupEl = popupRef.current;
         const { width, height } = popupEl.getBoundingClientRect();
@@ -363,6 +371,7 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
                           <DraggableItem
                             key={item.id}
                             id={item.id}
+                            zoom={zoom}
                             data={{
                               type: "guide-item",
                               rowId: `row${idx + 1}`,
@@ -495,114 +504,116 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
           </div>
         </div>
         {/* 编辑悬浮框 */}
-        {editingItem && (
-          <div
-            className="editing-popup"
-            onClick={e => e.stopPropagation()}
-            ref={popupRef}
-            style={{
-              position: "fixed",
-              left: editingItem.position.x,
-              top: editingItem.position.y,
-              zIndex: 1000,
-              padding: "16px",
-              backgroundColor: "white",
-              boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
-              borderRadius: "16px",
-              width: 200,
-              fontFamily: themes[currentTheme][1].fontFamily,
-            }}
-          >
-            <Typography.Title heading={6}>{t("editor.title")}</Typography.Title>
-            {(() => {
-              // 从主题组件注册表中获取组件
-              const ComponentClass = themes[currentTheme][1].components.find(
-                item => item.displayName === editingItem.item.type
-              )?.component;
-              if (!(ComponentClass as any).getEditorConfig) return null;
+        {editingItem &&
+          createPortal(
+            <div
+              className="editing-popup"
+              onClick={e => e.stopPropagation()}
+              ref={popupRef}
+              style={{
+                position: "fixed",
+                left: editingItem.position.x,
+                top: editingItem.position.y,
+                zIndex: 114,
+                padding: "16px",
+                backgroundColor: "white",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+                borderRadius: "16px",
+                width: 200,
+                fontFamily: themes[currentTheme][1].fontFamily,
+              }}
+            >
+              <Typography.Title heading={6}>{t("editor.title")}</Typography.Title>
+              {(() => {
+                // 从主题组件注册表中获取组件
+                const ComponentClass = themes[currentTheme][1].components.find(
+                  item => item.displayName === editingItem.item.type
+                )?.component;
+                if (!(ComponentClass as any).getEditorConfig) return null;
 
-              // 每次渲染时重新生成配置，以确保使用最新的props值
-              const config = (ComponentClass as any).getEditorConfig(t);
+                // 每次渲染时重新生成配置，以确保使用最新的props值
+                const config = (ComponentClass as any).getEditorConfig(t);
 
-              return (
-                <>
-                  {config.forms.map((form: PropForm, index: number) => (
-                    <div key={index} className="flex flex-col gap-1">
-                      <Typography.Text
-                        type="tertiary"
-                        size="small"
-                        className="mt-5px"
-                      >
-                        {t(form.label)}
-                      </Typography.Text>
-                      {React.cloneElement(form.element as any, {
-                        checked: editingItem.item.props[form.key],
-                        value: editingItem.item.props[form.key],
-                        onChange: (value: any) => {
-                          setEditingItem({
-                            ...editingItem,
-                            item: {
-                              ...editingItem.item,
-                              props: {
-                                ...editingItem.item.props,
-                                [form.key]: value,
+                return (
+                  <>
+                    {config.forms.map((form: PropForm, index: number) => (
+                      <div key={index} className="flex flex-col gap-1">
+                        <Typography.Text
+                          type="tertiary"
+                          size="small"
+                          className="mt-5px"
+                        >
+                          {t(form.label)}
+                        </Typography.Text>
+                        {React.cloneElement(form.element as any, {
+                          checked: editingItem.item.props[form.key],
+                          value: editingItem.item.props[form.key],
+                          onChange: (value: any) => {
+                            setEditingItem({
+                              ...editingItem,
+                              item: {
+                                ...editingItem.item,
+                                props: {
+                                  ...editingItem.item.props,
+                                  [form.key]: value,
+                                },
                               },
-                            },
-                          });
-                          setRows(prev =>
-                            prev.map(row =>
-                              row.map(item => {
-                                return item.id === editingItem.item.id
-                                  ? {
-                                      ...item,
-                                      props: {
-                                        ...item.props,
-                                        [form.key]: value,
-                                      },
-                                    }
-                                  : item;
-                              })
-                            )
+                            });
+                            setRows(prev =>
+                              prev.map(row =>
+                                row.map(item => {
+                                  return item.id === editingItem.item.id
+                                    ? {
+                                        ...item,
+                                        props: {
+                                          ...item.props,
+                                          [form.key]: value,
+                                        },
+                                      }
+                                    : item;
+                                })
+                              )
+                            );
+                          },
+                        })}
+                      </div>
+                    ))}
+                    {/* 添加删除按钮 */}
+                    <div className="mt-4 pt-4 border-t border-solid border-gray-200">
+                      <Button
+                        type="danger"
+                        theme="outline"
+                        onClick={() => {
+                          // 查找组件所在的行
+                          const rowIndex = rows.findIndex(row =>
+                            row.some(item => item.id === editingItem.item.id)
                           );
-                        },
-                      })}
+                          if (rowIndex !== -1) {
+                            // 过滤掉要删除的组件
+                            setRows(prev =>
+                              prev.map((row, idx) =>
+                                idx === rowIndex
+                                  ? row.filter(
+                                      item => item.id !== editingItem.item.id
+                                    )
+                                  : row
+                              )
+                            );
+                            // 关闭编辑框
+                            setEditingItem(null);
+                          }
+                        }}
+                        block
+                      >
+                        {t("editor.delete")}
+                      </Button>
                     </div>
-                  ))}
-                  {/* 添加删除按钮 */}
-                  <div className="mt-4 pt-4 border-t border-solid border-gray-200">
-                    <Button
-                      type="danger"
-                      theme="outline"
-                      onClick={() => {
-                        // 查找组件所在的行
-                        const rowIndex = rows.findIndex(row =>
-                          row.some(item => item.id === editingItem.item.id)
-                        );
-                        if (rowIndex !== -1) {
-                          // 过滤掉要删除的组件
-                          setRows(prev =>
-                            prev.map((row, idx) =>
-                              idx === rowIndex
-                                ? row.filter(
-                                    item => item.id !== editingItem.item.id
-                                  )
-                                : row
-                            )
-                          );
-                          // 关闭编辑框
-                          setEditingItem(null);
-                        }
-                      }}
-                      block
-                    >
-                      {t("editor.delete")}
-                    </Button>
-                  </div>
-                </>
-              );
-            })()}
-          </div>
-        )}
+                  </>
+                );
+              })()}
+            </div>,
+            document.body
+          )}
       </div>
     );
   }

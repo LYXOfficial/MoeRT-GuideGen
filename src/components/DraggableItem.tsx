@@ -7,11 +7,14 @@ export default function DraggableItem({
   children,
   onClick,
   data,
+  zoom = 1,
 }: {
   id: string;
   children: React.ReactNode;
   onClick?: (event: React.MouseEvent) => void;
   data?: Record<string, any>;
+  // 当前编辑区缩放，用于修正 dnd 在缩放容器内的位移
+  zoom?: number;
 }) {
   const {
     attributes,
@@ -24,8 +27,18 @@ export default function DraggableItem({
     id,
     data,
   });
+  // 在被缩放的容器内（父级 scale(zoom)），dnd-kit 提供的 translate 会被再次放大，
+  // 需要将位移按 zoom 折算，保证视觉上与指针一致。
+  const adjustedTransform = transform
+    ? {
+        ...transform,
+        x: transform.x / (zoom || 1),
+        y: transform.y / (zoom || 1),
+      }
+    : null;
+
   const style = {
-    transform: CSS.Transform.toString(transform),
+    transform: CSS.Transform.toString(adjustedTransform as any),
     transition: transition || "transform 200ms ease, opacity 200ms ease",
     outline: isDragging ? "2px dashed #66ccff" : "1px solid transparent",
     display: "inline-flex",
