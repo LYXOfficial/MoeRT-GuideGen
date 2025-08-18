@@ -11,7 +11,9 @@ export const blankDefaultProps: BlankProps = {
   background: colors.background,
   width: 20,
 };
-export const blankEditorConfig: EditorConfig = {
+export const blankEditorConfig = (
+  _t: (key: string) => string
+): EditorConfig => ({
   forms: [
     {
       key: "width",
@@ -24,7 +26,7 @@ export const blankEditorConfig: EditorConfig = {
       element: <CustomColorPicker currentTheme={0} />,
     },
   ],
-};
+});
 
 function Blank({
   background = blankDefaultProps.background,
@@ -38,6 +40,6 @@ function Blank({
   );
 }
 
-Blank.getEditorConfig = () => blankEditorConfig;
+Blank.getEditorConfig = (t: (key: string) => string) => blankEditorConfig(t);
 
 export default Blank;

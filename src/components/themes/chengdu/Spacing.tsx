@@ -9,7 +9,9 @@ export const spacingDefaultProps: SpacingProps = {
   background: colors.background,
 };
 
-export const spacingEditorConfig: EditorConfig = {
+export const spacingEditorConfig = (
+  _t: (key: string) => string
+): EditorConfig => ({
   forms: [
     {
       key: "background",
@@ -17,7 +19,7 @@ export const spacingEditorConfig: EditorConfig = {
       element: <CustomColorPicker currentTheme={1} />,
     },
   ],
-};
+});
 
 function Spacing({
   background = spacingDefaultProps.background,
@@ -30,6 +32,7 @@ function Spacing({
   );
 }
 
-Spacing.getEditorConfig = () => spacingEditorConfig;
+Spacing.getEditorConfig = (t: (key: string) => string) =>
+  spacingEditorConfig(t);
 
 export default Spacing;

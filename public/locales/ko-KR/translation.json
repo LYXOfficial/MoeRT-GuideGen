@@ -37,6 +37,9 @@
     "success": "내보내기 성공!"
   },
   "saves": {
+    "clear_local_button": "로컬 저장소 지우기",
+    "clear_local_title": "로컬 저장소 지우기",
+    "clear_local_confirm": "로컬 자동 저장을 지우고 페이지를 새로고침하시겠습니까? 이 작업은 취소할 수 없습니다.",
     "export_image": "이미지로 내보내기",
     "save_project": "프로젝트를 로컬에 저장",
     "load_project": "프로젝트 가져오기",

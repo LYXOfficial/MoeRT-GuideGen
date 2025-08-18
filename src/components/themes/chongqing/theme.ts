@@ -4,7 +4,7 @@ import "./fonts/helvetica.css";
 import LineNum, { lineNumDefaultProps } from "./LineNum.tsx";
 import LineText, { lineTextDefaultProps } from "./LineText.tsx";
 import Arrow, { arrowDefaultProps } from "./Arrow.tsx";
-import Icon from "./Icon.tsx";
+import Icon, { iconDefaultProps } from "./Icon.tsx";
 import NumAlphabet, { numAlphabetDefaultProps } from "./NumAlphabet.tsx";
 import Spacing, { spacingDefaultProps } from "./Spacing.tsx";
 import Text, { textDefaultProps } from "./Text.tsx";
@@ -43,8 +43,7 @@ const theme: Theme = {
     {
       displayName: "themes.chongqing.components.Icon",
       component: Icon,
-      // defaultProps: iconDefaultProps
-      defaultProps: {},
+      defaultProps: iconDefaultProps,
     },
     {
       displayName: "themes.chongqing.components.Text",

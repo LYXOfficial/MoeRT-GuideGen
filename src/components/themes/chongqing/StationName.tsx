@@ -12,7 +12,9 @@ export const stationNameDefaultProps: StationNameProps = {
   english: "Hongqihegou",
 };
 
-export const stationNameEditorConfig: EditorConfig = {
+export const stationNameEditorConfig = (
+  _t: (key: string) => string
+): EditorConfig => ({
   forms: [
     {
       key: "chinese",
@@ -25,7 +27,7 @@ export const stationNameEditorConfig: EditorConfig = {
       element: <Input />,
     },
   ],
-};
+});
 
 function StationName({
   chinese = stationNameDefaultProps.chinese,
@@ -86,6 +88,7 @@ function StationName({
   );
 }
 
-StationName.getEditorConfig = () => stationNameEditorConfig;
+StationName.getEditorConfig = (t: (key: string) => string) =>
+  stationNameEditorConfig(t);
 
 export default StationName;

@@ -4,8 +4,9 @@ import {
   IconImport,
   IconUpload,
   IconLanguage,
+  IconDeleteStroked,
 } from "@douyinfe/semi-icons";
-import { Popover, List } from "@douyinfe/semi-ui";
+import { Popover, List, Modal } from "@douyinfe/semi-ui";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { ExportDialog } from "./ExportDialog";
@@ -108,6 +109,22 @@ export default function Header({
             title="GitHub"
           >
             <IconGithubLogo size="extra-large" />
+          </a>
+          <a
+            className="transition duration-300 hover:text-red-500 flex items-center"
+            onClick={() => {
+              Modal.confirm({
+                title: t("saves.clear_local_title"),
+                content: t("saves.clear_local_confirm"),
+                onOk: () => {
+                  localStorage.removeItem("guide-autosave");
+                  location.reload();
+                },
+              });
+            }}
+            title={t("saves.clear_local_button")}
+          >
+            <IconDeleteStroked size="extra-large" />
           </a>
         </div>
       </header>

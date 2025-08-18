@@ -11,7 +11,9 @@ export const specLineDefaultProps = {
   background: colors.background,
 };
 
-export const specLineEditorConfig: EditorConfig = {
+export const specLineEditorConfig = (
+  _t: (key: string) => string
+): EditorConfig => ({
   forms: [
     {
       key: "foreground",
@@ -24,7 +26,7 @@ export const specLineEditorConfig: EditorConfig = {
       element: <CustomColorPicker currentTheme={1} />,
     },
   ],
-};
+});
 
 function SpecLine({
   background = specLineDefaultProps.background,
@@ -42,6 +44,7 @@ function SpecLine({
   );
 }
 
-SpecLine.getEditorConfig = () => specLineEditorConfig;
+SpecLine.getEditorConfig = (t: (key: string) => string) =>
+  specLineEditorConfig(t);
 
 export default SpecLine;

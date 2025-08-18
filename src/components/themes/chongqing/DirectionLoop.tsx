@@ -23,7 +23,9 @@ export const directionLoopDefaultProps: DirectionLoopProps = {
   background: colors.background,
 };
 
-export const directionEditorConfig: EditorConfig = {
+export const directionEditorConfig = (
+  t: (key: string) => string
+): EditorConfig => ({
   forms: [
     {
       key: "tochinese",
@@ -51,8 +53,12 @@ export const directionEditorConfig: EditorConfig = {
         "themes.chongqing.components.DirectionLoop.props.align.displayName",
       element: (
         <Select>
-          <Select.Option value="left">left</Select.Option>
-          <Select.Option value="right">right</Select.Option>
+          <Select.Option value="left">
+            {t("themes.chongqing.components.DirectionLoop.props.align.left")}
+          </Select.Option>
+          <Select.Option value="right">
+            {t("themes.chongqing.components.DirectionLoop.props.align.right")}
+          </Select.Option>
         </Select>
       ),
     },
@@ -67,7 +73,7 @@ export const directionEditorConfig: EditorConfig = {
       element: <CustomColorPicker currentTheme={1} />,
     },
   ],
-};
+});
 
 export default function DirectionLoop({
   tochinese = directionLoopDefaultProps.tochinese,
@@ -134,4 +140,5 @@ export default function DirectionLoop({
 }
 
 // 添加静态方法
-DirectionLoop.getEditorConfig = () => directionEditorConfig;
+DirectionLoop.getEditorConfig = (t: (key: string) => string) =>
+  directionEditorConfig(t);

@@ -2,7 +2,6 @@ import { Select } from "@douyinfe/semi-ui";
 import colors from "./define/colors";
 import type { EditorConfig } from "../../../interfaces/editor";
 import CustomColorPicker from "../../CustomColorPicker";
-import { t } from "i18next";
 
 import Metro from "./icons/metro";
 import Exit from "./icons/exit";
@@ -51,7 +50,7 @@ export const iconDefaultProps: IconProps = {
   background: colors.background,
 };
 
-export const iconEditorConfig: EditorConfig = {
+export const iconEditorConfig = (t: (key: string) => string): EditorConfig => ({
   forms: [
     {
       key: "rotation",
@@ -91,7 +90,7 @@ export const iconEditorConfig: EditorConfig = {
       element: <CustomColorPicker currentTheme={0} />,
     },
   ],
-};
+});
 
 function Icon({
   rotation = iconDefaultProps.rotation,
@@ -114,6 +113,6 @@ function Icon({
   );
 }
 
-Icon.getEditorConfig = () => iconEditorConfig;
+Icon.getEditorConfig = (t: (key: string) => string) => iconEditorConfig(t);
 
 export default Icon;

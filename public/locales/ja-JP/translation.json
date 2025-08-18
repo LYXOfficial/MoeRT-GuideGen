@@ -37,6 +37,9 @@
     "success": "エクスポート成功！"
   },
   "saves": {
+    "clear_local_button": "ローカル保存を消去",
+    "clear_local_title": "ローカル保存を消去",
+    "clear_local_confirm": "ローカルの自動保存を消去してページをリロードしてもよろしいですか？この操作は元に戻せません。",
     "export_image": "画像としてエクスポート",
     "save_project": "プロジェクトをローカルに保存",
     "load_project": "プロジェクトをインポート",

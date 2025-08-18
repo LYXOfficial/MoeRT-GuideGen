@@ -22,7 +22,9 @@ export const lineNumDefaultProps: LineNumProps = {
   align: "left",
 };
 
-export const lineNumEditorConfig: EditorConfig = {
+export const lineNumEditorConfig = (
+  t: (key: string) => string
+): EditorConfig => ({
   forms: [
     {
       key: "lineColor",
@@ -54,13 +56,17 @@ export const lineNumEditorConfig: EditorConfig = {
       label: "themes.chengdu.components.LineNum.props.align.displayName",
       element: (
         <Select>
-          <Select.Option value="left">left</Select.Option>
-          <Select.Option value="right">right</Select.Option>
+          <Select.Option value="left">
+            {t("themes.chengdu.components.LineNum.props.align.left")}
+          </Select.Option>
+          <Select.Option value="right">
+            {t("themes.chengdu.components.LineNum.props.align.right")}
+          </Select.Option>
         </Select>
       ),
     },
   ],
-};
+});
 
 function LineNum({
   num = lineNumDefaultProps.num,
@@ -220,6 +226,7 @@ function LineNum({
   );
 }
 
-LineNum.getEditorConfig = () => lineNumEditorConfig;
+LineNum.getEditorConfig = (t: (key: string) => string) =>
+  lineNumEditorConfig(t);
 
 export default LineNum;

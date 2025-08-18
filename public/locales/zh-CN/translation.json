@@ -37,6 +37,9 @@
     "success": "导出成功！"
   },
   "saves": {
+    "clear_local_button": "清除本地存档",
+    "clear_local_title": "清除本地存档",
+    "clear_local_confirm": "确定要清除本地自动存档并刷新页面吗？此操作不可撤销。",
     "export_image": "导出为图片",
     "save_project": "保存项目到本地",
     "load_project": "导入项目",

@@ -18,7 +18,9 @@ export const lineTextDefaultProps: LineTextProps = {
   align: "left",
 };
 
-export const lineTextEditorConfig: EditorConfig = {
+export const lineTextEditorConfig = (
+  t: (key: string) => string
+): EditorConfig => ({
   forms: [
     {
       key: "lineColor",
@@ -40,13 +42,17 @@ export const lineTextEditorConfig: EditorConfig = {
       label: "themes.chongqing.components.LineText.props.align.displayName",
       element: (
         <Select>
-          <Select.Option value="left">left</Select.Option>
-          <Select.Option value="right">right</Select.Option>
+          <Select.Option value="left">
+            {t("themes.chongqing.components.LineText.props.align.left")}
+          </Select.Option>
+          <Select.Option value="right">
+            {t("themes.chongqing.components.LineText.props.align.right")}
+          </Select.Option>
         </Select>
       ),
     },
   ],
-};
+});
 
 function LineText({
   lineColor = lineTextDefaultProps.lineColor,
@@ -119,5 +125,6 @@ function LineText({
   );
 }
 
-LineText.getEditorConfig = () => lineTextEditorConfig;
+LineText.getEditorConfig = (t: (key: string) => string) =>
+  lineTextEditorConfig(t);
 export default LineText;

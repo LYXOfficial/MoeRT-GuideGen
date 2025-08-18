@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, useCallback } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import ComponentsList from "./ComponentsList";
 import GuideBoardCols, { type GuideBoardRef } from "./GuideBoard";
 import type { GuideItem } from "../interfaces/guide";
@@ -54,6 +54,28 @@ export default function Editor({
   }>({ show: false, x: 0, y: 0, height: 0 });
 
   // 导出存档
+  const stripGuideItem = (
+    item: GuideItem
+  ): { id: string; type: string; props: Record<string, any> } => {
+    const props: any = { ...(item.props || {}) };
+    // element 不保存
+    delete props.element;
+    // children 若存在，为数组则递归剥离元素
+    if (Array.isArray(props.children)) {
+      props.children = props.children.map((row: any[]) =>
+        (row || []).map((child: any) =>
+          stripGuideItem({
+            id: child.id,
+            type: child.type,
+            props: child.props,
+            element: child.element,
+          } as GuideItem)
+        )
+      );
+    }
+    return { id: item.id, type: item.type, props };
+  };
+
   const exportSaveData = () => {
     if (!guideBoardRef.current) return;
     const { rows, config } = guideBoardRef.current.getState();
@@ -63,13 +85,7 @@ export default function Editor({
         ...config,
         theme: themes[currentTheme][0],
       },
-      rows: rows.map(row =>
-        row.map(({ id, type, props }) => ({
-          id,
-          type,
-          props,
-        }))
-      ),
+      rows: rows.map(row => row.map(stripGuideItem)),
     };
 
     // 下载文件
@@ -155,13 +171,7 @@ export default function Editor({
         ...config,
         theme: themes[currentTheme][0],
       },
-      rows: rows.map(row =>
-        row.map(({ id, type, props }) => ({
-          id,
-          type,
-          props,
-        }))
-      ),
+      rows: rows.map(row => row.map(stripGuideItem)),
     };
     localStorage.setItem("guide-autosave", JSON.stringify(saveData));
     lastChangeRef.current = Date.now();
@@ -302,48 +312,7 @@ export default function Editor({
       overRowId = over.id.toString();
     }
 
-    // 检查是否是拖拽到 TwoRowContainer 内部行
-    const isTwoRowContainerTarget = over.data.current?.type === 'two-row-container-row';
-    const twoRowTargetId = over.data.current?.rowId;
-
-    // 从组件列表拖入到 TwoRowContainer 内部行
-    if (draggedItem && !sourceRowId && isTwoRowContainerTarget && twoRowTargetId) {
-      console.log('拖拽到 TwoRowContainer 内部行:', { draggedItem, twoRowTargetId });
-      
-      // 阻止拖拽 TwoRowContainer 到自身内部
-      if (draggedItem.type === "TwoRowContainer") return;
-
-      const newId = `${draggedItem.type || "item"}-${Math.random().toString(36).substring(2)}`;
-      const themeComponents = themes[currentTheme][1].components;
-      const componentInfo = themeComponents.find(c => c.displayName === draggedItem.type);
-      if (!componentInfo) {
-        console.log('未找到组件信息:', draggedItem.type);
-        return;
-      }
-
-      const newItem: GuideItem = {
-        id: newId,
-        type: draggedItem.type,
-        props: { ...componentInfo.defaultProps },
-        element: React.createElement(componentInfo.component, {
-          ...componentInfo.defaultProps,
-          id: newId,
-          currentTheme,
-        }),
-      };
-
-      // 找到对应的 TwoRowContainer 并更新其 children
-      const containerMatch = twoRowTargetId.match(/^(.+)-(top|bottom)$/);
-      if (containerMatch) {
-        const containerId = containerMatch[1];
-        const targetRow = containerMatch[2] as 'top' | 'bottom';
-        
-        console.log('更新 TwoRowContainer:', { containerId, targetRow, newItem });
-        guideBoardRef.current?.updateTwoRowContainerChildren(containerId, newItem, targetRow);
-        lastChangeRef.current = Date.now();
-      }
-      return;
-    }
+    // 移除 TwoRowContainer 内部行的特殊处理
 
     if (!overRowId) return;
 
@@ -397,6 +366,8 @@ export default function Editor({
         ...draggedItem,
         id: newId,
       };
+
+      // 无 TwoRowContainer 特殊处理
 
       guideBoardRef.current?.addItemToRow(targetRowId, newItem, insertIndex);
       lastChangeRef.current = Date.now();
@@ -500,13 +471,19 @@ export default function Editor({
     }
 
     // 检查是否是 TwoRowContainer 内部行
-    const isTwoRowContainerTarget = over.data.current?.type === 'two-row-container-row';
+    const isTwoRowContainerTarget =
+      over.data.current?.type === "two-row-container-row";
     const twoRowTargetId = over.data.current?.rowId;
 
     // 处理拖拽到 TwoRowContainer 内部行的情况
-    if (!sourceRowId && draggedItem && isTwoRowContainerTarget && twoRowTargetId) {
+    if (
+      !sourceRowId &&
+      draggedItem &&
+      isTwoRowContainerTarget &&
+      twoRowTargetId
+    ) {
       // 阻止拖拽 TwoRowContainer 到自身内部
-      if (draggedItem.type === "TwoRowContainer") {
+      if (draggedItem.type?.indexOf("TwoRowContainer") !== -1) {
         setDropIndicator({ show: false, x: 0, y: 0, height: 0 });
         return;
       }
@@ -515,8 +492,10 @@ export default function Editor({
       const targetElement = document.querySelector(`[id="${twoRowTargetId}"]`);
       if (targetElement) {
         const targetRect = targetElement.getBoundingClientRect();
-        const guideBoardRect = document.querySelector(".guide-board")?.getBoundingClientRect();
-        
+        const guideBoardRect = document
+          .querySelector(".guide-board")
+          ?.getBoundingClientRect();
+
         if (guideBoardRect) {
           setDropIndicator({
             show: true,
@@ -537,6 +516,12 @@ export default function Editor({
 
     // 如果是从组件列表拖入，显示指示器
     if (!sourceRowId && draggedItem) {
+      // 如果拖拽的是 TwoRowContainer，不显示指示器（因为它是容器组件，直接添加到行中）
+      if (draggedItem.type?.indexOf("TwoRowContainer") !== -1) {
+        setDropIndicator({ show: false, x: 0, y: 0, height: 0 });
+        return;
+      }
+
       const rowNumber = overRowId.match(/^row(\d+)/);
       if (!rowNumber) {
         setDropIndicator({ show: false, x: 0, y: 0, height: 0 });

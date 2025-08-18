@@ -23,21 +23,39 @@ export const arrowDefaultProps: ArrowProps = {
   background: colors.background,
 };
 
-export const arrowEditorConfig: EditorConfig = {
+export const arrowEditorConfig = (
+  t: (key: string) => string
+): EditorConfig => ({
   forms: [
     {
       key: "type",
       label: "themes.chongqing.components.Arrow.props.type.displayName",
       element: (
         <Select>
-          <Select.Option value="up">Up</Select.Option>
-          <Select.Option value="down">Down</Select.Option>
-          <Select.Option value="left">Left</Select.Option>
-          <Select.Option value="right">Right</Select.Option>
-          <Select.Option value="up-left">Left-Up</Select.Option>
-          <Select.Option value="up-right">Right-Up</Select.Option>
-          <Select.Option value="down-left">Left-Down</Select.Option>
-          <Select.Option value="down-right">Right-Down</Select.Option>
+          <Select.Option value="up">
+            {t("themes.chongqing.components.Arrow.props.type.up")}
+          </Select.Option>
+          <Select.Option value="down">
+            {t("themes.chongqing.components.Arrow.props.type.down")}
+          </Select.Option>
+          <Select.Option value="left">
+            {t("themes.chongqing.components.Arrow.props.type.left")}
+          </Select.Option>
+          <Select.Option value="right">
+            {t("themes.chongqing.components.Arrow.props.type.right")}
+          </Select.Option>
+          <Select.Option value="up-left">
+            {t("themes.chongqing.components.Arrow.props.type.up-left")}
+          </Select.Option>
+          <Select.Option value="up-right">
+            {t("themes.chongqing.components.Arrow.props.type.up-right")}
+          </Select.Option>
+          <Select.Option value="down-left">
+            {t("themes.chongqing.components.Arrow.props.type.down-left")}
+          </Select.Option>
+          <Select.Option value="down-right">
+            {t("themes.chongqing.components.Arrow.props.type.down-right")}
+          </Select.Option>
         </Select>
       ),
     },
@@ -52,7 +70,7 @@ export const arrowEditorConfig: EditorConfig = {
       element: <CustomColorPicker currentTheme={0} />,
     },
   ],
-};
+});
 
 function Arrow({
   type = arrowDefaultProps.type,
@@ -87,6 +105,6 @@ function Arrow({
   );
 }
 
-Arrow.getEditorConfig = () => arrowEditorConfig;
+Arrow.getEditorConfig = (t: (key: string) => string) => arrowEditorConfig(t);
 
 export default Arrow;

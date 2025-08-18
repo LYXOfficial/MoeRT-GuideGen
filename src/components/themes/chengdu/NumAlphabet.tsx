@@ -15,7 +15,9 @@ export const numAlphabetDefaultProps: NumAlphabetProps = {
   background: colors.background,
   type: "fit",
 };
-export const numAlphabetEditorConfig: EditorConfig = {
+export const numAlphabetEditorConfig = (
+  t: (key: string) => string
+): EditorConfig => ({
   forms: [
     {
       key: "text",
@@ -27,8 +29,12 @@ export const numAlphabetEditorConfig: EditorConfig = {
       label: "themes.chengdu.components.NumAlphabet.props.type.displayName",
       element: (
         <Select>
-          <Select.Option value="block">Block</Select.Option>
-          <Select.Option value="fit">Fit</Select.Option>
+          <Select.Option value="block">
+            {t("themes.chengdu.components.NumAlphabet.props.type.block")}
+          </Select.Option>
+          <Select.Option value="fit">
+            {t("themes.chengdu.components.NumAlphabet.props.type.fit")}
+          </Select.Option>
         </Select>
       ),
     },
@@ -43,7 +49,7 @@ export const numAlphabetEditorConfig: EditorConfig = {
       element: <CustomColorPicker currentTheme={1} />,
     },
   ],
-};
+});
 
 function NumAlphabet({
   text = numAlphabetDefaultProps.text,
@@ -101,6 +107,7 @@ function NumAlphabet({
   );
 }
 
-NumAlphabet.getEditorConfig = () => numAlphabetEditorConfig;
+NumAlphabet.getEditorConfig = (t: (key: string) => string) =>
+  numAlphabetEditorConfig(t);
 
 export default NumAlphabet;

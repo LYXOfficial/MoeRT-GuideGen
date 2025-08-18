@@ -37,6 +37,9 @@
     "success": "Export successful!"
   },
   "saves": {
+    "clear_local_button": "Clear Local Saves",
+    "clear_local_title": "Clear Local Saves",
+    "clear_local_confirm": "Are you sure you want to clear local autosave and refresh the page? This cannot be undone.",
     "export_image": "Export as Image",
     "save_project": "Save Project Locally",
     "load_project": "Import Project",

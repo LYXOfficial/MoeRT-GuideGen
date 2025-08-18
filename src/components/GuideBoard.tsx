@@ -19,6 +19,9 @@ import themes from "./themes/themereg.ts";
 import type { PropForm } from "../interfaces/editor.ts";
 import type { GuideItem } from "../interfaces/guide";
 
+// 用于还原状态时的精简条目类型（允许可选 children）
+type SavedItem = Pick<GuideItem, "id" | "type" | "props">;
+
 export interface BoardState {
   rows: Array<Array<GuideItem>>;
   config: {
@@ -32,16 +35,11 @@ export interface GuideBoardRef {
   removeItemFromRow: (rowId: string, itemId: string) => GuideItem | null;
   reorderRow: (rowId: string, oldIndex: number, newIndex: number) => void;
   getItemIndex: (rowId: string, itemId: string) => number;
-  updateItemChildren: (itemId: string, children: GuideItem[][]) => void;
-  updateTwoRowContainerChildren: (
-    containerId: string,
-    newItem: GuideItem,
-    targetRow: "top" | "bottom"
-  ) => void;
+  // TwoRowContainer 已移除
   clearBoard: () => void;
   getState: () => BoardState;
   restoreState: (state: {
-    rows: Array<Array<Pick<GuideItem, "id" | "type" | "props">>>;
+    rows: Array<Array<SavedItem>>;
     config: BoardState["config"];
   }) => void;
 }
@@ -112,6 +110,7 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
     const [editingItem, setEditingItem] = useState<{
       item: GuideItem;
       position: { x: number; y: number };
+      parentId?: string; // 若为 TwoRowContainer 内部子项，则父容器 ID
     } | null>(null);
     const boardContentRef = useRef<HTMLDivElement>(null);
     const popupRef = useRef<HTMLDivElement>(null);
@@ -189,9 +188,9 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
           },
         }),
         restoreState: state => {
-          const restoredRows = state.rows.map(row =>
+          const restoredRows = state.rows.map((row: SavedItem[]) =>
             row
-              .map(item => {
+              .map((item: SavedItem) => {
                 // 直接从当前主题中获取组件
                 const Component = themes[currentTheme][1].components.find(
                   comp => comp.displayName === item.type
@@ -208,13 +207,21 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
                   return null;
                 }
 
+                // 构造 props；TwoRowContainer 的 children 完全放在 props.children 中
+                const finalProps: any = {
+                  key: item.id,
+                  ...item.props,
+                  id: item.id,
+                  currentTheme,
+                };
+                // 无 TwoRowContainer 特殊处理
+
                 return {
                   ...item,
-                  element: React.createElement(Component as React.ElementType, {
-                    key: item.id,
-                    currentTheme, // 确保传入当前主题
-                    ...item.props,
-                  }),
+                  element: React.createElement(
+                    Component as React.ElementType,
+                    finalProps
+                  ),
                 } as GuideItem;
               })
               .filter((item): item is GuideItem => item !== null)
@@ -228,15 +235,41 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
           item: GuideItem,
           insertIndex?: number
         ) => {
+          // 统一用主题里的组件重建 element，确保 id/currentTheme/children 正确
           setRows(prev => {
             const idx = Number(rowId.replace("row", "")) - 1;
             if (idx < 0 || idx >= prev.length) return prev;
             const newRows = prev.map(arr => [...arr]);
+
+            const Component = themes[currentTheme][1].components.find(
+              comp => comp.displayName === item.type
+            )?.component;
+
+            const finalProps: any = {
+              ...(item.props || {}),
+              id: item.id,
+              currentTheme,
+            };
+            // 无 TwoRowContainer 特殊处理
+
+            const rebuilt: GuideItem = Component
+              ? {
+                  ...item,
+                  element: React.createElement(
+                    Component as React.ElementType,
+                    finalProps
+                  ),
+                  // 同步 props 里也带上 children，避免后续丢失
+                  props: { ...finalProps },
+                }
+              : item;
+
             if (insertIndex !== undefined) {
-              newRows[idx].splice(insertIndex, 0, item);
+              newRows[idx].splice(insertIndex, 0, rebuilt);
             } else {
-              newRows[idx].push(item);
+              newRows[idx].push(rebuilt);
             }
+            // console.log('addItemToRow 完成，新的 rows:', newRows); // 调试完成
             return newRows;
           });
         },
@@ -271,73 +304,7 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
           if (idx < 0 || idx >= rows.length) return -1;
           return rows[idx].findIndex(i => i.id === itemId);
         },
-        updateItemChildren: (itemId, children) => {
-          setRows(prev => {
-            return prev.map(row =>
-              row.map(item => {
-                if (item.id === itemId) {
-                  return { ...item, children };
-                }
-                return item;
-              })
-            );
-          });
-        },
-        updateTwoRowContainerChildren: (containerId, newItem, targetRow) => {
-          setRows(prev => {
-            return prev.map(row =>
-              row.map(item => {
-                if (
-                  item.id === containerId &&
-                  item.type === "TwoRowContainer" &&
-                  item.children
-                ) {
-                  const newChildren = [...(item.children as GuideItem[][])];
-                  const rowIndex = targetRow === "top" ? 0 : 1;
-                  if (!newChildren[rowIndex]) {
-                    newChildren[rowIndex] = [];
-                  }
-                  newChildren[rowIndex].push(newItem);
-
-                  // 更新组件元素
-                  const themeComponents = themes[currentTheme][1].components;
-                  const componentInfo = themeComponents.find(
-                    c => c.displayName === "TwoRowContainer"
-                  );
-                  if (componentInfo) {
-                    const updatedElement = React.createElement(
-                      componentInfo.component,
-                      {
-                        ...item.props,
-                        id: item.id,
-                        currentTheme,
-                        children: newChildren,
-                        onChildrenChange: (updatedChildren: GuideItem[][]) => {
-                          setRows(prevRows =>
-                            prevRows.map(r =>
-                              r.map(it =>
-                                it.id === item.id
-                                  ? { ...it, children: updatedChildren }
-                                  : it
-                              )
-                            )
-                          );
-                        },
-                      }
-                    );
-
-                    return {
-                      ...item,
-                      children: newChildren,
-                      element: updatedElement,
-                    };
-                  }
-                }
-                return item;
-              })
-            );
-          });
-        },
+        // 无 TwoRowContainer 相关方法
       }),
       [rows, boardWidth, showDividers, currentTheme]
     );
@@ -555,20 +522,7 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
               if (!(ComponentClass as any).getEditorConfig) return null;
 
               // 每次渲染时重新生成配置，以确保使用最新的props值
-              const config = (ComponentClass as any).getEditorConfig(
-                editingItem.item.props,
-                (newProps: any) => {
-                  setRows(prev =>
-                    prev.map(row =>
-                      row.map(item =>
-                        item.id === editingItem.item.id
-                          ? { ...item, props: { ...item.props, ...newProps } }
-                          : item
-                      )
-                    )
-                  );
-                }
-              );
+              const config = (ComponentClass as any).getEditorConfig(t);
 
               return (
                 <>

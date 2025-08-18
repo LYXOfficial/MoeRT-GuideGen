@@ -123,7 +123,9 @@ export const stationNumberDefaultProps: StationNumberProps = {
   ],
 };
 
-export const stationNumberEditorConfig: EditorConfig = {
+export const stationNumberEditorConfig = (
+  _t: (key: string) => string
+): EditorConfig => ({
   forms: [
     {
       key: "lines",
@@ -131,7 +133,7 @@ export const stationNumberEditorConfig: EditorConfig = {
       element: <LineArrayEditor />,
     },
   ],
-};
+});
 
 export default function StationNumber({
   lines = stationNumberDefaultProps.lines,
@@ -190,4 +192,5 @@ export default function StationNumber({
 }
 
 // 添加静态方法
-StationNumber.getEditorConfig = () => stationNumberEditorConfig;
+StationNumber.getEditorConfig = (t: (key: string) => string) =>
+  stationNumberEditorConfig(t);

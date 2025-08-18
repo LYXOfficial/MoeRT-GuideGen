@@ -23,7 +23,9 @@ export const directionDefaultProps: DirectionProps = {
   background: colors.background,
 };
 
-export const directionEditorConfig: EditorConfig = {
+export const directionEditorConfig = (
+  t: (key: string) => string
+): EditorConfig => ({
   forms: [
     {
       key: "tochinese",
@@ -50,8 +52,12 @@ export const directionEditorConfig: EditorConfig = {
       label: "themes.chengdu.components.Direction.props.align.displayName",
       element: (
         <Select>
-          <Select.Option value="left">left</Select.Option>
-          <Select.Option value="right">right</Select.Option>
+          <Select.Option value="left">
+            {t("themes.chengdu.components.Direction.props.align.left")}
+          </Select.Option>
+          <Select.Option value="right">
+            {t("themes.chengdu.components.Direction.props.align.right")}
+          </Select.Option>
         </Select>
       ),
     },
@@ -66,7 +72,7 @@ export const directionEditorConfig: EditorConfig = {
       element: <CustomColorPicker currentTheme={1} />,
     },
   ],
-};
+});
 
 export default function Direction({
   tochinese = directionDefaultProps.tochinese,
@@ -133,4 +139,5 @@ export default function Direction({
 }
 
 // 添加静态方法
-Direction.getEditorConfig = () => directionEditorConfig;
+Direction.getEditorConfig = (t: (key: string) => string) =>
+  directionEditorConfig(t);

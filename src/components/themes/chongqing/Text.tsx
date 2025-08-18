@@ -19,7 +19,7 @@ export const textDefaultProps: TextProps = {
   background: colors.background,
 };
 
-export const textEditorConfig: EditorConfig = {
+export const textEditorConfig = (t: (key: string) => string): EditorConfig => ({
   forms: [
     {
       key: "chinese",
@@ -36,9 +36,15 @@ export const textEditorConfig: EditorConfig = {
       label: "themes.chongqing.components.Text.props.align.displayName",
       element: (
         <Select>
-          <Select.Option value="left">left</Select.Option>
-          <Select.Option value="center">center</Select.Option>
-          <Select.Option value="right">right</Select.Option>
+          <Select.Option value="left">
+            {t("themes.chongqing.components.Text.props.align.left")}
+          </Select.Option>
+          <Select.Option value="center">
+            {t("themes.chongqing.components.Text.props.align.center")}
+          </Select.Option>
+          <Select.Option value="right">
+            {t("themes.chongqing.components.Text.props.align.right")}
+          </Select.Option>
         </Select>
       ),
     },
@@ -53,7 +59,7 @@ export const textEditorConfig: EditorConfig = {
       element: <CustomColorPicker currentTheme={0} />,
     },
   ],
-};
+});
 
 export default function Text({
   chinese = textDefaultProps.chinese,
@@ -119,4 +125,4 @@ export default function Text({
 }
 
 // 添加静态方法
-Text.getEditorConfig = () => textEditorConfig;
+Text.getEditorConfig = (t: (key: string) => string) => textEditorConfig(t);
