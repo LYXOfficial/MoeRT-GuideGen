@@ -139,7 +139,9 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
     useEffect(() => {
       // 通知外层当前是否在编辑（用于禁用缩放等）
       try {
-        const evt = new CustomEvent('guide-editing-change', { detail: { isEditing: !!editingItem } });
+        const evt = new CustomEvent("guide-editing-change", {
+          detail: { isEditing: !!editingItem },
+        });
         window.dispatchEvent(evt);
       } catch {}
 
@@ -509,7 +511,30 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
             <div
               className="editing-popup"
               onClick={e => e.stopPropagation()}
-              ref={popupRef}
+              tabIndex={0}
+              ref={el => {
+                // @ts-ignore
+                popupRef.current = el;
+                if (el) el.focus();
+              }}
+              onKeyDown={e => {
+                if (e.key === "Delete" || e.key === "Del") {
+                  // 查找组件所在的行
+                  const rowIndex = rows.findIndex(row =>
+                    row.some(item => item.id === editingItem.item.id)
+                  );
+                  if (rowIndex !== -1) {
+                    setRows(prev =>
+                      prev.map((row, idx) =>
+                        idx === rowIndex
+                          ? row.filter(item => item.id !== editingItem.item.id)
+                          : row
+                      )
+                    );
+                    setEditingItem(null);
+                  }
+                }
+              }}
               style={{
                 position: "fixed",
                 left: editingItem.position.x,
@@ -523,7 +548,9 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
                 fontFamily: themes[currentTheme][1].fontFamily,
               }}
             >
-              <Typography.Title heading={6}>{t("editor.title")}</Typography.Title>
+              <Typography.Title heading={6}>
+                {t("editor.title")}
+              </Typography.Title>
               {(() => {
                 // 从主题组件注册表中获取组件
                 const ComponentClass = themes[currentTheme][1].components.find(

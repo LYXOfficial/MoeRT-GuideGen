@@ -16,6 +16,7 @@ import colors from "./define/colors.ts";
 import type Theme from "../../../interfaces/theme.ts";
 import Direction, { directionDefaultProps } from "./Direction.tsx";
 import StationNumber from "./StationNumber.tsx";
+import ExitName, { exitNameDefaultProps } from "./ExitName.tsx";
 
 const theme: Theme = {
   colors: {
@@ -70,6 +71,11 @@ const theme: Theme = {
       displayName: "themes.chengdu.components.Direction",
       component: Direction,
       defaultProps: directionDefaultProps,
+    },
+    {
+      displayName: "themes.chengdu.components.ExitName",
+      component: ExitName,
+      defaultProps: exitNameDefaultProps,
     },
     {
       displayName: "themes.chengdu.components.SpecLine",

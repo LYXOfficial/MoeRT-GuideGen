@@ -208,6 +208,23 @@
               "right": "오른쪽"
             }
           }
+        },
+        "ExitName": {
+          "displayName": "출구명",
+          "props": {
+            "line1chinese": "1행 중국어",
+            "line1english": "1행 영어",
+            "line2chinese": "2행 중국어",
+            "line2english": "2행 영어",
+            "background": "배경색",
+            "foreground": "전경색",
+            "align": {
+              "displayName": "정렬",
+              "left": "왼쪽",
+              "right": "오른쪽",
+              "center": "가운데"
+            }
+          }
         }
       },
       "colors": {

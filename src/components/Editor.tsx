@@ -47,27 +47,27 @@ export default function Editor({
   // 添加全局鼠标位置跟踪
   const mousePositionRef = useRef({ x: 0, y: 0 });
 
-    // 将屏幕坐标转换为内容坐标系统
+  // 将屏幕坐标转换为内容坐标系统
   const transformMouseCoords = (screenX: number, screenY: number) => {
     if (!editorAreaRef.current) return { x: screenX, y: screenY };
-    
+
     const editorRect = editorAreaRef.current.getBoundingClientRect();
-    
+
     // 1. 将屏幕坐标转换为相对于 editorArea 的坐标
     const x = screenX - editorRect.left;
     const y = screenY - editorRect.top;
-    
+
     // 2. 应用逆变换
     // 变换公式: new_coord = (coord - pan) / zoom
     // 我们需要的是相对于 editorArea 中心的变换
     const centerX = editorRect.width / 2;
     const centerY = editorRect.height / 2;
 
-  // 现在使用 transform: scale(zoom) translate(pan)（先缩放再位移，位移不受缩放影响）
-  // 前向：view = center + zoom * (content - center) + pan
-  // 逆向：content = center + (view - center - pan) / zoom
-  const contentX = centerX + (x - centerX - pan.x) / zoom;
-  const contentY = centerY + (y - centerY - pan.y) / zoom;
+    // 现在使用 transform: scale(zoom) translate(pan)（先缩放再位移，位移不受缩放影响）
+    // 前向：view = center + zoom * (content - center) + pan
+    // 逆向：content = center + (view - center - pan) / zoom
+    const contentX = centerX + (x - centerX - pan.x) / zoom;
+    const contentY = centerY + (y - centerY - pan.y) / zoom;
 
     return { x: contentX, y: contentY };
   };
@@ -83,49 +83,64 @@ export default function Editor({
       const detail = (e as CustomEvent).detail as { isEditing: boolean };
       setIsEditingOpen(!!detail?.isEditing);
     };
-    window.addEventListener('guide-editing-change', onEditingChange as EventListener);
+    window.addEventListener(
+      "guide-editing-change",
+      onEditingChange as EventListener
+    );
     return () => document.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
   // 处理编辑区的鼠标事件（拖拽和缩放）
-  const handleEditorMouseDown = useCallback((e: React.MouseEvent) => {
-    // 只要点击位置不在 .guide-board 内部，就认为是空白区域，可用于拖拽视图
-    const targetEl = e.target as HTMLElement;
-    const inGuideBoard = !!targetEl.closest('.guide-board');
-    if (!inGuideBoard) {
-      setIsDragging(true);
-      setDragStart({
-        x: e.clientX,
-        y: e.clientY,
-        panX: pan.x,
-        panY: pan.y,
-      });
-      e.preventDefault();
-    }
-  }, [pan]);
+  const handleEditorMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      // 编辑器打开时禁用背景拖拽
+      if (isEditingOpen) return;
 
-  const handleEditorMouseMove = useCallback((e: React.MouseEvent) => {
-    if (isDragging) {
-      const deltaX = e.clientX - dragStart.x;
-      const deltaY = e.clientY - dragStart.y;
-      setPan({
-        x: dragStart.panX + deltaX,
-        y: dragStart.panY + deltaY,
-      });
-    }
-  }, [isDragging, dragStart]);
+      // 只要点击位置不在 .guide-board 内部，就认为是空白区域，可用于拖拽视图
+      const targetEl = e.target as HTMLElement;
+      const inGuideBoard = !!targetEl.closest(".guide-board");
+      if (!inGuideBoard) {
+        setIsDragging(true);
+        setDragStart({
+          x: e.clientX,
+          y: e.clientY,
+          panX: pan.x,
+          panY: pan.y,
+        });
+        e.preventDefault();
+      }
+    },
+    [pan, isEditingOpen]
+  );
+
+  const handleEditorMouseMove = useCallback(
+    (e: React.MouseEvent) => {
+      if (isDragging) {
+        const deltaX = e.clientX - dragStart.x;
+        const deltaY = e.clientY - dragStart.y;
+        setPan({
+          x: dragStart.panX + deltaX,
+          y: dragStart.panY + deltaY,
+        });
+      }
+    },
+    [isDragging, dragStart]
+  );
 
   const handleEditorMouseUp = useCallback(() => {
     setIsDragging(false);
   }, []);
 
-  const handleEditorWheel = useCallback((e: React.WheelEvent) => {
-    e.preventDefault();
-    if (isEditingOpen) return; // 编辑弹窗打开时禁用滚轮缩放
-    const delta = e.deltaY > 0 ? -0.1 : 0.1;
-    const newZoom = Math.max(0.5, Math.min(4, zoom + delta));
-    setZoom(newZoom);
-  }, [zoom, isEditingOpen]);
+  const handleEditorWheel = useCallback(
+    (e: React.WheelEvent) => {
+      e.preventDefault();
+      if (isEditingOpen) return; // 编辑弹窗打开时禁用滚轮缩放
+      const delta = e.deltaY > 0 ? -0.1 : 0.1;
+      const newZoom = Math.max(0.5, Math.min(4, zoom + delta));
+      setZoom(newZoom);
+    },
+    [zoom, isEditingOpen]
+  );
 
   // 全局鼠标事件处理
   useEffect(() => {
@@ -135,7 +150,7 @@ export default function Editor({
 
     const handleGlobalMouseMove = (e: MouseEvent) => {
       mousePositionRef.current = { x: e.clientX, y: e.clientY };
-      
+
       if (isDragging) {
         const deltaX = e.clientX - dragStart.x;
         const deltaY = e.clientY - dragStart.y;
@@ -466,7 +481,7 @@ export default function Editor({
           );
         }) as HTMLElement[];
 
-          if (children.length > 0 && pointerX > 0) {
+        if (children.length > 0 && pointerX > 0) {
           // 找到合适的插入位置
           insertIndex = children.length; // 默认插入到最后
           for (let i = 0; i < children.length; i++) {
@@ -600,7 +615,7 @@ export default function Editor({
       twoRowTargetId
     ) {
       // 阻止拖拽 TwoRowContainer 到自身内部
-  if (draggedItem.type?.indexOf("TwoRowContainer") !== -1) {
+      if (draggedItem.type?.indexOf("TwoRowContainer") !== -1) {
         setDropIndicator({ show: false, x: 0, y: 0, height: 0 });
         return;
       }
@@ -615,9 +630,18 @@ export default function Editor({
 
         if (guideBoardRect) {
           // 将视口坐标转换为内容坐标（与指示器所在容器一致）
-          const gbContent = transformMouseCoords(guideBoardRect.left, guideBoardRect.top);
-          const tgtTopLeftContent = transformMouseCoords(targetRect.left, targetRect.top);
-          const tgtBottomLeftContent = transformMouseCoords(targetRect.left, targetRect.bottom);
+          const gbContent = transformMouseCoords(
+            guideBoardRect.left,
+            guideBoardRect.top
+          );
+          const tgtTopLeftContent = transformMouseCoords(
+            targetRect.left,
+            targetRect.top
+          );
+          const tgtBottomLeftContent = transformMouseCoords(
+            targetRect.left,
+            targetRect.bottom
+          );
 
           setDropIndicator({
             show: true,
@@ -705,10 +729,16 @@ export default function Editor({
           }
 
           // 视口 -> 内容坐标
-          const gbContent = transformMouseCoords(guideBoardRect.left, guideBoardRect.top);
+          const gbContent = transformMouseCoords(
+            guideBoardRect.left,
+            guideBoardRect.top
+          );
           const insContentX = transformMouseCoords(insertX, rowRect.top).x;
           const rowTopContent = transformMouseCoords(rowRect.left, rowRect.top);
-          const rowBottomContent = transformMouseCoords(rowRect.left, rowRect.bottom);
+          const rowBottomContent = transformMouseCoords(
+            rowRect.left,
+            rowRect.bottom
+          );
 
           setDropIndicator({
             show: true,
@@ -737,7 +767,7 @@ export default function Editor({
     const targetRowId = `row${rowNumber[1]}`;
 
     // 使用变换后的鼠标位置
-  const pointerX = mousePositionRef.current.x;
+    const pointerX = mousePositionRef.current.x;
 
     // 获取拖拽元素在源行中的索引
     const oldIndex = guideBoardRef.current?.getItemIndex(
@@ -806,10 +836,16 @@ export default function Editor({
           }
 
           // 视口 -> 内容坐标
-          const gbContent = transformMouseCoords(guideBoardRect.left, guideBoardRect.top);
+          const gbContent = transformMouseCoords(
+            guideBoardRect.left,
+            guideBoardRect.top
+          );
           const insContentX = transformMouseCoords(insertX, rowRect.top).x;
           const rowTopContent = transformMouseCoords(rowRect.left, rowRect.top);
-          const rowBottomContent = transformMouseCoords(rowRect.left, rowRect.bottom);
+          const rowBottomContent = transformMouseCoords(
+            rowRect.left,
+            rowRect.bottom
+          );
 
           setDropIndicator({
             show: true,
@@ -877,10 +913,10 @@ export default function Editor({
               guideBoardRef.current?.clearBoard();
             }}
           />
-          <div 
+          <div
             ref={editorAreaRef}
             className="flex-1 relative overflow-hidden bg-gray-50"
-            style={{ cursor: isDragging ? 'grabbing' : 'default' }}
+            style={{ cursor: isDragging ? "grabbing" : "default" }}
             onMouseDown={handleEditorMouseDown}
             onMouseMove={handleEditorMouseMove}
             onMouseUp={handleEditorMouseUp}
@@ -891,12 +927,12 @@ export default function Editor({
               style={{
                 // 先缩放，再位移；位移不受缩放影响
                 transform: `scale(${zoom}) translate(${pan.x}px, ${pan.y}px)`,
-                transformOrigin: 'center',
-                transition: isDragging ? 'none' : 'transform 0.1s ease-out',
-                cursor: isDragging ? 'grabbing' : 'default',
+                transformOrigin: "center",
+                transition: isDragging ? "none" : "transform 0.1s ease-out",
+                cursor: isDragging ? "grabbing" : "default",
               }}
             >
-              <div style={{ position: 'relative' }}>
+              <div style={{ position: "relative" }}>
                 <GuideBoardCols
                   ref={guideBoardRef}
                   currentTheme={currentTheme}

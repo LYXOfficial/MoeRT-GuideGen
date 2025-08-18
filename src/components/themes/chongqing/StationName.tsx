@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from "react";
 import type { EditorConfig } from "../../../interfaces/editor";
-import { Input } from "@douyinfe/semi-ui";
+import { Input, TextArea } from "@douyinfe/semi-ui";
 import colors from "./define/colors";
 
 export interface StationNameProps {
@@ -24,7 +24,7 @@ export const stationNameEditorConfig = (
     {
       key: "english",
       label: "themes.chongqing.components.StationName.props.english",
-      element: <Input />,
+      element: <TextArea />,
     },
   ],
 });
@@ -56,6 +56,11 @@ function StationName({
     };
   }, [chinese, english]);
 
+  // 按换行符分割英文
+  const englishLines = english.split(/\r?\n/);
+  const lineHeight = 14; // 英文行高
+  const baseY = englishLines.length > 1 ? 42 : 48;
+
   return (
     <div style={{ backgroundColor: colors.background }}>
       <div className="h-64px ml-5px mr-5px" style={{ width: svgWidth }}>
@@ -63,7 +68,7 @@ function StationName({
           <g ref={textGroupRef}>
             <text
               x={svgWidth / 2}
-              y={32}
+              y={englishLines.length > 1 ? 26 : 32}
               fontSize={24}
               fontWeight="bold"
               textAnchor="middle"
@@ -73,13 +78,21 @@ function StationName({
             </text>
             <text
               x={svgWidth / 2}
-              y={48}
-              fontSize={14}
+              y={baseY}
+              fontSize={englishLines.length > 1 ? 12 : 14}
               fontWeight="bold"
               textAnchor="middle"
               fill={colors.foreground}
             >
-              {english}
+              {englishLines.map((line, idx) => (
+                <tspan
+                  key={idx}
+                  x={svgWidth / 2}
+                  dy={idx === 0 ? 0 : lineHeight}
+                >
+                  {line}
+                </tspan>
+              ))}
             </text>
           </g>
         </svg>

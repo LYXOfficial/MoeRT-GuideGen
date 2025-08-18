@@ -74,7 +74,7 @@ export default function Header({
       <header className="h-12 flex items-center font-sans p-3 border-b border-gray-300">
         <img src="/favicon.ico" className="h-8 mr-2" />
         <span className="text-xl font-bold">{t("title")}</span>
-        
+
         {/* 缩放滑块 */}
         <div className="ml-6 flex items-center gap-2">
           <span className="text-sm text-gray-600">缩放:</span>
@@ -85,13 +85,15 @@ export default function Header({
               step={0.1}
               value={zoom}
               disabled={disableZoom}
-              onChange={(value) => {
-                if (typeof value === 'number') {
+              onChange={value => {
+                if (typeof value === "number") {
                   onZoomChange?.(value);
                 }
               }}
               showBoundary={false}
-              tipFormatter={(value) => `${Math.round((typeof value === 'number' ? value : 1) * 100)}%`}
+              tipFormatter={value =>
+                `${Math.round((typeof value === "number" ? value : 1) * 100)}%`
+              }
             />
           </div>
           <span className="text-xs text-gray-500 w-8 text-center">

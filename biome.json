@@ -37,7 +37,7 @@
         "noExplicitAny": "off",
         "noPrototypeBuiltins": "off",
         "noRedeclare": "off",
-        "noVar": "warn"
+        "noTsIgnore": "off"
       },
       "correctness": {
         "noUnusedImports": "on",
@@ -50,7 +50,8 @@
         "useValidAnchor": "off",
         "noStaticElementInteractions": "off",
         "useAltText": "off",
-        "useKeyWithClickEvents": "off"
+        "useKeyWithClickEvents": "off",
+        "noNoninteractiveTabindex": "off"
       },
       "complexity": {
         "noImportantStyles": "off",

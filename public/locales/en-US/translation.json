@@ -208,6 +208,23 @@
               "right": "Right"
             }
           }
+        },
+        "ExitName": {
+          "displayName": "Exit Name",
+          "props": {
+            "line1chinese": "Line 1 Chinese",
+            "line1english": "Line 1 English",
+            "line2chinese": "Line 2 Chinese",
+            "line2english": "Line 2 English",
+            "background": "Background Color",
+            "foreground": "Foreground Color",
+            "align": {
+              "displayName": "Alignment",
+              "left": "Left",
+              "right": "Right",
+              "center": "Center"
+            }
+          }
         }
       },
       "colors": {

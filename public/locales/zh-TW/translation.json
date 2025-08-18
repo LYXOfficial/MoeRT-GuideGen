@@ -124,7 +124,7 @@
             "customChinese": "自定義中文文本",
             "customEnglish": "自定義英文文本",
             "align": {
-              "displayName": "對齊方式",
+              "displayName": "對齊",
               "left": "左",
               "right": "右"
             },
@@ -138,7 +138,7 @@
             "chinese": "中文名",
             "english": "英文名",
             "align": {
-              "displayName": "對齊方式",
+              "displayName": "對齊",
               "left": "左",
               "right": "右"
             },
@@ -184,7 +184,7 @@
             "chinese": "中文文本",
             "english": "英文文本",
             "align": {
-              "displayName": "對齊方式",
+              "displayName": "對齊",
               "left": "左",
               "right": "右",
               "center": "中"
@@ -206,6 +206,23 @@
               "displayName": "對齊",
               "left": "左",
               "right": "右"
+            }
+          }
+        },
+        "ExitName": {
+          "displayName": "出口名稱",
+          "props": {
+            "line1chinese": "第一行中文",
+            "line1english": "第一行英文",
+            "line2chinese": "第二行中文",
+            "line2english": "第二行英文",
+            "background": "背景色",
+            "foreground": "前景色",
+            "align": {
+              "displayName": "對齊",
+              "left": "左",
+              "right": "右",
+              "center": "中"
             }
           }
         }
@@ -319,7 +336,7 @@
             "customChinese": "自定義中文文本",
             "customEnglish": "自定義英文文本",
             "align": {
-              "displayName": "對齊方式",
+              "displayName": "對齊",
               "left": "左",
               "right": "右"
             },
@@ -333,7 +350,7 @@
             "chinese": "中文名",
             "english": "英文名",
             "align": {
-              "displayName": "對齊方式",
+              "displayName": "對齊",
               "left": "左",
               "right": "右"
             },
@@ -379,7 +396,7 @@
             "chinese": "中文文本",
             "english": "英文文本",
             "align": {
-              "displayName": "對齊方式",
+              "displayName": "對齊",
               "left": "左",
               "right": "右",
               "center": "中"

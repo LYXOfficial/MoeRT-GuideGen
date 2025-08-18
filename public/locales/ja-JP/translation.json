@@ -208,6 +208,23 @@
               "right": "右"
             }
           }
+        },
+        "ExitName": {
+          "displayName": "出口名",
+          "props": {
+            "line1chinese": "1行目中国語",
+            "line1english": "1行目英語",
+            "line2chinese": "2行目中国語",
+            "line2english": "2行目英語",
+            "background": "背景色",
+            "foreground": "前景色",
+            "align": {
+              "displayName": "配置",
+              "left": "左",
+              "right": "右",
+              "center": "中央"
+            }
+          }
         }
       },
       "colors": {

@@ -15,6 +15,7 @@ import Blank, { blankDefaultProps } from "./Blank.tsx";
 import colors from "./define/colors.ts";
 import type Theme from "../../../interfaces/theme.ts";
 import DirectionLoop, { directionLoopDefaultProps } from "./DirectionLoop.tsx";
+import ExitName, { exitNameDefaultProps } from "./ExitName.tsx";
 
 const theme: Theme = {
   colors: {
@@ -59,6 +60,11 @@ const theme: Theme = {
       displayName: "themes.chongqing.components.StationName",
       component: StationName,
       defaultProps: stationNameDefaultProps,
+    },
+    {
+      displayName: "themes.chongqing.components.ExitName",
+      component: ExitName,
+      defaultProps: exitNameDefaultProps,
     },
     {
       displayName: "themes.chongqing.components.DirectionLoop",

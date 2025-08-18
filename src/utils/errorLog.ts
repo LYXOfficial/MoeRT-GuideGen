@@ -61,7 +61,7 @@ window.addEventListener("error", e => {
       time: Date.now(),
       level: "error",
       message: String(e.message),
-      stack: String(e.error?.stack || e.filename + ":" + e.lineno),
+      stack: String(e.error?.stack || `${e.filename}:${e.lineno}`),
     });
   } catch {}
 });
