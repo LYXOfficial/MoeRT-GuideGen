@@ -42,7 +42,8 @@
       "correctness": {
         "noUnusedImports": "on",
         "useExhaustiveDependencies": "off",
-        "useUniqueElementIds": "off"
+        "useUniqueElementIds": "off",
+        "noChildrenProp": "off"
       },
       "a11y": {
         "noSvgWithoutTitle": "off",

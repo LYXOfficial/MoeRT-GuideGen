@@ -189,6 +189,22 @@
             "background": "Background Color",
             "foreground": "Foreground Color"
           }
+        },
+        "DirectionLoop": {
+          "displayName": "Direction (Loop Line)",
+          "props": {
+            "background": "Background Color",
+            "foreground": "Foreground Color",
+            "tochinese": "To (Chinese)",
+            "toenglish": "To (English)",
+            "tipchinese": "Tip (Chinese)",
+            "tipenglish": "Tip (English)",
+            "align": {
+              "displayName": "Alignment",
+              "left": "Left",
+              "right": "Right"
+            }
+          }
         }
       },
       "colors": {
@@ -369,12 +385,35 @@
             "foreground": "Foreground Color"
           }
         },
-        "StationId": {
-          "displayName": "Station ID",
+        "StationNumber": {
+          "displayName": "Station Number",
           "props": {
             "color": "Line Color",
             "lineNum": "Line Number",
-            "stationNum": "Station Number"
+            "stationNum": "Station Number",
+            "lines": "Line List"
+          }
+        },
+        "Direction": {
+          "displayName": "Direction",
+          "props": {
+            "background": "Background Color",
+            "foreground": "Foreground Color",
+            "tochinese": "To (Chinese)",
+            "toenglish": "To (English)",
+            "viachinese": "Via (Chinese)",
+            "viaenglish": "Via (English)",
+            "align": {
+              "displayName": "Alignment",
+              "left": "Left",
+              "right": "Right"
+            }
+          }
+        },
+        "TwoRowContainer": {
+          "displayName": "Two-Row Container",
+          "props": {
+            "background": "Background Color"
           }
         }
       },
@@ -386,6 +425,7 @@
         "specline": "Divider Line",
         "border": "Border",
         "noentry": "No Entry",
+        "pass": "Pass",
         "line1": "Line 1",
         "line2": "Line 2",
         "line3": "Line 3",

@@ -32,6 +32,12 @@ export interface GuideBoardRef {
   removeItemFromRow: (rowId: string, itemId: string) => GuideItem | null;
   reorderRow: (rowId: string, oldIndex: number, newIndex: number) => void;
   getItemIndex: (rowId: string, itemId: string) => number;
+  updateItemChildren: (itemId: string, children: GuideItem[][]) => void;
+  updateTwoRowContainerChildren: (
+    containerId: string,
+    newItem: GuideItem,
+    targetRow: "top" | "bottom"
+  ) => void;
   clearBoard: () => void;
   getState: () => BoardState;
   restoreState: (state: {
@@ -264,6 +270,73 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
           const idx = Number(rowId.replace("row", "")) - 1;
           if (idx < 0 || idx >= rows.length) return -1;
           return rows[idx].findIndex(i => i.id === itemId);
+        },
+        updateItemChildren: (itemId, children) => {
+          setRows(prev => {
+            return prev.map(row =>
+              row.map(item => {
+                if (item.id === itemId) {
+                  return { ...item, children };
+                }
+                return item;
+              })
+            );
+          });
+        },
+        updateTwoRowContainerChildren: (containerId, newItem, targetRow) => {
+          setRows(prev => {
+            return prev.map(row =>
+              row.map(item => {
+                if (
+                  item.id === containerId &&
+                  item.type === "TwoRowContainer" &&
+                  item.children
+                ) {
+                  const newChildren = [...(item.children as GuideItem[][])];
+                  const rowIndex = targetRow === "top" ? 0 : 1;
+                  if (!newChildren[rowIndex]) {
+                    newChildren[rowIndex] = [];
+                  }
+                  newChildren[rowIndex].push(newItem);
+
+                  // 更新组件元素
+                  const themeComponents = themes[currentTheme][1].components;
+                  const componentInfo = themeComponents.find(
+                    c => c.displayName === "TwoRowContainer"
+                  );
+                  if (componentInfo) {
+                    const updatedElement = React.createElement(
+                      componentInfo.component,
+                      {
+                        ...item.props,
+                        id: item.id,
+                        currentTheme,
+                        children: newChildren,
+                        onChildrenChange: (updatedChildren: GuideItem[][]) => {
+                          setRows(prevRows =>
+                            prevRows.map(r =>
+                              r.map(it =>
+                                it.id === item.id
+                                  ? { ...it, children: updatedChildren }
+                                  : it
+                              )
+                            )
+                          );
+                        },
+                      }
+                    );
+
+                    return {
+                      ...item,
+                      children: newChildren,
+                      element: updatedElement,
+                    };
+                  }
+                }
+                return item;
+              })
+            );
+          });
         },
       }),
       [rows, boardWidth, showDividers, currentTheme]

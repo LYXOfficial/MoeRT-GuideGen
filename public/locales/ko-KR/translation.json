@@ -189,6 +189,22 @@
             "background": "배경색",
             "foreground": "전경색"
           }
+        },
+        "DirectionLoop": {
+          "displayName": "방향 (순환선)",
+          "props": {
+            "background": "배경색",
+            "foreground": "전경색",
+            "tochinese": "행선지 (중국어)",
+            "toenglish": "행선지 (영어)",
+            "tipchinese": "상단 안내 (중국어)",
+            "tipenglish": "상단 안내 (영어)",
+            "align": {
+              "displayName": "정렬",
+              "left": "왼쪽",
+              "right": "오른쪽"
+            }
+          }
         }
       },
       "colors": {
@@ -369,12 +385,35 @@
             "foreground": "전경색"
           }
         },
-        "StationId": {
+        "StationNumber": {
           "displayName": "역 번호",
           "props": {
             "color": "노선 색상",
             "lineNum": "노선 번호",
-            "stationNum": "역 번호"
+            "stationNum": "역 번호",
+            "lines": "노선 목록"
+          }
+        },
+        "Direction": {
+          "displayName": "방향",
+          "props": {
+            "background": "배경색",
+            "foreground": "전경색",
+            "tochinese": "행선지 (중국어)",
+            "toenglish": "행선지 (영어)",
+            "viachinese": "경유 (중국어)",
+            "viaenglish": "경유 (영어)",
+            "align": {
+              "displayName": "정렬",
+              "left": "왼쪽",
+              "right": "오른쪽"
+            }
+          }
+        },
+        "TwoRowContainer": {
+          "displayName": "2행 컨테이너",
+          "props": {
+            "background": "배경색"
           }
         }
       },
@@ -386,6 +425,7 @@
         "specline": "구분선",
         "border": "테두리색",
         "noentry": "통행 금지",
+        "pass": "통행 가능",
         "line1": "1호선",
         "line2": "2호선",
         "line3": "3호선",

@@ -189,6 +189,22 @@
             "background": "背景色",
             "foreground": "前景色"
           }
+        },
+        "DirectionLoop": {
+          "displayName": "方向（環状線）",
+          "props": {
+            "background": "背景色",
+            "foreground": "前景色",
+            "tochinese": "行先（中国語）",
+            "toenglish": "行先（英語）",
+            "tipchinese": "上部ヒント（中国語）",
+            "tipenglish": "上部ヒント（英語）",
+            "align": {
+              "displayName": "配置",
+              "left": "左",
+              "right": "右"
+            }
+          }
         }
       },
       "colors": {
@@ -369,12 +385,35 @@
             "foreground": "前景色"
           }
         },
-        "StationId": {
+        "StationNumber": {
           "displayName": "駅番号",
           "props": {
             "color": "路線色",
             "lineNum": "路線番号",
-            "stationNum": "駅番号"
+            "stationNum": "駅番号",
+            "lines": "路線リスト"
+          }
+        },
+        "Direction": {
+          "displayName": "方向",
+          "props": {
+            "background": "背景色",
+            "foreground": "前景色",
+            "tochinese": "行先（中国語）",
+            "toenglish": "行先（英語）",
+            "viachinese": "経由（中国語）",
+            "viaenglish": "経由（英語）",
+            "align": {
+              "displayName": "配置",
+              "left": "左",
+              "right": "右"
+            }
+          }
+        },
+        "TwoRowContainer": {
+          "displayName": "2行コンテナ",
+          "props": {
+            "background": "背景色"
           }
         }
       },
@@ -386,6 +425,7 @@
         "specline": "区切り線",
         "border": "ボーダー色",
         "noentry": "通行禁止",
+        "pass": "通行可",
         "line1": "1号線",
         "line2": "2号線",
         "line3": "3号線",

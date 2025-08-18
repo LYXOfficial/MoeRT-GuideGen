@@ -298,17 +298,19 @@
               "displayName": "图标",
               "noentry": "禁止通行",
               "train": "乘车",
-              "metro": "地铁",
-              "monorail": "单轨",
               "cdrt": "成都地铁",
               "exit": "出口",
               "elevator": "无障碍电梯",
               "waitingroom": "等候室",
               "toilet": "卫生间",
               "ticket": "售票/加值",
-              "checkin": "自助检票"
+              "checkin": "自助检票",
+              "stairs": "楼梯",
+              "autostair": "自动扶梯"
             },
-            "lineColor": "线路颜色"
+            "background": "背景色",
+            "foreground": "前景色",
+            "rotation": "旋转角度"
           }
         },
         "LineNum": {
@@ -411,6 +413,12 @@
               "right": "右"
             }
           }
+        },
+        "TwoRowContainer": {
+          "displayName": "双行容器",
+          "props": {
+            "background": "背景色"
+          }
         }
       },
       "colors": {
@@ -421,6 +429,7 @@
         "specline": "分隔线",
         "border": "边框色",
         "noentry": "禁止通行",
+        "pass": "可通行",
         "line1": "1号线",
         "line2": "2号线",
         "line3": "3号线",
