@@ -77,7 +77,7 @@ export default function Header({
 
         {/* 缩放滑块 */}
         <div className="ml-6 flex items-center gap-2">
-          <span className="text-sm text-gray-600">缩放:</span>
+          <span className="text-sm text-gray-600">{t("zoom.label")}</span>
           <div className="w-32">
             <Slider
               min={0.5}

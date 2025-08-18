@@ -1,4 +1,7 @@
 {
+  "zoom": {
+    "label": "Zoom:"
+  },
   "title": "MoeRT-GuideGen",
   "componentsList": {
     "title": "Component List",
@@ -481,7 +484,7 @@
         "linet2": "Tram Rong Line 2",
         "lines1": "S1/Xindu-Jintang Line",
         "lines2": "S2/Jintang Airport Line",
-        "lines3": "S3/Ziyang Line",
+        "lines3": "S3/Ziyang East Line",
         "lines4": "S4/Longquanyi-Huaizhou Line",
         "lines5": "S5/Meishan-Renshou Line",
         "lines6": "S6/Xinjin-Pujiang Line",

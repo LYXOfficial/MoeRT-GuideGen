@@ -1,4 +1,7 @@
 {
+  "zoom": {
+    "label": "확대/축소:"
+  },
   "title": "MoeRT 가이드 생성기",
   "componentsList": {
     "title": "컴포넌트 목록",

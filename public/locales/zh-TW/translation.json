@@ -1,4 +1,7 @@
 {
+  "zoom": {
+    "label": "縮放："
+  },
   "title": "MoeRT-GuideGen",
   "componentsList": {
     "title": "元件列表",
@@ -481,7 +484,7 @@
         "linet2": "有軌電車蓉2號線",
         "lines1": "S1/新都金堂線",
         "lines2": "S2/金堂空港線",
-        "lines3": "S3/資陽線",
+        "lines3": "S3/資陽東線",
         "lines4": "S4/龍泉驛淮州線",
         "lines5": "S5/眉山任壽線",
         "lines6": "S6/新津蒲江線",

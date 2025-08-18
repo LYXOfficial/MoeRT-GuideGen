@@ -1,4 +1,7 @@
 {
+  "zoom": {
+    "label": "ズーム："
+  },
   "title": "MoeRT ガイドジェネレーター",
   "componentsList": {
     "title": "コンポーネントリスト",

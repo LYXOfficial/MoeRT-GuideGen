@@ -1,4 +1,7 @@
 {
+  "zoom": {
+    "label": "缩放："
+  },
   "title": "MoeRT-GuideGen",
   "componentsList": {
     "title": "组件列表",

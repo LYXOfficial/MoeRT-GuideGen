@@ -474,7 +474,7 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
             </Typography.Text>
             <InputNumber
               min={256}
-              max={1024}
+              max={1920}
               step={32}
               className="font-sans"
               value={boardWidth}
@@ -482,7 +482,7 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
                 let num = Number(val);
                 if (Number.isNaN(num)) num = 256;
                 if (num < 256) num = 256;
-                if (num > 1024) num = 1024;
+                if (num > 1920) num = 1920;
                 setBoardWidth(num);
                 if (onConfigChange) onConfigChange();
               }}
