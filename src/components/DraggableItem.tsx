@@ -36,7 +36,7 @@ export default function DraggableItem({
         y: transform.y / (zoom || 1),
       }
     : null;
-
+  console.log((children as any).type)
   const style = {
     transform: CSS.Transform.toString(adjustedTransform as any),
     transition: transition || "transform 200ms ease, opacity 200ms ease",
