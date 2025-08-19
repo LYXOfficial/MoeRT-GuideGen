@@ -32,6 +32,7 @@
     "height": "高さ（ピクセル）",
     "keepRatio": "縦横比を維持",
     "export": "エクスポート",
+    "exporting": "エクスポート中...",
     "cancel": "キャンセル",
     "error": {
       "noElement": "標識要素が見つかりません",

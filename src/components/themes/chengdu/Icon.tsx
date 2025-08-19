@@ -91,7 +91,10 @@ function Icon({
   const IconComponent = regicons.find(i => i.label === icon)?.component;
 
   return (
-    <div className="h-64px w-64px p-10px">
+    <div
+      className="h-64px w-64px p-10px"
+      style={{ backgroundColor: background }}
+    >
       {IconComponent ? (
         <IconComponent
           background={background}

@@ -32,6 +32,7 @@
     "height": "高度 (像素)",
     "keepRatio": "保持等比例",
     "export": "导出",
+    "exporting": "导出中...",
     "cancel": "取消",
     "error": {
       "noElement": "找不到指示牌元素",

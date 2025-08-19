@@ -32,6 +32,7 @@
     "height": "Height (pixels)",
     "keepRatio": "Keep aspect ratio",
     "export": "Export",
+    "exporting": "Exporting...",
     "cancel": "Cancel",
     "error": {
       "noElement": "Sign element not found",

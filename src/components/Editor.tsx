@@ -470,15 +470,17 @@ export default function Editor({
           const element = child as HTMLElement;
           // 过滤掉空占位符、拖拽相关元素和隐藏元素
           const id = element.getAttribute("id") || "";
-          return (
-            !element.classList.contains("sortable-ghost") &&
-            !element.classList.contains("sortable-chosen") &&
-            !element.classList.contains("sortable-placeholder") &&
-            element.style.display !== "none" &&
-            !id.startsWith("empty-") &&
-            element.tagName !== "SCRIPT" &&
-            element.tagName !== "STYLE"
-          );
+          const isDragRelated =
+            element.classList.contains("sortable-ghost") ||
+            element.classList.contains("sortable-chosen") ||
+            element.classList.contains("sortable-placeholder") ||
+            element.style.display === "none";
+          const isEmptyPlaceholder = id.startsWith("empty-");
+          const isScriptOrStyle =
+            element.tagName === "SCRIPT" || element.tagName === "STYLE";
+          // 注意：在组件列表拖入时不需要过滤正在拖拽的元素（因为它还不在目标行中）
+
+          return !isDragRelated && !isEmptyPlaceholder && !isScriptOrStyle;
         }) as HTMLElement[];
 
         if (children.length > 0 && pointerX > 0) {
@@ -491,6 +493,9 @@ export default function Editor({
               break;
             }
           }
+        } else if (children.length === 0) {
+          // 空行，插入到第一个位置
+          insertIndex = 0;
         }
       }
 
@@ -550,14 +555,22 @@ export default function Editor({
             const element = child as HTMLElement;
             // 过滤掉空占位符、拖拽相关元素和隐藏元素
             const id = element.getAttribute("id") || "";
+            const isDragRelated =
+              element.classList.contains("sortable-ghost") ||
+              element.classList.contains("sortable-chosen") ||
+              element.classList.contains("sortable-placeholder") ||
+              element.style.display === "none";
+            const isEmptyPlaceholder = id.startsWith("empty-");
+            const isScriptOrStyle =
+              element.tagName === "SCRIPT" || element.tagName === "STYLE";
+            // 跨行移动时，排除正在被拖拽的元素本身（它已经在源行中被移除）
+            const isDraggedElement = active.id.toString() === id;
+
             return (
-              !element.classList.contains("sortable-ghost") &&
-              !element.classList.contains("sortable-chosen") &&
-              !element.classList.contains("sortable-placeholder") &&
-              element.style.display !== "none" &&
-              !id.startsWith("empty-") &&
-              element.tagName !== "SCRIPT" &&
-              element.tagName !== "STYLE"
+              !isDragRelated &&
+              !isEmptyPlaceholder &&
+              !isScriptOrStyle &&
+              !isDraggedElement
             );
           }) as HTMLElement[];
 
@@ -571,6 +584,9 @@ export default function Editor({
                 break;
               }
             }
+          } else if (children.length === 0) {
+            // 空行，插入到第一个位置
+            insertIndex = 0;
           }
         }
 
@@ -694,14 +710,21 @@ export default function Editor({
             const element = child as HTMLElement;
             // 过滤掉空占位符、拖拽相关元素和隐藏元素
             const id = element.getAttribute("id") || "";
+            const isDragRelated =
+              element.classList.contains("sortable-ghost") ||
+              element.classList.contains("sortable-chosen") ||
+              element.classList.contains("sortable-placeholder") ||
+              element.style.display === "none";
+            const isEmptyPlaceholder = id.startsWith("empty-");
+            const isScriptOrStyle =
+              element.tagName === "SCRIPT" || element.tagName === "STYLE";
+            const isDraggedElement = active.id.toString() === id;
+
             return (
-              !element.classList.contains("sortable-ghost") &&
-              !element.classList.contains("sortable-chosen") &&
-              !element.classList.contains("sortable-placeholder") &&
-              element.style.display !== "none" &&
-              !id.startsWith("empty-") &&
-              element.tagName !== "SCRIPT" &&
-              element.tagName !== "STYLE"
+              !isDragRelated &&
+              !isEmptyPlaceholder &&
+              !isScriptOrStyle &&
+              !isDraggedElement
             );
           }) as HTMLElement[];
 
@@ -718,10 +741,11 @@ export default function Editor({
                 break;
               }
             }
-            // 如果没有找到位置，插入到最后
+            // 如果没有找到位置，插入到最后一个元素的右边
             if (!foundPosition) {
               const lastChild = children[children.length - 1];
-              insertX = lastChild.getBoundingClientRect().right;
+              const lastRect = lastChild.getBoundingClientRect();
+              insertX = lastRect.right;
             }
           } else {
             // 空行的情况，显示在行的中间
@@ -800,14 +824,21 @@ export default function Editor({
             const element = child as HTMLElement;
             // 过滤掉空占位符、拖拽相关元素和隐藏元素
             const id = element.getAttribute("id") || "";
+            const isDragRelated =
+              element.classList.contains("sortable-ghost") ||
+              element.classList.contains("sortable-chosen") ||
+              element.classList.contains("sortable-placeholder") ||
+              element.style.display === "none";
+            const isEmptyPlaceholder = id.startsWith("empty-");
+            const isScriptOrStyle =
+              element.tagName === "SCRIPT" || element.tagName === "STYLE";
+            const isDraggedElement = active.id.toString() === id;
+
             return (
-              !element.classList.contains("sortable-ghost") &&
-              !element.classList.contains("sortable-chosen") &&
-              !element.classList.contains("sortable-placeholder") &&
-              element.style.display !== "none" &&
-              !id.startsWith("empty-") &&
-              element.tagName !== "SCRIPT" &&
-              element.tagName !== "STYLE"
+              !isDragRelated &&
+              !isEmptyPlaceholder &&
+              !isScriptOrStyle &&
+              !isDraggedElement
             );
           }) as HTMLElement[];
 
@@ -825,10 +856,11 @@ export default function Editor({
                 break;
               }
             }
-            // 如果没有找到位置，插入到最后一个元素后面
+            // 如果没有找到位置，插入到最后一个元素的右边
             if (!foundPosition) {
               const lastChild = children[children.length - 1];
-              insertX = lastChild.getBoundingClientRect().right;
+              const lastRect = lastChild.getBoundingClientRect();
+              insertX = lastRect.right;
             }
           } else {
             // 空行的情况，显示在行的中间
