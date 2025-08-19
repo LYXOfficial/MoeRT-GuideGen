@@ -109,6 +109,23 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
     const [rows, setRows] = useState<GuideItem[][]>([[]]);
     const [boardWidth, setBoardWidth] = useState(DEFAULT_WIDTH);
     const [showDividers, setShowDividers] = useState(true);
+    const [isRestoring, setIsRestoring] = useState(false);
+    const configChangeTimeoutRef = useRef<number | null>(null);
+    
+    // 防抖的配置变化通知，在恢复状态时暂停
+    useEffect(() => {
+      if (onConfigChange && !isRestoring) {
+        // 清除之前的定时器
+        if (configChangeTimeoutRef.current) {
+          clearTimeout(configChangeTimeoutRef.current);
+        }
+        // 设置新的定时器，避免频繁调用
+        configChangeTimeoutRef.current = window.setTimeout(() => {
+          onConfigChange();
+        }, 10);
+      }
+    }, [rows, boardWidth, showDividers, onConfigChange, isRestoring]);
+    
     const [editingItem, setEditingItem] = useState<{
       item: GuideItem;
       position: { x: number; y: number };
@@ -198,6 +215,9 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
           },
         }),
         restoreState: state => {
+          // 设置恢复状态标志，暂停配置变化通知
+          setIsRestoring(true);
+          
           const restoredRows = state.rows.map((row: SavedItem[]) =>
             row
               .map((item: SavedItem) => {
@@ -236,9 +256,13 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
               })
               .filter((item): item is GuideItem => item !== null)
           );
+          
           setRows(restoredRows);
           setBoardWidth(state.config.width);
           setShowDividers(state.config.showSpecLine);
+          
+          // 恢复完成后重新启用配置变化通知
+          setTimeout(() => setIsRestoring(false), 50);
         },
         addItemToRow: (
           rowId: string,
@@ -319,28 +343,18 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
       [rows, boardWidth, showDividers, currentTheme]
     );
 
-    // 添加一行
+  // 添加一行
     const handleAddRow = (idx: number) => {
       setRows(prev => {
         const newRows = [...prev];
         newRows.splice(idx + 1, 0, []);
         return newRows;
       });
-      // 配置变更时触发保存
-      if (onConfigChange) {
-        onConfigChange();
-      }
     };
 
-    // 删除某一行
+  // 删除某一行
     const handleRemoveRow = (idx: number) => {
-      setRows(prev =>
-        prev.length > 1 ? prev.filter((_, i) => i !== idx) : prev
-      );
-      // 配置变更时触发保存
-      if (onConfigChange) {
-        onConfigChange();
-      }
+      setRows(prev => (prev.length > 1 ? prev.filter((_, i) => i !== idx) : prev));
     };
 
     return (
@@ -484,7 +498,6 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
                 if (num < 256) num = 256;
                 if (num > 1920) num = 1920;
                 setBoardWidth(num);
-                if (onConfigChange) onConfigChange();
               }}
               style={{ width: 120 }}
               suffix="px"
@@ -500,7 +513,6 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
               checked={showDividers}
               onChange={val => {
                 setShowDividers(val);
-                if (onConfigChange) onConfigChange();
               }}
             />
           </div>
@@ -512,10 +524,11 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
               className="editing-popup"
               onClick={e => e.stopPropagation()}
               tabIndex={0}
-              ref={el => {
-                // @ts-ignore
+              ref={(el: HTMLDivElement | null) => {
+                //@ts-ignore
+                // please dont remove the tabindex and ts ignore,and then it will not runs normally
                 popupRef.current = el;
-                if (el) el.focus();
+                el?.focus();
               }}
               onKeyDown={e => {
                 if (e.key === "Delete" || e.key === "Del") {

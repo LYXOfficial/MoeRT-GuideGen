@@ -244,7 +244,6 @@ export default function Editor({
         if (saveData.version !== 1) {
           throw new Error(t("saves.import.unsupportedVersion"));
         }
-        console.log("导入存档数据：", saveData);
 
         // 设置导入状态，防止主题变化触发保存
         setIsImporting(true);
@@ -302,7 +301,7 @@ export default function Editor({
     };
     localStorage.setItem("guide-autosave", JSON.stringify(saveData));
     lastChangeRef.current = Date.now();
-  }, [currentTheme]); // 依赖 currentTheme
+  }, []); // 移除 currentTheme 依赖，使用当前值
 
   // 从 LocalStorage 加载
   const loadFromLocalStorage = async () => {
@@ -343,8 +342,8 @@ export default function Editor({
           }
         }
       });
-    } catch (err) {
-      console.error("加载自动存档失败：", err);
+    } catch {
+      // 加载自动存档失败
     }
   };
 
@@ -355,6 +354,9 @@ export default function Editor({
 
   // 监听配置变化并触发保存
   const handleConfigChange = () => {
+    // 未初始化时不保存，避免循环
+    if (!isInitialized) return;
+    
     if (configChangeTimeoutRef.current) {
       window.clearTimeout(configChangeTimeoutRef.current);
     }
@@ -377,6 +379,7 @@ export default function Editor({
 
   // 初始化和自动保存
   useEffect(() => {
+
     const saveInterval: number | null = null;
 
     const init = async () => {
@@ -389,8 +392,7 @@ export default function Editor({
         setIsInitialized(true);
         // 通知App组件档案加载完成
         onArchiveLoaded?.();
-      } catch (err) {
-        console.error("初始化失败：", err);
+      } catch {
         setIsInitialized(true);
         // 即使失败也要通知加载完成
         onArchiveLoaded?.();
@@ -405,22 +407,33 @@ export default function Editor({
         clearTimeout(configChangeTimeoutRef.current);
       }
     };
-  }, [onArchiveLoaded]);
+  }, []); // 移除 onArchiveLoaded 依赖，防止重复初始化
 
-  // 设置自动保存定时器 - 单独的 useEffect
+  // 设置自动保存定时器 - 恢复正常的2秒定时保存
   useEffect(() => {
     if (!isInitialized) return;
 
     const saveInterval = window.setInterval(() => {
+      // 检查是否需要保存：距离上次变化超过1秒
       if (Date.now() - lastChangeRef.current > 1000) {
-        saveToLocalStorage();
+        if (!guideBoardRef.current) return;
+        const { rows, config } = guideBoardRef.current.getState();
+        const saveData: SaveData = {
+          version: 1,
+          config: {
+            ...config,
+            theme: themes[currentTheme][0],
+          },
+          rows: rows.map(row => row.map(stripGuideItem)),
+        };
+        localStorage.setItem("guide-autosave", JSON.stringify(saveData));
       }
-    }, autoSaveIntervalMs);
+    }, autoSaveIntervalMs); // 2秒间隔
 
     return () => {
       clearInterval(saveInterval);
     };
-  }, [isInitialized, saveToLocalStorage]); // 依赖 saveToLocalStorage
+  }, [isInitialized, currentTheme]); // 重新添加必要的依赖
 
   const handleDragStart = (event: DragStartEvent) => {
     const draggedItem = event.active.data.current?.item as GuideItem;
