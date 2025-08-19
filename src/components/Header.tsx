@@ -5,6 +5,8 @@ import {
   IconUpload,
   IconLanguage,
   IconDeleteStroked,
+  IconUndo,
+  IconRedo,
 } from "@douyinfe/semi-icons";
 import { Popover, List, Modal, Slider } from "@douyinfe/semi-ui";
 import { useTranslation } from "react-i18next";
@@ -18,6 +20,11 @@ interface HeaderProps {
   zoom?: number;
   onZoomChange?: (zoom: number) => void;
   disableZoom?: boolean;
+  onUndo?: () => void;
+  onRedo?: () => void;
+  canUndo?: boolean;
+  canRedo?: boolean;
+  onClearHistory?: () => void;
 }
 
 export default function Header({
@@ -27,6 +34,11 @@ export default function Header({
   zoom = 1,
   onZoomChange,
   disableZoom = false,
+  onUndo,
+  onRedo,
+  canUndo = false,
+  canRedo = false,
+  onClearHistory,
 }: HeaderProps) {
   const { t, i18n } = useTranslation();
   const [exportDialogVisible, setExportDialogVisible] = useState(false);
@@ -102,6 +114,36 @@ export default function Header({
         </div>
 
         <div className="flex items-center ml-auto gap-4">
+          {/* 撤销/重做按钮 */}
+          <button
+            type="button"
+            className={`transition duration-300 flex items-center p-1 rounded ${
+              canUndo 
+                ? "hover:bg-gray-100 text-gray-700 hover:text-blue-500 cursor-pointer" 
+                : "text-gray-300 cursor-not-allowed"
+            }`}
+            onClick={onUndo}
+            disabled={!canUndo}
+            title={`${t("saves.undo")} (Ctrl+Z)`}
+          >
+            <IconUndo size="extra-large" />
+          </button>
+          <button
+            type="button"
+            className={`transition duration-300 flex items-center p-1 rounded ${
+              canRedo 
+                ? "hover:bg-gray-100 text-gray-700 hover:text-blue-500 cursor-pointer" 
+                : "text-gray-300 cursor-not-allowed"
+            }`}
+            onClick={onRedo}
+            disabled={!canRedo}
+            title={`${t("saves.redo")} (Ctrl+Y)`}
+          >
+            <IconRedo size="extra-large" />
+          </button>
+
+          <div className="w-px h-6 bg-gray-300"></div> {/* 分隔线 */}
+
           <Popover
             content={languageSelector}
             trigger="hover"
@@ -125,6 +167,7 @@ export default function Header({
                   // 标记清理状态，避免 Editor 在重载前再次自动保存
                   localStorage.setItem("guide-clearing", "1");
                   localStorage.removeItem("guide-autosave");
+                  if (onClearHistory) onClearHistory();
                   location.reload();
                 },
               });

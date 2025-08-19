@@ -47,6 +47,8 @@
     "export_image": "이미지로 내보내기",
     "save_project": "프로젝트를 로컬에 저장",
     "load_project": "프로젝트 가져오기",
+    "undo": "실행 취소",
+    "redo": "다시 실행",
     "autosave": {
       "success": "자동 저장 성공",
       "error": "자동 저장 실패"

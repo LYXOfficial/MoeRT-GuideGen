@@ -47,6 +47,8 @@
     "export_image": "画像としてエクスポート",
     "save_project": "プロジェクトをローカルに保存",
     "load_project": "プロジェクトをインポート",
+    "undo": "元に戻す",
+    "redo": "やり直し",
     "autosave": {
       "success": "自動保存成功",
       "error": "自動保存失敗"

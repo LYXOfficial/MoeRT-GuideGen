@@ -18,10 +18,21 @@ import {
 import themes from "./themes/themereg";
 import Header from "./Header";
 import { useTranslation } from "react-i18next";
+import { useUndoRedo } from "../hooks/useUndoRedo";
 
 interface EditorProps {
   guideHeight?: number;
   onArchiveLoaded?: () => void;
+}
+
+// 撤销/重做状态类型
+interface EditorState {
+  rows: GuideItem[][];
+  config: {
+    width: number;
+    showSpecLine: boolean;
+  };
+  currentTheme: number;
 }
 
 export default function Editor({
@@ -33,10 +44,101 @@ export default function Editor({
   const [activeItem, setActiveItem] = useState<GuideItem | null>(null);
   const [currentTheme, setCurrentTheme] = useState(0);
   const [isImporting, setIsImporting] = useState(false); // 添加导入状态标志
+  const [isUndoRedoing, setIsUndoRedoing] = useState(false); // 添加撤销/重做状态标志
   const lastChangeRef = useRef(Date.now());
   const autoSaveIntervalMs = 2000; // 自动保存间隔
 
-  // 缩放和拖拽状态
+  // 撤销/重做状态管理
+  const initialState: EditorState = {
+    rows: [[]],
+    config: { width: 512, showSpecLine: true },
+    currentTheme: 0,
+  };
+  const { saveState, undo, redo, canUndo, canRedo, clear: clearHistory } = useUndoRedo(initialState);
+
+  // 记录状态到历史记录（防抖处理）
+  const saveCurrentState = useCallback(() => {
+    if (guideBoardRef.current && !isImporting && !isUndoRedoing) {
+      const { rows, config } = guideBoardRef.current.getState();
+      const state: EditorState = {
+        rows,
+        config,
+        currentTheme,
+      };
+      console.log('💾 保存状态到历史记录:', { rowsCount: rows.length, config, currentTheme });
+      saveState(state);
+    }
+  }, [saveState, currentTheme, isImporting, isUndoRedoing]);
+
+  // 撤销操作
+  const handleUndo = useCallback(() => {
+    console.log('🔙 执行撤销操作, canUndo:', canUndo);
+    const previousState = undo();
+    if (previousState && guideBoardRef.current) {
+      console.log('🔙 撤销到状态:', { rowsCount: previousState.rows.length, theme: previousState.currentTheme });
+      // 设置撤销/重做状态，防止触发自动保存
+      setIsUndoRedoing(true);
+      
+      // 设置主题
+      if (previousState.currentTheme !== currentTheme) {
+        setCurrentTheme(previousState.currentTheme);
+      }
+      
+      // 恢复状态（转换数据格式）
+      const restoreData = {
+        rows: previousState.rows.map(row => 
+          row.map(item => ({
+            id: item.id,
+            type: item.type,
+            props: item.props,
+          }))
+        ),
+        config: previousState.config,
+      };
+      
+      guideBoardRef.current.restoreState(restoreData);
+      
+      // 延迟清除撤销/重做状态
+      setTimeout(() => setIsUndoRedoing(false), 200);
+    } else {
+      console.log('🔙 撤销失败: 没有可撤销的状态');
+    }
+  }, [undo, currentTheme, canUndo]);
+
+  // 重做操作
+  const handleRedo = useCallback(() => {
+    console.log('🔜 执行重做操作, canRedo:', canRedo);
+    const nextState = redo();
+    if (nextState && guideBoardRef.current) {
+      console.log('🔜 重做到状态:', { rowsCount: nextState.rows.length, theme: nextState.currentTheme });
+      // 设置撤销/重做状态，防止触发自动保存
+      setIsUndoRedoing(true);
+      
+      // 设置主题
+      if (nextState.currentTheme !== currentTheme) {
+        setCurrentTheme(nextState.currentTheme);
+      }
+      
+      // 恢复状态（转换数据格式）
+      const restoreData = {
+        rows: nextState.rows.map(row => 
+          row.map(item => ({
+            id: item.id,
+            type: item.type,
+            props: item.props,
+          }))
+        ),
+        config: nextState.config,
+      };
+      
+      guideBoardRef.current.restoreState(restoreData);
+      
+      // 延迟清除撤销/重做状态
+      setTimeout(() => setIsUndoRedoing(false), 200);
+    } else {
+      console.log('🔜 重做失败: 没有可重做的状态');
+    }
+  }, [redo, currentTheme, canRedo]);
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
@@ -77,7 +179,31 @@ export default function Editor({
       mousePositionRef.current = { x: e.clientX, y: e.clientY };
     };
 
+    // 键盘快捷键监听
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // 检查是否在输入框中
+      const target = e.target as HTMLElement;
+      const isInInput = target.tagName === 'INPUT' || 
+                       target.tagName === 'TEXTAREA' || 
+                       target.contentEditable === 'true';
+      
+      if (isInInput) return;
+      
+      // Ctrl+Z 撤销
+      if (e.ctrlKey && e.key === 'z' && !e.shiftKey) {
+        e.preventDefault();
+        handleUndo();
+      }
+      // Ctrl+Y 或 Ctrl+Shift+Z 重做
+      else if ((e.ctrlKey && e.key === 'y') || (e.ctrlKey && e.shiftKey && e.key === 'Z')) {
+        e.preventDefault();
+        handleRedo();
+      }
+    };
+
     document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("keydown", handleKeyDown);
+    
     // 监听来自 GuideBoard 的编辑态变化
     const onEditingChange = (e: Event) => {
       const detail = (e as CustomEvent).detail as { isEditing: boolean };
@@ -87,8 +213,13 @@ export default function Editor({
       "guide-editing-change",
       onEditingChange as EventListener
     );
-    return () => document.removeEventListener("mousemove", handleMouseMove);
-  }, []);
+    
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("guide-editing-change", onEditingChange as EventListener);
+    };
+  }, [handleUndo, handleRedo]);
 
   // 处理编辑区的鼠标事件（拖拽和缩放）
   const handleEditorMouseDown = useCallback(
@@ -266,6 +397,9 @@ export default function Editor({
                 // 清除导入状态
                 setIsImporting(false);
                 Toast.success(t("saves.import.success"));
+                // 清空撤销历史并保存当前状态
+                clearHistory();
+                setTimeout(() => saveCurrentState(), 100);
               }
               resolve();
             }, 100);
@@ -274,6 +408,9 @@ export default function Editor({
             if (guideBoardRef.current) {
               guideBoardRef.current.restoreState(saveData);
               Toast.success(t("saves.import.success"));
+              // 清空撤销历史并保存当前状态
+              clearHistory();
+              setTimeout(() => saveCurrentState(), 100);
             }
             setIsImporting(false);
             resolve();
@@ -355,7 +492,7 @@ export default function Editor({
   // 监听配置变化并触发保存
   const handleConfigChange = () => {
     // 未初始化时不保存，避免循环
-    if (!isInitialized) return;
+    if (!isInitialized || isUndoRedoing) return;
     
     if (configChangeTimeoutRef.current) {
       window.clearTimeout(configChangeTimeoutRef.current);
@@ -363,6 +500,8 @@ export default function Editor({
     configChangeTimeoutRef.current = window.setTimeout(() => {
       lastChangeRef.current = Date.now();
       saveToLocalStorage();
+      // 保存到撤销/重做历史
+      saveCurrentState();
     }, 500);
   };
 
@@ -392,6 +531,12 @@ export default function Editor({
         setIsInitialized(true);
         // 通知App组件档案加载完成
         onArchiveLoaded?.();
+        // 延迟保存初始状态到撤销历史，确保所有状态都已初始化
+        setTimeout(() => {
+          if (guideBoardRef.current) {
+            saveCurrentState();
+          }
+        }, 200);
       } catch {
         setIsInitialized(true);
         // 即使失败也要通知加载完成
@@ -521,6 +666,8 @@ export default function Editor({
 
       guideBoardRef.current?.addItemToRow(targetRowId, newItem, insertIndex);
       lastChangeRef.current = Date.now();
+      // 保存状态到撤销历史
+      setTimeout(() => saveCurrentState(), 50);
       return;
     }
 
@@ -545,6 +692,8 @@ export default function Editor({
           ) {
             guideBoardRef.current?.reorderRow(sourceRowId, oldIndex, newIndex);
             lastChangeRef.current = Date.now();
+            // 保存状态到撤销历史
+            setTimeout(() => saveCurrentState(), 50);
           }
         }
       } else {
@@ -611,6 +760,8 @@ export default function Editor({
         if (item) {
           guideBoardRef.current?.addItemToRow(targetRowId, item, insertIndex);
           lastChangeRef.current = Date.now();
+          // 保存状态到撤销历史
+          setTimeout(() => saveCurrentState(), 50);
         }
       }
     }
@@ -941,10 +1092,15 @@ export default function Editor({
         <Header
           onExport={exportSaveData}
           onImport={importSaveData}
+          onUndo={handleUndo}
+          onRedo={handleRedo}
+          canUndo={canUndo}
+          canRedo={canRedo}
           guideHeight={guideHeight}
           zoom={zoom}
           onZoomChange={setZoom}
           disableZoom={isEditingOpen}
+          onClearHistory={clearHistory}
         />
         <div className="flex h-0 flex-1">
           <ComponentsList
@@ -956,6 +1112,8 @@ export default function Editor({
               }
               setCurrentTheme(theme);
               guideBoardRef.current?.clearBoard();
+              // 在切换主题后保存状态，而不是清空历史
+              setTimeout(() => saveCurrentState(), 100);
             }}
           />
           <div

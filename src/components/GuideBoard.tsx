@@ -110,7 +110,41 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
     const [boardWidth, setBoardWidth] = useState(DEFAULT_WIDTH);
     const [showDividers, setShowDividers] = useState(true);
     const [isRestoring, setIsRestoring] = useState(false);
+    const [editingItem, setEditingItem] = useState<{
+      item: GuideItem;
+      position: { x: number; y: number };
+      parentId?: string;
+    } | null>(null);
     const configChangeTimeoutRef = useRef<number | null>(null);
+
+    // 编辑弹窗全局Delete监听，保证无论焦点在弹窗内哪个元素都能Delete删除组件
+    useEffect(() => {
+      if (!editingItem) return;
+      const handleDelete = (e: KeyboardEvent) => {
+        if (e.key === "Delete" || e.key === "Del") {
+          const rowIndex = rows.findIndex(row =>
+            row.some(item => item.id === editingItem.item.id)
+          );
+          if (rowIndex !== -1) {
+            setRows(prev =>
+              prev.map((row, idx) =>
+                idx === rowIndex
+                  ? row.filter(item => item.id !== editingItem.item.id)
+                  : row
+              )
+            );
+            setEditingItem(null);
+            if (onConfigChange && !isRestoring) {
+              setTimeout(() => onConfigChange(), 50);
+            }
+          }
+        }
+      };
+      window.addEventListener("keydown", handleDelete);
+      return () => {
+        window.removeEventListener("keydown", handleDelete);
+      };
+    }, [editingItem, rows, onConfigChange, isRestoring]);
     
     // 防抖的配置变化通知，在恢复状态时暂停
     useEffect(() => {
@@ -121,16 +155,13 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
         }
         // 设置新的定时器，避免频繁调用
         configChangeTimeoutRef.current = window.setTimeout(() => {
+          console.log('🔧 GuideBoard 配置变化，触发保存');
           onConfigChange();
         }, 10);
       }
     }, [rows, boardWidth, showDividers, onConfigChange, isRestoring]);
     
-    const [editingItem, setEditingItem] = useState<{
-      item: GuideItem;
-      position: { x: number; y: number };
-      parentId?: string; // 若为 TwoRowContainer 内部子项，则父容器 ID
-    } | null>(null);
+  // ...existing code...
     const boardContentRef = useRef<HTMLDivElement>(null);
     const popupRef = useRef<HTMLDivElement>(null);
 
@@ -344,18 +375,26 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
     );
 
   // 添加一行
-    const handleAddRow = (idx: number) => {
-      setRows(prev => {
-        const newRows = [...prev];
-        newRows.splice(idx + 1, 0, []);
-        return newRows;
-      });
-    };
+  const handleAddRow = (idx: number) => {
+    setRows(prev => {
+      const newRows = [...prev];
+      newRows.splice(idx + 1, 0, []);
+      return newRows;
+    });
+    // 触发配置变化通知（包含撤销历史保存）
+    if (onConfigChange && !isRestoring) {
+      setTimeout(() => onConfigChange(), 50);
+    }
+  };
 
   // 删除某一行
-    const handleRemoveRow = (idx: number) => {
-      setRows(prev => (prev.length > 1 ? prev.filter((_, i) => i !== idx) : prev));
-    };
+  const handleRemoveRow = (idx: number) => {
+    setRows(prev => (prev.length > 1 ? prev.filter((_, i) => i !== idx) : prev));
+    // 触发配置变化通知（包含撤销历史保存）
+    if (onConfigChange && !isRestoring) {
+      setTimeout(() => onConfigChange(), 50);
+    }
+  };
 
     return (
       <div className="flex flex-col items-center">
@@ -523,31 +562,11 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
             <div
               className="editing-popup"
               onClick={e => e.stopPropagation()}
-              tabIndex={0}
-              ref={(el: HTMLDivElement | null) => {
+              ref={el => {
                 //@ts-ignore
-                // please dont remove the tabindex and ts ignore,and then it will not runs normally
                 popupRef.current = el;
-                el?.focus();
               }}
-              onKeyDown={e => {
-                if (e.key === "Delete" || e.key === "Del") {
-                  // 查找组件所在的行
-                  const rowIndex = rows.findIndex(row =>
-                    row.some(item => item.id === editingItem.item.id)
-                  );
-                  if (rowIndex !== -1) {
-                    setRows(prev =>
-                      prev.map((row, idx) =>
-                        idx === rowIndex
-                          ? row.filter(item => item.id !== editingItem.item.id)
-                          : row
-                      )
-                    );
-                    setEditingItem(null);
-                  }
-                }
-              }}
+              tabIndex={-1}
               style={{
                 position: "fixed",
                 left: editingItem.position.x,
@@ -614,6 +633,10 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
                                 })
                               )
                             );
+                            // 触发配置变化通知（包含撤销历史保存）
+                            if (onConfigChange && !isRestoring) {
+                              setTimeout(() => onConfigChange(), 50);
+                            }
                           },
                         })}
                       </div>
@@ -641,6 +664,10 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
                             );
                             // 关闭编辑框
                             setEditingItem(null);
+                            // 触发配置变化通知（包含撤销历史保存）
+                            if (onConfigChange && !isRestoring) {
+                              setTimeout(() => onConfigChange(), 50);
+                            }
                           }
                         }}
                         block

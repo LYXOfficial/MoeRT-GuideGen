@@ -47,6 +47,8 @@
     "export_image": "匯出為圖片",
     "save_project": "保存專案到本地",
     "load_project": "匯入專案",
+    "undo": "復原",
+    "redo": "重做",
     "autosave": {
       "success": "自動保存成功",
       "error": "自動保存失敗"

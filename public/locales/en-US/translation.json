@@ -47,6 +47,8 @@
     "export_image": "Export as Image",
     "save_project": "Save Project Locally",
     "load_project": "Import Project",
+    "undo": "Undo",
+    "redo": "Redo",
     "autosave": {
       "success": "Auto-save successful",
       "error": "Auto-save failed"
