@@ -1,6 +1,10 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { useRef, useState } from "react";
+import { useRef, useState, type ReactElement } from "react";
+import ChongqingSpecLine from "./themes/chongqing/SpecLine";
+import ChengduSpecLine from "./themes/chengdu/SpecLine";
+import ChongqingSpacing from "./themes/chongqing/Spacing";
+import ChengduSpacing from "./themes/chengdu/Spacing";
 
 export default function DraggableItem({
   id,
@@ -36,7 +40,7 @@ export default function DraggableItem({
         y: transform.y / (zoom || 1),
       }
     : null;
-  console.log((children as any).type)
+  console.log((children as any).type);
   const style = {
     transform: CSS.Transform.toString(adjustedTransform as any),
     transition: transition || "transform 200ms ease, opacity 200ms ease",
@@ -47,10 +51,15 @@ export default function DraggableItem({
     background: isDragging ? "#f0f0f0" : "transparent",
     zIndex: isDragging
       ? 9999
-      : (children as any).type.name === "SpecLine"
+      : (children as ReactElement).type === ChengduSpecLine ||
+          (children as ReactElement).type === ChongqingSpecLine
         ? 10
         : 1,
-    flex: (children as any).type.name === "Spacing" ? "1" : "0 0 auto",
+    flex:
+      (children as ReactElement).type === ChengduSpacing ||
+      (children as ReactElement).type === ChongqingSpacing
+        ? "1"
+        : "0 0 auto",
     opacity: isDragging ? 0.5 : 1,
     touchAction: "none",
     position: "relative" as const,
