@@ -1,4 +1,4 @@
-const Exit: React.FC<
+const Exit1: React.FC<
   React.SVGProps<SVGSVGElement> & {
     rotation?: number;
     background?: string;
@@ -52,4 +52,4 @@ const Exit: React.FC<
   );
 };
 
-export default Exit;
+export default Exit1;

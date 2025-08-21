@@ -7,19 +7,21 @@ import CustomColorPicker from "../../CustomColorPicker";
 export interface StationNameProps {
   chinese: string;
   english: string;
-  align?: "left" | "center" | "right";
+  align?: "left" | "right";
   foreground?: string;
   background?: string;
 }
 export const stationNameDefaultProps: StationNameProps = {
-  align: "center",
+  align: "left",
   chinese: "中環",
   english: "Central",
   foreground: colors.foreground,
   background: colors.background,
 };
 
-export const stationNameEditorConfig = (t: (key: string) => string): EditorConfig => ({
+export const stationNameEditorConfig = (
+  t: (key: string) => string
+): EditorConfig => ({
   forms: [
     {
       key: "chinese",
@@ -132,4 +134,5 @@ export default function StationName({
 }
 
 // 添加静态方法
-StationName.getEditorConfig = (t: (key: string) => string) => stationNameEditorConfig(t);
+StationName.getEditorConfig = (t: (key: string) => string) =>
+  stationNameEditorConfig(t);

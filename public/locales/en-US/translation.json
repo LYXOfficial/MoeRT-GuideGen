@@ -113,14 +113,17 @@
               "ct": "Chongqing Railway Group",
               "crt": "Chongqing Rail Transit",
               "cr": "China Railway",
-              "exit": "Exit",
+              "exit1": "Exit_1",
+              "exit2": "Exit_2",
               "elevator": "Accessible Elevator",
               "waitingroom": "Waiting Room",
               "toilet": "Restroom",
               "ticket": "Ticketing/Top-up",
               "checkin": "Self-service Check-in"
             },
-            "lineColor": "Line Color"
+            "rotation": "Rotation Angle",
+            "background": "Background Color",
+            "foreground": "Foreground Color"
           }
         },
         "LineNum": {
@@ -322,17 +325,24 @@
               "displayName": "Icon",
               "noentry": "No Entry",
               "train": "Train",
-              "metro": "Metro",
-              "monorail": "Monorail",
               "cdrt": "Chengdu Metro",
-              "exit": "Exit",
+              "exit1": "Exit (1)",
+              "exit2": "Exit (2)",
               "elevator": "Accessible Elevator",
               "waitingroom": "Waiting Room",
               "toilet": "Restroom",
               "ticket": "Ticketing/Top-up",
-              "checkin": "Self-service Check-in"
+              "checkin": "Self-service Check-in",
+              "stairs": "Stairs",
+              "autostair": "Auto Stair",
+              "coach": "Coach",
+              "bus": "Bus",
+              "parking": "Parking",
+              "cr": "China Railway"
             },
-            "lineColor": "Line Color"
+            "background": "Background Color",
+            "foreground": "Foreground Color",
+            "rotation": "Rotation Angle"
           }
         },
         "LineNum": {
@@ -588,7 +598,10 @@
           "props": {
             "chinese": "Chinese Name",
             "english": "English Name",
-            "lineColor": "Line Color"
+            "lineColor": "Line Color",
+            "align": {
+              "displayName": "Alignment"
+            }
           }
         },
         "Exit": {
@@ -651,7 +664,7 @@
             }
           }
         },
-        "Platform": {
+        "platform": {
           "displayName": "Platform",
           "props": {
             "color": "Line Color",
@@ -665,8 +678,6 @@
         "foreground": "Foreground Color",
         "background2": "Background Color 2",
         "foreground2": "Foreground Color 2",
-        "background3": "Background Color 3",
-        "foreground3": "Foreground Color 3",
         "border": "Border Color",
         "specline": "Divider Line",
         "kwuntongline": "Kwun Tong Line",

@@ -40,7 +40,7 @@ const Ticket: React.FC<
       <rect x="123" y="89" width="79" height="113" fill={background} />
       <circle cx="66" cy="200" r="34" fill={background} />
       <text
-        fontFamily="MicrosoftYaHeiUI-Bold, 'Microsoft YaHei UI, sans-serif'"
+        fontFamily="sans-serif'"
         fontSize={54}
         fontWeight={700}
         transform="translate(39 221.21)"

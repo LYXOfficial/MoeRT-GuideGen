@@ -113,14 +113,17 @@
               "ct": "重慶鐵路集團",
               "crt": "重慶軌道交通",
               "cr": "國鐵",
-              "exit": "出口",
+              "exit1": "出口（1）",
+              "exit2": "出口（2）",
               "elevator": "無障礙電梯",
               "waitingroom": "等候室",
               "toilet": "衛生間",
               "ticket": "售票/加值",
               "checkin": "自助檢票"
             },
-            "lineColor": "線路顏色"
+            "rotation": "旋轉角度",
+            "background": "背景色",
+            "foreground": "前景色"
           }
         },
         "LineNum": {
@@ -322,17 +325,24 @@
               "displayName": "圖標",
               "noentry": "禁止通行",
               "train": "乘車",
-              "metro": "地鐵",
-              "monorail": "單軌",
               "cdrt": "成都地鐵",
-              "exit": "出口",
+              "exit1": "出口（1）",
+              "exit2": "出口（2）",
               "elevator": "無障礙電梯",
               "waitingroom": "等候室",
               "toilet": "衛生間",
               "ticket": "售票/加值",
-              "checkin": "自助檢票"
+              "checkin": "自助檢票",
+              "stairs": "樓梯",
+              "autostair": "自動扶梯",
+              "coach": "長途客車",
+              "bus": "公交車",
+              "parking": "停車場",
+              "cr": "國鐵"
             },
-            "lineColor": "線路顏色"
+            "background": "背景色",
+            "foreground": "前景色",
+            "rotation": "旋轉角度"
           }
         },
         "LineNum": {
@@ -588,7 +598,10 @@
           "props": {
             "chinese": "中文名",
             "english": "英文名",
-            "lineColor": "路線顏色"
+            "lineColor": "路線顏色",
+            "align": {
+              "displayName": "對齊"
+            }
           }
         },
         "Exit": {

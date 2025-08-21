@@ -1,0 +1,26 @@
+import colors from "../define/colors";
+
+interface IconProps {
+  foreground?: string;
+  background?: string;
+}
+
+const CR = ({
+  foreground = colors.foreground,
+  background = colors.background,
+}: IconProps) => {
+  return (
+    <svg id="a" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+        <g id="b">
+            <rect fill={foreground} y="0" width="256" height="256" rx="40" ry="40"/>
+            <path fill={background} d="M144.26,46.19c.95,4.3-1.86,7.81-6.26,7.81h-20c-4.4,0-7.22-3.51-6.26-7.81l.53-2.38c.95-4.3,5.34-7.81,9.74-7.81h12c4.4,0,8.78,3.51,9.74,7.81l.53,2.38Z"/>
+            <g mask="url(#c)">
+                <circle stroke={background} strokeMiterlimit={10} strokeWidth="17px" fill="none" cx="128" cy="124" r="70.5"/>
+            </g>
+            <path fill={background} d="M179,213c-.43-1.67-1.68-2.61-3-3-3.59-1.06-30.56-5.56-34-7s-8-6-8-16v-41c0-4.56,4.11-7.48,6-8l15-4v-16s0-4-3-7-8-3-8-3h-32s-5,0-8,3-3,7-3,7v16l15,4c1.89.52,6,3.44,6,8v41c0,10-4.56,14.56-8,16s-30.41,5.94-34,7c-1.32.39-2.57,1.33-3,3-.43,1.67-1,7-1,7h104s-.57-5.33-1-7Z"/>
+        </g>
+    </svg>
+  );
+};
+
+export default CR;

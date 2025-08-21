@@ -3,10 +3,17 @@ import colors from "./define/colors";
 import type { EditorConfig } from "../../../interfaces/editor";
 import CustomColorPicker from "../../CustomColorPicker";
 
-import Exit from "./icons/exit";
+import Exit1 from "./icons/exit1";
 import CheckIn from "./icons/checkin";
 import Ticket from "./icons/ticket";
 import Train from "./icons/train";
+import Bus from "./icons/bus";
+import CR from "./icons/cr";
+import Coach from "./icons/coach";
+import Elevator from "./icons/elevator";
+import Exit2 from "./icons/exit2";
+import Parking from "./icons/parking";
+import WaitingRoom from "./icons/waitingroom";
 
 export const regicons = [
   {
@@ -14,8 +21,12 @@ export const regicons = [
     component: Train,
   },
   {
-    label: "themes.chengdu.components.Icon.props.icon.exit",
-    component: Exit,
+    label: "themes.chengdu.components.Icon.props.icon.exit1",
+    component: Exit1,
+  },
+  {
+    label: "themes.chengdu.components.Icon.props.icon.exit2",
+    component: Exit2,
   },
   {
     label: "themes.chengdu.components.Icon.props.icon.ticket",
@@ -24,6 +35,30 @@ export const regicons = [
   {
     label: "themes.chengdu.components.Icon.props.icon.checkin",
     component: CheckIn,
+  },
+  {
+    label: "themes.chengdu.components.Icon.props.icon.bus",
+    component: Bus,
+  },
+  {
+    label: "themes.chengdu.components.Icon.props.icon.cr",
+    component: CR,
+  },
+  {
+    label: "themes.chengdu.components.Icon.props.icon.coach",
+    component: Coach,
+  },
+  {
+    label: "themes.chengdu.components.Icon.props.icon.elevator",
+    component: Elevator,
+  },
+  {
+    label: "themes.chengdu.components.Icon.props.icon.parking",
+    component: Parking,
+  },
+  {
+    label: "themes.chengdu.components.Icon.props.icon.waitingroom",
+    component: WaitingRoom,
   },
 ];
 
@@ -35,7 +70,7 @@ export interface IconProps {
 }
 export const iconDefaultProps: IconProps = {
   rotation: "0",
-  icon: "themes.chengdu.components.Icon.props.icon.exit",
+  icon: "themes.chengdu.components.Icon.props.icon.exit2",
   foreground: colors.exitforeground,
   background: colors.exitbackground,
 };

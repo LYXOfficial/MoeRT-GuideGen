@@ -113,14 +113,17 @@
               "ct": "충칭철도그룹",
               "crt": "충칭 궤도교통",
               "cr": "중국철로",
-              "exit": "출구",
+              "exit1": "출구 1",
+              "exit2": "출구 2",
               "elevator": "무장애 엘리베이터",
               "waitingroom": "대기실",
               "toilet": "화장실",
               "ticket": "매표/충전",
               "checkin": "셀프 개찰"
             },
-            "lineColor": "노선 색상"
+            "rotation": "회전 각도",
+            "background": "배경색",
+            "foreground": "전경색"
           }
         },
         "LineNum": {
@@ -322,17 +325,24 @@
               "displayName": "아이콘",
               "noentry": "통행 금지",
               "train": "승차",
-              "metro": "지하철",
-              "monorail": "모노레일",
               "cdrt": "청두 지하철",
-              "exit": "출구",
+              "exit1": "출구 (1)",
+              "exit2": "출구 (2)",
               "elevator": "무장애 엘리베이터",
               "waitingroom": "대기실",
               "toilet": "화장실",
               "ticket": "매표/충전",
-              "checkin": "셀프 개찰"
+              "checkin": "셀프 개찰",
+              "stairs": "계단",
+              "autostair": "자동 계단",
+              "coach": "고속버스",
+              "bus": "버스",
+              "parking": "주차장",
+              "cr": "중국철로"
             },
-            "lineColor": "노선 색상"
+            "background": "배경색",
+            "foreground": "전경색",
+            "rotation": "회전 각도"
           }
         },
         "LineNum": {
@@ -588,7 +598,10 @@
           "props": {
             "chinese": "중국어 이름",
             "english": "영어 이름",
-            "lineColor": "노선 색상"
+            "lineColor": "노선 색상",
+            "align": {
+              "displayName": "정렬"
+            }
           }
         },
         "Exit": {
