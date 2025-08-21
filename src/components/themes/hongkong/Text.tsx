@@ -128,10 +128,20 @@ export default function Text({
                   : "start"
             }
           >
-            <text x={0} y={34} fontSize={fontsize==="large"?28:22} fill={foreground}>
+            <text
+              x={0}
+              y={34}
+              fontSize={fontsize === "large" ? 28 : 22}
+              fill={foreground}
+            >
               {chinese}
             </text>
-            <text x={0} y={fontsize==="large"?52:48} fontSize={fontsize==="large"?14:12} fill={foreground}>
+            <text
+              x={0}
+              y={fontsize === "large" ? 52 : 48}
+              fontSize={fontsize === "large" ? 14 : 12}
+              fill={foreground}
+            >
               {english}
             </text>
           </g>

@@ -118,8 +118,8 @@ export default function Header({
           <button
             type="button"
             className={`transition duration-300 flex items-center p-1 rounded ${
-              canUndo 
-                ? "hover:bg-gray-100 text-gray-700 hover:text-blue-500 cursor-pointer" 
+              canUndo
+                ? "hover:bg-gray-100 text-gray-700 hover:text-blue-500 cursor-pointer"
                 : "text-gray-300 cursor-not-allowed"
             }`}
             onClick={onUndo}
@@ -131,8 +131,8 @@ export default function Header({
           <button
             type="button"
             className={`transition duration-300 flex items-center p-1 rounded ${
-              canRedo 
-                ? "hover:bg-gray-100 text-gray-700 hover:text-blue-500 cursor-pointer" 
+              canRedo
+                ? "hover:bg-gray-100 text-gray-700 hover:text-blue-500 cursor-pointer"
                 : "text-gray-300 cursor-not-allowed"
             }`}
             onClick={onRedo}
@@ -141,9 +141,7 @@ export default function Header({
           >
             <IconRedo size="extra-large" />
           </button>
-
           <div className="w-px h-6 bg-gray-300"></div> {/* 分隔线 */}
-
           <Popover
             content={languageSelector}
             trigger="hover"

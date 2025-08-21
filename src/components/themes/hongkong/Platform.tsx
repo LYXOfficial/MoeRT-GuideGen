@@ -39,17 +39,14 @@ function Platform({
   color = platformDefaultProps.color,
   background = platformDefaultProps.background,
 }: PlatformProps) {
-
   return (
     <div style={{ background: background }}>
-      <div
-        className="h-64px w-48px"
-      >
+      <div className="h-64px w-48px">
         <svg height={64} width={48}>
           <circle cx={24} cy={32} r={20} fill={color} />
           <text
-            x={22}   
-            y={29}  
+            x={22}
+            y={29}
             fontSize={32}
             textAnchor="middle"
             dominantBaseline="central"

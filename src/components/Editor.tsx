@@ -54,7 +54,14 @@ export default function Editor({
     config: { width: 512, showSpecLine: true },
     currentTheme: 0,
   };
-  const { saveState, undo, redo, canUndo, canRedo, clear: clearHistory } = useUndoRedo(initialState);
+  const {
+    saveState,
+    undo,
+    redo,
+    canUndo,
+    canRedo,
+    clear: clearHistory,
+  } = useUndoRedo(initialState);
 
   // 记录状态到历史记录（防抖处理）
   const saveCurrentState = useCallback(() => {
@@ -65,28 +72,35 @@ export default function Editor({
         config,
         currentTheme,
       };
-      console.log('💾 保存状态到历史记录:', { rowsCount: rows.length, config, currentTheme });
+      console.log("💾 保存状态到历史记录:", {
+        rowsCount: rows.length,
+        config,
+        currentTheme,
+      });
       saveState(state);
     }
   }, [saveState, currentTheme, isImporting, isUndoRedoing]);
 
   // 撤销操作
   const handleUndo = useCallback(() => {
-    console.log('🔙 执行撤销操作, canUndo:', canUndo);
+    console.log("🔙 执行撤销操作, canUndo:", canUndo);
     const previousState = undo();
     if (previousState && guideBoardRef.current) {
-      console.log('🔙 撤销到状态:', { rowsCount: previousState.rows.length, theme: previousState.currentTheme });
+      console.log("🔙 撤销到状态:", {
+        rowsCount: previousState.rows.length,
+        theme: previousState.currentTheme,
+      });
       // 设置撤销/重做状态，防止触发自动保存
       setIsUndoRedoing(true);
-      
+
       // 设置主题
       if (previousState.currentTheme !== currentTheme) {
         setCurrentTheme(previousState.currentTheme);
       }
-      
+
       // 恢复状态（转换数据格式）
       const restoreData = {
-        rows: previousState.rows.map(row => 
+        rows: previousState.rows.map(row =>
           row.map(item => ({
             id: item.id,
             type: item.type,
@@ -95,33 +109,36 @@ export default function Editor({
         ),
         config: previousState.config,
       };
-      
+
       guideBoardRef.current.restoreState(restoreData);
-      
+
       // 延迟清除撤销/重做状态
       setTimeout(() => setIsUndoRedoing(false), 200);
     } else {
-      console.log('🔙 撤销失败: 没有可撤销的状态');
+      console.log("🔙 撤销失败: 没有可撤销的状态");
     }
   }, [undo, currentTheme, canUndo]);
 
   // 重做操作
   const handleRedo = useCallback(() => {
-    console.log('🔜 执行重做操作, canRedo:', canRedo);
+    console.log("🔜 执行重做操作, canRedo:", canRedo);
     const nextState = redo();
     if (nextState && guideBoardRef.current) {
-      console.log('🔜 重做到状态:', { rowsCount: nextState.rows.length, theme: nextState.currentTheme });
+      console.log("🔜 重做到状态:", {
+        rowsCount: nextState.rows.length,
+        theme: nextState.currentTheme,
+      });
       // 设置撤销/重做状态，防止触发自动保存
       setIsUndoRedoing(true);
-      
+
       // 设置主题
       if (nextState.currentTheme !== currentTheme) {
         setCurrentTheme(nextState.currentTheme);
       }
-      
+
       // 恢复状态（转换数据格式）
       const restoreData = {
-        rows: nextState.rows.map(row => 
+        rows: nextState.rows.map(row =>
           row.map(item => ({
             id: item.id,
             type: item.type,
@@ -130,13 +147,13 @@ export default function Editor({
         ),
         config: nextState.config,
       };
-      
+
       guideBoardRef.current.restoreState(restoreData);
-      
+
       // 延迟清除撤销/重做状态
       setTimeout(() => setIsUndoRedoing(false), 200);
     } else {
-      console.log('🔜 重做失败: 没有可重做的状态');
+      console.log("🔜 重做失败: 没有可重做的状态");
     }
   }, [redo, currentTheme, canRedo]);
   const [zoom, setZoom] = useState(1);
@@ -183,19 +200,23 @@ export default function Editor({
     const handleKeyDown = (e: KeyboardEvent) => {
       // 检查是否在输入框中
       const target = e.target as HTMLElement;
-      const isInInput = target.tagName === 'INPUT' || 
-                       target.tagName === 'TEXTAREA' || 
-                       target.contentEditable === 'true';
-      
+      const isInInput =
+        target.tagName === "INPUT" ||
+        target.tagName === "TEXTAREA" ||
+        target.contentEditable === "true";
+
       if (isInInput) return;
-      
+
       // Ctrl+Z 撤销
-      if (e.ctrlKey && e.key === 'z' && !e.shiftKey) {
+      if (e.ctrlKey && e.key === "z" && !e.shiftKey) {
         e.preventDefault();
         handleUndo();
       }
       // Ctrl+Y 或 Ctrl+Shift+Z 重做
-      else if ((e.ctrlKey && e.key === 'y') || (e.ctrlKey && e.shiftKey && e.key === 'Z')) {
+      else if (
+        (e.ctrlKey && e.key === "y") ||
+        (e.ctrlKey && e.shiftKey && e.key === "Z")
+      ) {
         e.preventDefault();
         handleRedo();
       }
@@ -203,7 +224,7 @@ export default function Editor({
 
     document.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("keydown", handleKeyDown);
-    
+
     // 监听来自 GuideBoard 的编辑态变化
     const onEditingChange = (e: Event) => {
       const detail = (e as CustomEvent).detail as { isEditing: boolean };
@@ -213,11 +234,14 @@ export default function Editor({
       "guide-editing-change",
       onEditingChange as EventListener
     );
-    
+
     return () => {
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("guide-editing-change", onEditingChange as EventListener);
+      window.removeEventListener(
+        "guide-editing-change",
+        onEditingChange as EventListener
+      );
     };
   }, [handleUndo, handleRedo]);
 
@@ -493,7 +517,7 @@ export default function Editor({
   const handleConfigChange = () => {
     // 未初始化时不保存，避免循环
     if (!isInitialized || isUndoRedoing) return;
-    
+
     if (configChangeTimeoutRef.current) {
       window.clearTimeout(configChangeTimeoutRef.current);
     }
@@ -518,7 +542,6 @@ export default function Editor({
 
   // 初始化和自动保存
   useEffect(() => {
-
     const saveInterval: number | null = null;
 
     const init = async () => {

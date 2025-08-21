@@ -145,7 +145,7 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
         window.removeEventListener("keydown", handleDelete);
       };
     }, [editingItem, rows, onConfigChange, isRestoring]);
-    
+
     // 防抖的配置变化通知，在恢复状态时暂停
     useEffect(() => {
       if (onConfigChange && !isRestoring) {
@@ -155,13 +155,13 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
         }
         // 设置新的定时器，避免频繁调用
         configChangeTimeoutRef.current = window.setTimeout(() => {
-          console.log('🔧 GuideBoard 配置变化，触发保存');
+          console.log("🔧 GuideBoard 配置变化，触发保存");
           onConfigChange();
         }, 10);
       }
     }, [rows, boardWidth, showDividers, onConfigChange, isRestoring]);
-    
-  // ...existing code...
+
+    // ...existing code...
     const boardContentRef = useRef<HTMLDivElement>(null);
     const popupRef = useRef<HTMLDivElement>(null);
 
@@ -248,7 +248,7 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
         restoreState: state => {
           // 设置恢复状态标志，暂停配置变化通知
           setIsRestoring(true);
-          
+
           const restoredRows = state.rows.map((row: SavedItem[]) =>
             row
               .map((item: SavedItem) => {
@@ -287,11 +287,11 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
               })
               .filter((item): item is GuideItem => item !== null)
           );
-          
+
           setRows(restoredRows);
           setBoardWidth(state.config.width);
           setShowDividers(state.config.showSpecLine);
-          
+
           // 恢复完成后重新启用配置变化通知
           setTimeout(() => setIsRestoring(false), 50);
         },
@@ -374,27 +374,29 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
       [rows, boardWidth, showDividers, currentTheme]
     );
 
-  // 添加一行
-  const handleAddRow = (idx: number) => {
-    setRows(prev => {
-      const newRows = [...prev];
-      newRows.splice(idx + 1, 0, []);
-      return newRows;
-    });
-    // 触发配置变化通知（包含撤销历史保存）
-    if (onConfigChange && !isRestoring) {
-      setTimeout(() => onConfigChange(), 50);
-    }
-  };
+    // 添加一行
+    const handleAddRow = (idx: number) => {
+      setRows(prev => {
+        const newRows = [...prev];
+        newRows.splice(idx + 1, 0, []);
+        return newRows;
+      });
+      // 触发配置变化通知（包含撤销历史保存）
+      if (onConfigChange && !isRestoring) {
+        setTimeout(() => onConfigChange(), 50);
+      }
+    };
 
-  // 删除某一行
-  const handleRemoveRow = (idx: number) => {
-    setRows(prev => (prev.length > 1 ? prev.filter((_, i) => i !== idx) : prev));
-    // 触发配置变化通知（包含撤销历史保存）
-    if (onConfigChange && !isRestoring) {
-      setTimeout(() => onConfigChange(), 50);
-    }
-  };
+    // 删除某一行
+    const handleRemoveRow = (idx: number) => {
+      setRows(prev =>
+        prev.length > 1 ? prev.filter((_, i) => i !== idx) : prev
+      );
+      // 触发配置变化通知（包含撤销历史保存）
+      if (onConfigChange && !isRestoring) {
+        setTimeout(() => onConfigChange(), 50);
+      }
+    };
 
     return (
       <div className="flex flex-col items-center">

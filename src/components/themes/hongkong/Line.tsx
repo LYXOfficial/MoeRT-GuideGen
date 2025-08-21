@@ -20,9 +20,7 @@ export const lineDefaultProps: LineProps = {
   align: "left", // 默认居中对齐
 };
 
-export const lineEditorConfig = (
-  t: (key: string) => string
-): EditorConfig => ({
+export const lineEditorConfig = (t: (key: string) => string): EditorConfig => ({
   forms: [
     {
       key: "chinese",
@@ -124,8 +122,8 @@ export default function Line({
               align === "center"
                 ? "middle"
                 : align === "right"
-                ? "end"
-                : "start"
+                  ? "end"
+                  : "start"
             }
           >
             <rect
@@ -133,8 +131,8 @@ export default function Line({
                 align === "center"
                   ? -svgWidth / 2 - padding
                   : align === "right"
-                  ? -svgWidth - padding
-                  : -padding
+                    ? -svgWidth - padding
+                    : -padding
               }
               y={12}
               width={svgWidth + padding * 2}
