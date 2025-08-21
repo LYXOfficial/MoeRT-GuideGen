@@ -504,6 +504,199 @@
         "lines17": "S17/Ziyang West Line",
         "lines18": "S18/Xinjin North Line"
       }
+    },
+    "hongkong": {
+      "displayName": "MTR (Hong Kong) Style",
+      "components": {
+        "Arrow": {
+          "displayName": "Arrow",
+          "props": {
+            "type": {
+              "displayName": "Direction",
+              "up": "Up",
+              "down": "Down",
+              "left": "Left",
+              "right": "Right",
+              "up-left": "Up-Left",
+              "up-right": "Up-Right",
+              "down-left": "Down-Left",
+              "down-right": "Down-Right",
+              "turn-back": "Turn Back"
+            },
+            "background": "Background Color",
+            "foreground": "Foreground Color"
+          }
+        },
+        "Blank": {
+          "displayName": "Blank Space",
+          "props": {
+            "width": "Width",
+            "background": "Background Color",
+            "foreground": "Foreground Color"
+          }
+        },
+        "Icon": {
+          "displayName": "Icon",
+          "props": {
+            "icon": {
+              "displayName": "Icon",
+              "noentry": "No Entry",
+              "airplane": "Airplane",
+              "airport_transfer": "Airport Transfer",
+              "airport_express": "Airport Express",
+              "baggage_claim": "Baggage Claim",
+              "boat": "Ferry",
+              "cable_car": "Cable Car",
+              "check_in": "Check-in",
+              "cross": "No Entry",
+              "customer_service_centre": "Customer Service Centre",
+              "emergency_exit": "Emergency Exit",
+              "escalator": "Escalator",
+              "exit_1": "Exit (1)",
+              "exit_2": "Exit (2)",
+              "exit_3": "Exit (3)",
+              "female": "Female",
+              "lift_1": "Lift (1)",
+              "lift_2": "Lift (2)",
+              "light_rail_1": "Light Rail (1)",
+              "light_rail_2": "Light Rail (2)",
+              "light_rail_3": "Light Rail (3)",
+              "light_rail_4": "Light Rail (4)",
+              "male": "Male",
+              "mtr": "MTR Logo",
+              "sp1900": "SP1900",
+              "stairs_down": "Stairs (Down)",
+              "stairs_up": "Stairs (Up)",
+              "tickets": "Tickets",
+              "toilets": "Toilets",
+              "train": "Train",
+              "train_old": "Train (Old)",
+              "wheelchair": "Wheelchair",
+              "wifi": "Wi-Fi",
+              "xrl_1": "High Speed Rail (1)",
+              "xrl_2": "High Speed Rail (2)",
+              "yellow_head_1": "Yellow Head (1)",
+              "yellow_head_2": "Yellow Head (2)"
+            },
+            "rotation": "Rotation Angle",
+            "background": "Background Color",
+            "foreground": "Foreground Color"
+          }
+        },
+        "Line": {
+          "displayName": "Line",
+          "props": {
+            "chinese": "Chinese Name",
+            "english": "English Name",
+            "lineColor": "Line Color"
+          }
+        },
+        "Exit": {
+          "displayName": "Exit Number",
+          "props": {
+            "letter": "Letter",
+            "num": "Additional Number",
+            "background": "Background Color"
+          }
+        },
+        "Spacing": {
+          "displayName": "Spacing",
+          "props": {
+            "background": "Background Color"
+          }
+        },
+        "SpecLine": {
+          "displayName": "Divider Line",
+          "props": {
+            "background": "Background Color",
+            "foreground": "Foreground Color"
+          }
+        },
+        "StationName": {
+          "displayName": "Station Name",
+          "props": {
+            "chinese": "Chinese Name",
+            "english": "English Name"
+          }
+        },
+        "Text": {
+          "displayName": "Text",
+          "props": {
+            "chinese": "Chinese Text",
+            "english": "English Text",
+            "align": {
+              "displayName": "Alignment",
+              "left": "Left",
+              "right": "Right",
+              "center": "Center"
+            },
+            "background": "Background Color",
+            "foreground": "Foreground Color"
+          }
+        },
+        "ExitName": {
+          "displayName": "Exit Name",
+          "props": {
+            "line1chinese": "Line 1 Chinese",
+            "line1english": "Line 1 English",
+            "line2chinese": "Line 2 Chinese",
+            "line2english": "Line 2 English",
+            "background": "Background Color",
+            "foreground": "Foreground Color",
+            "align": {
+              "displayName": "Alignment",
+              "left": "Left",
+              "right": "Right",
+              "center": "Center"
+            }
+          }
+        },
+        "platform": {
+          "displayName": "Platform",
+          "props": {
+            "color": "Line Color",
+            "num": "Number",
+            "background": "Background Color"
+          }
+        }
+      },
+      "colors": {
+        "background": "Background Color",
+        "foreground": "Foreground Color",
+        "background2": "Background Color 2",
+        "foreground2": "Foreground Color 2",
+        "border": "Border Color",
+        "specline": "Divider Line",
+        "kwuntongline": "Kwun Tong Line",
+        "tsuenwanline": "Tsuen Wan Line",
+        "islandline": "Island Line",
+        "tungchungline": "Tung Chung Line",
+        "tseungkwanoline": "Tseung Kwan O Line",
+        "eastrailline": "East Rail Line",
+        "tuenmaline": "Tuen Ma Line",
+        "disneyline": "Disneyland Resort Line",
+        "southislandline": "South Island Line",
+        "airportexpress": "Airport Express",
+        "highspeedrail": "High Speed Rail",
+        "shenzhenmetro": "Shenzhen Metro",
+        "lightrail": "Light Rail",
+        "lr505": "Light Rail 505",
+        "lr507": "Light Rail 507",
+        "lr610": "Light Rail 610",
+        "lr614": "Light Rail 614",
+        "lr614p": "Light Rail 614P",
+        "lr615": "Light Rail 615",
+        "lr615p": "Light Rail 615P",
+        "lr705": "Light Rail 705",
+        "lr706": "Light Rail 706",
+        "lr751": "Light Rail 751",
+        "lr761p": "Light Rail 761P",
+        "np360": "Ngong Ping 360",
+        "tramways": "Hong Kong Tramways",
+        "northernlink": "Northern Link",
+        "eastkowloon": "East Kowloon Line",
+        "southislandwest": "South Island Line (West)"
+      }
     }
   }
 }

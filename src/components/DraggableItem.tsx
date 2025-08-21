@@ -3,8 +3,10 @@ import { CSS } from "@dnd-kit/utilities";
 import { useRef, useState, type ReactElement } from "react";
 import ChongqingSpecLine from "./themes/chongqing/SpecLine";
 import ChengduSpecLine from "./themes/chengdu/SpecLine";
+import HongkongSpecLine from "./themes/hongkong/SpecLine";
 import ChongqingSpacing from "./themes/chongqing/Spacing";
 import ChengduSpacing from "./themes/chengdu/Spacing";
+import HongkongSpacing from "./themes/hongkong/Spacing";
 
 export default function DraggableItem({
   id,
@@ -52,12 +54,14 @@ export default function DraggableItem({
     zIndex: isDragging
       ? 9999
       : (children as ReactElement).type === ChengduSpecLine ||
-          (children as ReactElement).type === ChongqingSpecLine
+          (children as ReactElement).type === ChongqingSpecLine ||
+          (children as ReactElement).type === HongkongSpecLine
         ? 10
         : 1,
     flex:
       (children as ReactElement).type === ChengduSpacing ||
-      (children as ReactElement).type === ChongqingSpacing
+      (children as ReactElement).type === ChongqingSpacing ||
+      (children as ReactElement).type === HongkongSpacing
         ? "1"
         : "0 0 auto",
     opacity: isDragging ? 0.5 : 1,

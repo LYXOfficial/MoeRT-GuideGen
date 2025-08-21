@@ -1,0 +1,38 @@
+import type { EditorConfig } from "../../../interfaces/editor";
+import colors from "./define/colors";
+import CustomColorPicker from "../../CustomColorPicker";
+
+export interface SpacingProps {
+  background?: string;
+}
+export const spacingDefaultProps: SpacingProps = {
+  background: colors.background,
+};
+
+export const spacingEditorConfig = (
+  _t: (key: string) => string
+): EditorConfig => ({
+  forms: [
+    {
+      key: "background",
+      label: "themes.hongkong.components.Spacing.props.background",
+      element: <CustomColorPicker currentTheme={2} />,
+    },
+  ],
+});
+
+function Spacing({
+  background = spacingDefaultProps.background,
+}: SpacingProps) {
+  return (
+    <div
+      className="flex-1 w-full h-full"
+      style={{ backgroundColor: background }}
+    ></div>
+  );
+}
+
+Spacing.getEditorConfig = (t: (key: string) => string) =>
+  spacingEditorConfig(t);
+
+export default Spacing;

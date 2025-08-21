@@ -504,6 +504,199 @@
         "lines17": "S17/資陽西線",
         "lines18": "S18/新津北線"
       }
+    },
+    "hongkong": {
+      "displayName": "港鉄（MTR）スタイル",
+      "components": {
+        "Arrow": {
+          "displayName": "矢印",
+          "props": {
+            "type": {
+              "displayName": "方向",
+              "up": "上",
+              "down": "下",
+              "left": "左",
+              "right": "右",
+              "up-left": "左上",
+              "up-right": "右上",
+              "down-left": "左下",
+              "down-right": "右下",
+              "turn-back": "折り返し"
+            },
+            "background": "背景色",
+            "foreground": "前景色"
+          }
+        },
+        "Blank": {
+          "displayName": "空白",
+          "props": {
+            "width": "幅",
+            "background": "背景色",
+            "foreground": "前景色"
+          }
+        },
+        "Icon": {
+          "displayName": "アイコン",
+          "props": {
+            "icon": {
+              "displayName": "アイコン",
+              "noentry": "進入禁止",
+              "airplane": "飛行機",
+              "airport_transfer": "空港乗換",
+              "airport_express": "エアポートエクスプレス",
+              "baggage_claim": "手荷物受取",
+              "boat": "フェリー",
+              "cable_car": "ケーブルカー",
+              "check_in": "チェックイン",
+              "cross": "進入禁止",
+              "customer_service_centre": "カスタマーサービスセンター",
+              "emergency_exit": "非常口",
+              "escalator": "エスカレーター",
+              "exit_1": "出口（1）",
+              "exit_2": "出口（2）",
+              "exit_3": "出口（3）",
+              "female": "女性",
+              "lift_1": "エレベーター（1）",
+              "lift_2": "エレベーター（2）",
+              "light_rail_1": "ライトレール（1）",
+              "light_rail_2": "ライトレール（2）",
+              "light_rail_3": "ライトレール（3）",
+              "light_rail_4": "ライトレール（4）",
+              "male": "男性",
+              "mtr": "MTRロゴ",
+              "sp1900": "SP1900",
+              "stairs_down": "階段（下り）",
+              "stairs_up": "階段（上り）",
+              "tickets": "切符",
+              "toilets": "トイレ",
+              "train": "列車",
+              "train_old": "列車（旧）",
+              "wheelchair": "車いす",
+              "wifi": "Wi-Fi",
+              "xrl_1": "高速鉄道（1）",
+              "xrl_2": "高速鉄道（2）",
+              "yellow_head_1": "黄色車両前部（1）",
+              "yellow_head_2": "黄色車両前部（2）"
+            },
+            "rotation": "回転角度",
+            "background": "背景色",
+            "foreground": "前景色"
+          }
+        },
+        "Line": {
+          "displayName": "路線",
+          "props": {
+            "chinese": "中国語名",
+            "english": "英語名",
+            "lineColor": "路線カラー"
+          }
+        },
+        "Exit": {
+          "displayName": "出口番号",
+          "props": {
+            "letter": "文字",
+            "num": "追加番号",
+            "background": "背景色"
+          }
+        },
+        "Spacing": {
+          "displayName": "間隔",
+          "props": {
+            "background": "背景色"
+          }
+        },
+        "SpecLine": {
+          "displayName": "区切り線",
+          "props": {
+            "background": "背景色",
+            "foreground": "前景色"
+          }
+        },
+        "StationName": {
+          "displayName": "駅名",
+          "props": {
+            "chinese": "中国語名",
+            "english": "英語名"
+          }
+        },
+        "Text": {
+          "displayName": "テキスト",
+          "props": {
+            "chinese": "中国語テキスト",
+            "english": "英語テキスト",
+            "align": {
+              "displayName": "配置",
+              "left": "左",
+              "right": "右",
+              "center": "中央"
+            },
+            "background": "背景色",
+            "foreground": "前景色"
+          }
+        },
+        "ExitName": {
+          "displayName": "出口名",
+          "props": {
+            "line1chinese": "1行目中国語",
+            "line1english": "1行目英語",
+            "line2chinese": "2行目中国語",
+            "line2english": "2行目英語",
+            "background": "背景色",
+            "foreground": "前景色",
+            "align": {
+              "displayName": "配置",
+              "left": "左",
+              "right": "右",
+              "center": "中央"
+            }
+          }
+        },
+        "platform": {
+          "displayName": "プラットフォーム",
+          "props": {
+            "color": "路線カラー",
+            "num": "番号",
+            "background": "背景色"
+          }
+        }
+      },
+      "colors": {
+        "background": "背景色",
+        "foreground": "前景色",
+        "background2": "背景色2",
+        "foreground2": "前景色2",
+        "border": "枠線色",
+        "specline": "区切り線",
+        "kwuntongline": "観塘線",
+        "tsuenwanline": "荃湾線",
+        "islandline": "港島線",
+        "tungchungline": "東涌線",
+        "tseungkwanoline": "将軍澳線",
+        "eastrailline": "東鉄線",
+        "tuenmaline": "屯馬線",
+        "disneyline": "ディズニーランドリゾート線",
+        "southislandline": "南港島線",
+        "airportexpress": "エアポートエクスプレス",
+        "highspeedrail": "高速鉄道",
+        "shenzhenmetro": "深圳メトロ",
+        "lightrail": "ライトレール",
+        "lr505": "ライトレール505",
+        "lr507": "ライトレール507",
+        "lr610": "ライトレール610",
+        "lr614": "ライトレール614",
+        "lr614p": "ライトレール614P",
+        "lr615": "ライトレール615",
+        "lr615p": "ライトレール615P",
+        "lr705": "ライトレール705",
+        "lr706": "ライトレール706",
+        "lr751": "ライトレール751",
+        "lr761p": "ライトレール761P",
+        "np360": "ゴンピン360",
+        "tramways": "香港トラム",
+        "northernlink": "北環線",
+        "eastkowloon": "東九龍線",
+        "southislandwest": "南港島線（西段）"
+      }
     }
   }
 }
