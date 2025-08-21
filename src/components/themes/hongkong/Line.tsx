@@ -1,180 +1,158 @@
 import { useRef, useState, useEffect } from "react";
 import colors from "./define/colors";
 import type { EditorConfig } from "../../../interfaces/editor";
-import { Input, Select, Switch } from "@douyinfe/semi-ui";
+import { Input, Select } from "@douyinfe/semi-ui";
 import CustomColorPicker from "../../CustomColorPicker";
 
-export interface LineNumProps {
-  num: string;
+export interface LineProps {
   lineColor: string;
-  customChinese?: string;
-  customEnglish?: string;
-  showText?: boolean;
-  align?: string;
+  chinese: string;
+  english: string;
+  background?: string;
+  align?: "left" | "center" | "right"; // 添加对齐选项
 }
 
-export const lineNumDefaultProps: LineNumProps = {
-  num: "6",
-  lineColor: colors.line6,
-  customChinese: "号线",
-  customEnglish: "Line",
-  showText: true,
-  align: "left",
+export const lineDefaultProps: LineProps = {
+  lineColor: colors.tsuenwanline,
+  chinese: "荃灣綫",
+  english: "Tsuen Wan Line",
+  background: colors.background,
+  align: "left", // 默认居中对齐
 };
 
-export const lineNumEditorConfig = (
+export const lineEditorConfig = (
   t: (key: string) => string
 ): EditorConfig => ({
   forms: [
     {
-      key: "lineColor",
-      label: "themes.chongqing.components.LineNum.props.lineColor",
-      element: <CustomColorPicker currentTheme={0} />,
-    },
-    {
-      key: "num",
-      label: "themes.chongqing.components.LineNum.props.num",
+      key: "chinese",
+      label: "themes.hongkong.components.Line.props.chinese",
       element: <Input />,
     },
     {
-      key: "customChinese",
-      label: "themes.chongqing.components.LineNum.props.customChinese",
+      key: "english",
+      label: "themes.hongkong.components.Line.props.english",
       element: <Input />,
-    },
-    {
-      key: "customEnglish",
-      label: "themes.chongqing.components.LineNum.props.customEnglish",
-      element: <Input />,
-    },
-    {
-      key: "showText",
-      label: "themes.chongqing.components.LineNum.props.showText",
-      element: <Switch />,
     },
     {
       key: "align",
-      label: "themes.chongqing.components.LineNum.props.align.displayName",
+      label: "themes.hongkong.components.Line.props.align.displayName",
       element: (
         <Select>
           <Select.Option value="left">
-            {t("themes.chongqing.components.LineNum.props.align.left")}
+            {t("themes.hongkong.components.Text.props.align.left")}
+          </Select.Option>
+          <Select.Option value="center">
+            {t("themes.hongkong.components.Text.props.align.center")}
           </Select.Option>
           <Select.Option value="right">
-            {t("themes.chongqing.components.LineNum.props.align.right")}
+            {t("themes.hongkong.components.Text.props.align.right")}
           </Select.Option>
         </Select>
       ),
     },
+    {
+      key: "lineColor",
+      label: "themes.hongkong.components.Line.props.lineColor",
+      element: <CustomColorPicker currentTheme={2} />,
+    },
+    {
+      key: "background",
+      label: "themes.hongkong.components.Line.props.background",
+      element: <CustomColorPicker currentTheme={2} />,
+    },
   ],
 });
 
-function LineNum({
-  num = lineNumDefaultProps.num,
-  lineColor = lineNumDefaultProps.lineColor,
-  customChinese = lineNumDefaultProps.customChinese,
-  customEnglish = lineNumDefaultProps.customEnglish,
-  showText = lineNumDefaultProps.showText,
-  align = lineNumDefaultProps.align,
-}: LineNumProps) {
-  const numRef = useRef<SVGTextElement>(null);
-  const textRef = useRef<SVGGElement>(null);
+export default function Line({
+  chinese = lineDefaultProps.chinese,
+  english = lineDefaultProps.english,
+  lineColor = lineDefaultProps.lineColor,
+  background = lineDefaultProps.background,
+  align = lineDefaultProps.align,
+}: LineProps) {
+  const lineGroupRef = useRef<SVGGElement>(null);
   const [svgWidth, setSvgWidth] = useState(0);
-  const [textOffsetX, setTextOffsetX] = useState(0);
-  const [numX, setNumX] = useState(0);
-  const [rectX, setRectX] = useState(0);
-  const [textAnchor, setTextAnchor] = useState<"start" | "end">("start");
-
-  const isChinese = /[\u4e00-\u9fa5]/.test(num);
+  const measureGroupRef = useRef<SVGGElement>(null);
 
   useEffect(() => {
     let mounted = true;
 
     const measure = () => {
-      if (numRef.current) {
-        const numBBox = numRef.current.getBBox();
-        const textBBox = textRef.current?.getBBox() ?? { width: 0 };
-        const rectWidth = 15;
-        const margin = 8;
-
-        const totalWidth =
-          rectWidth +
-          numBBox.width +
-          (showText ? margin + textBBox.width : margin / 2);
-
-        if (align === "left") {
-          setRectX(0);
-          setNumX(rectWidth + 5);
-          setTextOffsetX(rectWidth + numBBox.width + margin);
-          setTextAnchor("start");
-        } else if (align === "right") {
-          setRectX(totalWidth - rectWidth);
-          setNumX(totalWidth - rectWidth - numBBox.width - 5);
-          setTextOffsetX(totalWidth - rectWidth - numBBox.width - margin);
-          setTextAnchor("end");
-        }
-
-        setSvgWidth(totalWidth);
+      if (measureGroupRef.current) {
+        const bbox = measureGroupRef.current.getBBox();
+        setSvgWidth(bbox.width);
       }
     };
 
-    document.fonts.ready.then(() => {
+    (async () => {
+      await document.fonts.ready;
       if (mounted) measure();
-    });
+    })();
 
     return () => {
       mounted = false;
     };
-  }, [num, showText, customChinese, customEnglish, align]);
+  }, [chinese, english]);
+
+  const padding = 8;
+  const totalWidth = svgWidth + padding * 2;
+
+  let groupX = padding;
+  if (align === "center") groupX = svgWidth / 2 + padding;
+  if (align === "right") groupX = svgWidth + padding;
 
   return (
-    <div style={{ backgroundColor: colors.background }}>
-      <div className="h-64px mr-5px ml-5px" style={{ width: svgWidth }}>
-        <svg width={svgWidth} height={64}>
-          {/* 矩形 */}
-          <rect width={15} height={52} x={rectX} y={12} fill={lineColor} />
+    <div style={{ backgroundColor: background }}>
+      <div className="ml-5px mr-5px" style={{ width: totalWidth }}>
+        <svg className="h-full" width={totalWidth} height={64}>
+          {/* 隐藏的测量组 */}
+          <g ref={measureGroupRef} visibility="hidden">
+            <text x={0} y={34} fontSize={20}>
+              {chinese}
+            </text>
+            <text x={0} y={48} fontSize={10}>
+              {english}
+            </text>
+          </g>
 
-          {/* 数字 */}
-          <text
-            ref={numRef}
-            x={numX}
-            y={isChinese ? 48 : 52}
-            fontSize={isChinese ? 42 : 56}
-            style={{ letterSpacing: "-3px" }}
-            fill={colors.foreground}
+          {/* 实际显示的组 */}
+          <g
+            ref={lineGroupRef}
+            transform={`translate(${groupX}, 0)`}
+            textAnchor={
+              align === "center"
+                ? "middle"
+                : align === "right"
+                ? "end"
+                : "start"
+            }
           >
-            {num}
-          </text>
-
-          {/* 文字组 */}
-          {showText && (
-            <g ref={textRef} transform={`translate(${textOffsetX},0)`}>
-              <text
-                x={0}
-                y={32}
-                fontSize={20}
-                textAnchor={textAnchor}
-                fill={colors.foreground}
-              >
-                {customChinese ?? (isChinese ? "线" : "号线")}
-              </text>
-              <text
-                x={0}
-                y={48}
-                fontSize={14}
-                textAnchor={textAnchor}
-                fill={colors.foreground}
-              >
-                {customEnglish}
-              </text>
-            </g>
-          )}
+            <rect
+              x={
+                align === "center"
+                  ? -svgWidth / 2 - padding
+                  : align === "right"
+                  ? -svgWidth - padding
+                  : -padding
+              }
+              y={12}
+              width={svgWidth + padding * 2}
+              height={40}
+              fill={lineColor}
+            />
+            <text x={0} y={34} fontSize={20} fill={colors.foreground}>
+              {chinese}
+            </text>
+            <text x={0} y={48} fontSize={10} fill={colors.foreground}>
+              {english}
+            </text>
+          </g>
         </svg>
       </div>
     </div>
   );
 }
 
-LineNum.getEditorConfig = (t: (key: string) => string) =>
-  lineNumEditorConfig(t);
-
-export default LineNum;
+// 添加静态方法
+Line.getEditorConfig = (t: (key: string) => string) => lineEditorConfig(t);

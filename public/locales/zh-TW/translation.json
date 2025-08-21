@@ -651,7 +651,7 @@
             }
           }
         },
-        "platform": {
+        "Platform": {
           "displayName": "月台",
           "props": {
             "color": "路線顏色",
@@ -665,6 +665,8 @@
         "foreground": "前景色",
         "background2": "背景色_2",
         "foreground2": "前景色_2",
+        "background3": "背景色_3",
+        "foreground3": "前景色_3",
         "border": "邊框色",
         "specline": "分隔線",
         "kwuntongline": "觀塘綫",

@@ -18,6 +18,7 @@ import Exit1 from "./icons/exit_1.png";
 import Exit2 from "./icons/exit_2.png";
 import Exit3 from "./icons/exit_3.png";
 import Female from "./icons/female.png";
+import KCR from "./icons/kcr.png";
 import Lift1 from "./icons/lift_1.png";
 import Lift2 from "./icons/lift_2.png";
 import LightRail1 from "./icons/light_rail_1.png";
@@ -102,6 +103,10 @@ export const regicons = [
     icon: Female,
   },
   {
+    label: "themes.hongkong.components.Icon.props.icon.kcr",
+    icon: KCR,
+  },
+  {
     label: "themes.hongkong.components.Icon.props.icon.lift_1",
     icon: Lift1,
   },
@@ -184,7 +189,7 @@ export const regicons = [
   {
     label: "themes.hongkong.components.Icon.props.icon.yellow_head_2",
     icon: YellowHead2,
-  }
+  },
 ];
 
 export interface IconProps {
@@ -248,10 +253,13 @@ function Icon({
 
   return (
     <div
-      className="h-64px w-64px p-10px"
+      className={`h-64px ${icon === "themes.hongkong.components.Icon.props.icon.exit_1" ? "w-74px" : "w-54px pt-10px pb-10px"} pl-5px pr-5px flex align-center justify-center`}
       style={{ backgroundColor: background }}
     >
-      <img style={{transform: `rotate(${rotation}deg)`}} src={iconsrc}/>
+      <img
+        style={{ transform: `rotate(${rotation}deg)`, objectFit: "contain" }}
+        src={iconsrc}
+      />
     </div>
   );
 }

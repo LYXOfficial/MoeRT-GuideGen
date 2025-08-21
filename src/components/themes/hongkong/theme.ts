@@ -12,6 +12,9 @@ import Blank, { blankDefaultProps } from "./Blank.tsx";
 
 import colors from "./define/colors.ts";
 import type Theme from "../../../interfaces/theme.ts";
+import Platform, { platformDefaultProps } from "./Platform.tsx";
+import Line, { lineDefaultProps } from "./Line.tsx";
+import StationName, { stationNameDefaultProps } from "./StationName.tsx";
 
 const theme: Theme = {
   colors: {
@@ -22,11 +25,11 @@ const theme: Theme = {
   },
   fontFamily: "'MTR Sung', 'Noto Serif TC', 'Noto Serif SC', serif, sans-serif",
   components: [
-    // {
-    //   displayName: "themes.hongkong.components.Line",
-    //   component: Line,
-    //   defaultProps: lineDefaultProps,
-    // },
+    {
+      displayName: "themes.hongkong.components.Line",
+      component: Line,
+      defaultProps: lineDefaultProps,
+    },
     {
       displayName: "themes.hongkong.components.Arrow",
       component: Arrow,
@@ -41,6 +44,16 @@ const theme: Theme = {
       displayName: "themes.hongkong.components.Text",
       component: Text,
       defaultProps: textDefaultProps,
+    },
+    {
+      displayName: "themes.hongkong.components.Platform",
+      component: Platform,
+      defaultProps: platformDefaultProps,
+    },
+    {
+      displayName: "themes.hongkong.components.StationName",
+      component: StationName,
+      defaultProps: stationNameDefaultProps,
     },
     // {
     //   displayName: "themes.hongkong.components.Exit",

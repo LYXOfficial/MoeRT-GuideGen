@@ -4,6 +4,8 @@ const colors = {
   foreground: "#ffffff",
   background2: "#ffffff",
   foreground2: "#000000",
+  background3: "#003869",
+  foreground3: "#ffffff",
   border: "#e5e7eb",
   specline: "#ffffff",
   // 线路色

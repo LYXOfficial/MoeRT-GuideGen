@@ -8,13 +8,15 @@ export interface TextProps {
   chinese: string;
   english: string;
   align?: "left" | "center" | "right";
+  fontsize?: "small" | "large";
   foreground?: string;
   background?: string;
 }
 export const textDefaultProps: TextProps = {
   align: "center",
-  chinese: "中環",
-  english: "Central",
+  chinese: "皇后大道東",
+  english: "Queen's Road East",
+  fontsize: "large",
   foreground: colors.foreground,
   background: colors.background,
 };
@@ -23,27 +25,41 @@ export const textEditorConfig = (t: (key: string) => string): EditorConfig => ({
   forms: [
     {
       key: "chinese",
-      label: "themes.chongqing.components.Text.props.chinese",
+      label: "themes.hongkong.components.Text.props.chinese",
       element: <Input />,
     },
     {
       key: "english",
-      label: "themes.chongqing.components.Text.props.english",
+      label: "themes.hongkong.components.Text.props.english",
       element: <Input />,
     },
     {
       key: "align",
-      label: "themes.chongqing.components.Text.props.align.displayName",
+      label: "themes.hongkong.components.Text.props.align.displayName",
       element: (
         <Select>
           <Select.Option value="left">
-            {t("themes.chongqing.components.Text.props.align.left")}
+            {t("themes.hongkong.components.Text.props.align.left")}
           </Select.Option>
           <Select.Option value="center">
-            {t("themes.chongqing.components.Text.props.align.center")}
+            {t("themes.hongkong.components.Text.props.align.center")}
           </Select.Option>
           <Select.Option value="right">
-            {t("themes.chongqing.components.Text.props.align.right")}
+            {t("themes.hongkong.components.Text.props.align.right")}
+          </Select.Option>
+        </Select>
+      ),
+    },
+    {
+      key: "fontsize",
+      label: "themes.hongkong.components.Text.props.fontsize.displayName",
+      element: (
+        <Select>
+          <Select.Option value="small">
+            {t("themes.hongkong.components.Text.props.fontsize.small")}
+          </Select.Option>
+          <Select.Option value="large">
+            {t("themes.hongkong.components.Text.props.fontsize.large")}
           </Select.Option>
         </Select>
       ),
@@ -65,6 +81,7 @@ export default function Text({
   chinese = textDefaultProps.chinese,
   english = textDefaultProps.english,
   align = textDefaultProps.align,
+  fontsize = textDefaultProps.fontsize,
   foreground = textDefaultProps.foreground,
   background = textDefaultProps.background,
 }: TextProps) {
@@ -111,10 +128,10 @@ export default function Text({
                   : "start"
             }
           >
-            <text x={0} y={32} fontSize={28} fill={foreground}>
+            <text x={0} y={34} fontSize={fontsize==="large"?28:22} fill={foreground}>
               {chinese}
             </text>
-            <text x={0} y={52} fontSize={14} fill={foreground}>
+            <text x={0} y={fontsize==="large"?52:48} fontSize={fontsize==="large"?14:12} fill={foreground}>
               {english}
             </text>
           </g>

@@ -651,7 +651,7 @@
             }
           }
         },
-        "platform": {
+        "Platform": {
           "displayName": "プラットフォーム",
           "props": {
             "color": "路線カラー",
@@ -665,6 +665,8 @@
         "foreground": "前景色",
         "background2": "背景色2",
         "foreground2": "前景色2",
+        "background3": "背景色3",
+        "foreground3": "前景色3",
         "border": "枠線色",
         "specline": "区切り線",
         "kwuntongline": "観塘線",

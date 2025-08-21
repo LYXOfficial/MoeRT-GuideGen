@@ -651,7 +651,7 @@
             }
           }
         },
-        "platform": {
+        "Platform": {
           "displayName": "승강장",
           "props": {
             "color": "노선 색상",
@@ -665,6 +665,8 @@
         "foreground": "전경색",
         "background2": "배경색 2",
         "foreground2": "전경색 2",
+        "background3": "배경색 3",
+        "foreground3": "전경색 3",
         "border": "테두리색",
         "specline": "구분선",
         "kwuntongline": "관동선",

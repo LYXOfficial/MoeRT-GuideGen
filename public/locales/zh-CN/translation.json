@@ -577,6 +577,7 @@
               "exit_2": "出口（2）",
               "exit_3": "出口（3）",
               "female": "女",
+              "kcr": "KCR Logo",
               "lift_1": "直梯（1）",
               "lift_2": "直梯（2）",
               "light_rail_1": "轻铁（1）",
@@ -609,7 +610,14 @@
           "props": {
             "chinese": "中文名",
             "english": "英文名",
-            "lineColor": "线路颜色"
+            "lineColor": "线路颜色",
+            "background": "背景色",
+            "align": {
+              "displayName": "对齐",
+              "left": "左",
+              "right": "右",
+              "center": "中"
+            }
           }
         },
         "Exit": {
@@ -633,13 +641,6 @@
             "foreground": "前景色"
           }
         },
-        "StationName": {
-          "displayName": "站点名称",
-          "props": {
-            "chinese": "中文名",
-            "english": "英文名"
-          }
-        },
         "Text": {
           "displayName": "文本",
           "props": {
@@ -651,28 +652,30 @@
               "right": "右",
               "center": "中"
             },
+            "fontsize": {
+              "displayName": "字体大小",
+              "small": "小",
+              "large": "大"
+            },
             "background": "背景色",
             "foreground": "前景色"
           }
         },
-        "ExitName": {
-          "displayName": "出口名称",
+        "StationName": {
+          "displayName": "站名",
           "props": {
-            "line1chinese": "第一行中文",
-            "line1english": "第一行英文",
-            "line2chinese": "第二行中文",
-            "line2english": "第二行英文",
-            "background": "背景色",
-            "foreground": "前景色",
+            "chinese": "中文名",
+            "english": "英文名",
             "align": {
               "displayName": "对齐",
               "left": "左",
-              "right": "右",
-              "center": "中"
-            }
+              "right": "右"
+            },
+            "background": "背景色",
+            "foreground": "前景色"
           }
         },
-        "platform": {
+        "Platform": {
           "displayName": "站台",
           "props": {
             "color": "线路色",
@@ -686,6 +689,8 @@
         "foreground": "前景色",
         "background2": "背景色_2",
         "foreground2": "前景色_2",
+        "background3": "背景色_3",
+        "foreground3": "前景色_3",
         "border": "边框色",
         "specline": "分隔线",
         "kwuntongline": "观塘线",

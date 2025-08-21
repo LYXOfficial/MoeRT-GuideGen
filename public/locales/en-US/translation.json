@@ -651,7 +651,7 @@
             }
           }
         },
-        "platform": {
+        "Platform": {
           "displayName": "Platform",
           "props": {
             "color": "Line Color",
@@ -665,6 +665,8 @@
         "foreground": "Foreground Color",
         "background2": "Background Color 2",
         "foreground2": "Foreground Color 2",
+        "background3": "Background Color 3",
+        "foreground3": "Foreground Color 3",
         "border": "Border Color",
         "specline": "Divider Line",
         "kwuntongline": "Kwun Tong Line",
