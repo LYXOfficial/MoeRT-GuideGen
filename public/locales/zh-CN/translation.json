@@ -698,6 +698,7 @@
         "foreground3": "前景色_3",
         "border": "边框色",
         "specline": "分隔线",
+        "exitletter": "出口编号",
         "kwuntongline": "观塘线",
         "tsuenwanline": "荃湾线",
         "islandline": "港岛线",

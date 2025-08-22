@@ -98,6 +98,10 @@ export default function StationName({
   let groupX = 0;
   if (align === "right") groupX = totalWidth;
 
+  // 根据对齐方式计算 x 坐标
+  const chineseX = align === "right" ? 0 : 0;
+  const englishX = align === "right" ? -chineseWidth - 10 : chineseWidth + 10;
+
   return (
     <div style={{ backgroundColor: background }}>
       <div className="ml-5px mr-5px" style={{ width: totalWidth }}>
@@ -108,7 +112,7 @@ export default function StationName({
           >
             <text
               ref={chineseRef}
-              x={0}
+              x={chineseX}
               y={36}
               fontSize={36}
               fill={foreground}
@@ -118,7 +122,7 @@ export default function StationName({
             </text>
             <text
               ref={englishRef}
-              x={chineseWidth + 10}
+              x={englishX}
               y={42}
               fontSize={20}
               fill={foreground}

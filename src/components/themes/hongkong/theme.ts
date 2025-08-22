@@ -1,20 +1,19 @@
 import "./fonts/mtrsung.css";
 import "./fonts/notoserif.css";
 
-// import Line, { lineDefaultProps } from "./Line.tsx";
+import Line, { lineDefaultProps } from "./Line.tsx";
 import Arrow, { arrowDefaultProps } from "./Arrow.tsx";
 import Icon, { iconDefaultProps } from "./Icon.tsx";
 import Spacing, { spacingDefaultProps } from "./Spacing.tsx";
 import Text, { textDefaultProps } from "./Text.tsx";
 import SpecLine, { specLineDefaultProps } from "./SpecLine.tsx";
 import Blank, { blankDefaultProps } from "./Blank.tsx";
-// import Exit, { exitDefaultProps } from "./Exit.tsx";
+import Exit, { exitDefaultProps } from "./Exit.tsx";
+import Platform, { platformDefaultProps } from "./Platform.tsx";
+import StationName, { stationNameDefaultProps } from "./StationName.tsx";
 
 import colors from "./define/colors.ts";
 import type Theme from "../../../interfaces/theme.ts";
-import Platform, { platformDefaultProps } from "./Platform.tsx";
-import Line, { lineDefaultProps } from "./Line.tsx";
-import StationName, { stationNameDefaultProps } from "./StationName.tsx";
 
 const theme: Theme = {
   colors: {
@@ -55,11 +54,11 @@ const theme: Theme = {
       component: StationName,
       defaultProps: stationNameDefaultProps,
     },
-    // {
-    //   displayName: "themes.hongkong.components.Exit",
-    //   component: Exit,
-    //   defaultProps: exitDefaultProps,
-    // },
+    {
+      displayName: "themes.hongkong.components.Exit",
+      component: Exit,
+      defaultProps: exitDefaultProps,
+    },
     {
       displayName: "themes.hongkong.components.SpecLine",
       component: SpecLine,

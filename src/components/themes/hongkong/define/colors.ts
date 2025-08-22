@@ -5,6 +5,7 @@ const colors = {
   foreground2: "#000000",
   background3: "#003869",
   foreground3: "#ffffff",
+  exitletter: "#6D92AA",
   border: "#e5e7eb",
   specline: "#ffffff",
   // 线路色

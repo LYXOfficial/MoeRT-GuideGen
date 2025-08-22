@@ -69,7 +69,11 @@
   },
   "editor": {
     "title": "Edit Component",
-    "delete": "Delete Component"
+    "delete": "Delete Component",
+    "board": {
+      "title": "Edit Guide Board",
+      "backgroundColor": "Background Color"
+    }
   },
   "themes": {
     "chongqing": {

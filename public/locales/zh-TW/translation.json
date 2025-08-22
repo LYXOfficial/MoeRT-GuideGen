@@ -69,7 +69,11 @@
   },
   "editor": {
     "title": "編輯元件",
-    "delete": "刪除元件"
+    "delete": "刪除元件",
+    "board": {
+      "title": "編輯導向牌",
+      "backgroundColor": "背景顏色"
+    }
   },
   "themes": {
     "chongqing": {

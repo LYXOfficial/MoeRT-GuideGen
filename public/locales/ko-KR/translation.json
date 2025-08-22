@@ -68,8 +68,12 @@
     "archive": "아카이브를 로드하는 중..."
   },
   "editor": {
-    "title": "컴포넌트 편집",
-    "delete": "컴포넌트 삭제"
+    "title": "구성 요소 편집",
+    "delete": "구성 요소 삭제",
+    "board": {
+      "title": "안내판 편집",
+      "backgroundColor": "배경색"
+    }
   },
   "themes": {
     "chongqing": {
