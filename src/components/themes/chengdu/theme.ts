@@ -11,6 +11,9 @@ import Text, { textDefaultProps } from "./Text.tsx";
 import StationName, { stationNameDefaultProps } from "./StationName.tsx";
 import SpecLine, { specLineDefaultProps } from "./SpecLine.tsx";
 import Blank, { blankDefaultProps } from "./Blank.tsx";
+import TwoRowContainer, {
+  twoRowContainerDefaultProps,
+} from "./TwoRowContainer.tsx";
 
 import colors from "./define/colors.ts";
 import type Theme from "../../../interfaces/theme.ts";
@@ -91,6 +94,11 @@ const theme: Theme = {
       displayName: "themes.chengdu.components.Blank",
       component: Blank,
       defaultProps: blankDefaultProps,
+    },
+    {
+      displayName: "themes.chengdu.components.TwoRowContainer",
+      component: TwoRowContainer,
+      defaultProps: twoRowContainerDefaultProps,
     },
   ],
 };

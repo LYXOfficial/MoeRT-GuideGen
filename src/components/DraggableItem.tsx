@@ -63,6 +63,7 @@ export default function DraggableItem({
       (children as ReactElement).type === HongkongSpacing
         ? "1"
         : "0 0 auto",
+    width: (data && (data as any).parentWidth) || undefined,
     opacity: isDragging ? 0.5 : 1,
     touchAction: "none",
     position: "relative" as const,

@@ -36,7 +36,8 @@ export interface GuideBoardRef {
   removeItemFromRow: (rowId: string, itemId: string) => GuideItem | null;
   reorderRow: (rowId: string, oldIndex: number, newIndex: number) => void;
   getItemIndex: (rowId: string, itemId: string) => number;
-  // TwoRowContainer 已移除
+  addItemToTwoRowContainer: (containerId: string, rowIndex: number, item: GuideItem, insertIndex?: number) => void;
+  removeItemFromTwoRowContainer: (containerId: string, rowIndex: number, itemId: string) => GuideItem | null;
   clearBoard: () => void;
   getState: () => BoardState;
   restoreState: (state: {
@@ -374,7 +375,133 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
           if (idx < 0 || idx >= rows.length) return -1;
           return rows[idx].findIndex(i => i.id === itemId);
         },
-        // 无 TwoRowContainer 相关方法
+        addItemToTwoRowContainer: (containerId: string, rowIndex: number, item: GuideItem, insertIndex?: number) => {
+          setRows(prev => {
+            const newRows = prev.map(row => row.map(rowItem => {
+              if (rowItem.id === containerId && rowItem.type?.includes('TwoRowContainer')) {
+                // 找到目标容器，更新其 children
+                const currentChildren = (rowItem.props?.children as GuideItem[][]) || [[], []];
+                const newChildren = [...currentChildren];
+                
+                // 确保 rowIndex 在范围内
+                if (rowIndex >= 0 && rowIndex < newChildren.length) {
+                  const targetRow = [...newChildren[rowIndex]];
+                  
+                  // 重建 item 的 element
+                  const Component = themes[currentTheme][1].components.find(
+                    comp => comp.displayName === item.type
+                  )?.component;
+                  
+                  const finalProps: any = {
+                    ...(item.props || {}),
+                    id: item.id,
+                    currentTheme,
+                  };
+                  
+                  const rebuiltItem: GuideItem = Component
+                    ? {
+                        ...item,
+                        element: React.createElement(
+                          Component as React.ElementType,
+                          finalProps
+                        ),
+                        props: { ...finalProps },
+                      }
+                    : item;
+                  
+                  if (insertIndex !== undefined && insertIndex >= 0 && insertIndex <= targetRow.length) {
+                    targetRow.splice(insertIndex, 0, rebuiltItem);
+                  } else {
+                    targetRow.push(rebuiltItem);
+                  }
+                  
+                  newChildren[rowIndex] = targetRow;
+                  
+                  // 重建容器的 element
+                  const ContainerComponent = themes[currentTheme][1].components.find(
+                    comp => comp.displayName === rowItem.type
+                  )?.component;
+                  
+                  const containerProps = {
+                    ...rowItem.props,
+                    children: newChildren,
+                    currentTheme,
+                    onItemClick: (e: React.MouseEvent, clickedItem: GuideItem) => {
+                      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+                      setEditingItem({
+                        item: clickedItem,
+                        position: { x: rect.right, y: rect.top },
+                        parentId: containerId,
+                      });
+                    },
+                  };
+                  
+                  return {
+                    ...rowItem,
+                    props: containerProps,
+                    element: ContainerComponent
+                      ? React.createElement(ContainerComponent as React.ElementType, containerProps)
+                      : rowItem.element,
+                  };
+                }
+              }
+              return rowItem;
+            }));
+            return newRows;
+          });
+        },
+        removeItemFromTwoRowContainer: (containerId: string, rowIndex: number, itemId: string) => {
+          let removed: GuideItem | null = null;
+          setRows(prev => {
+            const newRows = prev.map(row => row.map(rowItem => {
+              if (rowItem.id === containerId && rowItem.type?.includes('TwoRowContainer')) {
+                const currentChildren = (rowItem.props?.children as GuideItem[][]) || [[], []];
+                const newChildren = [...currentChildren];
+                
+                if (rowIndex >= 0 && rowIndex < newChildren.length) {
+                  const targetRow = [...newChildren[rowIndex]];
+                  const itemIndex = targetRow.findIndex(i => i.id === itemId);
+                  
+                  if (itemIndex !== -1) {
+                    removed = { ...targetRow[itemIndex] };
+                    targetRow.splice(itemIndex, 1);
+                    newChildren[rowIndex] = targetRow;
+                    
+                    // 重建容器的 element
+                    const ContainerComponent = themes[currentTheme][1].components.find(
+                      comp => comp.displayName === rowItem.type
+                    )?.component;
+                    
+                    const containerProps = {
+                      ...rowItem.props,
+                      children: newChildren,
+                      currentTheme,
+                      onItemClick: (e: React.MouseEvent, clickedItem: GuideItem) => {
+                        const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+                        setEditingItem({
+                          item: clickedItem,
+                          position: { x: rect.right, y: rect.top },
+                          parentId: containerId,
+                        });
+                      },
+                    };
+                    
+                    return {
+                      ...rowItem,
+                      props: containerProps,
+                      element: ContainerComponent
+                        ? React.createElement(ContainerComponent as React.ElementType, containerProps)
+                        : rowItem.element,
+                    };
+                  }
+                }
+              }
+              return rowItem;
+            }));
+            return newRows;
+          });
+          return removed;
+        }
       }),
       [rows, boardWidth, showDividers, currentTheme]
     );
