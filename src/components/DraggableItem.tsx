@@ -1,6 +1,6 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { useRef, useState, type ReactElement } from "react";
+import { useRef, useState, type ReactElement, isValidElement } from "react";
 import ChongqingSpecLine from "./themes/chongqing/SpecLine";
 import ChengduSpecLine from "./themes/chengdu/SpecLine";
 import HongkongSpecLine from "./themes/hongkong/SpecLine";
@@ -42,6 +42,8 @@ export default function DraggableItem({
         y: transform.y / (zoom || 1),
       }
     : null;
+  const inTwoRow = data && (data as any).context === "two-row";
+  const childType = isValidElement(children) ? (children as ReactElement).type : null;
   const style = {
     transform: CSS.Transform.toString(adjustedTransform as any),
     transition: transition || "transform 200ms ease, opacity 200ms ease",
@@ -52,17 +54,18 @@ export default function DraggableItem({
     background: isDragging ? "#f0f0f0" : "transparent",
     zIndex: isDragging
       ? 9999
-      : (children as ReactElement).type === ChengduSpecLine ||
-          (children as ReactElement).type === ChongqingSpecLine ||
-          (children as ReactElement).type === HongkongSpecLine
+      : childType === ChengduSpecLine ||
+          childType === ChongqingSpecLine ||
+          childType === HongkongSpecLine
         ? 10
         : 1,
-    flex:
-      (children as ReactElement).type === ChengduSpacing ||
-      (children as ReactElement).type === ChongqingSpacing ||
-      (children as ReactElement).type === HongkongSpacing
-        ? "1"
-        : "0 0 auto",
+    flex: inTwoRow
+      ? "0 0 auto"
+      : childType === ChengduSpacing ||
+        childType === ChongqingSpacing ||
+        childType === HongkongSpacing
+      ? "1"
+      : "0 0 auto",
     width: (data && (data as any).parentWidth) || undefined,
     opacity: isDragging ? 0.5 : 1,
     touchAction: "none",

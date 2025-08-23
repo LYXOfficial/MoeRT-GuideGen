@@ -614,10 +614,147 @@ export default function Editor({
     const twoRowTargetRowIndex = over.data.current?.rowIndex;
     const twoRowTargetRowId = over.data.current?.rowId;
 
+    // 检查是否是双行容器内部拖拽（同一容器内的行间拖拽或行内排序）
+    const sourceTwoRowData = active.data.current;
+    const isTwoRowInternalDrag = sourceTwoRowData?.context === 'two-row' && 
+                                sourceTwoRowData?.containerId && 
+                                isTwoRowContainerTarget &&
+                                sourceTwoRowData.containerId === twoRowContainerId;
+
     // 处理拖拽到双行容器内部的情况
     if (isTwoRowContainerTarget && twoRowContainerId && typeof twoRowTargetRowIndex === 'number') {
+      console.log('TwoRowContainer drag detected:', {
+        isTwoRowContainerTarget,
+        twoRowContainerId,
+        twoRowTargetRowIndex,
+        draggedItem: draggedItem?.type,
+        sourceRowId,
+        isTwoRowInternalDrag,
+        sourceTwoRowData
+      });
+      
       // 阻止拖拽 TwoRowContainer 到自身内部
       if (draggedItem?.type?.indexOf('TwoRowContainer') !== -1) {
+        console.log('Blocked: Cannot drag TwoRowContainer into itself');
+        return;
+      }
+
+      // 处理双行容器内部拖拽（行内排序或跨行移动）
+      if (isTwoRowInternalDrag) {
+        const sourceContainerId = sourceTwoRowData.containerId;
+        const sourceRowIndex = sourceTwoRowData.rowIndex;
+        const draggedItemId = active.id.toString();
+        
+        console.log('Internal TwoRow drag:', {
+          sourceContainerId,
+          sourceRowIndex,
+          targetRowIndex: twoRowTargetRowIndex,
+          draggedItemId
+        });
+        
+        // 如果是同一行内的排序
+        if (sourceRowIndex === twoRowTargetRowIndex) {
+          // 使用 GuideBoard 的重排序方法
+          const sourceItem = guideBoardRef.current?.removeItemFromTwoRowContainer(
+            sourceContainerId, 
+            sourceRowIndex, 
+            draggedItemId
+          );
+          
+          if (sourceItem) {
+            // 计算插入位置
+            const targetElement = document.querySelector(`[id="${twoRowTargetRowId}"]`);
+            let insertIndex: number | undefined;
+            
+            if (targetElement) {
+              const pointerX = mousePositionRef.current.x;
+              const innerRow = targetElement.querySelector('.two-row-inner');
+              if (innerRow) {
+                const children = Array.from(innerRow.children).filter(child => {
+                  const element = child as HTMLElement;
+                  const isDragRelated = element.classList.contains('sortable-ghost') || 
+                                       element.classList.contains('sortable-chosen') ||
+                                       element.style.display === 'none';
+                  const isBeingDragged = element.getAttribute('id') === draggedItemId;
+                  return !isDragRelated && !isBeingDragged;
+                }) as HTMLElement[];
+                
+                if (children.length > 0 && pointerX > 0) {
+                  insertIndex = children.length;
+                  for (let i = 0; i < children.length; i++) {
+                    const rect = children[i].getBoundingClientRect();
+                    if (pointerX < rect.left + rect.width / 2) {
+                      insertIndex = i;
+                      break;
+                    }
+                  }
+                } else {
+                  insertIndex = 0;
+                }
+              }
+            }
+            
+            guideBoardRef.current?.addItemToTwoRowContainer(
+              sourceContainerId, 
+              twoRowTargetRowIndex, 
+              sourceItem, 
+              insertIndex
+            );
+            
+            lastChangeRef.current = Date.now();
+            setTimeout(() => saveCurrentState(), 50);
+          }
+        } else {
+          // 跨行移动
+          const sourceItem = guideBoardRef.current?.removeItemFromTwoRowContainer(
+            sourceContainerId, 
+            sourceRowIndex, 
+            draggedItemId
+          );
+          
+          if (sourceItem) {
+            // 计算插入位置
+            const targetElement = document.querySelector(`[id="${twoRowTargetRowId}"]`);
+            let insertIndex: number | undefined;
+            
+            if (targetElement) {
+              const pointerX = mousePositionRef.current.x;
+              const innerRow = targetElement.querySelector('.two-row-inner');
+              if (innerRow) {
+                const children = Array.from(innerRow.children).filter(child => {
+                  const element = child as HTMLElement;
+                  const isDragRelated = element.classList.contains('sortable-ghost') || 
+                                       element.classList.contains('sortable-chosen') ||
+                                       element.style.display === 'none';
+                  return !isDragRelated;
+                }) as HTMLElement[];
+                
+                if (children.length > 0 && pointerX > 0) {
+                  insertIndex = children.length;
+                  for (let i = 0; i < children.length; i++) {
+                    const rect = children[i].getBoundingClientRect();
+                    if (pointerX < rect.left + rect.width / 2) {
+                      insertIndex = i;
+                      break;
+                    }
+                  }
+                } else {
+                  insertIndex = 0;
+                }
+              }
+            }
+            
+            guideBoardRef.current?.addItemToTwoRowContainer(
+              sourceContainerId, 
+              twoRowTargetRowIndex, 
+              sourceItem, 
+              insertIndex
+            );
+            
+            lastChangeRef.current = Date.now();
+            setTimeout(() => saveCurrentState(), 50);
+          }
+        }
         return;
       }
 
@@ -663,8 +800,8 @@ export default function Editor({
         return;
       }
       
-      // 从其他位置拖拽到双行容器
-      if (sourceRowId) {
+      // 从普通行拖拽到双行容器
+      if (sourceRowId && !isTwoRowInternalDrag) {
         const item = guideBoardRef.current?.removeItemFromRow(sourceRowId, active.id.toString());
         if (item) {
           // 计算插入位置（同上）
@@ -897,6 +1034,13 @@ export default function Editor({
     const twoRowRowId = over.data.current?.rowId;
     
     if (!sourceRowId && draggedItem && isTwoRowTarget && twoRowRowId) {
+      console.log('handleDragOver: TwoRowContainer target detected:', {
+        isTwoRowTarget,
+        twoRowContainerId,
+        twoRowRowId,
+        draggedItem: draggedItem?.type
+      });
+      
       // 阻止拖拽 TwoRowContainer 到自身内部
       if (draggedItem.type?.indexOf("TwoRowContainer") !== -1) {
         setDropIndicator({ show: false, x: 0, y: 0, height: 0 });
@@ -1301,9 +1445,22 @@ export default function Editor({
       onDragEnd={handleDragEnd}
       onDragOver={handleDragOver}
       collisionDetection={(args) => {
+        // 优先使用 pointerWithin 检测双行容器内部区域
         const pointer = pointerWithin(args);
-        if (pointer.length > 0) return pointer;
-        return rectIntersection(args);
+        if (pointer.length > 0) {
+          // 检查是否命中双行容器相关区域
+          const twoRowHits = pointer.filter(collision => {
+            const data = collision.data?.droppableContainer?.data?.current;
+            return data?.type === "two-row-container-row" || data?.type === "two-row-container";
+          });
+          if (twoRowHits.length > 0) {
+            return twoRowHits;
+          }
+          return pointer;
+        }
+        // 回退到矩形相交检测
+        const rect = rectIntersection(args);
+        return rect;
       }}
     >
       <div className="flex flex-col h-screen">

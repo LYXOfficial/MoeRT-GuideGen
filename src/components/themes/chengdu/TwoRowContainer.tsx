@@ -65,14 +65,35 @@ function TwoRowContainer({
   useLayoutEffect(() => {
     const root = containerDomRef.current;
     if (!root) return;
-    const inners = root.querySelectorAll<HTMLDivElement>(".two-row-inner");
-    if (!inners.length) return;
-    let maxW = 0;
-    inners.forEach(el => {
-      const rect = el.getBoundingClientRect();
-      if (rect.width > maxW) maxW = rect.width;
-    });
-    if (maxW > 0) setMeasuredWidth(Math.ceil(maxW));
+    
+    // 延迟测量，确保DOM完全渲染
+    const measureWidth = () => {
+      const inners = root.querySelectorAll<HTMLDivElement>(".two-row-inner");
+      if (!inners.length) {
+        setMeasuredWidth(80); // 最小宽度
+        return;
+      }
+      
+      let maxW = 0;
+      inners.forEach(el => {
+        // 确保元素可见且已渲染
+        if (el.offsetWidth > 0) {
+          const rect = el.getBoundingClientRect();
+          if (rect.width > maxW) maxW = rect.width;
+        }
+      });
+      
+      // 设置最小宽度和适当的边距
+      const finalWidth = Math.max(80, Math.ceil(maxW) + 4);
+      setMeasuredWidth(finalWidth / 2);
+    };
+    
+    // 立即测量一次
+    measureWidth();
+    
+    // 延迟再测量一次，确保拖拽后的布局稳定
+    const timer = setTimeout(measureWidth, 100);
+    return () => clearTimeout(timer);
   }, [rows, finalBgColor]);
 
   // All drag handling moved to Editor.tsx for unified state management
@@ -141,11 +162,13 @@ const TwoRowRow = memo(function TwoRowRow({
       ref={setNodeRef}
       className="two-row-container-row"
       style={{
-        width: "fit-content",
+        width: "fit-content", // 宽度跟随内部内容
+        minWidth: 80,
         height: 32, // 每行布局高度 32
-        overflow: isOver ? "visible" : "hidden", // 悬停时显示完整内容以便看到高亮
+        overflow: "visible", // 始终显示完整内容，避免拖拽时被裁剪
         background: isOver ? "#e6f7ff66" : undefined,
         position: "relative",
+        border: isOver ? "1px dashed #91caff" : "1px dashed transparent", // 显示拖拽边界
       }}
     >
       <div
@@ -154,6 +177,7 @@ const TwoRowRow = memo(function TwoRowRow({
           alignItems: "center",
           gap: 0,
           width: "fit-content",
+          minWidth: 40, // 确保空行也有最小宽度
           minHeight: 64, // 内容原始高度 64
           transform: `scale(${SCALE})`,
           transformOrigin: "top left",
@@ -163,16 +187,41 @@ const TwoRowRow = memo(function TwoRowRow({
         className="two-row-inner"
       >
         <SortableContext items={items} strategy={horizontalListSortingStrategy}>
-          {renderItems.map(item => (
-            <DraggableItem
-              key={item.id}
-              id={item.id}
-              zoom={SCALE}
-              onClick={e => onItemClick?.(e, item)}
+          {renderItems.length > 0 ? (
+            renderItems.map(item => (
+              <DraggableItem
+                key={item.id}
+                id={item.id}
+                zoom={SCALE}
+                data={{ 
+                  context: "two-row",
+                  rowId: id,
+                  containerId,
+                  rowIndex 
+                }}
+                onClick={e => onItemClick?.(e, item)}
+              >
+                {item.element}
+              </DraggableItem>
+            ))
+          ) : (
+            // 空行占位符，确保有可拖拽的区域
+            <div
+              style={{
+                minWidth: 40,
+                minHeight: 32,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                opacity: 0.3,
+                fontSize: "12px",
+                color: "#999",
+                pointerEvents: "none",
+              }}
             >
-              {item.element}
-            </DraggableItem>
-          ))}
+              空行
+            </div>
+          )}
         </SortableContext>
       </div>
     </div>

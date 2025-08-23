@@ -350,6 +350,11 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
             const idx = Number(rowId.replace("row", "")) - 1;
             if (idx < 0 || idx >= prev.length) return prev;
             const newRows = prev.map(arr => [...arr]);
+            // 额外检查确保 newRows[idx] 存在
+            if (!newRows[idx]) {
+              console.error(`removeItemFromRow: newRows[${idx}] is undefined, rowId: ${rowId}, prev.length: ${prev.length}`);
+              return prev;
+            }
             const itemIdx = newRows[idx].findIndex(i => i.id === itemId);
             if (itemIdx !== -1) {
               removed = { ...newRows[idx][itemIdx] };
