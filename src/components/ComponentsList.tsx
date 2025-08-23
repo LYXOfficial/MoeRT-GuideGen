@@ -94,7 +94,6 @@ export default function ComponentsList({
 
   // 处理主题选择 - 添加防抖逻辑
   const handleThemeSelect = (themeIndex: number) => {
-    console.log("Select 触发主题变化:", currentTheme, "->", themeIndex);
     if (themeIndex !== currentTheme) {
       setNextTheme(themeIndex);
       setThemeChangeVisible(true);

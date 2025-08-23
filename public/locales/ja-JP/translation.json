@@ -2,7 +2,7 @@
   "zoom": {
     "label": "ズーム："
   },
-  "title": "MoeRT ガイドジェネレーター",
+  "title": "MoeRT-GuideGen",
   "componentsList": {
     "title": "コンポーネントリスト",
     "drag": "右側にドラッグしてコンポーネントを追加",
@@ -69,7 +69,11 @@
   },
   "editor": {
     "title": "コンポーネントを編集",
-    "delete": "コンポーネントを削除"
+    "delete": "コンポーネントを削除",
+    "board": {
+      "title": "案内板を編集",
+      "backgroundColor": "背景色"
+    }
   },
   "themes": {
     "chongqing": {

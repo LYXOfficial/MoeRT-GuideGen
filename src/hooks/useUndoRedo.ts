@@ -6,7 +6,7 @@ interface UndoRedoState<T> {
 }
 
 interface UndoRedoActions<T> {
-  saveState: (state: T) => void;
+  saveState: (state: T, immediate?: boolean) => void;
   undo: () => T | undefined;
   redo: () => T | undefined;
   canUndo: boolean;
@@ -33,14 +33,13 @@ export function useUndoRedo<T>(
   const lastSavedState = useRef<string>("");
 
   const saveState = useCallback(
-    (newState: T) => {
+    (newState: T, immediate: boolean = false) => {
       // 清除之前的防抖定时器
       if (debounceTimer.current) {
         window.clearTimeout(debounceTimer.current);
       }
 
-      // 防抖：短时间内的多次调用只保存最后一次
-      debounceTimer.current = window.setTimeout(() => {
+      const doSave = () => {
         const serializedState = JSON.stringify(newState);
 
         // 如果新状态与上次保存的状态相同，跳过
@@ -64,57 +63,75 @@ export function useUndoRedo<T>(
             newHistory.shift();
           }
 
+          // 保存到撤回栈（移除调试日志）
+
           return {
             history: newHistory,
             currentIndex: newHistory.length - 1,
           };
         });
-      }, 100); // 100ms 防抖，更快响应用户操作
+      };
+
+      if (immediate) {
+        // 立即保存，用于删除等重要操作
+        doSave();
+      } else {
+        // 防抖：短时间内的多次调用只保存最后一次
+        debounceTimer.current = window.setTimeout(doSave, 100);
+      }
     },
     [maxHistorySize]
   );
 
   const undo = useCallback((): T | undefined => {
-    let result: T | undefined;
+    // 直接从当前状态中获取数据，避免异步问题
+    const currentState = state;
+    const { history, currentIndex } = currentState;
 
-    setState(prevState => {
-      const { history, currentIndex } = prevState;
+    if (currentIndex > 0) {
+      const newIndex = currentIndex - 1;
+      const result = history[newIndex];
+      
+      // undo 操作（移除调试日志）
 
-      if (currentIndex > 0) {
-        const newIndex = currentIndex - 1;
-        result = history[newIndex];
-        return {
-          ...prevState,
-          currentIndex: newIndex,
-        };
-      }
+      // 更新状态
+      setState(prevState => ({
+        ...prevState,
+        currentIndex: newIndex,
+      }));
 
-      return prevState;
-    });
-
-    return result;
-  }, []);
+      // 返回结果（移除调试日志）
+      return result;
+    } else {
+      // 无可撤销（移除调试日志）
+      return undefined;
+    }
+  }, [state]);
 
   const redo = useCallback((): T | undefined => {
-    let result: T | undefined;
+    // 直接从当前状态中获取数据，避免异步问题
+    const currentState = state;
+    const { history, currentIndex } = currentState;
 
-    setState(prevState => {
-      const { history, currentIndex } = prevState;
+    if (currentIndex < history.length - 1) {
+      const newIndex = currentIndex + 1;
+      const result = history[newIndex];
+      
+      // redo 操作（移除调试日志）
 
-      if (currentIndex < history.length - 1) {
-        const newIndex = currentIndex + 1;
-        result = history[newIndex];
-        return {
-          ...prevState,
-          currentIndex: newIndex,
-        };
-      }
+      // 更新状态
+      setState(prevState => ({
+        ...prevState,
+        currentIndex: newIndex,
+      }));
 
-      return prevState;
-    });
-
-    return result;
-  }, []);
+      // 返回结果（移除调试日志）
+      return result;
+    } else {
+      // 无可重做（移除调试日志）
+      return undefined;
+    }
+  }, [state]);
 
   const clear = useCallback(() => {
     setState(prevState => ({

@@ -9,7 +9,7 @@ import {
   type DragEndEvent,
   type DragStartEvent,
   type DragOverEvent,
-  closestCenter,
+  rectIntersection,
   DragOverlay,
   useSensor,
   useSensors,
@@ -72,31 +72,16 @@ export default function Editor({
         config,
         currentTheme,
       };
-      console.log("💾 保存状态到历史记录:", {
-        rowsCount: rows.length,
-        config,
-        currentTheme,
-      });
       saveState(state);
     }
   }, [saveState, currentTheme, isImporting, isUndoRedoing]);
 
   // 撤销操作
   const handleUndo = useCallback(() => {
-    console.log("🔙 执行撤销操作, canUndo:", canUndo);
     const previousState = undo();
     if (previousState && guideBoardRef.current) {
-      console.log("🔙 撤销到状态:", {
-        rowsCount: previousState.rows.length,
-        theme: previousState.currentTheme,
-      });
       // 设置撤销/重做状态，防止触发自动保存
       setIsUndoRedoing(true);
-
-      // 设置主题
-      if (previousState.currentTheme !== currentTheme) {
-        setCurrentTheme(previousState.currentTheme);
-      }
 
       // 恢复状态（转换数据格式）
       const restoreData = {
@@ -110,31 +95,29 @@ export default function Editor({
         config: previousState.config,
       };
 
-      guideBoardRef.current.restoreState(restoreData);
-
-      // 延迟清除撤销/重做状态
-      setTimeout(() => setIsUndoRedoing(false), 200);
-    } else {
-      console.log("🔙 撤销失败: 没有可撤销的状态");
+      // 如果需要切换主题，先切主题再恢复，等待主题生效
+      if (previousState.currentTheme !== currentTheme) {
+        setCurrentTheme(previousState.currentTheme);
+        setTimeout(() => {
+          guideBoardRef.current?.restoreState(restoreData);
+          // 在恢复完成后再清除撤销/重做标志，避免自动保存提前触发
+          setTimeout(() => setIsUndoRedoing(false), 200);
+        }, 150);
+      } else {
+        // 主题未变化，直接恢复
+        guideBoardRef.current.restoreState(restoreData);
+        // 延迟清除撤销/重做状态
+        setTimeout(() => setIsUndoRedoing(false), 200);
+      }
     }
   }, [undo, currentTheme, canUndo]);
 
   // 重做操作
   const handleRedo = useCallback(() => {
-    console.log("🔜 执行重做操作, canRedo:", canRedo);
     const nextState = redo();
     if (nextState && guideBoardRef.current) {
-      console.log("🔜 重做到状态:", {
-        rowsCount: nextState.rows.length,
-        theme: nextState.currentTheme,
-      });
       // 设置撤销/重做状态，防止触发自动保存
       setIsUndoRedoing(true);
-
-      // 设置主题
-      if (nextState.currentTheme !== currentTheme) {
-        setCurrentTheme(nextState.currentTheme);
-      }
 
       // 恢复状态（转换数据格式）
       const restoreData = {
@@ -148,12 +131,17 @@ export default function Editor({
         config: nextState.config,
       };
 
-      guideBoardRef.current.restoreState(restoreData);
-
-      // 延迟清除撤销/重做状态
-      setTimeout(() => setIsUndoRedoing(false), 200);
-    } else {
-      console.log("🔜 重做失败: 没有可重做的状态");
+      // 如果主题不同，切换主题并等待后再恢复
+      if (nextState.currentTheme !== currentTheme) {
+        setCurrentTheme(nextState.currentTheme);
+        setTimeout(() => {
+          guideBoardRef.current?.restoreState(restoreData);
+          setTimeout(() => setIsUndoRedoing(false), 200);
+        }, 150);
+      } else {
+        guideBoardRef.current.restoreState(restoreData);
+        setTimeout(() => setIsUndoRedoing(false), 200);
+      }
     }
   }, [redo, currentTheme, canRedo]);
   const [zoom, setZoom] = useState(1);
@@ -962,6 +950,94 @@ export default function Editor({
       return;
     }
 
+    // 跨行拖动：仅渲染指示器（不改动行内拖动逻辑）
+    if (sourceRowId && overRowId && sourceRowId !== overRowId) {
+      const rowNumber = overRowId.match(/^row(\d+)/);
+      if (!rowNumber) {
+        setDropIndicator({ show: false, x: 0, y: 0, height: 0 });
+        return;
+      }
+
+      const targetRowId = `row${rowNumber[1]}`;
+      const rowContainer = document.querySelector(
+        `[data-row="${targetRowId}"]`
+      );
+
+      if (rowContainer) {
+        const rowRect = rowContainer.getBoundingClientRect();
+        const guideBoardRect = document
+          .querySelector('.guide-board')
+          ?.getBoundingClientRect();
+
+        if (guideBoardRect) {
+          const pointerX = mousePositionRef.current.x;
+
+          const children = Array.from(rowContainer.children).filter(child => {
+            const element = child as HTMLElement;
+            const id = element.getAttribute('id') || '';
+            const isDragRelated =
+              element.classList.contains('sortable-ghost') ||
+              element.classList.contains('sortable-chosen') ||
+              element.classList.contains('sortable-placeholder') ||
+              element.style.display === 'none';
+            const isEmptyPlaceholder = id.startsWith('empty-');
+            const isScriptOrStyle =
+              element.tagName === 'SCRIPT' || element.tagName === 'STYLE';
+            const isDraggedElement = active.id.toString() === id;
+
+            return (
+              !isDragRelated &&
+              !isEmptyPlaceholder &&
+              !isScriptOrStyle &&
+              !isDraggedElement
+            );
+          }) as HTMLElement[];
+
+          let insertX = rowRect.left + 10; // 默认在行首，留一点边距
+          if (children.length > 0) {
+            let foundPosition = false;
+            for (let i = 0; i < children.length; i++) {
+              const rect = children[i].getBoundingClientRect();
+              if (pointerX < rect.left + rect.width / 2) {
+                insertX = rect.left;
+                foundPosition = true;
+                break;
+              }
+            }
+            if (!foundPosition) {
+              const lastChild = children[children.length - 1];
+              const lastRect = lastChild.getBoundingClientRect();
+              insertX = lastRect.right;
+            }
+          } else {
+            insertX = rowRect.left + rowRect.width / 2; // 空行：居中显示
+          }
+
+          const gbContent = transformMouseCoords(
+            guideBoardRect.left,
+            guideBoardRect.top
+          );
+          const insContentX = transformMouseCoords(insertX, rowRect.top).x;
+          const rowTopContent = transformMouseCoords(
+            rowRect.left,
+            rowRect.top
+          );
+          const rowBottomContent = transformMouseCoords(
+            rowRect.left,
+            rowRect.bottom
+          );
+
+          setDropIndicator({
+            show: true,
+            x: insContentX - gbContent.x,
+            y: rowTopContent.y - gbContent.y,
+            height: rowBottomContent.y - rowTopContent.y,
+          });
+        }
+      }
+      return;
+    }
+
     // 如果没有源行ID或拖拽项，隐藏指示器
     if (!sourceRowId || !draggedItem) {
       setDropIndicator({ show: false, x: 0, y: 0, height: 0 });
@@ -1109,7 +1185,7 @@ export default function Editor({
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       onDragOver={handleDragOver}
-      collisionDetection={closestCenter}
+      collisionDetection={rectIntersection}
     >
       <div className="flex flex-col h-screen">
         <Header

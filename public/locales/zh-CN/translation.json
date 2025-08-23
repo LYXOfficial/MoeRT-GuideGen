@@ -69,7 +69,11 @@
   },
   "editor": {
     "title": "编辑组件",
-    "delete": "删除组件"
+    "delete": "删除组件",
+    "board": {
+      "title": "编辑导向牌",
+      "backgroundColor": "背景颜色"
+    }
   },
   "themes": {
     "chongqing": {
@@ -113,12 +117,17 @@
               "ct": "重庆铁路集团",
               "crt": "重庆轨道交通",
               "cr": "国铁",
-              "exit": "出口",
               "elevator": "无障碍电梯",
               "waitingroom": "等候室",
               "toilet": "卫生间",
               "ticket": "售票/加值",
-              "checkin": "自助检票"
+              "checkin": "自助检票",
+              "exit1": "出口（1）",
+              "exit2": "出口（2）",
+              "autostair": "自动扶梯",
+              "coach": "长途客车",
+              "bus": "公交车",
+              "parking": "停车场"
             },
             "rotation": "旋转角度",
             "background": "背景色",

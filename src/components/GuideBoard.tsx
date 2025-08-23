@@ -99,7 +99,7 @@ export function GuideBoard({
 interface GuideBoardProps {
   currentTheme: number;
   zoom?: number;
-  onConfigChange?: () => void;
+  onConfigChange?: (immediate?: boolean) => void;
 }
 
 const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
@@ -135,7 +135,8 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
             );
             setEditingItem(null);
             if (onConfigChange && !isRestoring) {
-              setTimeout(() => onConfigChange(), 50);
+              // 删除操作立即保存状态，避免被后续操作覆盖
+              onConfigChange(true);
             }
           }
         }
@@ -155,7 +156,6 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
         }
         // 设置新的定时器，避免频繁调用
         configChangeTimeoutRef.current = window.setTimeout(() => {
-          console.log("🔧 GuideBoard 配置变化，触发保存");
           onConfigChange();
         }, 10);
       }
@@ -246,11 +246,12 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
           },
         }),
         restoreState: state => {
+          
           // 设置恢复状态标志，暂停配置变化通知
           setIsRestoring(true);
 
-          const restoredRows = state.rows.map((row: SavedItem[]) =>
-            row
+          const restoredRows = state.rows.map((row: SavedItem[]) => {
+            return row
               .map((item: SavedItem) => {
                 // 直接从当前主题中获取组件
                 const Component = themes[currentTheme][1].components.find(
@@ -277,23 +278,27 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
                 };
                 // 无 TwoRowContainer 特殊处理
 
-                return {
+                const restoredItem = {
                   ...item,
                   element: React.createElement(
                     Component as React.ElementType,
                     finalProps
                   ),
                 } as GuideItem;
+                
+                return restoredItem;
               })
               .filter((item): item is GuideItem => item !== null)
-          );
+          });
 
           setRows(restoredRows);
           setBoardWidth(state.config.width);
           setShowDividers(state.config.showSpecLine);
 
           // 恢复完成后重新启用配置变化通知
-          setTimeout(() => setIsRestoring(false), 50);
+          setTimeout(() => {
+            setIsRestoring(false);
+          }, 50);
         },
         addItemToRow: (
           rowId: string,
@@ -383,7 +388,8 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
       });
       // 触发配置变化通知（包含撤销历史保存）
       if (onConfigChange && !isRestoring) {
-        setTimeout(() => onConfigChange(), 50);
+        // 添加/删除行操作立即保存状态
+        onConfigChange(true);
       }
     };
 
@@ -394,7 +400,8 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
       );
       // 触发配置变化通知（包含撤销历史保存）
       if (onConfigChange && !isRestoring) {
-        setTimeout(() => onConfigChange(), 50);
+        // 添加/删除行操作立即保存状态
+        onConfigChange(true);
       }
     };
 
@@ -668,7 +675,8 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
                             setEditingItem(null);
                             // 触发配置变化通知（包含撤销历史保存）
                             if (onConfigChange && !isRestoring) {
-                              setTimeout(() => onConfigChange(), 50);
+                              // 删除操作立即保存状态，避免被后续操作覆盖
+                              onConfigChange(true);
                             }
                           }
                         }}
