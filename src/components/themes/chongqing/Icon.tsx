@@ -16,6 +16,15 @@ import Coach from "./icons/coach";
 import Elevator from "./icons/elevator";
 import Parking from "./icons/parking";
 import WaitingRoom from "./icons/waitingroom";
+import Crt from "./icons/crt";
+import Men from "./icons/men";
+import Women from "./icons/women";
+import Toilet from "./icons/toilet";
+import ThirdToilet from "./icons/thirdtoilet";
+import MenColor from "./icons/men-color";
+import WomenColor from "./icons/women-color";
+import ToiletColor from "./icons/toilet-color";
+import ThirdToiletColor from "./icons/thirdtoilet-color";
 
 export const regicons = [
   {
@@ -69,6 +78,42 @@ export const regicons = [
   {
     label: "themes.chongqing.components.Icon.props.icon.waitingroom",
     component: WaitingRoom,
+  },
+  {
+    label: "themes.chongqing.components.Icon.props.icon.crt",
+    component: Crt,
+  },
+  {
+    label: "themes.chongqing.components.Icon.props.icon.men",
+    component: Men,
+  },
+  {
+    label: "themes.chongqing.components.Icon.props.icon.women",
+    component: Women,
+  },
+  {
+    label: "themes.chongqing.components.Icon.props.icon.toilet",
+    component: Toilet,
+  },
+  {
+    label: "themes.chongqing.components.Icon.props.icon.thirdtoilet",
+    component: ThirdToilet,
+  },
+  {
+    label: "themes.chongqing.components.Icon.props.icon.men_color",
+    component: MenColor,
+  },
+  {
+    label: "themes.chongqing.components.Icon.props.icon.women_color",
+    component: WomenColor,
+  },
+  {
+    label: "themes.chongqing.components.Icon.props.icon.toilet_color",
+    component: ToiletColor,
+  },
+  {
+    label: "themes.chongqing.components.Icon.props.icon.thirdtoilet_color",
+    component: ThirdToiletColor,
   },
 ];
 
