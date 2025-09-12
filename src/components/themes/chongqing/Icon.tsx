@@ -6,9 +6,9 @@ import CustomColorPicker from "../../CustomColorPicker";
 import Metro from "./icons/metro";
 import Exit1 from "./icons/exit1";
 import Exit2 from "./icons/exit2";
-import CheckIn from "./icons/checkin";
+import CheckIn from "./icons/check-in";
 import MonoRail from "./icons/monorail";
-import Ticket from "./icons/ticket";
+import TicketMachine from "./icons/ticket-machine";
 import Train from "./icons/train";
 import Bus from "./icons/bus";
 import CR from "./icons/cr";
@@ -25,6 +25,14 @@ import MenColor from "./icons/men-color";
 import WomenColor from "./icons/women-color";
 import ToiletColor from "./icons/toilet-color";
 import ThirdToiletColor from "./icons/thirdtoilet-color";
+import EmergencyExit from "./icons/emergency-exit";
+import Escalator from "./icons/escalator";
+import Maimai from "./icons/maimai";
+import NoEntry from "./icons/no-entry";
+import NursingRoom from "./icons/nursing-room";
+import Stairs from "./icons/stairs";
+import Taxi from "./icons/taxi";
+import Tickets from "./icons/tickets";
 
 export const regicons = [
   {
@@ -48,11 +56,11 @@ export const regicons = [
     component: MonoRail,
   },
   {
-    label: "themes.chongqing.components.Icon.props.icon.ticket",
-    component: Ticket,
+    label: "themes.chongqing.components.Icon.props.icon.ticket_machine",
+    component: TicketMachine,
   },
   {
-    label: "themes.chongqing.components.Icon.props.icon.checkin",
+    label: "themes.chongqing.components.Icon.props.icon.check_in",
     component: CheckIn,
   },
   {
@@ -115,6 +123,38 @@ export const regicons = [
     label: "themes.chongqing.components.Icon.props.icon.thirdtoilet_color",
     component: ThirdToiletColor,
   },
+  {
+    label: "themes.chongqing.components.Icon.props.icon.emergency_exit",
+    component: EmergencyExit,
+  },
+  {
+    label: "themes.chongqing.components.Icon.props.icon.escalator",
+    component: Escalator,
+  },
+  {
+    label: "themes.chongqing.components.Icon.props.icon.maimai",
+    component: Maimai,
+  },
+  {
+    label: "themes.chongqing.components.Icon.props.icon.no_entry",
+    component: NoEntry,
+  },
+  {
+    label: "themes.chongqing.components.Icon.props.icon.nursing_room",
+    component: NursingRoom,
+  },
+  {
+    label: "themes.chongqing.components.Icon.props.icon.stairs",
+    component: Stairs,
+  },
+  {
+    label: "themes.chongqing.components.Icon.props.icon.taxi",
+    component: Taxi,
+  },
+  {
+    label: "themes.chongqing.components.Icon.props.icon.tickets",
+    component: Tickets,
+  }
 ];
 
 export interface IconProps {

@@ -110,7 +110,6 @@
           "props": {
             "icon": {
               "displayName": "アイコン",
-              "noentry": "通行禁止",
               "train": "乗車",
               "metro": "地下鉄",
               "monorail": "モノレール",
@@ -129,8 +128,19 @@
               "women_color": "女性用トイレ（カラー）",
               "toilet_color": "トイレ（カラー）",
               "thirdtoilet_color": "多目的トイレ（カラー）",
-              "ticket": "券売機/チャージ",
-              "checkin": "セルフ改札"
+              "ticket_machine": "券売機/チャージ",
+              "check_in": "セルフ改札",
+              "coach": "長距離バス",
+              "bus": "バス",
+              "parking": "駐車場",
+              "emergency_exit": "緊急出口",
+              "escalator": "エスカレーター",
+              "maimai": "マイマイ",
+              "no_entry": "進入禁止",
+              "nursing_room": "授乳室",
+              "stairs": "階段",
+              "taxi": "タクシー",
+              "tickets": "券売/チャージ"
             },
             "rotation": "回転角度",
             "background": "背景色",
@@ -334,7 +344,6 @@
           "props": {
             "icon": {
               "displayName": "アイコン",
-              "noentry": "通行禁止",
               "train": "乗車",
               "cdrt": "成都地下鉄",
               "exit1": "出口（1）",
@@ -342,10 +351,8 @@
               "elevator": "バリアフリーエレベーター",
               "waitingroom": "待合室",
               "toilet": "トイレ",
-              "ticket": "券売機/チャージ",
-              "checkin": "セルフ改札",
-              "stairs": "階段",
-              "autostair": "自動階段",
+              "ticket_machine": "券売機/チャージ",
+              "check_in": "セルフ改札",
               "coach": "長距離バス",
               "bus": "バス",
               "parking": "駐車場",
@@ -356,7 +363,15 @@
               "men_color": "男性用トイレ（カラー）",
               "women_color": "女性用トイレ（カラー）",
               "toilet_color": "トイレ（カラー）",
-              "thirdtoilet_color": "多目的トイレ（カラー）"
+              "thirdtoilet_color": "多目的トイレ（カラー）",
+              "emergency_exit": "緊急出口",
+              "escalator": "エスカレーター",
+              "maimai": "マイマイ",
+              "no_entry": "進入禁止",
+              "nursing_room": "授乳室",
+              "stairs": "階段",
+              "taxi": "タクシー",
+              "tickets": "券売/チャージ"
             },
             "background": "背景色",
             "foreground": "前景色",
