@@ -1,3 +1,4 @@
+import type { FC } from "react";
 import { Select } from "@douyinfe/semi-ui";
 import colors from "./define/colors";
 import type { EditorConfig } from "../../../interfaces/editor";
@@ -143,16 +144,17 @@ export const regicons = [
 ];
 
 export interface IconProps {
-  rotation: "0" | "90" | "180" | "270";
-  icon: string;
-  foreground?: string;
+  icon?: string;
   background?: string;
+  foreground?: string;
+  rotation?: "0" | "90" | "180" | "270";
 }
+
 export const iconDefaultProps: IconProps = {
-  rotation: "0",
   icon: "themes.chengdu.components.Icon.props.icon.exit2",
-  foreground: colors.exitforeground,
   background: colors.exitbackground,
+  foreground: colors.exitforeground,
+  rotation: "0"
 };
 
 export const iconEditorConfig = (t: (key: string) => string): EditorConfig => ({
@@ -198,12 +200,12 @@ export const iconEditorConfig = (t: (key: string) => string): EditorConfig => ({
 });
 
 function Icon({
-  rotation = iconDefaultProps.rotation,
   icon = iconDefaultProps.icon,
-  foreground = iconDefaultProps.foreground,
   background = iconDefaultProps.background,
+  foreground = iconDefaultProps.foreground,
+  rotation = iconDefaultProps.rotation
 }: IconProps) {
-  const IconComponent = regicons.find(i => i.label === icon)?.component;
+  const IconComponent = regicons.find(i => i.label === icon)?.component as FC<IconProps>;
 
   return (
     <div
@@ -212,9 +214,10 @@ function Icon({
     >
       {IconComponent ? (
         <IconComponent
+          icon={icon}
           background={background}
           foreground={foreground}
-          rotation={Number(rotation)}
+          rotation={rotation}
         />
       ) : null}
     </div>
