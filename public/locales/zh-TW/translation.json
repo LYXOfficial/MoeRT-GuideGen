@@ -110,7 +110,6 @@
           "props": {
             "icon": {
               "displayName": "圖標",
-              "noentry": "禁止通行",
               "train": "乘車",
               "metro": "地鐵",
               "monorail": "單軌",
@@ -129,8 +128,19 @@
               "women_color": "女衛生間（彩色）",
               "toilet_color": "衛生間（彩色）",
               "thirdtoilet_color": "第三衛生間（彩色）",
-              "ticket": "售票/加值",
-              "checkin": "自助檢票"
+              "ticket_machine": "自助售票/加值",
+              "check_in": "自助檢票",
+              "coach": "長途客車",
+              "bus": "公交車",
+              "parking": "停車場",
+              "emergency_exit": "緊急出口",
+              "escalator": "手扶梯",
+              "maimai": "舞萌",
+              "no_entry": "禁止通行",
+              "nursing_room": "哺乳室",
+              "stairs": "樓梯",
+              "taxi": "計程車",
+              "tickets": "售票/加值"
             },
             "rotation": "旋轉角度",
             "background": "背景色",
@@ -334,7 +344,6 @@
           "props": {
             "icon": {
               "displayName": "圖標",
-              "noentry": "禁止通行",
               "train": "乘車",
               "cdrt": "成都地鐵",
               "exit1": "出口（1）",
@@ -342,10 +351,8 @@
               "elevator": "無障礙電梯",
               "waitingroom": "等候室",
               "toilet": "衛生間",
-              "ticket": "售票/加值",
-              "checkin": "自助檢票",
-              "stairs": "樓梯",
-              "autostair": "自動扶梯",
+              "ticket_machine": "自助售票/加值",
+              "check_in": "自助檢票",
               "coach": "長途客車",
               "bus": "公交車",
               "parking": "停車場",
@@ -356,7 +363,15 @@
               "men_color": "男衛生間（彩色）",
               "women_color": "女衛生間（彩色）",
               "toilet_color": "衛生間（彩色）",
-              "thirdtoilet_color": "第三衛生間（彩色）"
+              "thirdtoilet_color": "第三衛生間（彩色）",
+              "emergency_exit": "緊急出口",
+              "escalator": "手扶梯",
+              "maimai": "舞萌",
+              "no_entry": "禁止通行",
+              "nursing_room": "哺乳室",
+              "stairs": "樓梯",
+              "taxi": "計程車",
+              "tickets": "售票/加值"
             },
             "background": "背景色",
             "foreground": "前景色",
