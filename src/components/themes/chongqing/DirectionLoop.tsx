@@ -70,7 +70,7 @@ export const directionEditorConfig = (
     {
       key: "background",
       label: "themes.chongqing.components.DirectionLoop.props.background",
-      element: <CustomColorPicker currentTheme={1} />,
+      element: <CustomColorPicker currentTheme={0} />,
     },
   ],
 });
