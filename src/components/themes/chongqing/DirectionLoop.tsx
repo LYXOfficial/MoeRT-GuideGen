@@ -65,7 +65,7 @@ export const directionEditorConfig = (
     {
       key: "foreground",
       label: "themes.chongqing.components.DirectionLoop.props.foreground",
-      element: <CustomColorPicker currentTheme={1} />,
+      element: <CustomColorPicker currentTheme={0} />,
     },
     {
       key: "background",
