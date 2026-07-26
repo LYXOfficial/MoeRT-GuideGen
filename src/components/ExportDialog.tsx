@@ -50,6 +50,11 @@ export const ExportDialog = ({
     }
 
     const operationBtns = guide.querySelectorAll(".operation-btn");
+    // 组件灰框只是编辑辅助线，导出时要临时去掉
+    const framedItems = Array.from(
+      guide.querySelectorAll<HTMLElement>(".guide-item-frame")
+    );
+    const originalOutlines = framedItems.map(el => el.style.outline);
     const originalBorder = guide.style.border;
     const originalTransform = guide.style.transform;
     const originalWidth = guide.style.width;
@@ -110,6 +115,12 @@ export const ExportDialog = ({
       operationBtns.forEach(btn => {
         (btn as HTMLElement).style.display = "none";
       });
+      framedItems.forEach(el => {
+        el.style.outline = "none";
+      });
+      // 灰框和间距箭头都吃这个变量，直接在导出根节点上关掉，
+      // 无论开关当前是什么状态，导出的图里都不会有它们
+      guide.style.setProperty("--guide-item-outline", "transparent");
 
       // 2. 等待字体和样式应用
       await new Promise(resolve => setTimeout(resolve, 300));
@@ -156,6 +167,7 @@ export const ExportDialog = ({
             return !classList.some(
               cls =>
                 cls.includes("operation-btn") ||
+                cls.includes("guide-item-hint") ||
                 cls.includes("sortable-") ||
                 cls.includes("dnd-kit-") ||
                 cls.includes("drag-overlay")
@@ -196,6 +208,10 @@ export const ExportDialog = ({
       operationBtns.forEach(btn => {
         (btn as HTMLElement).style.display = "";
       });
+      framedItems.forEach((el, i) => {
+        el.style.outline = originalOutlines[i];
+      });
+      guide.style.removeProperty("--guide-item-outline");
 
       // 移除遮罩层
       const mask = document.getElementById("export-mask");

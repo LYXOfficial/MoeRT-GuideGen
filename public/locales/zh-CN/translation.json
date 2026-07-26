@@ -24,6 +24,7 @@
   },
   "board": {
     "emptyRowHint": "拖拽组件到此行",
+    "showItemFrame": "组件框",
     "width": "宽度",
     "showDividers": "显示分隔线"
   },
@@ -43,6 +44,7 @@
   },
   "saves": {
     "clear_local_button": "清除本地存档",
+    "restore_failed": "存档载入失败：里面的组件和当前主题对不上。已暂停自动保存以保护存档，请检查版本或重新导入。",
     "clear_local_title": "清除本地存档",
     "clear_local_confirm": "确定要清除本地自动存档并刷新页面吗？此操作不可撤销。",
     "export_image": "导出为图片",

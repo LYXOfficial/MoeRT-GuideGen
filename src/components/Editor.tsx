@@ -1,4 +1,12 @@
-import { useRef, useState, useEffect, useCallback } from "react";
+import {
+  useRef,
+  useState,
+  useEffect,
+  useCallback,
+  cloneElement,
+  isValidElement,
+  type ReactElement,
+} from "react";
 import ComponentsList from "./ComponentsList";
 import GuideBoardCols, { type GuideBoardRef } from "./GuideBoard";
 import type { GuideItem } from "../interfaces/guide";
@@ -57,10 +65,17 @@ export default function Editor({
     movedRows: false,
   });
   const [currentTheme, setCurrentTheme] = useState(0);
+  // 供空依赖的回调读取最新主题
+  const currentThemeRef = useRef(0);
+  currentThemeRef.current = currentTheme;
   const [isImporting, setIsImporting] = useState(false); // 添加导入状态标志
   const [isUndoRedoing, setIsUndoRedoing] = useState(false); // 添加撤销/重做状态标志
   const lastChangeRef = useRef(Date.now());
   const autoSaveIntervalMs = 2000; // 自动保存间隔
+  // 存档保护：还原失败（比如主题对不上、组件找不到）时置位，
+  // 之后一律不再自动保存，避免用空白画板把用户的存档覆盖掉
+  const skipAutoSaveRef = useRef(false);
+  const archivedItemCountRef = useRef(0);
 
   // 撤销/重做状态管理
   const initialState: EditorState = {
@@ -159,6 +174,19 @@ export default function Editor({
     }
   }, [redo, currentTheme, canRedo]);
   const [zoom, setZoom] = useState(1);
+  // 组件灰框：只是编辑时的辅助线，用 CSS 变量下发，导出前会被临时关掉
+  const [showItemFrame, setShowItemFrame] = useState(() => {
+    try {
+      return localStorage.getItem("guide-show-item-frame") !== "0";
+    } catch {
+      return true;
+    }
+  });
+  useEffect(() => {
+    try {
+      localStorage.setItem("guide-show-item-frame", showItemFrame ? "1" : "0");
+    } catch {}
+  }, [showItemFrame]);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0, panX: 0, panY: 0 });
@@ -378,6 +406,9 @@ export default function Editor({
           throw new Error(t("saves.import.unsupportedVersion"));
         }
 
+        // 用户主动导入了新存档，解除保护
+        skipAutoSaveRef.current = false;
+        archivedItemCountRef.current = 0;
         // 设置导入状态，防止主题变化触发保存
         setIsImporting(true);
 
@@ -428,19 +459,26 @@ export default function Editor({
 
   // 自动保存 - 使用 useCallback 避免闭包问题
   const saveToLocalStorage = useCallback(() => {
-    if (!guideBoardRef.current) return;
+    if (!guideBoardRef.current || skipAutoSaveRef.current) return;
     const { rows, config } = guideBoardRef.current.getState();
     const saveData: SaveData = {
       version: 1,
       config: {
         ...config,
-        theme: themes[currentTheme][0],
+        // 必须用 ref 取当前主题：这个回调的依赖是空数组，
+        // 直接读 currentTheme 会永远是首次渲染的 0，
+        // 存档会被打上错误的主题名，重载时组件全部匹配不到 → 画板变空 → 存档被清空
+        theme: themes[currentThemeRef.current][0],
       },
       rows: rows.map(row => row.map(stripGuideItem)),
     };
-    localStorage.setItem("guide-autosave", JSON.stringify(saveData));
+    try {
+      localStorage.setItem("guide-autosave", JSON.stringify(saveData));
+    } catch {
+      // 写入失败（配额/隐私模式）时静默跳过，不影响编辑
+    }
     lastChangeRef.current = Date.now();
-  }, []); // 移除 currentTheme 依赖，使用当前值
+  }, []); // 依赖为空，主题通过 currentThemeRef 读取
 
   // 从 LocalStorage 加载
   const loadFromLocalStorage = async () => {
@@ -456,10 +494,33 @@ export default function Editor({
       const saveData = JSON.parse(saved) as SaveData;
       if (saveData.version !== 1) return;
 
+      // 记下存档里有多少个组件，初始化完成后用来校验是否真的还原成功
+      archivedItemCountRef.current = (saveData.rows || []).reduce(
+        (sum, row) => sum + (row?.length || 0),
+        0
+      );
+
       return new Promise<void>(resolve => {
-        const themeIndex = themes.findIndex(
-          ([name, _]) => name === saveData.config.theme
-        );
+        // 组件名自带主题前缀（themes.<主题>.components.<组件>），
+        // 用它反推真实主题，修掉旧版本写错 config.theme 的存档，
+        // 否则组件一个都匹配不上，画板会变成空的
+        const firstType =
+          (saveData.rows || []).flat().find(item => item?.type)?.type ?? "";
+        const matched = /^(themes\.[^.]+)\./.exec(firstType);
+        const themeFromItems =
+          matched && themes.some(([name]) => name === matched[1])
+            ? matched[1]
+            : null;
+        const themeName = themeFromItems ?? saveData.config.theme;
+        const themeIndex = themes.findIndex(([name, _]) => name === themeName);
+
+        // 存档里的主题在当前版本里不存在：还原只会把组件全部丢掉，
+        // 干脆不还原，并锁住自动保存，至少把存档原样留着
+        if (themeIndex === -1 && archivedItemCountRef.current > 0) {
+          skipAutoSaveRef.current = true;
+          resolve();
+          return;
+        }
 
         if (themeIndex !== -1 && themeIndex !== currentTheme) {
           // 先设置主题
@@ -528,6 +589,23 @@ export default function Editor({
         await loadFromLocalStorage();
         // 等待一下，确保 DOM 更新完成
         await new Promise(resolve => setTimeout(resolve, 100));
+
+        // 存档里有内容、还原后却是空画板 → 说明组件没匹配上（多半是主题对不上）。
+        // 这时候必须锁住自动保存，否则 2 秒后就会用空白画板覆盖掉存档。
+        const restoredCount =
+          guideBoardRef.current
+            ?.getState()
+            .rows.reduce((sum, row) => sum + row.length, 0) ?? 0;
+        if (archivedItemCountRef.current > 0 && restoredCount === 0) {
+          skipAutoSaveRef.current = true;
+        }
+        if (skipAutoSaveRef.current) {
+          Toast.error({
+            content: t("saves.restore_failed"),
+            duration: 10,
+          });
+        }
+
         prevThemeRef.current = currentTheme;
         setIsInitialized(true);
         // 通知App组件档案加载完成
@@ -562,17 +640,21 @@ export default function Editor({
     const saveInterval = window.setInterval(() => {
       // 检查是否需要保存：距离上次变化超过1秒
       if (Date.now() - lastChangeRef.current > 1000) {
-        if (!guideBoardRef.current) return;
+        if (!guideBoardRef.current || skipAutoSaveRef.current) return;
         const { rows, config } = guideBoardRef.current.getState();
         const saveData: SaveData = {
           version: 1,
           config: {
             ...config,
-            theme: themes[currentTheme][0],
+            theme: themes[currentThemeRef.current][0],
           },
           rows: rows.map(row => row.map(stripGuideItem)),
         };
-        localStorage.setItem("guide-autosave", JSON.stringify(saveData));
+        try {
+          localStorage.setItem("guide-autosave", JSON.stringify(saveData));
+        } catch {
+          // 写入失败时静默跳过
+        }
       }
     }, autoSaveIntervalMs); // 2秒间隔
 
@@ -670,6 +752,14 @@ export default function Editor({
     return pointerX > rect.left + rect.width / 2 ? overIndex + 1 : overIndex;
   };
 
+  // DragOverlay 里的副本：双行容器要切到预览模式，
+  // 否则副本内部会用同样的 id 抢注册可拖放区域，导致真身拖过一次后失效
+  const renderDragPreview = (item: GuideItem) => {
+    if (!isValidElement(item.element)) return item.element;
+    if (!item.type?.includes("TwoRowContainer")) return item.element;
+    return cloneElement(item.element as ReactElement<any>, { preview: true });
+  };
+
   const handleDragStart = (event: DragStartEvent) => {
     const data = (event.active.data.current || {}) as Record<string, any>;
     dragMetaRef.current = { sourceRowId: data.rowId, movedRows: false };
@@ -746,35 +836,18 @@ export default function Editor({
 
     // 处理拖拽到双行容器内部的情况
     if (isTwoRowContainerTarget && twoRowContainerId && typeof twoRowTargetRowIndex === 'number') {
-      console.log('TwoRowContainer drag detected:', {
-        isTwoRowContainerTarget,
-        twoRowContainerId,
-        twoRowTargetRowIndex,
-        draggedItem: draggedItem?.type,
-        sourceRowId,
-        isTwoRowInternalDrag,
-        sourceTwoRowData
-      });
-      
-      // 阻止拖拽 TwoRowContainer 到自身内部
-      if (draggedItem?.type?.indexOf('TwoRowContainer') !== -1) {
-        console.log('Blocked: Cannot drag TwoRowContainer into itself');
-        return;
-      }
+      // 双行容器不能嵌套双行容器
+      const draggedType = String(
+        (activeData.boardItem ?? activeData.item)?.type ?? ""
+      );
+      if (draggedType.includes("TwoRowContainer")) return;
 
       // 处理双行容器内部拖拽（行内排序或跨行移动）
       if (isTwoRowInternalDrag) {
         const sourceContainerId = sourceTwoRowData.containerId;
         const sourceRowIndex = sourceTwoRowData.rowIndex;
         const draggedItemId = active.id.toString();
-        
-        console.log('Internal TwoRow drag:', {
-          sourceContainerId,
-          sourceRowIndex,
-          targetRowIndex: twoRowTargetRowIndex,
-          draggedItemId
-        });
-        
+
         // 同一行内、且落在具体元素上：直接按 dnd-kit 预览的结果换位，
         // 保证松手后的位置和拖拽时看到的动画一致
         if (
@@ -1283,10 +1356,30 @@ export default function Editor({
           string,
           any
         >;
+        const activeId = String(args.active?.id ?? "");
+        const draggedType = String(
+          (activeData.boardItem ?? activeData.item)?.type ?? ""
+        );
+        const isTwoRowArea = (data: Record<string, any>) =>
+          data.type === "two-row-container-row" ||
+          data.type === "two-row-container" ||
+          data.context === "two-row";
+
+        // 排除拖拽元素“内部”的可放置区域：拖动双行容器时，指针一直压在
+        // 它自己的内部行上，不排掉就永远命中不到别人（自身作为排序项要保留，
+        // 指针在原位时 over 就该是它自己，这样才不会平白无故换位）
+        let pool = base.filter(
+          collision => dataOf(collision).containerId !== activeId
+        );
+        // 双行容器不能拖进双行容器，直接忽略所有容器区域，按普通行处理
+        if (draggedType.includes("TwoRowContainer")) {
+          pool = pool.filter(collision => !isTwoRowArea(dataOf(collision)));
+        }
+        if (pool.length === 0) pool = base;
 
         // 双行容器内部的拖动：优先命中同一容器内的元素，才能有排序预览动画
         if (activeData.context === "two-row") {
-          const sameContainer = base.filter(collision => {
+          const sameContainer = pool.filter(collision => {
             const data = dataOf(collision);
             return (
               data.context === "two-row" &&
@@ -1297,22 +1390,18 @@ export default function Editor({
         }
 
         // 双行容器区域优先（拖进容器时按容器行处理）
-        const twoRowHits = base.filter(collision => {
-          const data = dataOf(collision);
-          return (
-            data.type === "two-row-container-row" ||
-            data.type === "two-row-container"
-          );
-        });
+        const twoRowHits = pool.filter(collision =>
+          isTwoRowArea(dataOf(collision))
+        );
         if (twoRowHits.length > 0) return twoRowHits;
 
         // 命中了具体元素就用它：dnd-kit 只有在 over 是排序项时才会计算让位动画
-        const itemHits = base.filter(collision => dataOf(collision).sortable);
+        const itemHits = pool.filter(collision => dataOf(collision).sortable);
         if (itemHits.length > 0) return itemHits;
 
         // 只命中行容器（行首/行尾的空白处）时，退回到该行内距离最近的元素，
         // 否则 overIndex 为 -1，整行都不会有动画
-        const rowId = String(base[0].id);
+        const rowId = String(pool[0].id);
         if (/^row\d+$/.test(rowId)) {
           const rowItems = args.droppableContainers.filter(
             container =>
@@ -1326,7 +1415,7 @@ export default function Editor({
             if (closest.length > 0) return closest;
           }
         }
-        return base;
+        return pool;
       }}
     >
       <div className="flex flex-col h-screen">
@@ -1342,6 +1431,8 @@ export default function Editor({
           onZoomChange={setZoom}
           disableZoom={isEditingOpen}
           onClearHistory={clearHistory}
+          showItemFrame={showItemFrame}
+          onShowItemFrameChange={setShowItemFrame}
         />
         <div className="flex h-0 flex-1">
           <ComponentsList
@@ -1351,6 +1442,9 @@ export default function Editor({
               if (isImporting) {
                 return;
               }
+              // 换主题是用户主动清空画板，解除存档保护
+              skipAutoSaveRef.current = false;
+              archivedItemCountRef.current = 0;
               setCurrentTheme(theme);
               guideBoardRef.current?.clearBoard();
               // 在切换主题后保存状态，而不是清空历史
@@ -1368,13 +1462,20 @@ export default function Editor({
           >
             <div
               className="absolute inset-0 flex items-center justify-center z-1"
-              style={{
-                // 先缩放，再位移；位移不受缩放影响
-                transform: `scale(${zoom}) translate(${pan.x}px, ${pan.y}px)`,
-                transformOrigin: "center",
-                transition: isDragging ? "none" : "transform 0.1s ease-out",
-                cursor: isDragging ? "grabbing" : "default",
-              }}
+              style={
+                {
+                  // 先缩放，再位移；位移不受缩放影响
+                  transform: `scale(${zoom}) translate(${pan.x}px, ${pan.y}px)`,
+                  transformOrigin: "center",
+                  transition: isDragging ? "none" : "transform 0.1s ease-out",
+                  cursor: isDragging ? "grabbing" : "default",
+                  // 组件框的颜色，取当前主题的边框色，
+                  // DraggableItem 的 outline 和间距箭头都继承这个变量
+                  "--guide-item-outline": showItemFrame
+                    ? themes[currentTheme][1].colors.defaultBorder
+                    : "transparent",
+                } as React.CSSProperties
+              }
             >
               <div style={{ position: "relative" }}>
                 <GuideBoardCols
@@ -1403,7 +1504,7 @@ export default function Editor({
           </div>
         </div>
         <img
-          className="love-salt-kawaii-qwq fixed opacity-30 cursor-none -right-50px bottom-0 w-600px select-none"
+          className="love-salt-kawaii-qwq fixed opacity-30 cursor-none -right-50px bottom-0 w-600px select-none pointer-events-none"
           src="/imgs/salt.png"
         />
       </div>
@@ -1414,27 +1515,33 @@ export default function Editor({
         }}
       >
         {activeDrag ? (
+          // 从组件列表拖出时，覆盖层的尺寸是整张卡片，
+          // 把预览居中放进去，避免看起来像在拖侧栏的卡片
           <div
-            style={{
-              // 面板上的元素本身已经被缩放过，覆盖层按同样比例还原尺寸，
-              // 并以左上角为基准，正好盖住原来的位置
-              transform: `scale(${activeDrag.scale})`,
-              transformOrigin: activeDrag.fromBoard ? "top left" : "center",
-              boxShadow: "0 0 8px rgba(0,0,0,0.12)",
-              background: activeDrag.fromBoard
-                ? themes[currentTheme][1].colors.defaultBackground
-                : "white",
-              color: activeDrag.fromBoard
-                ? themes[currentTheme][1].colors.defaultForeground
-                : undefined,
-              display: "inline-flex",
-              alignItems: "center",
-              cursor: "grabbing",
-              opacity: 0.9,
-              fontFamily: themes[currentTheme][1].fontFamily,
-            }}
+            className={
+              activeDrag.fromBoard
+                ? undefined
+                : "w-full h-full flex items-center justify-center"
+            }
           >
-            {activeDrag.item.element}
+            <div
+              style={{
+                // 面板上的元素本身已经被缩放过，覆盖层按同样比例还原尺寸，
+                // 并以左上角为基准，正好盖住原来的位置
+                transform: `scale(${activeDrag.scale})`,
+                transformOrigin: activeDrag.fromBoard ? "top left" : "center",
+                boxShadow: "0 0 8px rgba(0,0,0,0.12)",
+                background: themes[currentTheme][1].colors.defaultBackground,
+                color: themes[currentTheme][1].colors.defaultForeground,
+                display: "inline-flex",
+                alignItems: "center",
+                cursor: "grabbing",
+                opacity: 0.9,
+                fontFamily: themes[currentTheme][1].fontFamily,
+              }}
+            >
+              {renderDragPreview(activeDrag.item)}
+            </div>
           </div>
         ) : null}
       </DragOverlay>

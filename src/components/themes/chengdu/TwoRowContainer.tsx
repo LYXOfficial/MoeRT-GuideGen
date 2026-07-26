@@ -18,6 +18,11 @@ export interface TwoRowContainerProps {
   children?: TwoRowChildren; // 作为数据来源（与导出/还原兼容）
   onItemClick?: (e: React.MouseEvent, item: GuideItem) => void;
   background?: string;
+  /**
+   * 预览模式：用于 DragOverlay 里的拖拽副本。
+   * 此时不注册可拖放区域、也不复用真身的 DOM id，避免和面板上的容器互相覆盖。
+   */
+  preview?: boolean;
 }
 
 export const twoRowContainerDefaultProps: Partial<TwoRowContainerProps> = {
@@ -33,8 +38,10 @@ function TwoRowContainer({
   children: initialChildren = [[], []],
   onItemClick,
   background,
+  preview = false,
 }: TwoRowContainerProps) {
-  const [autoId] = useState(() => id || `tworow-${Math.random().toString(36).slice(2)}`);
+  const [rawId] = useState(() => id || `tworow-${Math.random().toString(36).slice(2)}`);
+  const autoId = preview ? `${rawId}-preview` : rawId;
   const themeIndex = typeof currentTheme === "number" ? currentTheme : 0;
   // 使用传入的 children 而不是本地状态
   const rows = initialChildren;
@@ -51,7 +58,11 @@ function TwoRowContainer({
   const {
     setNodeRef: setContainerRef,
     isOver: isOverContainer,
-  } = useDroppable({ id: autoId, data: { type: "two-row-container" } });
+  } = useDroppable({
+    id: autoId,
+    data: { type: "two-row-container" },
+    disabled: preview,
+  });
   const containerDomRef = useRef<HTMLDivElement | null>(null);
   const [measuredWidth, setMeasuredWidth] = useState<number | null>(null);
 
@@ -126,6 +137,7 @@ function TwoRowContainer({
           onItemClick={onItemClick}
           containerId={autoId}
           rowIndex={rowIdx}
+          preview={preview}
         />
       ))}
     </div>
@@ -139,6 +151,7 @@ const TwoRowRow = memo(function TwoRowRow({
   onItemClick,
   containerId,
   rowIndex,
+  preview = false,
 }: {
   id: string;
   items: string[];
@@ -146,15 +159,17 @@ const TwoRowRow = memo(function TwoRowRow({
   onItemClick?: (e: React.MouseEvent, item: GuideItem) => void;
   containerId: string;
   rowIndex: number;
+  preview?: boolean;
 }) {
   const { setNodeRef, isOver } = useDroppable({
     id,
-    data: { 
-      type: "two-row-container-row", 
+    data: {
+      type: "two-row-container-row",
       containerId,
       rowIndex,
-      rowId: id 
+      rowId: id
     },
+    disabled: preview,
   });
   return (
     <div
@@ -188,25 +203,36 @@ const TwoRowRow = memo(function TwoRowRow({
       >
         <SortableContext items={items} strategy={horizontalListSortingStrategy}>
           {renderItems.length > 0 ? (
-            renderItems.map(item => (
-              <DraggableItem
-                key={item.id}
-                id={item.id}
-                zoom={SCALE}
-                data={{
-                  context: "two-row",
-                  rowId: id,
-                  containerId,
-                  rowIndex,
-                  boardItem: item,
-                  // 容器内部额外缩放，DragOverlay 需要据此还原视觉尺寸
-                  scale: SCALE,
-                }}
-                onClick={e => onItemClick?.(e, item)}
-              >
-                {item.element}
-              </DraggableItem>
-            ))
+            renderItems.map(item =>
+              // 预览副本里只画静态内容，不再注册可拖拽项，
+              // 否则会和面板上真身的同名元素抢注册
+              preview ? (
+                <div
+                  key={item.id}
+                  style={{ display: "inline-flex", alignItems: "center" }}
+                >
+                  {item.element}
+                </div>
+              ) : (
+                <DraggableItem
+                  key={item.id}
+                  id={item.id}
+                  zoom={SCALE}
+                  data={{
+                    context: "two-row",
+                    rowId: id,
+                    containerId,
+                    rowIndex,
+                    boardItem: item,
+                    // 容器内部额外缩放，DragOverlay 需要据此还原视觉尺寸
+                    scale: SCALE,
+                  }}
+                  onClick={e => onItemClick?.(e, item)}
+                >
+                  {item.element}
+                </DraggableItem>
+              )
+            )
           ) : (
             // 空行占位符，确保有可拖拽的区域
             <div

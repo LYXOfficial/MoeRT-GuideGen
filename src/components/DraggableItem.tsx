@@ -77,6 +77,10 @@ export default function DraggableItem({
     : null;
   const inTwoRow = data && (data as any).context === "two-row";
   const childType = isValidElement(children) ? (children as ReactElement).type : null;
+  const isSpacing =
+    childType === ChengduSpacing ||
+    childType === ChongqingSpacing ||
+    childType === HongkongSpacing;
   const style = {
     transform: CSS.Transform.toString(adjustedTransform as any),
     // dnd-kit 会在需要「无动画地重置位置」时返回 0ms 过渡，必须原样使用；
@@ -84,7 +88,10 @@ export default function DraggableItem({
     transition:
       transition ??
       (isDragging ? undefined : "transform 200ms ease, opacity 200ms ease"),
-    outline: isDragging ? "2px dashed #66ccff" : "1px solid transparent",
+    // outline 不参与布局，不会把组件撑宽；颜色由编辑区的 CSS 变量控制
+    outline: isDragging
+      ? "2px solid #66ccff"
+      : "2px dashed var(--guide-item-outline, transparent)",
     display: "inline-flex",
     alignItems: "center",
     cursor: "grab",
@@ -96,13 +103,7 @@ export default function DraggableItem({
           childType === HongkongSpecLine
         ? 10
         : 1,
-    flex: inTwoRow
-      ? "0 0 auto"
-      : childType === ChengduSpacing ||
-        childType === ChongqingSpacing ||
-        childType === HongkongSpacing
-      ? "1"
-      : "0 0 auto",
+    flex: inTwoRow ? "0 0 auto" : isSpacing ? "1" : "0 0 auto",
     width: (data && (data as any).parentWidth) || undefined,
     opacity: isDragging ? 0.5 : 1,
     touchAction: "none",
@@ -153,11 +154,49 @@ export default function DraggableItem({
       }}
       className={
         onClick
-          ? "hover:outline-blue-500 hover:outline-2 hover:outline-dashed"
-          : ""
+          ? "guide-item-frame hover:outline-blue-500 hover:outline-2 hover:outline-dashed"
+          : "guide-item-frame"
       }
     >
       {children}
+      {/* 间距组件：画一条拉到两端的双向箭头，和灰框一样只是编辑辅助，导出时不显示 */}
+      {isSpacing && !isDragging && (
+        <span
+          className="guide-item-hint"
+          style={{
+            position: "absolute",
+            left: 3,
+            right: 3,
+            top: "50%",
+            transform: "translateY(-50%)",
+            display: "flex",
+            alignItems: "center",
+            pointerEvents: "none",
+            // 跟随灰框的开关：关掉时变成 transparent，整个箭头自然隐藏
+            color: "var(--guide-item-outline, transparent)",
+          }}
+        >
+          <span
+            style={{
+              width: 0,
+              height: 0,
+              borderTop: "4px solid transparent",
+              borderBottom: "4px solid transparent",
+              borderRight: "6px solid currentColor",
+            }}
+          />
+          <span style={{ flex: 1, height: 2, background: "currentColor" }} />
+          <span
+            style={{
+              width: 0,
+              height: 0,
+              borderTop: "4px solid transparent",
+              borderBottom: "4px solid transparent",
+              borderLeft: "6px solid currentColor",
+            }}
+          />
+        </span>
+      )}
     </div>
   );
 }

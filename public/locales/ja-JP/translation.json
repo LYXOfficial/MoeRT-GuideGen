@@ -24,6 +24,7 @@
   },
   "board": {
     "emptyRowHint": "この行にコンポーネントをドラッグ",
+    "showItemFrame": "枠線",
     "width": "幅",
     "showDividers": "区切り線を表示"
   },
@@ -43,6 +44,7 @@
   },
   "saves": {
     "clear_local_button": "ローカル保存を消去",
+    "restore_failed": "保存データの読み込みに失敗しました：コンポーネントが現在のテーマと一致しません。保存データを守るため自動保存を停止しました。",
     "clear_local_title": "ローカル保存を消去",
     "clear_local_confirm": "ローカルの自動保存を消去してページをリロードしてもよろしいですか？この操作は元に戻せません。",
     "export_image": "画像としてエクスポート",

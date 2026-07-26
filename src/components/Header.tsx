@@ -8,7 +8,7 @@ import {
   IconUndo,
   IconRedo,
 } from "@douyinfe/semi-icons";
-import { Popover, List, Modal, Slider } from "@douyinfe/semi-ui";
+import { Popover, List, Modal, Slider, Checkbox } from "@douyinfe/semi-ui";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { ExportDialog } from "./ExportDialog";
@@ -25,6 +25,9 @@ interface HeaderProps {
   canUndo?: boolean;
   canRedo?: boolean;
   onClearHistory?: () => void;
+  /** 是否显示组件的灰色边框（不影响布局，也不会被导出） */
+  showItemFrame?: boolean;
+  onShowItemFrameChange?: (show: boolean) => void;
 }
 
 export default function Header({
@@ -39,6 +42,8 @@ export default function Header({
   canUndo = false,
   canRedo = false,
   onClearHistory,
+  showItemFrame = true,
+  onShowItemFrameChange,
 }: HeaderProps) {
   const { t, i18n } = useTranslation();
   const [exportDialogVisible, setExportDialogVisible] = useState(false);
@@ -111,6 +116,16 @@ export default function Header({
           <span className="text-xs text-gray-500 w-8 text-center">
             {Math.round(zoom * 100)}%
           </span>
+          {/* 组件灰框显隐 */}
+          <Checkbox
+            className="ml-2 text-sm"
+            checked={showItemFrame}
+            onChange={e => onShowItemFrameChange?.(Boolean(e.target.checked))}
+          >
+            <span className="text-sm text-gray-600">
+              {t("board.showItemFrame")}
+            </span>
+          </Checkbox>
         </div>
 
         <div className="flex items-center ml-auto gap-4">

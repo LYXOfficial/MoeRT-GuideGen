@@ -24,6 +24,7 @@
   },
   "board": {
     "emptyRowHint": "이 행에 컴포넌트를 드래그",
+    "showItemFrame": "테두리",
     "width": "너비",
     "showDividers": "구분선 표시"
   },
@@ -43,6 +44,7 @@
   },
   "saves": {
     "clear_local_button": "로컬 저장소 지우기",
+    "restore_failed": "저장 데이터를 불러오지 못했습니다: 구성 요소가 현재 테마와 맞지 않습니다. 저장 데이터를 보호하기 위해 자동 저장을 중지했습니다.",
     "clear_local_title": "로컬 저장소 지우기",
     "clear_local_confirm": "로컬 자동 저장을 지우고 페이지를 새로고침하시겠습니까? 이 작업은 취소할 수 없습니다.",
     "export_image": "이미지로 내보내기",

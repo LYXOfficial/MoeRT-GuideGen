@@ -30,31 +30,27 @@ const DraggableComponentItem: React.FC<ComponentItemProps> = ({
     () => `${type}-${Math.random().toString(36).substring(2)}`
   );
 
-  const { attributes, listeners, setNodeRef, isDragging, transform } =
-    useDraggable({
-      id,
-      data: {
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
+    id,
+    data: {
+      type,
+      item: {
+        id,
         type,
-        item: {
-          id,
-          type,
-          props,
-          element: <Component {...props} />,
-        } as GuideItem,
-      },
-    });
+        props,
+        element: <Component {...props} />,
+      } as GuideItem,
+    },
+  });
 
+  // 跟随指针的是 DragOverlay，卡片本身留在原地当占位，
+  // 否则卡片会被拖出侧栏，撑出横向滚动条
   return (
     <div
       ref={setNodeRef}
       {...attributes}
       {...listeners}
       className={`cursor-grab select-none w-full touch-none ${isDragging ? "opacity-50" : ""}`}
-      style={{
-        transform: transform
-          ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
-          : undefined,
-      }}
     >
       <Card
         className="mb-2 hover:shadow-lg transition-shadow"
@@ -67,7 +63,13 @@ const DraggableComponentItem: React.FC<ComponentItemProps> = ({
           className="h-16 flex items-center justify-center"
           style={{ fontFamily: themes[currentTheme][1].fontFamily }}
         >
-          <Component {...props} />
+          {/* 双行容器要用预览模式，否则侧栏里的这份示例也会注册可拖放区域，
+              把拖到侧栏的元件抢过去 */}
+          {type.includes("TwoRowContainer") ? (
+            <Component {...props} preview />
+          ) : (
+            <Component {...props} />
+          )}
         </div>
         <Typography.Text
           className="text-center block mt-2 font-sans"
@@ -121,14 +123,16 @@ export default function ComponentsList({
       ref={setNodeRef}
       className="w-300px border-r h-full relative overflow-hidden"
     >
-      {showDeleteHint && (
-        <div className="absolute inset-0 z-20 box-border flex items-center justify-center border-2 border-dashed border-[#eb5050] bg-black bg-opacity-30 pointer-events-none">
-          <span className="font-sans select-none px-4 text-center text-base font-semibold text-white">
-            {t("componentsList.dropToDelete")}
-          </span>
-        </div>
-      )}
-      <div className="p-4 overflow-y-auto h-full">
+      <div
+        className={`absolute inset-0 z-20 box-border flex items-center justify-center border-2 border-dashed border-[#eb5050] bg-black bg-opacity-30 pointer-events-none transition-opacity duration-300 ${
+          showDeleteHint ? "opacity-100" : "opacity-0"
+        }`}
+      >
+        <span className="font-sans select-none px-4 text-center text-base font-semibold text-white">
+          {t("componentsList.dropToDelete")}
+        </span>
+      </div>
+      <div className="p-4 overflow-y-auto overflow-x-hidden h-full">
         <div className="mb-4">
           <Typography.Title heading={4} className="font-sans block">
             {t("componentsList.theme")}
