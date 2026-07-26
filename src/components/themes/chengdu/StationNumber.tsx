@@ -40,7 +40,7 @@ function LineArrayEditor({
       {lines.map((line: any, index: number) => (
         <div
           key={index}
-          className="border border-solid border-gray-300 p-3 rounded"
+          className="border border-solid border-gray-300 p-3 rounded-sm"
         >
           {/* 第一行：颜色选择器 */}
           <div className="mb-2">
@@ -139,9 +139,9 @@ export default function StationNumber({
   lines = stationNumberDefaultProps.lines,
 }: StationNumberProps) {
   return (
-    <div className="h-64px flex" style={{ backgroundColor: colors.background }}>
+    <div className="h-16 flex" style={{ backgroundColor: colors.background }}>
       <div
-        className="h-64px mt-auto mb-auto p-10px flex flex-col flex-wrap gap-5px align-center justify-center"
+        className="h-16 mt-auto mb-auto p-2.5 flex flex-col flex-wrap gap-1.25 align-center justify-center"
         style={{
           width:
             (35 * (lines.length + (lines.length % 2))) / 2 +
@@ -151,7 +151,7 @@ export default function StationNumber({
       >
         {lines.map(line => (
           <div
-            className="w-35px h-15px border-1px rounded-10px border-solid flex align-center justify-center"
+            className="w-8.75 h-3.75 border rounded-[10px] border-solid flex align-center justify-center"
             style={{
               borderColor: line.color,
               backgroundColor: colors.foreground,

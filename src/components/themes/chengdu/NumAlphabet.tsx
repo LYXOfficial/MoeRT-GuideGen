@@ -83,7 +83,7 @@ function NumAlphabet({
   return (
     <div style={{ background: background }}>
       <div
-        className="h-64px"
+        className="h-16"
         style={{
           width: svgWidth,
           marginLeft: type === "fit" ? 5 : 24,

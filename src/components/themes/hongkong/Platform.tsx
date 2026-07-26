@@ -41,7 +41,7 @@ function Platform({
 }: PlatformProps) {
   return (
     <div style={{ background: background }}>
-      <div className="h-64px w-48px">
+      <div className="h-16 w-12">
         <svg height={64} width={48}>
           <circle cx={24} cy={32} r={20} fill={color} />
           <text

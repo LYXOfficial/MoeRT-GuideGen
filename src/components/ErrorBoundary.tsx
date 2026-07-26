@@ -164,7 +164,7 @@ export default class ErrorBoundary extends React.Component<
           </details>
         </div>
         <img
-          className="love-salt-kawaii-qwq fixed opacity-30 -right-50px bottom-0 z-0 w-600px select-none"
+          className="love-salt-kawaii-qwq fixed opacity-30 -right-12.5 bottom-0 z-0 w-150 select-none"
           src="/imgs/salt.png"
         />
       </div>

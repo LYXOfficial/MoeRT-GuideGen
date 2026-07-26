@@ -1504,7 +1504,7 @@ export default function Editor({
           </div>
         </div>
         <img
-          className="love-salt-kawaii-qwq fixed opacity-30 cursor-none -right-50px bottom-0 w-600px select-none pointer-events-none"
+          className="love-salt-kawaii-qwq fixed opacity-30 cursor-none -right-12.5 bottom-0 w-150 select-none pointer-events-none"
           src="/imgs/salt.png"
         />
       </div>

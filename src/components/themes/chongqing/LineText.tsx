@@ -95,7 +95,7 @@ function LineText({
 
   return (
     <div style={{ backgroundColor: colors.background }}>
-      <div className="h-64px ml-5px mr-5px" style={{ width: svgWidth }}>
+      <div className="h-16 ml-1.25 mr-1.25" style={{ width: svgWidth }}>
         <svg className="h-full" width={svgWidth} height={64}>
           {/* 矩形 */}
           <rect

@@ -121,10 +121,10 @@ export default function ComponentsList({
   return (
     <div
       ref={setNodeRef}
-      className="w-300px border-r h-full relative overflow-hidden"
+      className="w-75 border-r border-gray-200 h-full relative overflow-hidden"
     >
       <div
-        className={`absolute inset-0 z-20 box-border flex items-center justify-center border-2 border-dashed border-[#eb5050] bg-black bg-opacity-30 pointer-events-none transition-opacity duration-300 ${
+        className={`absolute inset-0 z-20 box-border flex items-center justify-center border-2 border-dashed border-[#eb5050] bg-black/30 pointer-events-none transition-opacity duration-300 ${
           showDeleteHint ? "opacity-100" : "opacity-0"
         }`}
       >

@@ -116,7 +116,7 @@ export default function ExitName({
 
   return (
     <div style={{ backgroundColor: background }}>
-      <div className="ml-5px mr-5px" style={{ width: svgWidth }}>
+      <div className="ml-1.25 mr-1.25" style={{ width: svgWidth }}>
         <svg className="h-full" width={svgWidth} height={64}>
           <g
             ref={exitNameGroupRef}

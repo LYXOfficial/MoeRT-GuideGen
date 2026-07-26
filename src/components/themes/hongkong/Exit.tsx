@@ -33,7 +33,7 @@ function Exit({
 }: ExitProps) {
   return (
     <div style={{ background: background }}>
-      <div className="h-64px w-52px">
+      <div className="h-16 w-13">
         <svg width={52} height={64}>
           <rect width={42} height={42} x={5} y={11} fill={colors.exitletter} />
           <text

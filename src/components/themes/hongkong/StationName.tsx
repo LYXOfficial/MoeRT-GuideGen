@@ -104,7 +104,7 @@ export default function StationName({
 
   return (
     <div style={{ backgroundColor: background }}>
-      <div className="ml-5px mr-5px" style={{ width: totalWidth }}>
+      <div className="ml-1.25 mr-1.25" style={{ width: totalWidth }}>
         <svg className="h-full" width={totalWidth} height={64}>
           <g
             transform={`translate(${groupX}, 0)`}

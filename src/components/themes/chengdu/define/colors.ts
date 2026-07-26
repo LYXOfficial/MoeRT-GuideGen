@@ -3,7 +3,7 @@ const colors = {
   foreground: "#ffffff",
   exitbackground: "#444444",
   exitforeground: "#FFC72C",
-  border: "#e5e7eb",
+  border: "#a5a7ab",
   specline: "#ffffff",
   noentry: "#ff0000",
 

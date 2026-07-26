@@ -73,7 +73,7 @@ export default function Header({
         dataSource={languages}
         renderItem={language => (
           <List.Item
-            className={`cursor-pointer px-3 py-2 rounded hover:bg-gray-100 flex items-center gap-2 font-sans ${
+            className={`cursor-pointer px-3 py-2 rounded-sm hover:bg-gray-100 flex items-center gap-2 font-sans ${
               language.code === i18n.language ? "bg-blue-50 text-blue-600" : ""
             }`}
             onClick={() => handleLanguageChange(language.code)}
@@ -132,7 +132,7 @@ export default function Header({
           {/* 撤销/重做按钮 */}
           <button
             type="button"
-            className={`transition duration-300 flex items-center p-1 rounded ${
+            className={`transition duration-300 flex items-center p-1 rounded-sm ${
               canUndo
                 ? "hover:bg-gray-100 text-gray-700 hover:text-blue-500 cursor-pointer"
                 : "text-gray-300 cursor-not-allowed"
@@ -145,7 +145,7 @@ export default function Header({
           </button>
           <button
             type="button"
-            className={`transition duration-300 flex items-center p-1 rounded ${
+            className={`transition duration-300 flex items-center p-1 rounded-sm ${
               canRedo
                 ? "hover:bg-gray-100 text-gray-700 hover:text-blue-500 cursor-pointer"
                 : "text-gray-300 cursor-not-allowed"

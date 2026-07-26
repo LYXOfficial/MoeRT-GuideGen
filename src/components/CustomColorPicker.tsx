@@ -67,7 +67,7 @@ const CustomColorPicker: React.FC<CustomColorPickerProps> = ({
           <Select.Option key={key} value={key}>
             <div className="flex items-center gap-2">
               <span
-                className="inline-block w-4 h-4 rounded"
+                className="inline-block w-4 h-4 rounded-sm"
                 style={{ backgroundColor: colorValue }}
               />
               {t(`${themes[currentTheme][0]}.colors.${key}`)}

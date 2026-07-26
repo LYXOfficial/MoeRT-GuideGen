@@ -128,7 +128,7 @@ function LineNum({
 
   return (
     <div style={{ backgroundColor: colors.background }}>
-      <div className="h-64px mr-5px ml-5px" style={{ width: svgWidth }}>
+      <div className="h-16 mr-1.25 ml-1.25" style={{ width: svgWidth }}>
         <svg width={svgWidth} height={64}>
           {/* 矩形 */}
           <rect width={15} height={52} x={rectX} y={12} fill={lineColor} />

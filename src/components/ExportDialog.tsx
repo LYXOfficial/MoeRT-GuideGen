@@ -232,7 +232,7 @@ export const ExportDialog = ({
       closeOnEsc={true}
       footer={null}
     >
-      <Form className="mb-20px">
+      <Form className="mb-5">
         <Form.Label>{t("exportDialog.width")}</Form.Label>
         <Input
           value={width}

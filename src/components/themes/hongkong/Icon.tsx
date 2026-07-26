@@ -253,7 +253,7 @@ function Icon({
 
   return (
     <div
-      className={`h-64px ${icon === "themes.hongkong.components.Icon.props.icon.exit_1" ? "w-74px" : "w-54px pt-10px pb-10px"} pl-5px pr-5px flex align-center justify-center`}
+      className={`h-16 ${icon === "themes.hongkong.components.Icon.props.icon.exit_1" ? "w-18.5" : "w-13.5 pt-2.5 pb-2.5"} pl-1.25 pr-1.25 flex align-center justify-center`}
       style={{ backgroundColor: background }}
     >
       <img

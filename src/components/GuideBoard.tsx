@@ -68,7 +68,7 @@ const DEFAULT_WIDTH = 512;
 export function LineEnd({ currentTheme }: { currentTheme: number }) {
   return (
     <span
-      className="w-calc(100%-20px) mt-2px mb-2px ml-10px mr-10px box-border h-1px"
+      className="w-[calc(100%_-_20px)] mt-0.5 mb-0.5 ml-2.5 mr-2.5 box-border h-px"
       style={{ backgroundColor: themes[currentTheme][1].colors.colors.border }}
     />
   );
@@ -89,7 +89,7 @@ export function GuideBoard({
     <div
       ref={setNodeRef}
       data-row={id}
-      className="min-h-64px overflow-x-hidden h-64px w-full flex align-center relative transition-colors duration-200 ease-in-out"
+      className="min-h-16 overflow-x-hidden h-16 w-full flex align-center relative transition-colors duration-200 ease-in-out"
       style={{
         transition: "all 200ms ease",
         background: isOver ? "#e6f7ff88" : undefined, // 拖拽时高亮
@@ -672,7 +672,7 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
       <div className="flex flex-col items-center">
         {/* GuideBoard 区域 */}
         <div
-          className="border-2px pl-1px pr-1px border-solid flex flex-col guide-board select-none"
+          className="border-2 pl-px pr-px border-solid flex flex-col guide-board select-none"
           ref={boardContentRef}
           style={{
             width: boardWidth,
@@ -875,7 +875,7 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
                         <Typography.Text
                           type="tertiary"
                           size="small"
-                          className="mt-5px"
+                          className="mt-1.25"
                         >
                           {t(form.label)}
                         </Typography.Text>

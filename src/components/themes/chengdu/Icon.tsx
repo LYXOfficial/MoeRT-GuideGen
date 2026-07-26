@@ -209,7 +209,7 @@ function Icon({
 
   return (
     <div
-      className="h-64px w-64px p-10px"
+      className="h-16 w-16 p-2.5"
       style={{ backgroundColor: background }}
     >
       {IconComponent ? (
