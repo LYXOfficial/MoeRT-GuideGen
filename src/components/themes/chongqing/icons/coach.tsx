@@ -1,6 +1,7 @@
 import colors from "../define/colors";
 
 interface IconProps {
+  rotation?: number;
   foreground?: string;
   background?: string;
 }
@@ -8,9 +9,11 @@ interface IconProps {
 const Coach = ({
   foreground = colors.foreground,
   background = colors.background,
+  rotation = 0,
 }: IconProps) => {
   return (
-    <svg id="a" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+    <svg id="a" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"
+      style={{ transform: `rotate(${rotation}deg)`, transformOrigin: "center" }}>
       <g id="b">
         <rect fill={foreground} width="256" height="256" rx="40" ry="40" />
         <path

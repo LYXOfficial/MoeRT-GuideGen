@@ -1,13 +1,25 @@
 import colors from "../define/colors";
 
-const ToiletColor = () => {
+interface IconProps {
+  rotation?: number;
+  foreground?: string;
+  background?: string;
+}
+
+// 人形是固定的品牌色，底板跟随 foreground，中间分隔线跟随 background
+const ToiletColor = ({
+  foreground = colors.foreground,
+  background = colors.background,
+  rotation = 0,
+}: IconProps) => {
   return (
-    <svg id="a" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+    <svg id="a" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"
+      style={{ transform: `rotate(${rotation}deg)`, transformOrigin: "center" }}>
       <g id="b">
-        <rect fill={colors.foreground} width="256" height="256" rx="40" ry="40" />
+        <rect fill={foreground} width="256" height="256" rx="40" ry="40" />
         <line
           fill="none"
-          stroke={colors.background}
+          stroke={background}
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeWidth="8px"

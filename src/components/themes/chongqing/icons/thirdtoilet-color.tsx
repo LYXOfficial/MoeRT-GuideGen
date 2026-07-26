@@ -1,12 +1,23 @@
 import colors from "../define/colors";
 
-const ThirdToiletColor = () => {
+interface IconProps {
+  rotation?: number;
+  foreground?: string;
+}
+
+// 图形部分是固定的品牌色（蓝/粉/绿），只有底板跟随 foreground；
+// 这个图标没有用到底色，所以不接 background，避免出现用不上的参数
+const ThirdToiletColor = ({
+  foreground = colors.foreground,
+  rotation = 0,
+}: IconProps) => {
   return (
     <svg
       id="a"
       xmlns="http://www.w3.org/2000/svg"
       xmlnsXlink="http://www.w3.org/1999/xlink"
       viewBox="0 0 256 256"
+      style={{ transform: `rotate(${rotation}deg)`, transformOrigin: "center" }}
     >
       <defs>
         <filter
@@ -39,7 +50,7 @@ const ThirdToiletColor = () => {
         </mask>
       </defs>
       <g id="b">
-        <rect fill={colors.foreground} width="256" height="256" rx="40" ry="40" />
+        <rect fill={foreground} width="256" height="256" rx="40" ry="40" />
         <path
           fill="#00ade9"
           d="M59.52,88H26.48c-4.21,0-7.62,3.41-7.62,7.62v42.57s0,4.45,3.81,4.45,3.81-4.45,3.81-4.45v-33.04s0-1.91,1.59-1.91,1.59,1.91,1.59,1.91v84.51s0,5.08,5.72,5.08,5.72-5.08,5.72-5.08v-48.29s0-1.91,1.91-1.91,1.91,1.91,1.91,1.91v48.29s0,5.08,5.72,5.08,5.72-5.08,5.72-5.08v-84.51s0-1.91,1.59-1.91,1.59,1.91,1.59,1.91v33.04s0,4.45,3.81,4.45,3.81-4.45,3.81-4.45v-42.57c0-4.21-3.41-7.62-7.62-7.62Z"

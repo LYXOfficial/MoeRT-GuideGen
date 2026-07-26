@@ -16,6 +16,7 @@ import React, {
 import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import DraggableItem from "./DraggableItem";
+import { EditingPropsContext } from "./EditingPropsContext";
 import themes from "./themes/themereg.ts";
 import type { PropForm } from "../interfaces/editor.ts";
 import type { GuideItem } from "../interfaces/guide";
@@ -869,7 +870,10 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
                 const config = (ComponentClass as any).getEditorConfig(t);
 
                 return (
-                  <>
+                  // 把当前组件的 props 下发给表单，供预览类元素跟随实时配色
+                  <EditingPropsContext.Provider
+                    value={editingItem.item.props || {}}
+                  >
                     {config.forms.map((form: PropForm, index: number) => (
                       <div key={index} className="flex flex-col gap-1">
                         <Typography.Text
@@ -951,7 +955,7 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
                         {t("editor.delete")}
                       </Button>
                     </div>
-                  </>
+                  </EditingPropsContext.Provider>
                 );
               })()}
             </div>,

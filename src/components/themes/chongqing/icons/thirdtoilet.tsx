@@ -1,6 +1,7 @@
 import colors from "../define/colors";
 
 interface IconProps {
+  rotation?: number;
   foreground?: string;
   background?: string;
 }
@@ -8,6 +9,7 @@ interface IconProps {
 const ThirdToilet = ({
   foreground = colors.foreground,
   background = colors.background,
+  rotation = 0,
 }: IconProps) => {
   return (
     <svg
@@ -15,6 +17,7 @@ const ThirdToilet = ({
       xmlns="http://www.w3.org/2000/svg"
       xmlnsXlink="http://www.w3.org/1999/xlink"
       viewBox="0 0 256 256"
+      style={{ transform: `rotate(${rotation}deg)`, transformOrigin: "center" }}
     >
       <defs>
         <filter

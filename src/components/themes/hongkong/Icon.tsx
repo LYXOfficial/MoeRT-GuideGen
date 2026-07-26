@@ -1,7 +1,9 @@
+import { useContext } from "react";
 import { Select } from "@douyinfe/semi-ui";
 import colors from "./define/colors";
 import type { EditorConfig } from "../../../interfaces/editor";
 import CustomColorPicker from "../../CustomColorPicker";
+import { EditingPropsContext } from "../../EditingPropsContext";
 
 import Airplane from "./icons/airplane.png";
 import AirportExpress from "./icons/airport_express.png";
@@ -203,6 +205,22 @@ export const iconDefaultProps: IconProps = {
   background: colors.background,
 };
 
+// 下拉框里的图标预览：图标是白色 PNG，必须衬底色才看得见，
+// 底色取自正在编辑的那个组件（没有则用默认值）
+function OptionPreview({ src }: { src: string }) {
+  const editing = useContext(EditingPropsContext);
+  return (
+    <span
+      className="inline-flex h-5 w-5 shrink-0 items-center justify-center"
+      style={{
+        backgroundColor: editing.background ?? iconDefaultProps.background,
+      }}
+    >
+      <img src={src} alt="" className="max-h-full max-w-full object-contain" />
+    </span>
+  );
+}
+
 export const iconEditorConfig = (t: (key: string) => string): EditorConfig => ({
   forms: [
     {
@@ -229,7 +247,10 @@ export const iconEditorConfig = (t: (key: string) => string): EditorConfig => ({
           {regicons.map(icon => {
             return (
               <Select.Option value={icon.label} key={icon.label}>
-                {t(icon.label)}
+                <span className="flex items-center gap-2 leading-none">
+                  <OptionPreview src={icon.icon} />
+                  <span className="truncate">{t(icon.label)}</span>
+                </span>
               </Select.Option>
             );
           })}

@@ -90,11 +90,11 @@ export default function Header({
     <>
       <header className="h-12 flex items-center font-sans p-3 border-b border-gray-300">
         <img src="/favicon.ico" className="h-8 mr-2" />
-        <span className="text-xl font-bold">{t("title")}</span>
+        <span className="text-xl font-bold whitespace-nowrap">{t("title")}</span>
 
         {/* 缩放滑块 */}
         <div className="ml-6 flex items-center gap-2">
-          <span className="text-sm text-gray-600">{t("zoom.label")}</span>
+          <span className="text-sm text-gray-600 whitespace-nowrap">{t("zoom.label")}</span>
           <div className="w-32">
             <Slider
               min={0.5}
@@ -122,7 +122,7 @@ export default function Header({
             checked={showItemFrame}
             onChange={e => onShowItemFrameChange?.(Boolean(e.target.checked))}
           >
-            <span className="text-sm text-gray-600">
+            <span className="text-sm text-gray-600 whitespace-nowrap">
               {t("board.showItemFrame")}
             </span>
           </Checkbox>
@@ -156,7 +156,7 @@ export default function Header({
           >
             <IconRedo size="extra-large" />
           </button>
-          <div className="w-px h-6 bg-gray-300"></div> {/* 分隔线 */}
+          <div className="w-px h-6 bg-gray-300"></div>
           <Popover
             content={languageSelector}
             trigger="hover"

@@ -1,8 +1,9 @@
-import type { FC } from "react";
+import { useContext, type FC } from "react";
 import { Select } from "@douyinfe/semi-ui";
 import colors from "./define/colors";
 import type { EditorConfig } from "../../../interfaces/editor";
 import CustomColorPicker from "../../CustomColorPicker";
+import { EditingPropsContext } from "../../EditingPropsContext";
 
 import Exit1 from "./icons/exit1";
 import CheckIn from "./icons/check-in";
@@ -25,7 +26,6 @@ import ToiletColor from "./icons/toilet-color";
 import ThirdToiletColor from "./icons/thirdtoilet-color";
 import EmergencyExit from "./icons/emergency-exit";
 import Escalator from "./icons/escalator";
-import Maimai from "./icons/maimai";
 import NoEntry from "./icons/no-entry";
 import NursingRoom from "./icons/nursing-room";
 import Stairs from "./icons/stairs";
@@ -118,10 +118,6 @@ export const regicons = [
     component: Escalator,
   },
   {
-    label: "themes.chengdu.components.Icon.props.icon.maimai",
-    component: Maimai,
-  },
-  {
     label: "themes.chengdu.components.Icon.props.icon.no_entry",
     component: NoEntry,
   },
@@ -157,6 +153,20 @@ export const iconDefaultProps: IconProps = {
   rotation: "0"
 };
 
+// 下拉框里的图标预览：颜色取自正在编辑的那个组件（没有则用默认值）
+function OptionPreview({ component }: { component: FC<any> }) {
+  const editing = useContext(EditingPropsContext);
+  const Component = component;
+  return (
+    <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center [&>svg]:h-full [&>svg]:w-full">
+      <Component
+        background={editing.background ?? iconDefaultProps.background}
+        foreground={editing.foreground ?? iconDefaultProps.foreground}
+      />
+    </span>
+  );
+}
+
 export const iconEditorConfig = (t: (key: string) => string): EditorConfig => ({
   forms: [
     {
@@ -176,13 +186,14 @@ export const iconEditorConfig = (t: (key: string) => string): EditorConfig => ({
       label: "themes.chengdu.components.Icon.props.icon.displayName",
       element: (
         <Select>
-          {regicons.map(icon => {
-            return (
-              <Select.Option value={icon.label} key={icon.label}>
-                {t(icon.label)}
-              </Select.Option>
-            );
-          })}
+          {regicons.map(icon => (
+            <Select.Option value={icon.label} key={icon.label}>
+              <span className="flex items-center gap-2 leading-none">
+                <OptionPreview component={icon.component as FC<any>} />
+                <span className="truncate">{t(icon.label)}</span>
+              </span>
+            </Select.Option>
+          ))}
         </Select>
       ),
     },
