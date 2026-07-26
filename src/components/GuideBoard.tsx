@@ -35,9 +35,27 @@ export interface GuideBoardRef {
   addItemToRow: (rowId: string, item: GuideItem, insertIndex?: number) => void;
   removeItemFromRow: (rowId: string, itemId: string) => GuideItem | null;
   reorderRow: (rowId: string, oldIndex: number, newIndex: number) => void;
+  /** 在两行之间原子地移动元素（拖拽过程中实时预览用，保证一次 setState 完成） */
+  moveItemBetweenRows: (
+    sourceRowId: string,
+    targetRowId: string,
+    itemId: string,
+    insertIndex?: number
+  ) => boolean;
   getItemIndex: (rowId: string, itemId: string) => number;
   addItemToTwoRowContainer: (containerId: string, rowIndex: number, item: GuideItem, insertIndex?: number) => void;
   removeItemFromTwoRowContainer: (containerId: string, rowIndex: number, itemId: string) => GuideItem | null;
+  reorderTwoRowContainerRow: (
+    containerId: string,
+    rowIndex: number,
+    oldIndex: number,
+    newIndex: number
+  ) => void;
+  getTwoRowItemIndex: (
+    containerId: string,
+    rowIndex: number,
+    itemId: string
+  ) => number;
   clearBoard: () => void;
   getState: () => BoardState;
   restoreState: (state: {
@@ -375,6 +393,43 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
             return newRows;
           });
         },
+        moveItemBetweenRows: (
+          sourceRowId,
+          targetRowId,
+          itemId,
+          insertIndex
+        ) => {
+          const fromIdx = Number(sourceRowId.replace("row", "")) - 1;
+          const toIdx = Number(targetRowId.replace("row", "")) - 1;
+          if (
+            Number.isNaN(fromIdx) ||
+            Number.isNaN(toIdx) ||
+            fromIdx < 0 ||
+            toIdx < 0 ||
+            fromIdx >= rows.length ||
+            toIdx >= rows.length ||
+            fromIdx === toIdx ||
+            rows[fromIdx].findIndex(i => i.id === itemId) === -1
+          ) {
+            return false;
+          }
+          // 一次 setState 内完成“移除 + 插入”，避免中间态导致的闪烁/丢失
+          setRows(prev => {
+            if (fromIdx >= prev.length || toIdx >= prev.length) return prev;
+            const itemIdx = prev[fromIdx].findIndex(i => i.id === itemId);
+            if (itemIdx === -1) return prev;
+            const newRows = prev.map(arr => [...arr]);
+            const [moved] = newRows[fromIdx].splice(itemIdx, 1);
+            const target = newRows[toIdx];
+            const at =
+              insertIndex === undefined
+                ? target.length
+                : Math.max(0, Math.min(insertIndex, target.length));
+            target.splice(at, 0, moved);
+            return newRows;
+          });
+          return true;
+        },
         getItemIndex: (rowId, itemId) => {
           const idx = Number(rowId.replace("row", "")) - 1;
           if (idx < 0 || idx >= rows.length) return -1;
@@ -506,7 +561,83 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
             return newRows;
           });
           return removed;
-        }
+        },
+        getTwoRowItemIndex: (containerId, rowIndex, itemId) => {
+          for (const row of rows) {
+            const container = row.find(i => i.id === containerId);
+            if (!container) continue;
+            const children = (container.props?.children as GuideItem[][]) || [];
+            return (children[rowIndex] || []).findIndex(i => i.id === itemId);
+          }
+          return -1;
+        },
+        reorderTwoRowContainerRow: (
+          containerId,
+          rowIndex,
+          oldIndex,
+          newIndex
+        ) => {
+          if (oldIndex === newIndex || oldIndex < 0 || newIndex < 0) return;
+          setRows(prev =>
+            prev.map(row =>
+              row.map(rowItem => {
+                if (
+                  rowItem.id !== containerId ||
+                  !rowItem.type?.includes("TwoRowContainer")
+                ) {
+                  return rowItem;
+                }
+                const currentChildren =
+                  (rowItem.props?.children as GuideItem[][]) || [[], []];
+                if (rowIndex < 0 || rowIndex >= currentChildren.length) {
+                  return rowItem;
+                }
+                const targetRow = currentChildren[rowIndex];
+                if (
+                  oldIndex >= targetRow.length ||
+                  newIndex >= targetRow.length
+                ) {
+                  return rowItem;
+                }
+                const newChildren = [...currentChildren];
+                newChildren[rowIndex] = arrayMove(targetRow, oldIndex, newIndex);
+
+                const ContainerComponent = themes[
+                  currentTheme
+                ][1].components.find(
+                  comp => comp.displayName === rowItem.type
+                )?.component;
+
+                const containerProps = {
+                  ...rowItem.props,
+                  children: newChildren,
+                  currentTheme,
+                  onItemClick: (e: React.MouseEvent, clickedItem: GuideItem) => {
+                    const rect = (
+                      e.currentTarget as HTMLElement
+                    ).getBoundingClientRect();
+                    setEditingItem({
+                      item: clickedItem,
+                      position: { x: rect.right, y: rect.top },
+                      parentId: containerId,
+                    });
+                  },
+                };
+
+                return {
+                  ...rowItem,
+                  props: containerProps,
+                  element: ContainerComponent
+                    ? React.createElement(
+                        ContainerComponent as React.ElementType,
+                        containerProps
+                      )
+                    : rowItem.element,
+                };
+              })
+            )
+          );
+        },
       }),
       [rows, boardWidth, showDividers, currentTheme]
     );
@@ -571,6 +702,9 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
                             data={{
                               type: "guide-item",
                               rowId: `row${idx + 1}`,
+                              // 供 DragOverlay 渲染拖拽副本（不能叫 item，
+                              // 那是「从组件列表拖入」的标记字段）
+                              boardItem: item,
                             }}
                             onClick={e => {
                               const rect = (

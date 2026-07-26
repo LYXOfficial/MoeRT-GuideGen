@@ -9,8 +9,12 @@ import {
   type DragEndEvent,
   type DragStartEvent,
   type DragOverEvent,
+  type Over,
   rectIntersection,
   pointerWithin,
+  closestCenter,
+  getClientRect,
+  MeasuringStrategy,
   DragOverlay,
   useSensor,
   useSensors,
@@ -42,7 +46,16 @@ export default function Editor({
 }: EditorProps) {
   const { t } = useTranslation();
   const guideBoardRef = useRef<GuideBoardRef>(null);
-  const [activeItem, setActiveItem] = useState<GuideItem | null>(null);
+  // 正在拖拽的元素（用于 DragOverlay 渲染跟随指针的副本）
+  const [activeDrag, setActiveDrag] = useState<{
+    item: GuideItem;
+    scale: number;
+    fromBoard: boolean;
+  } | null>(null);
+  // 单次拖拽的过程状态：起始行、是否已经实时跨行搬运过
+  const dragMetaRef = useRef<{ sourceRowId?: string; movedRows: boolean }>({
+    movedRows: false,
+  });
   const [currentTheme, setCurrentTheme] = useState(0);
   const [isImporting, setIsImporting] = useState(false); // 添加导入状态标志
   const [isUndoRedoing, setIsUndoRedoing] = useState(false); // 添加撤销/重做状态标志
@@ -155,30 +168,14 @@ export default function Editor({
   // 添加全局鼠标位置跟踪
   const mousePositionRef = useRef({ x: 0, y: 0 });
 
-  // 将屏幕坐标转换为内容坐标系统
-  const transformMouseCoords = (screenX: number, screenY: number) => {
-    if (!editorAreaRef.current) return { x: screenX, y: screenY };
-
-    const editorRect = editorAreaRef.current.getBoundingClientRect();
-
-    // 1. 将屏幕坐标转换为相对于 editorArea 的坐标
-    const x = screenX - editorRect.left;
-    const y = screenY - editorRect.top;
-
-    // 2. 应用逆变换
-    // 变换公式: new_coord = (coord - pan) / zoom
-    // 我们需要的是相对于 editorArea 中心的变换
-    const centerX = editorRect.width / 2;
-    const centerY = editorRect.height / 2;
-
-    // 现在使用 transform: scale(zoom) translate(pan)（先缩放再位移，位移不受缩放影响）
-    // 前向：view = center + zoom * (content - center) + pan
-    // 逆向：content = center + (view - center - pan) / zoom
-    const contentX = centerX + (x - centerX - pan.x) / zoom;
-    const contentY = centerY + (y - centerY - pan.y) / zoom;
-
-    return { x: contentX, y: contentY };
-  };
+  // 插入位置指示线：只在「从左侧组件列表拖入」时显示
+  // （面板内已有的元素在拖动时是实时排布预览，不需要指示线）
+  const [dropIndicator, setDropIndicator] = useState<{
+    show: boolean;
+    x: number;
+    y: number;
+    height: number;
+  }>({ show: false, x: 0, y: 0, height: 0 });
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -315,14 +312,6 @@ export default function Editor({
       document.removeEventListener("mousemove", handleGlobalMouseMove);
     };
   }, [isDragging, dragStart]);
-
-  // 拖拽指示器状态
-  const [dropIndicator, setDropIndicator] = useState<{
-    show: boolean;
-    x: number;
-    y: number;
-    height: number;
-  }>({ show: false, x: 0, y: 0, height: 0 });
 
   // 导出存档
   const stripGuideItem = (
@@ -592,27 +581,161 @@ export default function Editor({
     };
   }, [isInitialized, currentTheme]); // 重新添加必要的依赖
 
+  // 隐藏指示线（只有真的在显示时才更新，避免拖拽过程中无谓的重渲染）
+  const hideDropIndicator = useCallback(() => {
+    setDropIndicator(prev =>
+      prev.show ? { show: false, x: 0, y: 0, height: 0 } : prev
+    );
+  }, []);
+
+  // 从组件列表拖入时，计算并显示插入位置的蓝线
+  const updateDropIndicator = (
+    activeData: Record<string, any>,
+    overData: Record<string, any>,
+    over: Over
+  ) => {
+    // 只有「新组件拖入」才需要指示线；拖到左侧组件栏（删除区）也不显示
+    const isNewItemDrag = Boolean(activeData.item) && !activeData.rowId;
+    if (!isNewItemDrag || overData.type === "trash") {
+      hideDropIndicator();
+      return;
+    }
+
+    // 目标容器：普通行，或双行容器内部的某一行
+    let rowEl: HTMLElement | null = null;
+    if (overData.rowId && !/^row\d+$/.test(String(overData.rowId))) {
+      rowEl = document.querySelector(
+        `[id="${overData.rowId}"] .two-row-inner`
+      ) as HTMLElement | null;
+    } else {
+      const candidate = String(overData.rowId ?? over.id);
+      if (/^row\d+$/.test(candidate)) {
+        rowEl = document.querySelector(
+          `[data-row="${candidate}"]`
+        ) as HTMLElement | null;
+      }
+    }
+    const boardEl = document.querySelector(".guide-board") as HTMLElement | null;
+    if (!rowEl || !boardEl) {
+      hideDropIndicator();
+      return;
+    }
+
+    const rowRect = rowEl.getBoundingClientRect();
+    const boardRect = boardEl.getBoundingClientRect();
+    const pointerX = mousePositionRef.current.x;
+
+    const children = (Array.from(rowEl.children) as HTMLElement[]).filter(el => {
+      const id = el.getAttribute("id") || "";
+      return !id.startsWith("empty-") && el.style.display !== "none";
+    });
+
+    let insertX = rowRect.left;
+    if (children.length > 0) {
+      // 落在第一个「指针还没越过中线」的元素前面，否则追加到最后一个元素后面
+      const next = children.find(el => {
+        const rect = el.getBoundingClientRect();
+        return pointerX < rect.left + rect.width / 2;
+      });
+      insertX = next
+        ? next.getBoundingClientRect().left
+        : children[children.length - 1].getBoundingClientRect().right;
+    }
+
+    // 指示线和画板处于同一个缩放层内，位移要换算回布局像素
+    const scale = zoom || 1;
+    const next = {
+      show: true,
+      x: (insertX - boardRect.left) / scale,
+      y: (rowRect.top - boardRect.top) / scale,
+      height: rowRect.height / scale,
+    };
+    setDropIndicator(prev =>
+      prev.show &&
+      Math.abs(prev.x - next.x) < 0.5 &&
+      Math.abs(prev.y - next.y) < 0.5 &&
+      Math.abs(prev.height - next.height) < 0.5
+        ? prev
+        : next
+    );
+  };
+
+  // 依据指针落在目标元素的左半 / 右半，算出插入下标
+  const insertIndexForOver = (targetRowId: string, over: Over) => {
+    const overIndex =
+      guideBoardRef.current?.getItemIndex(targetRowId, over.id.toString()) ?? -1;
+    if (overIndex === -1) return undefined; // 落在行的空白处 → 追加到行尾
+    const rect = over.rect;
+    const pointerX = mousePositionRef.current.x;
+    return pointerX > rect.left + rect.width / 2 ? overIndex + 1 : overIndex;
+  };
+
   const handleDragStart = (event: DragStartEvent) => {
-    const draggedItem = event.active.data.current?.item as GuideItem;
+    const data = (event.active.data.current || {}) as Record<string, any>;
+    dragMetaRef.current = { sourceRowId: data.rowId, movedRows: false };
+    const draggedItem = (data.boardItem ?? data.item) as GuideItem | undefined;
     if (draggedItem) {
-      setActiveItem(draggedItem);
+      setActiveDrag({
+        item: draggedItem,
+        // 组件列表里的元素本身没有缩放，按编辑区缩放预览；
+        // 面板上的元素还要叠加所在容器的内部缩放（如双行容器的 0.5）
+        scale: zoom * (typeof data.scale === "number" ? data.scale : 1),
+        fromBoard: Boolean(data.boardItem),
+      });
     }
   };
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
-    setActiveItem(null);
-    setDropIndicator({ show: false, x: 0, y: 0, height: 0 }); // 隐藏指示器
+    setActiveDrag(null);
+    setDropIndicator({ show: false, x: 0, y: 0, height: 0 });
 
-    if (!over) return;
+    // 拖拽过程中已经实时跨行搬运过：即使最后没有落在有效目标上，也要记录这次变更
+    const dragMeta = dragMetaRef.current;
+    const movedRows = dragMeta.movedRows;
+    dragMetaRef.current = { movedRows: false };
+
+    if (!over) {
+      if (movedRows) {
+        lastChangeRef.current = Date.now();
+        setTimeout(() => saveCurrentState(), 50);
+      }
+      return;
+    }
 
     const draggedItem = active.data.current?.item;
-    const sourceRowId = active.data.current?.rowId;
+    // 元素可能在拖拽过程中已经被实时搬到别的行，以记录的当前行为准
+    const sourceRowId = dragMeta.sourceRowId ?? active.data.current?.rowId;
+    const overData = (over.data.current || {}) as Record<string, any>;
+    const activeData = (active.data.current || {}) as Record<string, any>;
+
+    // ===== 拖回左侧组件栏 = 删除 =====
+    if (overData.type === "trash") {
+      if (!activeData.boardItem) return; // 组件列表里拖出来又拖回去，什么都不做
+      if (activeData.context === "two-row" && activeData.containerId) {
+        guideBoardRef.current?.removeItemFromTwoRowContainer(
+          activeData.containerId,
+          activeData.rowIndex,
+          active.id.toString()
+        );
+      } else if (sourceRowId) {
+        guideBoardRef.current?.removeItemFromRow(
+          sourceRowId,
+          active.id.toString()
+        );
+      }
+      lastChangeRef.current = Date.now();
+      setTimeout(() => saveCurrentState(), 50);
+      return;
+    }
 
     // 检查是否是双行容器相关的拖拽
-    const isTwoRowContainerTarget = over.data.current?.type === "two-row-container-row";
-    const twoRowContainerId = over.data.current?.containerId;
-    const twoRowTargetRowIndex = over.data.current?.rowIndex;
-    const twoRowTargetRowId = over.data.current?.rowId;
+    // （落点既可能是容器的某一行，也可能是这一行里的某个元素）
+    const isTwoRowContainerTarget =
+      overData.type === "two-row-container-row" ||
+      overData.context === "two-row";
+    const twoRowContainerId = overData.containerId;
+    const twoRowTargetRowIndex = overData.rowIndex;
+    const twoRowTargetRowId = overData.rowId;
 
     // 检查是否是双行容器内部拖拽（同一容器内的行间拖拽或行内排序）
     const sourceTwoRowData = active.data.current;
@@ -652,6 +775,38 @@ export default function Editor({
           draggedItemId
         });
         
+        // 同一行内、且落在具体元素上：直接按 dnd-kit 预览的结果换位，
+        // 保证松手后的位置和拖拽时看到的动画一致
+        if (
+          sourceRowIndex === twoRowTargetRowIndex &&
+          overData.context === "two-row" &&
+          over.id !== active.id
+        ) {
+          const oldIndex =
+            guideBoardRef.current?.getTwoRowItemIndex(
+              sourceContainerId,
+              sourceRowIndex,
+              draggedItemId
+            ) ?? -1;
+          const newIndex =
+            guideBoardRef.current?.getTwoRowItemIndex(
+              sourceContainerId,
+              sourceRowIndex,
+              over.id.toString()
+            ) ?? -1;
+          if (oldIndex !== -1 && newIndex !== -1 && oldIndex !== newIndex) {
+            guideBoardRef.current?.reorderTwoRowContainerRow(
+              sourceContainerId,
+              sourceRowIndex,
+              oldIndex,
+              newIndex
+            );
+            lastChangeRef.current = Date.now();
+            setTimeout(() => saveCurrentState(), 50);
+          }
+          return;
+        }
+
         // 如果是同一行内的排序
         if (sourceRowIndex === twoRowTargetRowIndex) {
           // 使用 GuideBoard 的重排序方法
@@ -918,6 +1073,8 @@ export default function Editor({
     // 行内和跨行拖拽
     if (sourceRowId && overRowId) {
       if (sourceRowId === overRowId) {
+        // 行内排序：按 dnd-kit 预览的落点换位（over 就是预览时让位的那个元素）
+        let changed = movedRows;
         if (active.id !== over.id) {
           const oldIndex = guideBoardRef.current?.getItemIndex(
             sourceRowId,
@@ -932,13 +1089,17 @@ export default function Editor({
             typeof oldIndex === "number" &&
             typeof newIndex === "number" &&
             oldIndex !== -1 &&
-            newIndex !== -1
+            newIndex !== -1 &&
+            oldIndex !== newIndex
           ) {
             guideBoardRef.current?.reorderRow(sourceRowId, oldIndex, newIndex);
-            lastChangeRef.current = Date.now();
-            // 保存状态到撤销历史
-            setTimeout(() => saveCurrentState(), 50);
+            changed = true;
           }
+        }
+        if (changed) {
+          lastChangeRef.current = Date.now();
+          // 保存状态到撤销历史
+          setTimeout(() => saveCurrentState(), 50);
         }
       } else {
         // 跨行移动
@@ -1003,6 +1164,8 @@ export default function Editor({
         );
         if (item) {
           guideBoardRef.current?.addItemToRow(targetRowId, item, insertIndex);
+        }
+        if (item || movedRows) {
           lastChangeRef.current = Date.now();
           // 保存状态到撤销历史
           setTimeout(() => saveCurrentState(), 50);
@@ -1013,426 +1176,49 @@ export default function Editor({
   const handleDragOver = (event: DragOverEvent) => {
     const { active, over } = event;
     if (!over) {
-      setDropIndicator({ show: false, x: 0, y: 0, height: 0 });
+      hideDropIndicator();
       return;
     }
 
-    const draggedItem = active.data.current?.item;
-    const sourceRowId = active.data.current?.rowId;
+    const activeData = (active.data.current || {}) as Record<string, any>;
+    const overData = (over.data.current || {}) as Record<string, any>;
+    const sourceRowId = activeData.rowId;
 
-    // 获取准确的 overRowId
-    let overRowId = over.data.current?.rowId;
-    if (!overRowId && over.id.toString().startsWith("row")) {
-      overRowId = over.id.toString();
-    }
-
-    // 检查是否是 TwoRowContainer 内部行（已在上面处理）
-
-    // 处理拖拽到 TwoRowContainer 内部行的情况
-    const isTwoRowTarget = over.data.current?.type === "two-row-container-row";
-    const twoRowContainerId = over.data.current?.containerId;
-    const twoRowRowId = over.data.current?.rowId;
-    
-    if (!sourceRowId && draggedItem && isTwoRowTarget && twoRowRowId) {
-      console.log('handleDragOver: TwoRowContainer target detected:', {
-        isTwoRowTarget,
-        twoRowContainerId,
-        twoRowRowId,
-        draggedItem: draggedItem?.type
-      });
-      
-      // 阻止拖拽 TwoRowContainer 到自身内部
-      if (draggedItem.type?.indexOf("TwoRowContainer") !== -1) {
-        setDropIndicator({ show: false, x: 0, y: 0, height: 0 });
-        return;
-      }
-
-      // 找到 TwoRowContainer 内部行的位置并显示指示器
-      const targetElement = document.querySelector(`[id="${twoRowRowId}"]`);
-      if (targetElement) {
-        const innerRow = targetElement.querySelector('.two-row-inner');
-        if (innerRow) {
-          const targetRect = innerRow.getBoundingClientRect();
-          const guideBoardRect = document
-            .querySelector(".guide-board")
-            ?.getBoundingClientRect();
-
-          if (guideBoardRect) {
-            // 计算插入位置的指示器
-            const pointerX = mousePositionRef.current.x;
-            const children = Array.from(innerRow.children) as HTMLElement[];
-            
-            let insertX = targetRect.left; // 默认在行开始位置
-            
-            if (children.length > 0 && pointerX > 0) {
-              // 找到合适的插入位置
-              let insertIndex = children.length;
-              for (let i = 0; i < children.length; i++) {
-                const rect = children[i].getBoundingClientRect();
-                if (pointerX < rect.left + rect.width / 2) {
-                  insertIndex = i;
-                  break;
-                }
-              }
-              
-              if (insertIndex < children.length) {
-                const rect = children[insertIndex].getBoundingClientRect();
-                insertX = rect.left;
-              } else if (children.length > 0) {
-                const rect = children[children.length - 1].getBoundingClientRect();
-                insertX = rect.right;
-              }
-            }
-            
-            // 将视口坐标转换为内容坐标
-            const gbContent = transformMouseCoords(
-              guideBoardRect.left,
-              guideBoardRect.top
-            );
-            const insertContent = transformMouseCoords(insertX, targetRect.top);
-            const bottomContent = transformMouseCoords(insertX, targetRect.bottom);
-
-            setDropIndicator({
-              show: true,
-              x: insertContent.x - gbContent.x,
-              y: insertContent.y - gbContent.y,
-              height: bottomContent.y - insertContent.y,
-            });
-          }
-        }
-      }
+    // ===== 面板普通行里的元素被拖动 =====
+    // 行内换位交给 dnd-kit 的排序预览（左右方向都有位移动画）；
+    // 跨行则当场把元素搬到目标行，让两边的行都用 FLIP 动画重新排布。
+    const isTwoRowArea =
+      overData.type === "two-row-container-row" ||
+      overData.type === "two-row-container" ||
+      overData.context === "two-row";
+    const isBoardRowDrag =
+      Boolean(activeData.boardItem) &&
+      activeData.context !== "two-row" &&
+      typeof sourceRowId === "string";
+    if (!isBoardRowDrag || isTwoRowArea) {
+      // 从组件列表拖入：没有实时排布预览，用蓝色指示线提示插入位置
+      updateDropIndicator(activeData, overData, over);
       return;
     }
+    hideDropIndicator();
 
-    // 如果不是在有效的行上，隐藏指示器
-    if (!overRowId) {
-      setDropIndicator({ show: false, x: 0, y: 0, height: 0 });
-      return;
-    }
+    const candidate = String(overData.rowId ?? over.id);
+    const targetRowId = /^row\d+$/.test(candidate) ? candidate : null;
+    // 元素被搬走后会在新行里重新挂载，active.data 可能还停留在旧行，
+    // 因此以自己记录的当前行为准
+    const currentRowId = dragMetaRef.current.sourceRowId ?? sourceRowId;
+    if (!targetRowId || targetRowId === currentRowId) return;
 
-    // 如果是从组件列表拖入，显示指示器
-    if (!sourceRowId && draggedItem) {
-      // 如果拖拽的是 TwoRowContainer，不显示指示器（因为它是容器组件，直接添加到行中）
-      if (draggedItem.type?.indexOf("TwoRowContainer") !== -1) {
-        setDropIndicator({ show: false, x: 0, y: 0, height: 0 });
-        return;
-      }
-
-      const rowNumber = overRowId.match(/^row(\d+)/);
-      if (!rowNumber) {
-        setDropIndicator({ show: false, x: 0, y: 0, height: 0 });
-        return;
-      }
-
-      const targetRowId = `row${rowNumber[1]}`;
-      const rowContainer = document.querySelector(
-        `[data-row="${targetRowId}"]`
-      );
-
-      if (rowContainer) {
-        const rowRect = rowContainer.getBoundingClientRect();
-        const guideBoardRect = document
-          .querySelector(".guide-board")
-          ?.getBoundingClientRect();
-
-        if (guideBoardRect) {
-          // 使用视口坐标进行比较
-          const pointerX = mousePositionRef.current.x;
-
-          // 计算插入位置
-          const children = Array.from(rowContainer.children).filter(child => {
-            const element = child as HTMLElement;
-            // 过滤掉空占位符、拖拽相关元素和隐藏元素
-            const id = element.getAttribute("id") || "";
-            const isDragRelated =
-              element.classList.contains("sortable-ghost") ||
-              element.classList.contains("sortable-chosen") ||
-              element.classList.contains("sortable-placeholder") ||
-              element.style.display === "none";
-            const isEmptyPlaceholder = id.startsWith("empty-");
-            const isScriptOrStyle =
-              element.tagName === "SCRIPT" || element.tagName === "STYLE";
-            const isDraggedElement = active.id.toString() === id;
-
-            return (
-              !isDragRelated &&
-              !isEmptyPlaceholder &&
-              !isScriptOrStyle &&
-              !isDraggedElement
-            );
-          }) as HTMLElement[];
-
-          let insertX = rowRect.left + 10; // 默认在行首，留一点边距
-
-          if (children.length > 0) {
-            // 找到合适的插入位置
-            let foundPosition = false;
-            for (let i = 0; i < children.length; i++) {
-              const rect = children[i].getBoundingClientRect();
-              if (pointerX < rect.left + rect.width / 2) {
-                insertX = rect.left;
-                foundPosition = true;
-                break;
-              }
-            }
-            // 如果没有找到位置，插入到最后一个元素的右边
-            if (!foundPosition) {
-              const lastChild = children[children.length - 1];
-              const lastRect = lastChild.getBoundingClientRect();
-              insertX = lastRect.right;
-            }
-          } else {
-            // 空行的情况，显示在行的中间
-            insertX = rowRect.left + rowRect.width / 2;
-          }
-
-          // 视口 -> 内容坐标
-          const gbContent = transformMouseCoords(
-            guideBoardRect.left,
-            guideBoardRect.top
-          );
-          const insContentX = transformMouseCoords(insertX, rowRect.top).x;
-          const rowTopContent = transformMouseCoords(rowRect.left, rowRect.top);
-          const rowBottomContent = transformMouseCoords(
-            rowRect.left,
-            rowRect.bottom
-          );
-
-          setDropIndicator({
-            show: true,
-            x: insContentX - gbContent.x,
-            y: rowTopContent.y - gbContent.y,
-            height: rowBottomContent.y - rowTopContent.y,
-          });
-        }
-      }
-      return;
-    }
-
-    // 跨行拖动：仅渲染指示器（不改动行内拖动逻辑）
-    if (sourceRowId && overRowId && sourceRowId !== overRowId) {
-      const rowNumber = overRowId.match(/^row(\d+)/);
-      if (!rowNumber) {
-        setDropIndicator({ show: false, x: 0, y: 0, height: 0 });
-        return;
-      }
-
-      const targetRowId = `row${rowNumber[1]}`;
-      const rowContainer = document.querySelector(
-        `[data-row="${targetRowId}"]`
-      );
-
-      if (rowContainer) {
-        const rowRect = rowContainer.getBoundingClientRect();
-        const guideBoardRect = document
-          .querySelector('.guide-board')
-          ?.getBoundingClientRect();
-
-        if (guideBoardRect) {
-          const pointerX = mousePositionRef.current.x;
-
-          const children = Array.from(rowContainer.children).filter(child => {
-            const element = child as HTMLElement;
-            const id = element.getAttribute('id') || '';
-            const isDragRelated =
-              element.classList.contains('sortable-ghost') ||
-              element.classList.contains('sortable-chosen') ||
-              element.classList.contains('sortable-placeholder') ||
-              element.style.display === 'none';
-            const isEmptyPlaceholder = id.startsWith('empty-');
-            const isScriptOrStyle =
-              element.tagName === 'SCRIPT' || element.tagName === 'STYLE';
-            const isDraggedElement = active.id.toString() === id;
-
-            return (
-              !isDragRelated &&
-              !isEmptyPlaceholder &&
-              !isScriptOrStyle &&
-              !isDraggedElement
-            );
-          }) as HTMLElement[];
-
-          let insertX = rowRect.left + 10; // 默认在行首，留一点边距
-          if (children.length > 0) {
-            let foundPosition = false;
-            for (let i = 0; i < children.length; i++) {
-              const rect = children[i].getBoundingClientRect();
-              if (pointerX < rect.left + rect.width / 2) {
-                insertX = rect.left;
-                foundPosition = true;
-                break;
-              }
-            }
-            if (!foundPosition) {
-              const lastChild = children[children.length - 1];
-              const lastRect = lastChild.getBoundingClientRect();
-              insertX = lastRect.right;
-            }
-          } else {
-            insertX = rowRect.left + rowRect.width / 2; // 空行：居中显示
-          }
-
-          const gbContent = transformMouseCoords(
-            guideBoardRect.left,
-            guideBoardRect.top
-          );
-          const insContentX = transformMouseCoords(insertX, rowRect.top).x;
-          const rowTopContent = transformMouseCoords(
-            rowRect.left,
-            rowRect.top
-          );
-          const rowBottomContent = transformMouseCoords(
-            rowRect.left,
-            rowRect.bottom
-          );
-
-          setDropIndicator({
-            show: true,
-            x: insContentX - gbContent.x,
-            y: rowTopContent.y - gbContent.y,
-            height: rowBottomContent.y - rowTopContent.y,
-          });
-        }
-      }
-      return;
-    }
-
-    // 如果没有源行ID或拖拽项，隐藏指示器
-    if (!sourceRowId || !draggedItem) {
-      setDropIndicator({ show: false, x: 0, y: 0, height: 0 });
-      return;
-    }
-
-    // 确保 overRowId 是正确的格式
-    const rowNumber = overRowId.match(/^row(\d+)/);
-    if (!rowNumber) {
-      setDropIndicator({ show: false, x: 0, y: 0, height: 0 });
-      return;
-    }
-
-    const targetRowId = `row${rowNumber[1]}`;
-
-    // 使用变换后的鼠标位置
-    const pointerX = mousePositionRef.current.x;
-
-    // 获取拖拽元素在源行中的索引
-    const oldIndex = guideBoardRef.current?.getItemIndex(
-      sourceRowId,
-      active.id.toString()
+    const moved = guideBoardRef.current?.moveItemBetweenRows(
+      currentRowId,
+      targetRowId,
+      active.id.toString(),
+      insertIndexForOver(targetRowId, over)
     );
-
-    if (typeof oldIndex !== "number" || oldIndex === -1) {
-      setDropIndicator({ show: false, x: 0, y: 0, height: 0 });
-      return;
-    }
-
-    // 跨行拖拽，显示指示器
-    if (sourceRowId !== targetRowId) {
-      const rowContainer = document.querySelector(
-        `[data-row="${targetRowId}"]`
-      );
-      if (rowContainer) {
-        const rowRect = rowContainer.getBoundingClientRect();
-        const guideBoardRect = document
-          .querySelector(".guide-board")
-          ?.getBoundingClientRect();
-
-        if (guideBoardRect) {
-          // 使用视口坐标进行比较
-          const pointerX = mousePositionRef.current.x;
-
-          // 计算插入位置
-          const children = Array.from(rowContainer.children).filter(child => {
-            const element = child as HTMLElement;
-            // 过滤掉空占位符、拖拽相关元素和隐藏元素
-            const id = element.getAttribute("id") || "";
-            const isDragRelated =
-              element.classList.contains("sortable-ghost") ||
-              element.classList.contains("sortable-chosen") ||
-              element.classList.contains("sortable-placeholder") ||
-              element.style.display === "none";
-            const isEmptyPlaceholder = id.startsWith("empty-");
-            const isScriptOrStyle =
-              element.tagName === "SCRIPT" || element.tagName === "STYLE";
-            const isDraggedElement = active.id.toString() === id;
-
-            return (
-              !isDragRelated &&
-              !isEmptyPlaceholder &&
-              !isScriptOrStyle &&
-              !isDraggedElement
-            );
-          }) as HTMLElement[];
-
-          let insertX = rowRect.left + 10; // 默认在行首，留一点边距
-
-          if (children.length > 0) {
-            // 找到合适的插入位置
-            let foundPosition = false;
-            for (let i = 0; i < children.length; i++) {
-              const rect = children[i].getBoundingClientRect();
-              // 检查鼠标是否在当前元素的左半部分
-              if (pointerX < rect.left + rect.width / 2) {
-                insertX = rect.left;
-                foundPosition = true;
-                break;
-              }
-            }
-            // 如果没有找到位置，插入到最后一个元素的右边
-            if (!foundPosition) {
-              const lastChild = children[children.length - 1];
-              const lastRect = lastChild.getBoundingClientRect();
-              insertX = lastRect.right;
-            }
-          } else {
-            // 空行的情况，显示在行的中间
-            insertX = rowRect.left + rowRect.width / 2;
-          }
-
-          // 视口 -> 内容坐标
-          const gbContent = transformMouseCoords(
-            guideBoardRect.left,
-            guideBoardRect.top
-          );
-          const insContentX = transformMouseCoords(insertX, rowRect.top).x;
-          const rowTopContent = transformMouseCoords(rowRect.left, rowRect.top);
-          const rowBottomContent = transformMouseCoords(
-            rowRect.left,
-            rowRect.bottom
-          );
-
-          setDropIndicator({
-            show: true,
-            x: insContentX - gbContent.x,
-            y: rowTopContent.y - gbContent.y,
-            height: rowBottomContent.y - rowTopContent.y,
-          });
-        }
-      }
-    } else {
-      // 同行内拖拽，隐藏指示器，继续预览重排序
-      setDropIndicator({ show: false, x: 0, y: 0, height: 0 });
-
-      const rowContainer = document.querySelector(
-        `[data-row="${targetRowId}"]`
-      );
-      if (!rowContainer) return;
-
-      const children = Array.from(rowContainer.children) as HTMLElement[];
-      let newIndex = children.length;
-
-      for (let i = 0; i < children.length; i++) {
-        const rect = children[i].getBoundingClientRect();
-        if (pointerX < rect.left + rect.width / 2) {
-          newIndex = i;
-          break;
-        }
-      }
-
-      // 如果位置发生变化，进行重排序
-      if (newIndex !== oldIndex) {
-        guideBoardRef.current?.reorderRow(targetRowId, oldIndex, newIndex);
-      }
+    if (moved) {
+      dragMetaRef.current.sourceRowId = targetRowId;
+      dragMetaRef.current.movedRows = true;
+      lastChangeRef.current = Date.now();
     }
   };
 
@@ -1444,23 +1230,103 @@ export default function Editor({
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       onDragOver={handleDragOver}
-      collisionDetection={(args) => {
-        // 优先使用 pointerWithin 检测双行容器内部区域
-        const pointer = pointerWithin(args);
-        if (pointer.length > 0) {
-          // 检查是否命中双行容器相关区域
-          const twoRowHits = pointer.filter(collision => {
-            const data = collision.data?.droppableContainer?.data?.current;
-            return data?.type === "two-row-container-row" || data?.type === "two-row-container";
-          });
-          if (twoRowHits.length > 0) {
-            return twoRowHits;
-          }
-          return pointer;
+      // onDragOver 只在落点切换时触发，指示线还需要跟着指针连续移动
+      onDragMove={event => {
+        const { active, over } = event;
+        const activeData = (active.data.current || {}) as Record<string, any>;
+        if (activeData.boardItem) return; // 面板内的元素有实时预览，不用指示线
+        if (!over) {
+          hideDropIndicator();
+          return;
         }
-        // 回退到矩形相交检测
-        const rect = rectIntersection(args);
-        return rect;
+        updateDropIndicator(
+          activeData,
+          (over.data.current || {}) as Record<string, any>,
+          over
+        );
+      }}
+      onDragCancel={() => {
+        setActiveDrag(null);
+        setDropIndicator({ show: false, x: 0, y: 0, height: 0 });
+        if (dragMetaRef.current.movedRows) {
+          lastChangeRef.current = Date.now();
+          setTimeout(() => saveCurrentState(), 50);
+        }
+        dragMetaRef.current = { movedRows: false };
+      }}
+      // 拖拽过程中元素会实时换位，必须持续重新测量；
+      // 并且测量时忽略元素自身的 transform，否则量到的是动画中间态的位置。
+      measuring={{
+        droppable: {
+          strategy: MeasuringStrategy.Always,
+          measure: node => getClientRect(node, { ignoreTransform: true }),
+        },
+      }}
+      collisionDetection={args => {
+        const dataOf = (collision: { data?: Record<string, any> }) =>
+          (collision.data?.droppableContainer?.data?.current ?? {}) as Record<
+            string,
+            any
+          >;
+        // 优先使用 pointerWithin，指针不在任何区域内时回退到矩形相交检测
+        // （删除区只认指针位置，否则元件靠近组件栏就会被误判成删除）
+        const pointer = pointerWithin(args);
+        const base =
+          pointer.length > 0
+            ? pointer
+            : rectIntersection(args).filter(
+                collision => dataOf(collision).type !== "trash"
+              );
+        if (base.length === 0) return base;
+
+        const activeData = (args.active?.data?.current ?? {}) as Record<
+          string,
+          any
+        >;
+
+        // 双行容器内部的拖动：优先命中同一容器内的元素，才能有排序预览动画
+        if (activeData.context === "two-row") {
+          const sameContainer = base.filter(collision => {
+            const data = dataOf(collision);
+            return (
+              data.context === "two-row" &&
+              data.containerId === activeData.containerId
+            );
+          });
+          if (sameContainer.length > 0) return sameContainer;
+        }
+
+        // 双行容器区域优先（拖进容器时按容器行处理）
+        const twoRowHits = base.filter(collision => {
+          const data = dataOf(collision);
+          return (
+            data.type === "two-row-container-row" ||
+            data.type === "two-row-container"
+          );
+        });
+        if (twoRowHits.length > 0) return twoRowHits;
+
+        // 命中了具体元素就用它：dnd-kit 只有在 over 是排序项时才会计算让位动画
+        const itemHits = base.filter(collision => dataOf(collision).sortable);
+        if (itemHits.length > 0) return itemHits;
+
+        // 只命中行容器（行首/行尾的空白处）时，退回到该行内距离最近的元素，
+        // 否则 overIndex 为 -1，整行都不会有动画
+        const rowId = String(base[0].id);
+        if (/^row\d+$/.test(rowId)) {
+          const rowItems = args.droppableContainers.filter(
+            container =>
+              (container.data?.current as any)?.sortable?.containerId === rowId
+          );
+          if (rowItems.length > 0) {
+            const closest = closestCenter({
+              ...args,
+              droppableContainers: rowItems,
+            });
+            if (closest.length > 0) return closest;
+          }
+        }
+        return base;
       }}
     >
       <div className="flex flex-col h-screen">
@@ -1517,7 +1383,7 @@ export default function Editor({
                   zoom={zoom}
                   onConfigChange={handleConfigChange}
                 />
-                {/* 拖拽指示器 - 现在直接在GuideBoard的相对定位容器中 */}
+                {/* 从组件列表拖入时的插入位置指示线 */}
                 {dropIndicator.show && (
                   <div
                     className="absolute pointer-events-none"
@@ -1547,18 +1413,28 @@ export default function Editor({
           easing: "cubic-bezier(0.18, 0.67, 0.6, 1.22)",
         }}
       >
-        {activeItem ? (
+        {activeDrag ? (
           <div
             style={{
-              transform: `scale(${zoom})`,
+              // 面板上的元素本身已经被缩放过，覆盖层按同样比例还原尺寸，
+              // 并以左上角为基准，正好盖住原来的位置
+              transform: `scale(${activeDrag.scale})`,
+              transformOrigin: activeDrag.fromBoard ? "top left" : "center",
               boxShadow: "0 0 8px rgba(0,0,0,0.12)",
-              background: "white",
+              background: activeDrag.fromBoard
+                ? themes[currentTheme][1].colors.defaultBackground
+                : "white",
+              color: activeDrag.fromBoard
+                ? themes[currentTheme][1].colors.defaultForeground
+                : undefined,
+              display: "inline-flex",
+              alignItems: "center",
               cursor: "grabbing",
               opacity: 0.9,
               fontFamily: themes[currentTheme][1].fontFamily,
             }}
           >
-            {activeItem.element}
+            {activeDrag.item.element}
           </div>
         ) : null}
       </DragOverlay>

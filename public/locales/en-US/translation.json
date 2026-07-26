@@ -6,6 +6,7 @@
   "componentsList": {
     "title": "Component List",
     "drag": "Drag to the right to add components",
+    "dropToDelete": "Drop here to delete",
     "theme": "Theme",
     "themeChange": {
       "title": "Switch Theme Confirmation",

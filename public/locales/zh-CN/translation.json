@@ -6,6 +6,7 @@
   "componentsList": {
     "title": "组件列表",
     "drag": "拖拽到右侧添加组件",
+    "dropToDelete": "拖到此处删除组件",
     "theme": "主题",
     "themeChange": {
       "title": "切换主题确认",

@@ -193,11 +193,14 @@ const TwoRowRow = memo(function TwoRowRow({
                 key={item.id}
                 id={item.id}
                 zoom={SCALE}
-                data={{ 
+                data={{
                   context: "two-row",
                   rowId: id,
                   containerId,
-                  rowIndex 
+                  rowIndex,
+                  boardItem: item,
+                  // 容器内部额外缩放，DragOverlay 需要据此还原视觉尺寸
+                  scale: SCALE,
                 }}
                 onClick={e => onItemClick?.(e, item)}
               >

@@ -15,10 +15,10 @@ export interface ExitNameProps {
 }
 export const exitNameDefaultProps: ExitNameProps = {
   align: "left",
-  line1chinese: "天府红",
-  line1english: "Tianfuhong",
-  line2chinese: "成都东站",
-  line2english: "Chengdu East Railway Station",
+  line1chinese: "武陵区息壤项目办公室",
+  line1english: "Wuling District Xinrang-Project Office",
+  line2chinese: "宏山科学院材料研究所",
+  line2english: "Institute of Materials Science, Hongshan Academy",
   foreground: colors.exitforeground,
   background: colors.exitbackground,
 };

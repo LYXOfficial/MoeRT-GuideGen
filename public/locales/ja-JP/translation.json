@@ -6,6 +6,7 @@
   "componentsList": {
     "title": "コンポーネントリスト",
     "drag": "右側にドラッグしてコンポーネントを追加",
+    "dropToDelete": "ここにドロップして削除",
     "theme": "テーマ",
     "themeChange": {
       "title": "テーマ切替確認",

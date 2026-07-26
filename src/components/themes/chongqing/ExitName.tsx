@@ -15,10 +15,10 @@ export interface ExitNameProps {
 }
 export const exitNameDefaultProps: ExitNameProps = {
   align: "left",
-  line1chinese: "重庆医科大学附属儿童医院",
-  line1english: "Children's Hospital of Chongqing Medical University",
-  line2chinese: "新桥医院",
-  line2english: "Xinqiao Hospital",
+  line1chinese: "羽丘女子学园",
+  line1english: "Haneoka Girls' Academy",
+  line2chinese: "花咲川女子学园",
+  line2english: "Hanasakigawa Girls' Academy",
   foreground: colors.exitforeground,
   background: colors.exitbackground,
 };

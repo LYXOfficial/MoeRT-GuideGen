@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { Card, List, Typography, Select, Modal } from "@douyinfe/semi-ui";
 import themes from "./themes/themereg";
-import { useDraggable } from "@dnd-kit/core";
+import { useDraggable, useDroppable, useDndContext } from "@dnd-kit/core";
 import { useState } from "react";
 import type { GuideItem } from "../interfaces/guide";
 
@@ -92,6 +92,16 @@ export default function ComponentsList({
   const [themeChangeVisible, setThemeChangeVisible] = useState(false);
   const [nextTheme, setNextTheme] = useState(0);
 
+  // 组件栏同时是「删除区」：把面板上的元件拖回来就删掉
+  const { setNodeRef, isOver } = useDroppable({
+    id: "components-trash",
+    data: { type: "trash" },
+  });
+  const { active } = useDndContext();
+  // 只有从面板上拖出来的元件才能删除（新组件拖回来只是取消）
+  const canDelete = Boolean(active?.data?.current?.boardItem);
+  const showDeleteHint = isOver && canDelete;
+
   // 处理主题选择 - 添加防抖逻辑
   const handleThemeSelect = (themeIndex: number) => {
     if (themeIndex !== currentTheme) {
@@ -107,58 +117,70 @@ export default function ComponentsList({
   };
 
   return (
-    <div className="w-300px border-r border-gray-200 p-4 overflow-y-auto h-full">
-      <div className="mb-4">
-        <Typography.Title heading={4} className="font-sans block">
-          {t("componentsList.theme")}
+    <div
+      ref={setNodeRef}
+      className="w-300px border-r h-full relative overflow-hidden"
+    >
+      {showDeleteHint && (
+        <div className="absolute inset-0 z-20 box-border flex items-center justify-center border-2 border-dashed border-[#eb5050] bg-black bg-opacity-30 pointer-events-none">
+          <span className="font-sans select-none px-4 text-center text-base font-semibold text-white">
+            {t("componentsList.dropToDelete")}
+          </span>
+        </div>
+      )}
+      <div className="p-4 overflow-y-auto h-full">
+        <div className="mb-4">
+          <Typography.Title heading={4} className="font-sans block">
+            {t("componentsList.theme")}
+          </Typography.Title>
+          <Select
+            value={currentTheme}
+            onChange={value => handleThemeSelect(value as number)}
+            className="w-full mt-2"
+            size="large"
+          >
+            {themes.map(([name], index) => (
+              <Select.Option key={index} value={index} className="font-sans">
+                {t(`${name}.displayName`)}
+              </Select.Option>
+            ))}
+          </Select>
+        </div>
+
+        <Typography.Title heading={4} className="mb-4 font-sans">
+          {t("componentsList.title")}
         </Typography.Title>
-        <Select
-          value={currentTheme}
-          onChange={value => handleThemeSelect(value as number)}
-          className="w-full mt-2"
-          size="large"
+
+        {/* 主题切换确认弹窗 */}
+        <Modal
+          title={t("componentsList.themeChange.title")}
+          visible={themeChangeVisible}
+          onOk={confirmThemeChange}
+          onCancel={() => setThemeChangeVisible(false)}
+          okText={t("componentsList.themeChange.dialog.confirm")}
+          cancelText={t("componentsList.themeChange.dialog.cancel")}
         >
-          {themes.map(([name], index) => (
-            <Select.Option key={index} value={index} className="font-sans">
-              {t(`${name}.displayName`)}
-            </Select.Option>
-          ))}
-        </Select>
+          <Typography.Text>
+            {t("componentsList.themeChange.confirm")}
+          </Typography.Text>
+        </Modal>
+
+        <List
+          className="grid w-full gap-2"
+          dataSource={components}
+          renderItem={component => (
+            <List.Item className="w-full" key={component.displayName}>
+              <DraggableComponentItem
+                name={component.displayName}
+                Component={component.component}
+                type={component.displayName}
+                props={component.defaultProps}
+                currentTheme={currentTheme}
+              />
+            </List.Item>
+          )}
+        />
       </div>
-
-      <Typography.Title heading={4} className="mb-4 font-sans">
-        {t("componentsList.title")}
-      </Typography.Title>
-
-      {/* 主题切换确认弹窗 */}
-      <Modal
-        title={t("componentsList.themeChange.title")}
-        visible={themeChangeVisible}
-        onOk={confirmThemeChange}
-        onCancel={() => setThemeChangeVisible(false)}
-        okText={t("componentsList.themeChange.dialog.confirm")}
-        cancelText={t("componentsList.themeChange.dialog.cancel")}
-      >
-        <Typography.Text>
-          {t("componentsList.themeChange.confirm")}
-        </Typography.Text>
-      </Modal>
-
-      <List
-        className="grid w-full gap-2"
-        dataSource={components}
-        renderItem={component => (
-          <List.Item className="w-full" key={component.displayName}>
-            <DraggableComponentItem
-              name={component.displayName}
-              Component={component.component}
-              type={component.displayName}
-              props={component.defaultProps}
-              currentTheme={currentTheme}
-            />
-          </List.Item>
-        )}
-      />
     </div>
   );
 }

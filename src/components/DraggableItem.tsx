@@ -1,6 +1,13 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { useRef, useState, type ReactElement, isValidElement } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ReactElement,
+  isValidElement,
+} from "react";
 import ChongqingSpecLine from "./themes/chongqing/SpecLine";
 import ChengduSpecLine from "./themes/chengdu/SpecLine";
 import HongkongSpecLine from "./themes/hongkong/SpecLine";
@@ -29,24 +36,54 @@ export default function DraggableItem({
     transform,
     transition,
     isDragging,
+    isSorting,
   } = useSortable({
     id,
     data,
+    // 始终允许布局动画：元素在行内换位、或被实时移动到另一行时，
+    // dnd-kit 默认策略会跳过 FLIP 动画（表现为“向左拖动/跨行没有动画”）。
+    animateLayoutChanges: () => true,
   });
-  // 在被缩放的容器内（父级 scale(zoom)），dnd-kit 提供的 translate 会被再次放大，
-  // 需要将位移按 zoom 折算，保证视觉上与指针一致。
+
+  // 在被缩放的容器内（父级 scale(...)），dnd-kit 给出的位移是屏幕像素，
+  // 需要按元素真实的屏幕缩放折算回布局像素，才能与指针/相邻元素对齐。
+  const domRef = useRef<HTMLDivElement | null>(null);
+  const scaleRef = useRef(zoom || 1);
+  const attachRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      domRef.current = node;
+      setNodeRef(node);
+    },
+    [setNodeRef]
+  );
+  useEffect(() => {
+    // 拖拽开始时量一次：编辑区缩放 × 所在容器的内部缩放
+    if (!isSorting) return;
+    const el = domRef.current;
+    if (!el || !el.offsetWidth) return;
+    const measured = el.getBoundingClientRect().width / el.offsetWidth;
+    if (Number.isFinite(measured) && measured > 0.01) {
+      scaleRef.current = measured;
+    }
+  }, [isSorting]);
+  const scale = isSorting ? scaleRef.current : zoom || 1;
+
   const adjustedTransform = transform
     ? {
         ...transform,
-        x: transform.x / (zoom || 1),
-        y: transform.y / (zoom || 1),
+        x: transform.x / scale,
+        y: transform.y / scale,
       }
     : null;
   const inTwoRow = data && (data as any).context === "two-row";
   const childType = isValidElement(children) ? (children as ReactElement).type : null;
   const style = {
     transform: CSS.Transform.toString(adjustedTransform as any),
-    transition: transition || "transform 200ms ease, opacity 200ms ease",
+    // dnd-kit 会在需要「无动画地重置位置」时返回 0ms 过渡，必须原样使用；
+    // 只有它没有给出过渡（且元素不是正在跟随指针的源元素）时才用默认值。
+    transition:
+      transition ??
+      (isDragging ? undefined : "transform 200ms ease, opacity 200ms ease"),
     outline: isDragging ? "2px dashed #66ccff" : "1px solid transparent",
     display: "inline-flex",
     alignItems: "center",
@@ -81,7 +118,7 @@ export default function DraggableItem({
 
   return (
     <div
-      ref={setNodeRef}
+      ref={attachRef}
       style={style}
       {...attributes}
       {...listeners}
