@@ -1,18 +1,42 @@
 # MoeRT-GuideGen
 
-## 介绍
+在线体验：https://guidegen.0v0.my/
 
-{}
+## Introduction
 
-## 使用方法
+轨道交通导视牌（导向标识牌）Web 编辑器，所见即所得。
 
-{}
+- 内置重庆轨道交通、成都地铁、MTR三套主题风格，可随时切换；未来计划添加为北京（新旧样式）+上海+广州；
+- 以「行 + 组件」自由拼搭：线路号、线路名、车站名、出口、方向箭头、服务设施图标（电梯 / 楼梯 / 洗手间等）以及双行容器；
+- 点击组件即可编辑属性，行可增删，牌面宽度、分隔线、组件虚线框均可调节；
+- 撤销 / 重做、localStorage 自动保存、工程 JSON 导入导出、导出高清 PNG；
+- 多语言（简体 / 繁体中文、English、日本語、한국어）；
+- 自适应桌面与移动 / 触屏：视口小于 1024px 自动切换为紧凑布局 + 底部组件抽屉。
 
-## 开发与环境管理
+## Usage
 
-{}
+1. 添加组件：桌面端从左侧组件栏、移动端点顶栏「组件列表」展开底部抽屉，把组件拖入画板相应行；每行右侧的 `+` / `-` 可增删行。
+2. 编辑属性：点击画板上的组件弹出属性面板（文字、颜色、对齐等），右键与左键效果一致；删除可在属性面板中完成，桌面端也可把组件拖回组件栏。
+3. 双行容器：可往容器上下两行拖入组件；容器内条目可点击编辑 / 删除、可拖出到普通行；抓住容器顶部的小灰条可整体选中或拖动容器。
+4. 画板设置：调节牌面宽度、分隔线显隐、「组件虚线框」开关；`Ctrl/⌘ + Z` 撤销、`Ctrl/⌘ + Y` 重做；滚轮 / 双指缩放，可用「适配」按钮把画板恢复到位。
+5. 导出与存档：顶栏「导出图片」可设置宽度导出 PNG；导出 / 导入工程（JSON）保存与恢复；内容会自动保存到浏览器 localStorage，刷新后自动还原（需要清空时使用「清空缓存」）。
 
-## 效果图
+## Deployment
+
+- `pnpm install` 安装依赖
+- `pnpm dev` 本地开发，默认端口 5173
+- `pnpm build` 生成 `dist` 静态文件，部署到任意静态文件服务器即可。
+- `pnpm preview` 本地预览，默认端口 4173
+
+## Development
+
+- 技术栈：React 18 + TypeScript + Vite；样式用 Tailwind CSS v4（`src/global.css`），中文字体 Blueaka 由 `src/blueaka.css` 按 unicode-range 分片引入；UI 组件 @douyinfe/semi-ui；拖拽 @dnd-kit；截图导出 modern-screenshot；多语言 i18next（翻译资源在 `public/locales/*/translation.json`）。
+- 主要文件：`src/components/Editor.tsx`（画布布局与拖拽编排）、`src/components/GuideBoard.tsx`（行与双行容器的状态、编辑弹窗）、`src/components/themes/<chongqing|chengdu|hongkong>/`（主题组件 / 配色 / 字体，注册于 `themereg.ts`）、`src/hooks/`（撤销重做、媒体查询）。
+- 双行容器说明：容器本身是行内 item，内部两行存在其 `props.children` 中，编辑 / 删除 / 拖拽进出 / 存档还原 / 宽度自适应在 GuideBoard 与主题组件中做了递归处理（对单行组件透明）。
+- 移动端适配：视口 < 1024px 进入紧凑布局（底部组件抽屉、手势平移、双指缩放）；拖拽使用统一指针传感器与距离激活；悬浮 hover 效果仅在支持 hover 的设备上显示。
+- 常用命令：`pnpm dev` 开发；`pnpm build` 先类型检查再构建到 `dist/`；`pnpm preview` 预览产物；`pnpm exec biome check src` 静态检查（仓库的 `eslint` 脚本暂未配置，日常以 biome 为准）。
+
+## Gallery
 
 ![](https://img.0v0.my/2025/08/14/65765d7ca1103.webp)
 
