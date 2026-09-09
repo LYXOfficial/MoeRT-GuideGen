@@ -71,6 +71,49 @@ body {
   }
 }
 
+/* ===== 画板组件：悬浮/选中 淡粉虚线框 + 点击淡遮罩 ===== */
+/* 点击选中后盖一层淡淡的遮罩（不挡指针）；常驻元素，用 opacity 过渡实现淡入淡出 */
+.guide-item-selected-mask {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 150, 175, 0.16);
+  border-radius: 2px;
+  pointer-events: none;
+  z-index: 19;
+  opacity: 0;
+  transition: opacity 0.18s ease;
+}
+.guide-item-selected-mask.is-visible {
+  opacity: 1;
+}
+/* 淡粉虚线框：hover 或 选中（.is-visible）都显示；常驻元素以支持淡入淡出，
+   且移动端（无 hover）也能在点击选中后持续显示 */
+.guide-item-dashed-frame {
+  position: absolute;
+  inset: 0;
+  border: 1px dashed rgba(255, 140, 168, 0.85);
+  border-radius: 2px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.18s ease;
+  z-index: 20;
+}
+.guide-item-dashed-frame.is-visible {
+  opacity: 1;
+}
+@media (hover: hover) {
+  /* 组件有 -1px 相互挤压，后绘制的邻居会盖住前一个靠接缝的框；
+     悬浮时把该组件整层抬高到邻居之上，自己的虚线框才不会被遮住 */
+  .guide-item-frame:hover {
+    z-index: 40 !important;
+  }
+  /* 只点亮「当前这一层」的虚线框（直接子元素），
+     避免 hover 双行容器时把里面所有子组件的框也一起点亮 */
+  .guide-item-frame:hover > .guide-item-dashed-frame {
+    opacity: 1;
+  }
+}
+
 .font-sans,
 .editing-popup * {
   font-family: Blueaka, sans-serif !important;

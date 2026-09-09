@@ -1091,6 +1091,30 @@ export default function Editor({
 
     if (!overRowId) return;
 
+    // 双行容器里的条目拖到顶层普通行：先从容器移除，再加到目标行
+    // （source 的 rowId 是 tworow-xxx-row-N，走顶部行逻辑会匹配不到，必须走容器移除）
+    if (
+      activeData.context === "two-row" &&
+      activeData.containerId &&
+      /^row\d+$/.test(overRowId)
+    ) {
+      const removed = guideBoardRef.current?.removeItemFromTwoRowContainer(
+        activeData.containerId,
+        activeData.rowIndex,
+        active.id.toString()
+      );
+      if (removed) {
+        guideBoardRef.current?.addItemToRow(
+          overRowId,
+          removed,
+          insertIndexForOver(overRowId, over)
+        );
+        lastChangeRef.current = Date.now();
+        setTimeout(() => saveCurrentState(), 50);
+      }
+      return;
+    }
+
     // 从组件列表拖入普通行
     if (draggedItem && !sourceRowId && overRowId) {
       const newId = `${draggedItem.type || "item"}-${Math.random().toString(36).substring(2)}`;
@@ -1589,11 +1613,35 @@ export default function Editor({
           if (sameContainer.length > 0) return sameContainer;
         }
 
-        // 双行容器区域优先（拖进容器时按容器行处理）
+        // 双行容器区域优先（拖进容器时按容器行处理）。
+        // 但「普通单行组件」拖到双行容器整块的左/右端时，应视为在容器前/后插入到该行，
+        // 否则容器在最左/最右时，压根没法把组件插到它旁边。
         const twoRowHits = pool.filter(collision =>
           isTwoRowArea(dataOf(collision))
         );
-        if (twoRowHits.length > 0) return twoRowHits;
+        const isTwoRowActive =
+          activeData.context === "two-row" ||
+          draggedType.includes("TwoRowContainer");
+        if (twoRowHits.length > 0 && !isTwoRowActive) {
+          // 拿「整个双行容器」的外包盒判断落点（而不是容器内某个窄条目），
+          // 左右各留 1/3，避免只能钻小缝隙
+          const dc = (twoRowHits[0]?.data?.droppableContainer ?? {}) as any;
+          const node = (dc.node?.current ?? dc.node) as HTMLElement | null;
+          const el = node?.closest?.(".two-row-container") as HTMLElement | null;
+          const rect =
+            el?.getBoundingClientRect?.() ?? dc.rect?.current ?? dc.rect ?? null;
+          const px = mousePositionRef.current.x;
+          const frac = rect?.width ? (px - rect.left) / rect.width : 0.5;
+          if (frac < 1 / 6 || frac > 5 / 6) {
+            // 左/右端：去掉所有“容器内部区域”，让落点回到容器这个行级排序项，
+            // 从而在容器前/后插入到该行
+            pool = pool.filter(c => !isTwoRowArea(dataOf(c)));
+          } else {
+            return twoRowHits;
+          }
+        } else if (twoRowHits.length > 0) {
+          return twoRowHits;
+        }
 
         // 命中了具体元素就用它：dnd-kit 只有在 over 是排序项时才会计算让位动画
         const itemHits = pool.filter(collision => dataOf(collision).sortable);

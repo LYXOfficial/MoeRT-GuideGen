@@ -21,6 +21,7 @@ export default function DraggableItem({
   onClick,
   data,
   zoom = 1,
+  selected = false,
 }: {
   id: string;
   children: React.ReactNode;
@@ -28,6 +29,8 @@ export default function DraggableItem({
   data?: Record<string, any>;
   // 当前编辑区缩放，用于修正 dnd 在缩放容器内的位移
   zoom?: number;
+  // 选中态：点击后在组件上盖一层淡淡的遮罩
+  selected?: boolean;
 }) {
   const {
     attributes,
@@ -98,11 +101,13 @@ export default function DraggableItem({
     background: isDragging ? "#f0f0f0" : "transparent",
     zIndex: isDragging
       ? 9999
-      : childType === ChengduSpecLine ||
-          childType === ChongqingSpecLine ||
-          childType === HongkongSpecLine
-        ? 10
-        : 1,
+      : selected
+        ? 40
+        : childType === ChengduSpecLine ||
+            childType === ChongqingSpecLine ||
+            childType === HongkongSpecLine
+          ? 10
+          : 1,
     flex: inTwoRow ? "0 0 auto" : isSpacing ? "1" : "0 0 auto",
     width: (data && (data as any).parentWidth) || undefined,
     opacity: isDragging ? 0.5 : 1,
@@ -164,6 +169,14 @@ export default function DraggableItem({
           : "guide-item-frame"
       }
     >
+      <span
+        className={`guide-item-dashed-frame ${selected ? "is-visible" : ""}`}
+        aria-hidden
+      />
+      <span
+        className={`guide-item-selected-mask ${selected ? "is-visible" : ""}`}
+        aria-hidden
+      />
       {children}
       {/* 间距组件：画一条拉到两端的双向箭头，和灰框一样只是编辑辅助，导出时不显示 */}
       {isSpacing && !isDragging && (

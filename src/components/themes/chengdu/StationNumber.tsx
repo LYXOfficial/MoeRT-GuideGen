@@ -155,7 +155,7 @@ export default function StationNumber({
             style={{
               borderColor: line.color,
               backgroundColor: colors.foreground,
-              fontFamily: "Helvetica, sans-serif",
+              fontFamily: "'Sogoe UI', Helvetica, sans-serif",
             }}
             key={`${line.lineNum}${line.stationNum}`}
           >

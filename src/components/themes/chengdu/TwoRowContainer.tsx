@@ -18,6 +18,8 @@ export interface TwoRowContainerProps {
   children?: TwoRowChildren; // 作为数据来源（与导出/还原兼容）
   onItemClick?: (e: React.MouseEvent, item: GuideItem) => void;
   background?: string;
+  /** 当前被选中（编辑中）的条目 id：命中时给容器内对应条目盖选中遮罩 */
+  selectedId?: string;
   /**
    * 预览模式：用于 DragOverlay 里的拖拽副本。
    * 此时不注册可拖放区域、也不复用真身的 DOM id，避免和面板上的容器互相覆盖。
@@ -38,6 +40,7 @@ function TwoRowContainer({
   children: initialChildren = [[], []],
   onItemClick,
   background,
+  selectedId,
   preview = false,
 }: TwoRowContainerProps) {
   const [rawId] = useState(() => id || `tworow-${Math.random().toString(36).slice(2)}`);
@@ -76,35 +79,51 @@ function TwoRowContainer({
   useLayoutEffect(() => {
     const root = containerDomRef.current;
     if (!root) return;
-    
-    // 延迟测量，确保DOM完全渲染
+
     const measureWidth = () => {
       const inners = root.querySelectorAll<HTMLDivElement>(".two-row-inner");
       if (!inners.length) {
         setMeasuredWidth(80); // 最小宽度
         return;
       }
-      
+
+      // 用 offsetWidth（不受 scale transform 影响）乘缩放系数得到可见宽度。
+      // 之前用 getBoundingClientRect（已被 scale 缩小）再除以 2，导致容器比实际内容窄、
+      // 最长行尾部被裁切；且 rect 受拖拽 transform 影响，宽度会闪动、插入动画奇怪。
       let maxW = 0;
       inners.forEach(el => {
-        // 确保元素可见且已渲染
         if (el.offsetWidth > 0) {
-          const rect = el.getBoundingClientRect();
-          if (rect.width > maxW) maxW = rect.width;
+          maxW = Math.max(maxW, el.offsetWidth);
         }
       });
-      
-      // 设置最小宽度和适当的边距
-      const finalWidth = Math.max(80, Math.ceil(maxW) + 4);
-      setMeasuredWidth(finalWidth / 2);
+
+      const finalWidth = Math.max(80, Math.ceil(maxW * SCALE) + 4);
+      setMeasuredWidth(prev =>
+        prev === finalWidth ? prev : finalWidth
+      );
     };
-    
+
     // 立即测量一次
     measureWidth();
-    
+
+    // 用 ResizeObserver 持续跟踪内部行的尺寸（增删条目、文字/字体变宽等都会自动触发），
+    // 保证容器宽度自动跟随最宽行，不会“丢失”自动调整
+    let ro: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== "undefined") {
+      ro = new ResizeObserver(measureWidth);
+      root
+        .querySelectorAll<HTMLDivElement>(".two-row-inner")
+        .forEach(el => {
+          ro?.observe(el);
+        });
+    }
+
     // 延迟再测量一次，确保拖拽后的布局稳定
     const timer = setTimeout(measureWidth, 100);
-    return () => clearTimeout(timer);
+    return () => {
+      ro?.disconnect();
+      clearTimeout(timer);
+    };
   }, [rows, finalBgColor]);
 
   // All drag handling moved to Editor.tsx for unified state management
@@ -121,6 +140,7 @@ function TwoRowContainer({
         padding: 0,
         display: "flex",
         flexDirection: "column",
+        position: "relative",
         width: measuredWidth ? `${measuredWidth}px` : "fit-content",
         minWidth: 80,
         height: 64, // 严格固定高度 64
@@ -128,6 +148,38 @@ function TwoRowContainer({
         outline: isOverContainer ? "1px dashed #91caff" : undefined,
       }}
     >
+      {/* 容器抓手：苹果式居中小灰线。命中原是透明的、始终生效（点/拖 = 选中/拖动整个容器）；
+          小灰线颜色跟随「组件虚线框」开关（--guide-item-outline 关掉时为 transparent，线即隐藏）。
+          用 guide-item-hint 类标记，导出时会自动被过滤掉 */}
+      {!preview && (
+        <div
+          className="two-row-grab guide-item-hint"
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            height: 12,
+            zIndex: 6,
+            cursor: "grab",
+            display: "flex",
+            alignItems: "flex-start",
+            justifyContent: "center",
+          }}
+          title="拖拽容器"
+        >
+          <div
+            style={{
+              width: 44,
+              height: 4,
+              borderRadius: 2,
+              marginTop: 3,
+              background: "var(--guide-item-outline, transparent)",
+              opacity: 0.55,
+            }}
+          />
+        </div>
+      )}
       {[0, 1].map(rowIdx => (
         <TwoRowRow
           key={`${autoId}-row-${rowIdx}`}
@@ -137,6 +189,7 @@ function TwoRowContainer({
           onItemClick={onItemClick}
           containerId={autoId}
           rowIndex={rowIdx}
+          selectedId={selectedId}
           preview={preview}
         />
       ))}
@@ -151,6 +204,7 @@ const TwoRowRow = memo(function TwoRowRow({
   onItemClick,
   containerId,
   rowIndex,
+  selectedId,
   preview = false,
 }: {
   id: string;
@@ -159,6 +213,7 @@ const TwoRowRow = memo(function TwoRowRow({
   onItemClick?: (e: React.MouseEvent, item: GuideItem) => void;
   containerId: string;
   rowIndex: number;
+  selectedId?: string;
   preview?: boolean;
 }) {
   const { setNodeRef, isOver } = useDroppable({
@@ -218,6 +273,7 @@ const TwoRowRow = memo(function TwoRowRow({
                   key={item.id}
                   id={item.id}
                   zoom={SCALE}
+                  selected={selectedId === item.id}
                   data={{
                     context: "two-row",
                     rowId: id,

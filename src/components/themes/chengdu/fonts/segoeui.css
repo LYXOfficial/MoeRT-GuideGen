@@ -1,0 +1,5 @@
+@font-face {
+  font-family: "Segoe UI";
+  src: url("/fonts/SegoeUI.ttf") format("truetype");
+  unicode-range: U+30-39, U+FF10-FF19;
+}

@@ -1,4 +1,4 @@
-import "./fonts/sogoeui.css";
+import "./fonts/segoeui.css";
 import "./fonts/helvetica.css";
 
 import LineNum, { lineNumDefaultProps } from "./LineNum.tsx";
@@ -28,7 +28,7 @@ const theme: Theme = {
     defaultBorder: colors.border,
     colors,
   },
-  fontFamily: "'Sogoe UI', Helvetica, sans-serif",
+  fontFamily: "'Segoe UI', Helvetica, sans-serif",
   components: [
     {
       displayName: "themes.chengdu.components.LineNum",

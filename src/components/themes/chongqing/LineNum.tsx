@@ -94,7 +94,7 @@ function LineNum({
         const numBBox = numRef.current.getBBox();
         const textBBox = textRef.current?.getBBox() ?? { width: 0 };
         const rectWidth = 15;
-        const margin = 8;
+        const margin = 10;
 
         const totalWidth =
           rectWidth +

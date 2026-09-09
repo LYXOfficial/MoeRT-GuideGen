@@ -818,6 +818,7 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
                             key={item.id}
                             id={item.id}
                             zoom={zoom}
+                            selected={editingItem?.item.id === item.id}
                             data={{
                               type: "guide-item",
                               rowId: `row${idx + 1}`,
@@ -841,6 +842,10 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
                             {React.isValidElement(item.element)
                               ? React.cloneElement(item.element, {
                                   ...item.props,
+                                  // 双行容器内部条目被选中时，让它给对应子条目盖遮罩
+                                  ...(item.type?.includes("TwoRowContainer")
+                                    ? { selectedId: editingItem?.item.id }
+                                    : {}),
                                 })
                               : item.element}
                           </DraggableItem>

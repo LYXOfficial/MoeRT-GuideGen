@@ -95,7 +95,7 @@ function LineNum({
         const textBBox = textRef.current?.getBBox() ?? { width: 0 };
         const rectWidth = 15;
         const margin = 5;
-        const textGap = 3; // 数字和文字之间的间隙
+        const textGap = 5; // 数字和文字之间的间隙
 
         const totalWidth =
           rectWidth +
@@ -147,7 +147,8 @@ function LineNum({
                 ref={numRef}
                 x={numX}
                 y={isChinese ? 48 : 52}
-                fontSize={isChinese ? 42 : 52}
+                fontSize={isChinese ? 42 : 50}
+                fontWeight={400}
                 style={{ letterSpacing: "-3px" }}
                 fill={colors.foreground}
               >
@@ -189,7 +190,7 @@ function LineNum({
                 ref={numRef}
                 x={numX}
                 y={isChinese ? 48 : 52}
-                fontSize={isChinese ? 42 : 56}
+                fontSize={isChinese ? 42 : 50}
                 style={{ letterSpacing: "-3px" }}
                 fill={colors.foreground}
               >
