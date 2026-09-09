@@ -1,6 +1,8 @@
 {
   "zoom": {
-    "label": "Zoom:"
+    "label": "Zoom:",
+    "fit": "Fit to view",
+    "reset": "Reset to 100%"
   },
   "title": "MoeRT-GuideGen",
   "componentsList": {
@@ -24,7 +26,7 @@
   },
   "board": {
     "emptyRowHint": "Drag components to this row",
-    "showItemFrame": "Frames",
+    "showItemFrame": "Show component outlines",
     "width": "Width",
     "showDividers": "Show dividers"
   },

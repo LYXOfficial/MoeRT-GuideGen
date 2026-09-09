@@ -5,13 +5,70 @@
   --font-sans: "Blueaka", sans-serif;
 }
 
+html {
+  overscroll-behavior: none;
+}
 body {
   height: 100vh;
   width: 100%;
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
 }
 #root {
   height: 100%;
   width: 100%;
+}
+
+/* 触屏下避免编辑器画布/按钮的交互被浏览器手势打断 */
+@media (pointer: coarse) {
+  .touch-manipulation,
+  button,
+  a,
+  [role="button"] {
+    touch-action: manipulation;
+  }
+}
+
+/* ===== 移动端底部组件抽屉 ===== */
+@keyframes moert-sheet-in {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes moert-sheet-out {
+  to {
+    transform: translateY(110%);
+  }
+}
+.mobile-palette-sheet {
+  animation: moert-sheet-in 0.26s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.mobile-palette-sheet.moert-sheet-closing {
+  animation: moert-sheet-out 0.22s ease-in forwards;
+}
+/* 让抽屉内容本身可以滚动，且不会误触发画布手势 */
+.mobile-palette-sheet {
+  overscroll-behavior: contain;
+}
+
+/* ===== 触屏没有“真实悬停”，点按后的 :hover 会粘住，去掉这类残留高亮 ===== */
+@media (hover: none) {
+  .hover\:bg-gray-100:hover,
+  .hover\:bg-gray-50:hover,
+  .hover\:bg-red-50:hover {
+    background-color: transparent !important;
+  }
+  .hover\:text-blue-400:hover,
+  .hover\:text-blue-500:hover,
+  .hover\:text-red-500:hover {
+    color: inherit !important;
+  }
+  .hover\:shadow-lg:hover {
+    box-shadow: none !important;
+  }
 }
 
 .font-sans,

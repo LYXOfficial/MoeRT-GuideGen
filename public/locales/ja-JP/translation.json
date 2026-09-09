@@ -1,6 +1,8 @@
 {
   "zoom": {
-    "label": "ズーム："
+    "label": "ズーム：",
+    "fit": "表示領域に合わせる",
+    "reset": "100% に戻す"
   },
   "title": "MoeRT-GuideGen",
   "componentsList": {
@@ -24,7 +26,7 @@
   },
   "board": {
     "emptyRowHint": "この行にコンポーネントをドラッグ",
-    "showItemFrame": "枠線",
+    "showItemFrame": "コンポーネントの点線枠を表示",
     "width": "幅",
     "showDividers": "区切り線を表示"
   },

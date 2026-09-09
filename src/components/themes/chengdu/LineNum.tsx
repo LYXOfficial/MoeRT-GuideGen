@@ -147,7 +147,7 @@ function LineNum({
                 ref={numRef}
                 x={numX}
                 y={isChinese ? 48 : 52}
-                fontSize={isChinese ? 42 : 56}
+                fontSize={isChinese ? 42 : 52}
                 style={{ letterSpacing: "-3px" }}
                 fill={colors.foreground}
               >

@@ -1,6 +1,8 @@
 {
   "zoom": {
-    "label": "확대/축소:"
+    "label": "확대/축소:",
+    "fit": "보드에 맞추기",
+    "reset": "100%로 초기화"
   },
   "title": "MoeRT-GuideGen",
   "componentsList": {
@@ -24,7 +26,7 @@
   },
   "board": {
     "emptyRowHint": "이 행에 컴포넌트를 드래그",
-    "showItemFrame": "테두리",
+    "showItemFrame": "컴포넌트 점선 테두리 표시",
     "width": "너비",
     "showDividers": "구분선 표시"
   },

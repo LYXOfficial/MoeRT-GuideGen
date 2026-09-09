@@ -137,27 +137,130 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
     } | null>(null);
     const configChangeTimeoutRef = useRef<number | null>(null);
 
+    // ===== 递归处理双行容器内部的条目编辑/删除 =====
+    // 双行容器里的元件存在容器 props.children 里，顶层行的 map / find
+    // 永远匹配不到它们，所以这里递归到 children，并重建被改动条目的 element。
+    const themeComponents = themes[currentTheme][1].components;
+    const rebuildItemElement = (item: GuideItem): GuideItem => {
+      const Comp = themeComponents.find(c => c.displayName === item.type)?.component;
+      if (!Comp) return item;
+      return {
+        ...item,
+        element: React.createElement(Comp as React.ElementType, item.props),
+      };
+    };
+    const makeContainerItem = (
+      item: GuideItem,
+      children: GuideItem[][]
+    ): GuideItem => {
+      const Comp = themeComponents.find(c => c.displayName === item.type)?.component;
+      // 存档时 element 已被剥掉，这里为每个子条目补回（否则刷新后容器内空白）
+      const rebuiltChildren = children.map(row =>
+        Array.isArray(row)
+          ? row.map(c => rebuildItemElement(c))
+          : row
+      );
+      const containerProps: Record<string, any> = {
+        ...item.props,
+        // id 必须等于容器的 GuideItem.id：TwoRowContainer 内部用它当 autoId，
+        // 编辑器拖入时拿 overData.containerId 去 rows 里匹配 rowItem.id，
+        // 对不上就找不到容器、东西拖不进去
+        id: item.id,
+        children: rebuiltChildren,
+        currentTheme,
+        onItemClick: (e: React.MouseEvent, clicked: GuideItem) => {
+          const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+          setEditingItem({
+            item: clicked,
+            position: { x: rect.right, y: rect.top },
+            parentId: item.id,
+          });
+        },
+      };
+      return {
+        ...item,
+        props: containerProps,
+        element: Comp
+          ? React.createElement(Comp as React.ElementType, containerProps)
+          : item.element,
+      };
+    };
+    const mapChildrenDeep = (
+      rows: GuideItem[][],
+      id: string,
+      updater: (it: GuideItem) => GuideItem
+    ): GuideItem[][] => {
+      let found = false;
+      const next = rows.map(row =>
+        row
+          .map(item => {
+            if (found) return item;
+            if (item.id === id) {
+              found = true;
+              return updater(item);
+            }
+            const kids = (item.props?.children as GuideItem[][] | undefined) || null;
+            if (Array.isArray(kids)) {
+              let changed = false;
+              const nkids = kids.map(r =>
+                Array.isArray(r)
+                  ? r.map(c => {
+                      if (found) return c;
+                      if (c.id === id) {
+                        found = true;
+                        changed = true;
+                        return updater(c);
+                      }
+                      return c;
+                    })
+                  : r
+              );
+              if (changed) return makeContainerItem(item, nkids);
+            }
+            return item;
+          })
+          .filter((it): it is GuideItem => it !== null)
+      );
+      return next;
+    };
+    const removeItemDeep = (rows: GuideItem[][], id: string): GuideItem[][] => {
+      return rows.map(row =>
+        row
+          .map(item => {
+            if (item.id === id) return null;
+            const kids = (item.props?.children as GuideItem[][] | undefined) || null;
+            if (Array.isArray(kids)) {
+              let changed = false;
+              const nkids = kids.map(r =>
+                Array.isArray(r)
+                  ? r.filter(c => {
+                      if (c.id === id) {
+                        changed = true;
+                        return false;
+                      }
+                      return true;
+                    })
+                  : r
+              );
+              if (changed) return makeContainerItem(item, nkids);
+            }
+            return item;
+          })
+          .filter((it): it is GuideItem => it !== null)
+      );
+    };
+
     // 编辑弹窗全局Delete监听，保证无论焦点在弹窗内哪个元素都能Delete删除组件
     useEffect(() => {
       if (!editingItem) return;
       const handleDelete = (e: KeyboardEvent) => {
         if (e.key === "Delete" || e.key === "Del") {
-          const rowIndex = rows.findIndex(row =>
-            row.some(item => item.id === editingItem.item.id)
-          );
-          if (rowIndex !== -1) {
-            setRows(prev =>
-              prev.map((row, idx) =>
-                idx === rowIndex
-                  ? row.filter(item => item.id !== editingItem.item.id)
-                  : row
-              )
-            );
-            setEditingItem(null);
-            if (onConfigChange && !isRestoring) {
-              // 删除操作立即保存状态，避免被后续操作覆盖
-              onConfigChange(true);
-            }
+          const nextRows = removeItemDeep(rows, editingItem.item.id);
+          setRows(nextRows);
+          setEditingItem(null);
+          if (onConfigChange && !isRestoring) {
+            // 删除操作立即保存状态，避免被后续操作覆盖
+            onConfigChange(true);
           }
         }
       };
@@ -296,7 +399,15 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
                   id: item.id,
                   currentTheme,
                 };
-                // 无 TwoRowContainer 特殊处理
+
+                // 双行容器需要补 onItemClick，内部条目才能被编辑/删除
+                if (item.type?.includes("TwoRowContainer")) {
+                  const kids = (item.props?.children as GuideItem[][]) || [
+                    [],
+                    [],
+                  ];
+                  return makeContainerItem(item as GuideItem, kids);
+                }
 
                 const restoredItem = {
                   ...item,
@@ -340,19 +451,26 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
               id: item.id,
               currentTheme,
             };
-            // 无 TwoRowContainer 特殊处理
 
-            const rebuilt: GuideItem = Component
-              ? {
-                  ...item,
-                  element: React.createElement(
-                    Component as React.ElementType,
-                    finalProps
-                  ),
-                  // 同步 props 里也带上 children，避免后续丢失
-                  props: { ...finalProps },
-                }
-              : item;
+            // 双行容器：children 在 props.children，且要补 onItemClick，
+            // 内部条目才能打开编辑/被删除
+            const rebuilt: GuideItem =
+              item.type?.includes("TwoRowContainer")
+                ? makeContainerItem(
+                    item,
+                    (item.props?.children as GuideItem[][]) || [[], []]
+                  )
+                : Component
+                  ? {
+                      ...item,
+                      element: React.createElement(
+                        Component as React.ElementType,
+                        finalProps
+                      ),
+                      // 同步 props 里也带上 children，避免后续丢失
+                      props: { ...finalProps },
+                    }
+                  : item;
 
             if (insertIndex !== undefined) {
               newRows[idx].splice(insertIndex, 0, rebuilt);
@@ -898,18 +1016,17 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
                               },
                             });
                             setRows(prev =>
-                              prev.map(row =>
-                                row.map(item => {
-                                  return item.id === editingItem.item.id
-                                    ? {
-                                        ...item,
-                                        props: {
-                                          ...item.props,
-                                          [form.key]: value,
-                                        },
-                                      }
-                                    : item;
-                                })
+                              mapChildrenDeep(
+                                prev,
+                                editingItem.item.id,
+                                it =>
+                                  rebuildItemElement({
+                                    ...it,
+                                    props: {
+                                      ...it.props,
+                                      [form.key]: value,
+                                    },
+                                  })
                               )
                             );
                             // 触发配置变化通知（包含撤销历史保存）
@@ -926,28 +1043,15 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
                         type="danger"
                         theme="outline"
                         onClick={() => {
-                          // 查找组件所在的行
-                          const rowIndex = rows.findIndex(row =>
-                            row.some(item => item.id === editingItem.item.id)
+                          setRows(prev =>
+                            removeItemDeep(prev, editingItem.item.id)
                           );
-                          if (rowIndex !== -1) {
-                            // 过滤掉要删除的组件
-                            setRows(prev =>
-                              prev.map((row, idx) =>
-                                idx === rowIndex
-                                  ? row.filter(
-                                      item => item.id !== editingItem.item.id
-                                    )
-                                  : row
-                              )
-                            );
-                            // 关闭编辑框
-                            setEditingItem(null);
-                            // 触发配置变化通知（包含撤销历史保存）
-                            if (onConfigChange && !isRestoring) {
-                              // 删除操作立即保存状态，避免被后续操作覆盖
-                              onConfigChange(true);
-                            }
+                          // 关闭编辑框
+                          setEditingItem(null);
+                          // 触发配置变化通知（包含撤销历史保存）
+                          if (onConfigChange && !isRestoring) {
+                            // 删除操作立即保存状态，避免被后续操作覆盖
+                            onConfigChange(true);
                           }
                         }}
                         block

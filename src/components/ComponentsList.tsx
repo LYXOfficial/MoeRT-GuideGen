@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Card, List, Typography, Select, Modal } from "@douyinfe/semi-ui";
+import { Card, Typography, Select, Modal } from "@douyinfe/semi-ui";
 import themes from "./themes/themereg";
 import { useDraggable, useDroppable, useDndContext } from "@dnd-kit/core";
 import { useState } from "react";
@@ -8,6 +8,8 @@ import type { GuideItem } from "../interfaces/guide";
 interface ComponentsListProps {
   currentTheme: number;
   onThemeChange: (theme: number) => void;
+  /** 移动端底部抽屉：占满整宽、去掉右侧分隔线 */
+  fullWidth?: boolean;
 }
 
 interface ComponentItemProps {
@@ -44,23 +46,24 @@ const DraggableComponentItem: React.FC<ComponentItemProps> = ({
   });
 
   // 跟随指针的是 DragOverlay，卡片本身留在原地当占位，
-  // 否则卡片会被拖出侧栏，撑出横向滚动条
+  // 否则卡片会被拖出侧栏，撑出横向滚动条。
+  // 触屏上用「移动激活」而非长按，且不设 touch-action:none，列表才能上下滚动
   return (
     <div
       ref={setNodeRef}
       {...attributes}
       {...listeners}
-      className={`cursor-grab select-none w-full touch-none ${isDragging ? "opacity-50" : ""}`}
+      style={{ touchAction: "pan-y" }}
+      className={`cursor-grab select-none w-full ${isDragging ? "opacity-50" : ""}`}
     >
       <Card
-        className="mb-2 hover:shadow-lg transition-shadow"
-        shadows="hover"
+        className="mb-2 min-w-0"
         style={{
           backgroundColor: themes[currentTheme][1].colors.defaultBackground,
         }}
       >
         <div
-          className="h-16 flex items-center justify-center"
+          className="h-16 flex items-center justify-center w-full overflow-hidden"
           style={{ fontFamily: themes[currentTheme][1].fontFamily }}
         >
           {/* 双行容器要用预览模式，否则侧栏里的这份示例也会注册可拖放区域，
@@ -87,6 +90,7 @@ const DraggableComponentItem: React.FC<ComponentItemProps> = ({
 export default function ComponentsList({
   currentTheme,
   onThemeChange,
+  fullWidth = false,
 }: ComponentsListProps) {
   const { t } = useTranslation();
   const theme = themes[currentTheme][1];
@@ -121,7 +125,9 @@ export default function ComponentsList({
   return (
     <div
       ref={setNodeRef}
-      className="w-75 border-r border-gray-200 h-full relative overflow-hidden"
+      className={`${
+        fullWidth ? "w-full border-t-0" : "w-75 border-r border-gray-200"
+      } h-full relative overflow-hidden`}
     >
       <div
         className={`absolute inset-0 z-20 box-border flex items-center justify-center border-2 border-dashed border-[#eb5050] bg-black/30 pointer-events-none transition-opacity duration-300 ${
@@ -151,7 +157,7 @@ export default function ComponentsList({
           </Select>
         </div>
 
-        <Typography.Title heading={4} className="mb-4 font-sans">
+        <Typography.Title heading={4} className="pb-3 font-sans">
           {t("componentsList.title")}
         </Typography.Title>
 
@@ -169,21 +175,24 @@ export default function ComponentsList({
           </Typography.Text>
         </Modal>
 
-        <List
-          className="grid w-full gap-2"
-          dataSource={components}
-          renderItem={component => (
-            <List.Item className="w-full" key={component.displayName}>
-              <DraggableComponentItem
-                name={component.displayName}
-                Component={component.component}
-                type={component.displayName}
-                props={component.defaultProps}
-                currentTheme={currentTheme}
-              />
-            </List.Item>
-          )}
-        />
+        <div
+          className={`grid w-full gap-3 ${
+            fullWidth
+              ? "grid-cols-1 min-[420px]:grid-cols-2 min-[640px]:grid-cols-3"
+              : ""
+          }`}
+        >
+          {components.map(component => (
+            <DraggableComponentItem
+              key={component.displayName}
+              name={component.displayName}
+              Component={component.component}
+              type={component.displayName}
+              props={component.defaultProps}
+              currentTheme={currentTheme}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

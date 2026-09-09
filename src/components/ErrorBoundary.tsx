@@ -1,4 +1,5 @@
 import React from "react";
+import Salt from "./Salt";
 import { getErrorLogs, type LogEntry } from "../utils/errorLog.ts";
 
 type State = {
@@ -163,10 +164,7 @@ export default class ErrorBoundary extends React.Component<
             </div>
           </details>
         </div>
-        <img
-          className="love-salt-kawaii-qwq fixed opacity-30 -right-12.5 bottom-0 z-0 w-150 select-none"
-          src="/imgs/salt.png"
-        />
+        <Salt />
       </div>
     );
   }

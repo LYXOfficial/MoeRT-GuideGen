@@ -54,10 +54,11 @@ export const ExportDialog = ({
     const framedItems = Array.from(
       guide.querySelectorAll<HTMLElement>(".guide-item-frame")
     );
+    // 快照整段内联 style，结束时整体还原：
+    // 直接设置 border/transform 等快捷键，会把 React 管理的内联 border-color
+    // 一并覆盖成其它值（如 currentColor），逐条还原会漏掉，留下黑框。
+    const originalStyleAttr = guide.getAttribute("style");
     const originalOutlines = framedItems.map(el => el.style.outline);
-    const originalBorder = guide.style.border;
-    const originalTransform = guide.style.transform;
-    const originalWidth = guide.style.width;
 
     try {
       // 开始导出，显示loading
@@ -201,17 +202,16 @@ export const ExportDialog = ({
         duration: 5,
       });
     } finally {
-      // 7. 恢复原始样式
-      guide.style.border = originalBorder;
-      guide.style.transform = originalTransform;
-      guide.style.width = originalWidth;
+      // 7. 恢复原始样式：整体还原内联 style（含 border-color，避免边框变黑）
+      if (guide.getAttribute("style") !== originalStyleAttr) {
+        guide.setAttribute("style", originalStyleAttr ?? "");
+      }
       operationBtns.forEach(btn => {
         (btn as HTMLElement).style.display = "";
       });
       framedItems.forEach((el, i) => {
         el.style.outline = originalOutlines[i];
       });
-      guide.style.removeProperty("--guide-item-outline");
 
       // 移除遮罩层
       const mask = document.getElementById("export-mask");

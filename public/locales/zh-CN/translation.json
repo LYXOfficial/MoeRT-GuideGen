@@ -1,6 +1,8 @@
 {
   "zoom": {
-    "label": "缩放："
+    "label": "缩放：",
+    "fit": "适配画板",
+    "reset": "重置为 100%"
   },
   "title": "MoeRT-GuideGen",
   "componentsList": {
@@ -24,7 +26,7 @@
   },
   "board": {
     "emptyRowHint": "拖拽组件到此行",
-    "showItemFrame": "组件框",
+    "showItemFrame": "组件虚线框",
     "width": "宽度",
     "showDividers": "显示分隔线"
   },

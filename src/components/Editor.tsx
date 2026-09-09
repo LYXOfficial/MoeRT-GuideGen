@@ -11,7 +11,9 @@ import ComponentsList from "./ComponentsList";
 import GuideBoardCols, { type GuideBoardRef } from "./GuideBoard";
 import type { GuideItem } from "../interfaces/guide";
 import type { SaveData } from "../interfaces/editor";
-import { Toast } from "@douyinfe/semi-ui";
+import Salt from "./Salt";
+import { Toast, Button } from "@douyinfe/semi-ui";
+import { IconClose } from "@douyinfe/semi-icons";
 import {
   DndContext,
   type DragEndEvent,
@@ -32,6 +34,7 @@ import themes from "./themes/themereg";
 import Header from "./Header";
 import { useTranslation } from "react-i18next";
 import { useUndoRedo } from "../hooks/useUndoRedo";
+import { useMediaQuery, useIsCompact } from "../hooks/useMediaQuery";
 
 interface EditorProps {
   guideHeight?: number;
@@ -193,7 +196,15 @@ export default function Editor({
   const editorAreaRef = useRef<HTMLDivElement>(null);
   const [isEditingOpen, setIsEditingOpen] = useState(false);
 
-  // 添加全局鼠标位置跟踪
+  // 触屏 / 紧凑布局判定
+  const isCompact = useIsCompact();
+  // 带触摸能力的设备（手机 / 平板 / 触屏笔记本）：这些设备需要手势支持
+  const isCoarsePointer = useMediaQuery("(any-pointer: coarse)");
+  // 移动端底部「组件抽屉」开关
+  const [paletteOpen, setPaletteOpen] = useState(false);
+
+  // 添加全局指针位置跟踪（mouse + touch + pen 都用 pointermove，
+  // 这样触屏拖拽时 drop 指示线的插入点也能用真实坐标计算）
   const mousePositionRef = useRef({ x: 0, y: 0 });
 
   // 插入位置指示线：只在「从左侧组件列表拖入」时显示
@@ -206,7 +217,7 @@ export default function Editor({
   }>({ show: false, x: 0, y: 0, height: 0 });
 
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
+    const handlePointerMove = (e: PointerEvent) => {
       mousePositionRef.current = { x: e.clientX, y: e.clientY };
     };
 
@@ -236,7 +247,7 @@ export default function Editor({
       }
     };
 
-    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("pointermove", handlePointerMove);
     document.addEventListener("keydown", handleKeyDown);
 
     // 监听来自 GuideBoard 的编辑态变化
@@ -250,7 +261,7 @@ export default function Editor({
     );
 
     return () => {
-      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("pointermove", handlePointerMove);
       document.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener(
         "guide-editing-change",
@@ -1295,11 +1306,200 @@ export default function Editor({
     }
   };
 
+  // 拖拽传感器：统一用 PointerSensor + 距离激活。
+  // ① 监听挂在 document 上，跨行移动时节点被实时搬运/重挂载也不会断拖；
+  // ② 距离激活（不用长按延时），鼠标/触屏都是「按下去移动即拖起」，
+  //    轻点不动则不会误触发拖拽，点击编辑照常可用。
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
+  );
+
+  // ===== 移动端画布「适配 + 手势」 =====
+
+  // 计算把画板放进「当前可见区域」所需的缩放与纵向位移。
+  // 若底部组件抽屉打开，可见区域只剩抽屉上方那一截，画板需要上移进这段区域。
+  const computeFit = useCallback(() => {
+    const area = editorAreaRef.current;
+    const board = document.querySelector(".guide-board") as HTMLElement | null;
+    const drawer = document.querySelector(
+      ".mobile-palette-sheet"
+    ) as HTMLElement | null;
+    if (!area || !board) return null;
+    const aRect = area.getBoundingClientRect();
+    const bw = board.offsetWidth;
+    const bh = board.offsetHeight;
+    const availW = aRect.width;
+    if (!availW || !bw || !bh) return null;
+    let availH = aRect.height;
+    if (drawer) {
+      const dTop = drawer.getBoundingClientRect().top;
+      availH = Math.min(availH, Math.max(0, dTop - aRect.top - 8));
+    }
+    const scale = Math.min(
+      2,
+      Math.max(0.2, Math.min((availW - 24) / bw, (availH - 24) / bh))
+    );
+    // 内容绕编辑区中心缩放；当抽屉占掉下方后，把画板上移进可见带（translate 在 scale 之前生效，
+    // 视觉位移 = scale × 平移量，因此要除以 scale 换算回布局位移）
+    const panY = drawer
+      ? -Math.max(0, (aRect.height - availH) / 2) / scale
+      : 0;
+    return { scale, panX: 0, panY };
+  }, []);
+
+  // 「适配画板」按钮
+  const fitToView = useCallback(() => {
+    const fit = computeFit();
+    if (!fit) return;
+    setZoom(fit.scale);
+    setPan({ x: fit.panX, y: fit.panY });
+  }, [computeFit]);
+
+  // 适配只在进入移动端布局、或打开组件抽屉（可见区域变小）时执行一次，
+  // 之后改宽度/加减行/分割线等都不会重置用户当前的缩放与位置。
+  // 初次进入时额外延后一次，等存档/字体恢复完成再按最终尺寸适配。
+  useEffect(() => {
+    if (!isCompact) return;
+    let cancelled = false;
+    const run = () => {
+      if (!cancelled) fitToView();
+    };
+    const rafId = requestAnimationFrame(run);
+    const timerId = window.setTimeout(run, 800);
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(rafId);
+      window.clearTimeout(timerId);
+    };
+  }, [isCompact, fitToView]);
+
+  // 打开组件抽屉：等滑出动画结束后，把画板对进抽屉上方的可见区域
+  useEffect(() => {
+    if (!isCompact || !paletteOpen) return;
+    const id = window.setTimeout(() => fitToView(), 320);
+    return () => window.clearTimeout(id);
+  }, [isCompact, paletteOpen, fitToView]);
+
+  // 触屏手势状态机：单指在空白处平移画布，双指缩放（以画布中心为基准）。
+  // 任意带触摸的屏幕（含桌面布局的触屏平板）都启用
+  const touchStateRef = useRef<{
+    mode: "none" | "pan" | "pinch";
+    startX: number;
+    startY: number;
+    startPanX: number;
+    startPanY: number;
+    pinchStartDist: number;
+    pinchStartZoom: number;
+  }>({
+    mode: "none",
+    startX: 0,
+    startY: 0,
+    startPanX: 0,
+    startPanY: 0,
+    pinchStartDist: 0,
+    pinchStartZoom: 1,
+  });
+  const touchDistance = (
+    a: { clientX: number; clientY: number },
+    b: { clientX: number; clientY: number }
+  ) => Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent) => {
+      if (!isCoarsePointer || isEditingOpen) return;
+      const t = e.touches;
+      if (t.length === 1) {
+        // 落在画板/组件上时交给 dnd-kit，只在空白处做画布平移
+        const target = e.target as HTMLElement;
+        if (target.closest(".guide-board")) return;
+        touchStateRef.current = {
+          mode: "pan",
+          startX: t[0].clientX,
+          startY: t[0].clientY,
+          startPanX: pan.x,
+          startPanY: pan.y,
+          pinchStartDist: 0,
+          pinchStartZoom: zoom,
+        };
+      } else if (t.length === 2) {
+        touchStateRef.current = {
+          mode: "pinch",
+          startX: 0,
+          startY: 0,
+          startPanX: pan.x,
+          startPanY: pan.y,
+          pinchStartDist: touchDistance(t[0], t[1]),
+          pinchStartZoom: zoom,
+        };
+      }
+    },
+    [isCoarsePointer, isEditingOpen, pan, zoom]
+  );
+
+  const handleTouchMove = useCallback(
+    (e: React.TouchEvent) => {
+      if (!isCoarsePointer || isEditingOpen) return;
+      const s = touchStateRef.current;
+      const t = e.touches;
+      if (s.mode === "pan" && t.length === 1) {
+        const dx = t[0].clientX - s.startX;
+        const dy = t[0].clientY - s.startY;
+        setPan({ x: s.startPanX + dx, y: s.startPanY + dy });
+      } else if (s.mode === "pinch" && t.length >= 2) {
+        const d = touchDistance(t[0], t[1]);
+        if (s.pinchStartDist > 0) {
+          const ratio = d / s.pinchStartDist;
+          const next = Math.max(0.2, Math.min(4, s.pinchStartZoom * ratio));
+          setZoom(next);
+        }
+      }
+    },
+    [isCoarsePointer, isEditingOpen]
+  );
+
+  const handleTouchEnd = useCallback(() => {
+    touchStateRef.current.mode = "none";
+  }, []);
+
+  // 组件抽屉显隐（带滑出动画：关→延迟卸载）
+  const [paletteRendered, setPaletteRendered] = useState(false);
+  const paletteCloseTimerRef = useRef<number | null>(null);
+  useEffect(() => {
+    if (paletteOpen) {
+      if (paletteCloseTimerRef.current) {
+        window.clearTimeout(paletteCloseTimerRef.current);
+        paletteCloseTimerRef.current = null;
+      }
+      setPaletteRendered(true);
+    } else if (paletteRendered) {
+      paletteCloseTimerRef.current = window.setTimeout(() => {
+        paletteCloseTimerRef.current = null;
+        setPaletteRendered(false);
+        // 抽屉已从 DOM 移除，把画板按整区重新适配
+        requestAnimationFrame(() => fitToView());
+      }, 240);
+    }
+    return () => {
+      if (paletteCloseTimerRef.current) {
+        window.clearTimeout(paletteCloseTimerRef.current);
+      }
+    };
+  }, [paletteOpen, paletteRendered, fitToView]);
+
+  // 切换主题（桌面侧栏与移动端组件抽屉共用；换主题即清空画板）
+  const handleThemeRequest = (theme: number) => {
+    if (isImporting) return;
+    // 换主题是用户主动清空画板，解除存档保护
+    skipAutoSaveRef.current = false;
+    archivedItemCountRef.current = 0;
+    setCurrentTheme(theme);
+    guideBoardRef.current?.clearBoard();
+    setTimeout(() => saveCurrentState(), 100);
+  };
+
   return (
     <DndContext
-      sensors={useSensors(
-        useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
-      )}
+      sensors={sensors}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       onDragOver={handleDragOver}
@@ -1433,32 +1633,33 @@ export default function Editor({
           onClearHistory={clearHistory}
           showItemFrame={showItemFrame}
           onShowItemFrameChange={setShowItemFrame}
+          onFitToView={fitToView}
+          paletteOpen={paletteOpen}
+          onTogglePalette={() => setPaletteOpen(open => !open)}
         />
         <div className="flex h-0 flex-1">
-          <ComponentsList
-            currentTheme={currentTheme}
-            onThemeChange={theme => {
-              // 在导入过程中忽略主题变化
-              if (isImporting) {
-                return;
-              }
-              // 换主题是用户主动清空画板，解除存档保护
-              skipAutoSaveRef.current = false;
-              archivedItemCountRef.current = 0;
-              setCurrentTheme(theme);
-              guideBoardRef.current?.clearBoard();
-              // 在切换主题后保存状态，而不是清空历史
-              setTimeout(() => saveCurrentState(), 100);
-            }}
-          />
+          {!isCompact && (
+            <ComponentsList
+              currentTheme={currentTheme}
+              onThemeChange={handleThemeRequest}
+            />
+          )}
           <div
             ref={editorAreaRef}
             className="flex-1 relative overflow-hidden bg-gray-50"
-            style={{ cursor: isDragging ? "grabbing" : "default" }}
+            style={{
+              cursor: isDragging ? "grabbing" : "default",
+              // 触屏画布手势由 JS 处理（单指平移/双指缩放），禁用原生手势
+              touchAction: isCoarsePointer ? "none" : undefined,
+            }}
             onMouseDown={handleEditorMouseDown}
             onMouseMove={handleEditorMouseMove}
             onMouseUp={handleEditorMouseUp}
             onWheel={handleEditorWheel}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            onTouchCancel={handleTouchEnd}
           >
             <div
               className="absolute inset-0 flex items-center justify-center z-1"
@@ -1503,10 +1704,34 @@ export default function Editor({
             </div>
           </div>
         </div>
-        <img
-          className="love-salt-kawaii-qwq fixed opacity-30 cursor-none -right-12.5 bottom-0 w-150 select-none pointer-events-none"
-          src="/imgs/salt.png"
-        />
+        <Salt />
+        {isCompact && paletteRendered && (
+          <div
+            className={`mobile-palette-sheet fixed inset-x-0 bottom-0 z-50 flex flex-col rounded-t-2xl bg-white shadow-2xl border-t border-gray-200 overflow-hidden ${
+              paletteOpen ? "" : "moert-sheet-closing"
+            }`}
+            style={{ maxHeight: "50vh", paddingBottom: "env(safe-area-inset-bottom)" }}
+          >
+            <div className="shrink-0 flex items-center justify-between gap-3 pl-4 pr-2 pt-2 pb-1">
+              <span className="font-sans font-bold text-sm text-gray-700">
+                {t("componentsList.title")}
+              </span>
+              <Button
+                theme="borderless"
+                icon={<IconClose />}
+                onClick={() => setPaletteOpen(false)}
+                style={{ color: "#111827" }}
+              />
+            </div>
+            <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain">
+              <ComponentsList
+                fullWidth
+                currentTheme={currentTheme}
+                onThemeChange={handleThemeRequest}
+              />
+            </div>
+          </div>
+        )}
       </div>
       <DragOverlay
         dropAnimation={{

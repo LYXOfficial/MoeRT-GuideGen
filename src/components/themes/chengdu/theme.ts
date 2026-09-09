@@ -1,4 +1,4 @@
-import "./fonts/frutiger.css";
+import "./fonts/sogoeui.css";
 import "./fonts/helvetica.css";
 
 import LineNum, { lineNumDefaultProps } from "./LineNum.tsx";
@@ -28,7 +28,7 @@ const theme: Theme = {
     defaultBorder: colors.border,
     colors,
   },
-  fontFamily: "Frutiger, Helvetica, sans-serif",
+  fontFamily: "'Sogoe UI', Helvetica, sans-serif",
   components: [
     {
       displayName: "themes.chengdu.components.LineNum",

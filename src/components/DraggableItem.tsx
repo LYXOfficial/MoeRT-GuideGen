@@ -60,7 +60,7 @@ export default function DraggableItem({
     // 拖拽开始时量一次：编辑区缩放 × 所在容器的内部缩放
     if (!isSorting) return;
     const el = domRef.current;
-    if (!el || !el.offsetWidth) return;
+    if (!el?.offsetWidth) return;
     const measured = el.getBoundingClientRect().width / el.offsetWidth;
     if (Number.isFinite(measured) && measured > 0.01) {
       scaleRef.current = measured;
@@ -151,6 +151,12 @@ export default function DraggableItem({
 
         mouseDownRef.current = null;
         setHasMoved(false);
+      }}
+      onContextMenu={e => {
+        // 右键与左键一致：弹出组件编辑菜单，屏蔽浏览器默认菜单
+        e.preventDefault();
+        e.stopPropagation();
+        onClick?.(e);
       }}
       className={
         onClick
