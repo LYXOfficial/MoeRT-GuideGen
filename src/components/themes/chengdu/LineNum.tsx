@@ -10,6 +10,7 @@ export interface LineNumProps {
   customChinese?: string;
   customEnglish?: string;
   showText?: boolean;
+  showRect?: boolean;
   align?: string;
 }
 
@@ -19,6 +20,7 @@ export const lineNumDefaultProps: LineNumProps = {
   customChinese: "号线",
   customEnglish: "Line",
   showText: true,
+  showRect: true,
   align: "left",
 };
 
@@ -52,6 +54,11 @@ export const lineNumEditorConfig = (
       element: <Switch />,
     },
     {
+      key: "showRect",
+      label: "themes.chengdu.components.LineNum.props.showRect",
+      element: <Switch />,
+    },
+    {
       key: "align",
       label: "themes.chengdu.components.LineNum.props.align.displayName",
       element: (
@@ -74,6 +81,7 @@ function LineNum({
   customChinese = lineNumDefaultProps.customChinese,
   customEnglish = lineNumDefaultProps.customEnglish,
   showText = lineNumDefaultProps.showText,
+  showRect = lineNumDefaultProps.showRect,
   align = lineNumDefaultProps.align,
 }: LineNumProps) {
   const numRef = useRef<SVGTextElement>(null);
@@ -85,6 +93,11 @@ function LineNum({
   const [textAnchor, setTextAnchor] = useState<"start" | "end">("start");
 
   const isChinese = /[\u4e00-\u9fa5]/.test(num);
+  // 数字为空 且（关闭文字 或 中英文都为空）→ 只保留色块，去掉与文字之间的间距
+  const numEmpty = !(num ?? "").trim();
+  const textEmptyBoth =
+    !(customChinese ?? "").trim() && !(customEnglish ?? "").trim();
+  const collapsed = numEmpty && (!showText || textEmptyBoth);
 
   useEffect(() => {
     let mounted = true;
@@ -96,30 +109,54 @@ function LineNum({
         const rectWidth = 15;
         const margin = 5;
         const textGap = 5; // 数字和文字之间的间隙
+        const GAP = 5;
 
-        const totalWidth =
-          rectWidth +
-          numBBox.width +
-          (showText ? margin + textBBox.width + textGap : margin);
+        let totalWidth: number;
 
-        if (align === "left") {
-          setRectX(0);
-          setNumX(rectWidth + 5);
-          setTextOffsetX(rectWidth + numBBox.width + margin + textGap); // 添加间隙
-          setTextAnchor("start");
-        } else if (align === "right") {
-          setRectX(totalWidth - rectWidth);
-          // 在数字和文字之间留一个小间隙
-          setNumX(
-            totalWidth -
-              rectWidth -
-              margin -
-              textBBox.width -
-              textGap -
-              numBBox.width
-          );
-          setTextOffsetX(totalWidth - rectWidth - margin - textBBox.width);
-          setTextAnchor("start");
+        if (collapsed) {
+          totalWidth = showRect ? rectWidth : 0;
+        } else if (!showRect) {
+          // 无色块：去掉色块及其两侧预留的间隙，按左右对齐把内容贴边排布
+          const contentW =
+            numBBox.width + (showText ? GAP + textBBox.width : 0);
+          if (align === "left") {
+            setRectX(0);
+            setNumX(0);
+            setTextOffsetX(showText ? numBBox.width + GAP : 0);
+            setTextAnchor("start");
+          } else {
+            // 右对齐（成都顺序：数字在左、文字在右）→ 文字贴右缘
+            setRectX(0);
+            setNumX(showText ? contentW - textBBox.width - GAP - numBBox.width : 0);
+            setTextOffsetX(showText ? contentW - textBBox.width : 0);
+            setTextAnchor("start");
+          }
+          totalWidth = contentW;
+        } else {
+          totalWidth =
+            rectWidth +
+            numBBox.width +
+            (showText ? margin + textBBox.width + textGap : margin);
+
+          if (align === "left") {
+            setRectX(0);
+            setNumX(rectWidth + 5);
+            setTextOffsetX(rectWidth + numBBox.width + margin + textGap); // 添加间隙
+            setTextAnchor("start");
+          } else if (align === "right") {
+            setRectX(totalWidth - rectWidth);
+            // 在数字和文字之间留一个小间隙
+            setNumX(
+              totalWidth -
+                rectWidth -
+                margin -
+                textBBox.width -
+                textGap -
+                numBBox.width
+            );
+            setTextOffsetX(totalWidth - rectWidth - margin - textBBox.width);
+            setTextAnchor("start");
+          }
         }
 
         setSvgWidth(totalWidth);
@@ -133,7 +170,7 @@ function LineNum({
     return () => {
       mounted = false;
     };
-  }, [num, showText, customChinese, customEnglish, align]);
+  }, [num, showText, showRect, customChinese, customEnglish, align, collapsed]);
 
   return (
     <div style={{ backgroundColor: colors.background }}>
@@ -160,7 +197,7 @@ function LineNum({
                   <text
                     x={0}
                     y={32}
-                    fontSize={20}
+                    fontSize={22}
                     textAnchor={textAnchor}
                     fill={colors.foreground}
                   >
@@ -178,13 +215,13 @@ function LineNum({
                 </g>
               )}
               {/* 色块 */}
-              <rect width={15} height={52} x={rectX} y={12} fill={lineColor} />
+              {showRect && <rect width={15} height={52} x={rectX} y={12} fill={lineColor} />}
             </>
           ) : (
             // 左对齐顺序：色块、数字、文字
             <>
               {/* 色块 */}
-              <rect width={15} height={52} x={rectX} y={12} fill={lineColor} />
+              {showRect && <rect width={15} height={52} x={rectX} y={12} fill={lineColor} />}
               {/* 数字 */}
               <text
                 ref={numRef}
@@ -202,7 +239,7 @@ function LineNum({
                   <text
                     x={0}
                     y={32}
-                    fontSize={20}
+                    fontSize={22}
                     textAnchor={textAnchor}
                     fill={colors.foreground}
                   >

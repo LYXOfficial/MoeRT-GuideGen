@@ -24,7 +24,7 @@ const theme: Theme = {
     defaultBorder: colors.border,
     colors,
   },
-  fontFamily: "Frutiger, Helvetica, sans-serif",
+  fontFamily: "Helvetica, sans-serif",
   components: [
     {
       displayName: "themes.chongqing.components.LineNum",

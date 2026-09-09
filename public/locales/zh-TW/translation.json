@@ -168,7 +168,8 @@
               "right": "右"
             },
             "lineColor": "線路顏色",
-            "showText": "是否顯示後面的文本"
+            "showText": "是否顯示後面的文本",
+            "showRect": "是否顯示色塊"
           }
         },
         "LineText": {
@@ -403,7 +404,8 @@
               "right": "右"
             },
             "lineColor": "線路顏色",
-            "showText": "是否顯示後面的文本"
+            "showText": "是否顯示後面的文本",
+            "showRect": "是否顯示色塊"
           }
         },
         "LineText": {

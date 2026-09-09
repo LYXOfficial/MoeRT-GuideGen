@@ -70,6 +70,8 @@ export default function Text({
 }: TextProps) {
   const textGroupRef = useRef<SVGGElement>(null);
   const [svgWidth, setSvgWidth] = useState(0);
+  // 供 JSX 内嵌闭包安全使用
+  const chineseText = chinese ?? textDefaultProps.chinese ?? "";
 
   useEffect(() => {
     let mounted = true;
@@ -91,6 +93,23 @@ export default function Text({
     };
   }, [chinese, english]);
 
+  // 汉字里的数字分段出来，单独放大 + dy 偏移；dy 会累积，
+  // 因此逐段维护偏移并给每段显式 dy，避免越排越歪。
+  const DIGIT_DY = 1; // 数字基线相对普通文字的偏移（与 LineText 一致）
+  const chineseSegs = (() => {
+    let offset = 0;
+    return chineseText
+      .split(/(\d+)/)
+      .filter(Boolean)
+      .map(seg => {
+        const isDigit = /^\d+$/.test(seg);
+        const desired = isDigit ? DIGIT_DY : 0;
+        const dy = desired - offset;
+        offset = desired;
+        return { seg, isDigit, dy };
+      });
+  })();
+
   // 对齐时的起始 x 坐标
   let groupX = 0;
   if (align === "center") groupX = svgWidth / 2;
@@ -111,8 +130,24 @@ export default function Text({
                   : "start"
             }
           >
-            <text x={0} y={32} fontSize={20} fill={foreground}>
-              {chinese}
+            <text x={0} y={32} fontSize={22} fill={foreground}>
+              {chineseSegs.map((seg, idx) =>
+                seg.isDigit ? (
+                  <tspan
+                    key={idx}
+                    dy={seg.dy}
+                    fontSize={30}
+                    fill={foreground}
+                    fontFamily="Frutiger, Helvetica, sans-serif"
+                  >
+                    {seg.seg}
+                  </tspan>
+                ) : (
+                  <tspan key={idx} dy={seg.dy} fill={foreground}>
+                    {seg.seg}
+                  </tspan>
+                )
+              )}
             </text>
             <text x={0} y={48} fontSize={14} fill={foreground}>
               {english}

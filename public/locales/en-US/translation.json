@@ -168,7 +168,8 @@
               "right": "Right"
             },
             "lineColor": "Line Color",
-            "showText": "Show Text Behind"
+            "showText": "Show Text Behind",
+            "showRect": "Show color block"
           }
         },
         "LineText": {
@@ -403,7 +404,8 @@
               "right": "Right"
             },
             "lineColor": "Line Color",
-            "showText": "Show Text Behind"
+            "showText": "Show Text Behind",
+            "showRect": "Show color block"
           }
         },
         "LineText": {

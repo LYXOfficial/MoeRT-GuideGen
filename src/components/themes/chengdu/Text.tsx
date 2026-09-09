@@ -111,7 +111,7 @@ export default function Text({
                   : "start"
             }
           >
-            <text x={0} y={32} fontSize={20} fill={foreground}>
+            <text x={0} y={32} fontSize={22} fill={foreground}>
               {chinese}
             </text>
             <text x={0} y={48} fontSize={14} fill={foreground}>

@@ -168,7 +168,8 @@
               "right": "右"
             },
             "lineColor": "线路颜色",
-            "showText": "是否显示后面的文本"
+            "showText": "是否显示后面的文本",
+            "showRect": "是否显示色块"
           }
         },
         "LineText": {
@@ -403,7 +404,8 @@
               "right": "右"
             },
             "lineColor": "线路颜色",
-            "showText": "是否显示后面的文本"
+            "showText": "是否显示后面的文本",
+            "showRect": "是否显示色块"
           }
         },
         "LineText": {

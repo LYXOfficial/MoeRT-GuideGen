@@ -64,6 +64,8 @@ function LineText({
   const [svgWidth, setSvgWidth] = useState(0);
   const rectWidth = 15;
   const margin = 5; // 矩形和文字的间距
+  // 中英文都为空 → 只保留色块，去掉色块与文字之间本应存在的间距
+  const textEmpty = !(chinese ?? "").trim() && !(english ?? "").trim();
 
   useEffect(() => {
     let mounted = true;
@@ -71,7 +73,8 @@ function LineText({
     const measure = () => {
       if (textGroupRef.current) {
         const bbox = textGroupRef.current.getBBox();
-        const totalWidth = rectWidth + margin + bbox.width;
+        const totalWidth =
+          rectWidth + (textEmpty ? 0 : margin) + bbox.width;
         setSvgWidth(totalWidth);
       }
     };
@@ -112,7 +115,7 @@ function LineText({
             transform={`translate(${textTranslateX}, 0)`}
             textAnchor={align === "right" ? "end" : "start"}
           >
-            <text x={0} y={32} fontSize={20} fill={colors.foreground}>
+            <text x={0} y={32} fontSize={22} fill={colors.foreground}>
               {chinese}
             </text>
             <text x={0} y={48} fontSize={12} fill={colors.foreground}>

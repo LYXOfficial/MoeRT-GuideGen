@@ -124,7 +124,7 @@ export default function StationName({
               ref={englishRef}
               x={englishX}
               y={42}
-              fontSize={20}
+              fontSize={22}
               fill={foreground}
               dominantBaseline="middle"
             >

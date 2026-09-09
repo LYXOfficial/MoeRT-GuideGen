@@ -28,7 +28,7 @@ const theme: Theme = {
     defaultBorder: colors.border,
     colors,
   },
-  fontFamily: "'Segoe UI', Helvetica, sans-serif",
+  fontFamily: "'Segoe UI', sans-serif",
   components: [
     {
       displayName: "themes.chengdu.components.LineNum",

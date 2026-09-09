@@ -168,7 +168,8 @@
               "right": "右"
             },
             "lineColor": "路線色",
-            "showText": "後ろのテキストを表示"
+            "showText": "後ろのテキストを表示",
+            "showRect": "色ブロックを表示"
           }
         },
         "LineText": {
@@ -403,7 +404,8 @@
               "right": "右"
             },
             "lineColor": "路線色",
-            "showText": "後ろのテキストを表示"
+            "showText": "後ろのテキストを表示",
+            "showRect": "色ブロックを表示"
           }
         },
         "LineText": {

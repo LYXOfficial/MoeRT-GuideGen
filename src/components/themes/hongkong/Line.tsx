@@ -106,7 +106,7 @@ export default function Line({
         <svg className="h-full" width={totalWidth} height={64}>
           {/* 隐藏的测量组 */}
           <g ref={measureGroupRef} visibility="hidden">
-            <text x={0} y={34} fontSize={20}>
+            <text x={0} y={34} fontSize={22}>
               {chinese}
             </text>
             <text x={0} y={48} fontSize={10}>
@@ -139,7 +139,7 @@ export default function Line({
               height={40}
               fill={lineColor}
             />
-            <text x={0} y={34} fontSize={20} fill={colors.foreground}>
+            <text x={0} y={34} fontSize={22} fill={colors.foreground}>
               {chinese}
             </text>
             <text x={0} y={48} fontSize={10} fill={colors.foreground}>

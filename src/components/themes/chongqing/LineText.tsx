@@ -64,6 +64,10 @@ function LineText({
   const [svgWidth, setSvgWidth] = useState(0);
   const rectWidth = 15;
   const margin = 5; // 矩形和文字的间距
+  // 供 JSX 内嵌闭包安全使用
+  const chineseText = chinese ?? lineTextDefaultProps.chinese ?? "";
+  // 中英文都为空 → 只保留色块，去掉色块与文字之间本应存在的间距
+  const textEmpty = !chineseText.trim() && !(english ?? "").trim();
 
   useEffect(() => {
     let mounted = true;
@@ -71,7 +75,8 @@ function LineText({
     const measure = () => {
       if (textGroupRef.current) {
         const bbox = textGroupRef.current.getBBox();
-        const totalWidth = rectWidth + margin + bbox.width;
+        const totalWidth =
+          rectWidth + (textEmpty ? 0 : margin) + bbox.width;
         setSvgWidth(totalWidth);
       }
     };
@@ -85,6 +90,24 @@ function LineText({
       mounted = false;
     };
   }, [chinese, english]);
+
+  // 汉字里的数字分段出来，单独放大（fontSize 32、字体 Frutiger）+ dy 偏移；
+  // SVG 的 dy 对后续 tspan 是累积的，所以逐段维护偏移、给每段显式 dy：
+  // 数字段落到 +DIGIT_DY，普通段回 0，避免“越来越歪”。
+  const DIGIT_DY = 1; // 数字基线相对普通文字的偏移
+  const chineseSegs = (() => {
+    let offset = 0;
+    return chineseText
+      .split(/(\d+)/)
+      .filter(Boolean)
+      .map(seg => {
+        const isDigit = /^\d+$/.test(seg);
+        const desired = isDigit ? DIGIT_DY : 0; // 该段想要落到的基线偏移
+        const dy = desired - offset; // 相对当前累积偏移的补偿量
+        offset = desired;
+        return { seg, isDigit, dy };
+      });
+  })();
 
   // 矩形位置
   const rectX = align === "left" ? 0 : svgWidth - rectWidth;
@@ -112,8 +135,24 @@ function LineText({
             transform={`translate(${textTranslateX}, 0)`}
             textAnchor={align === "right" ? "end" : "start"}
           >
-            <text x={0} y={32} fontSize={20} fill={colors.foreground}>
-              {chinese}
+            <text x={0} y={32} fontSize={22} fill={colors.foreground}>
+              {chineseSegs.map((seg, idx) =>
+                seg.isDigit ? (
+                  <tspan
+                    key={idx}
+                    dy={seg.dy}
+                    fontSize={30}
+                    fill={colors.foreground}
+                    fontFamily="Frutiger, Helvetica, sans-serif"
+                  >
+                    {seg.seg}
+                  </tspan>
+                ) : (
+                  <tspan key={idx} dy={seg.dy} fill={colors.foreground}>
+                    {seg.seg}
+                  </tspan>
+                )
+              )}
             </text>
             <text x={0} y={48} fontSize={12} fill={colors.foreground}>
               {english}

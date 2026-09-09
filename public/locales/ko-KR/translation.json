@@ -168,7 +168,8 @@
               "right": "오른쪽"
             },
             "lineColor": "노선 색상",
-            "showText": "뒤의 텍스트 표시"
+            "showText": "뒤의 텍스트 표시",
+            "showRect": "색 블록 표시"
           }
         },
         "LineText": {
@@ -403,7 +404,8 @@
               "right": "오른쪽"
             },
             "lineColor": "노선 색상",
-            "showText": "뒤의 텍스트 표시"
+            "showText": "뒤의 텍스트 표시",
+            "showRect": "색 블록 표시"
           }
         },
         "LineText": {
