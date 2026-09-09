@@ -96,7 +96,11 @@
               "up-left": "Up-Left",
               "up-right": "Up-Right",
               "down-left": "Down-Left",
-              "down-right": "Down-Right"
+              "down-right": "Down-Right",
+              "ahead-left": "Forward-left",
+              "ahead-right": "Forward-right",
+              "back-left": "Left-backward",
+              "back-right": "Right-backward"
             },
             "background": "Background Color",
             "foreground": "Foreground Color"
@@ -330,7 +334,11 @@
               "up-left": "Up-Left",
               "up-right": "Up-Right",
               "down-left": "Down-Left",
-              "down-right": "Down-Right"
+              "down-right": "Down-Right",
+              "ahead-left": "Forward-left",
+              "ahead-right": "Forward-right",
+              "back-left": "Left-backward",
+              "back-right": "Right-backward"
             },
             "background": "Background Color",
             "foreground": "Foreground Color"

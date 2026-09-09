@@ -96,7 +96,11 @@
               "up-left": "왼쪽 위",
               "up-right": "오른쪽 위",
               "down-left": "왼쪽 아래",
-              "down-right": "오른쪽 아래"
+              "down-right": "오른쪽 아래",
+              "ahead-left": "전방 좌측",
+              "ahead-right": "전방 우측",
+              "back-left": "좌측 후방",
+              "back-right": "우측 후방"
             },
             "background": "배경색",
             "foreground": "전경색"
@@ -330,7 +334,11 @@
               "up-left": "왼쪽 위",
               "up-right": "오른쪽 위",
               "down-left": "왼쪽 아래",
-              "down-right": "오른쪽 아래"
+              "down-right": "오른쪽 아래",
+              "ahead-left": "전방 좌측",
+              "ahead-right": "전방 우측",
+              "back-left": "좌측 후방",
+              "back-right": "우측 후방"
             },
             "background": "배경색",
             "foreground": "전경색"

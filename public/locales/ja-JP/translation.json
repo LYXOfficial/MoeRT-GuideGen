@@ -96,7 +96,11 @@
               "up-left": "左上",
               "up-right": "右上",
               "down-left": "左下",
-              "down-right": "右下"
+              "down-right": "右下",
+              "ahead-left": "前方左",
+              "ahead-right": "前方右",
+              "back-left": "左行後方",
+              "back-right": "右行後方"
             },
             "background": "背景色",
             "foreground": "前景色"
@@ -330,7 +334,11 @@
               "up-left": "左上",
               "up-right": "右上",
               "down-left": "左下",
-              "down-right": "右下"
+              "down-right": "右下",
+              "ahead-left": "前方左",
+              "ahead-right": "前方右",
+              "back-left": "左行後方",
+              "back-right": "右行後方"
             },
             "background": "背景色",
             "foreground": "前景色"

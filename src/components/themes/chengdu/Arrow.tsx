@@ -1,19 +1,13 @@
 import { Select } from "@douyinfe/semi-ui";
 import colors from "./define/colors";
-import ArrowIcon from "./icons/arrow";
+import ArrowIcon, { type ArrowDirection } from "./icons/arrow";
 import type { EditorConfig } from "../../../interfaces/editor";
 import CustomColorPicker from "../../CustomColorPicker";
 
+export type ArrowType = ArrowDirection;
+
 export interface ArrowProps {
-  type:
-    | "up"
-    | "down"
-    | "left"
-    | "right"
-    | "up-left"
-    | "up-right"
-    | "down-left"
-    | "down-right";
+  type: ArrowType;
   foreground?: string;
   background?: string;
 }
@@ -22,6 +16,22 @@ export const arrowDefaultProps: ArrowProps = {
   foreground: colors.foreground,
   background: colors.background,
 };
+
+// 平铺的全部方向（基础八向 + 前方向左/右、左/右行向后）
+const ARROW_TYPES: ArrowType[] = [
+  "up",
+  "down",
+  "left",
+  "right",
+  "up-left",
+  "up-right",
+  "down-left",
+  "down-right",
+  "ahead-left",
+  "ahead-right",
+  "back-left",
+  "back-right",
+];
 
 export const arrowEditorConfig = (
   t: (key: string) => string
@@ -32,30 +42,11 @@ export const arrowEditorConfig = (
       label: "themes.chengdu.components.Arrow.props.type.displayName",
       element: (
         <Select>
-          <Select.Option value="up">
-            {t("themes.chengdu.components.Arrow.props.type.up")}
-          </Select.Option>
-          <Select.Option value="down">
-            {t("themes.chengdu.components.Arrow.props.type.down")}
-          </Select.Option>
-          <Select.Option value="left">
-            {t("themes.chengdu.components.Arrow.props.type.left")}
-          </Select.Option>
-          <Select.Option value="right">
-            {t("themes.chengdu.components.Arrow.props.type.right")}
-          </Select.Option>
-          <Select.Option value="up-left">
-            {t("themes.chengdu.components.Arrow.props.type.up-left")}
-          </Select.Option>
-          <Select.Option value="up-right">
-            {t("themes.chengdu.components.Arrow.props.type.up-right")}
-          </Select.Option>
-          <Select.Option value="down-left">
-            {t("themes.chengdu.components.Arrow.props.type.down-left")}
-          </Select.Option>
-          <Select.Option value="down-right">
-            {t("themes.chengdu.components.Arrow.props.type.down-right")}
-          </Select.Option>
+          {ARROW_TYPES.map(v => (
+            <Select.Option key={v} value={v}>
+              {t(`themes.chengdu.components.Arrow.props.type.${v}`)}
+            </Select.Option>
+          ))}
         </Select>
       ),
     },
@@ -82,25 +73,7 @@ function Arrow({
       className="h-16 w-16 p-2.5"
       style={{ backgroundColor: background, color: foreground }}
     >
-      <ArrowIcon
-        rotation={
-          type === "up"
-            ? 0
-            : type === "down"
-              ? 180
-              : type === "left"
-                ? 270
-                : type === "right"
-                  ? 90
-                  : type === "up-left"
-                    ? 315
-                    : type === "up-right"
-                      ? 45
-                      : type === "down-left"
-                        ? 225
-                        : 135
-        }
-      />
+      <ArrowIcon type={type} />
     </div>
   );
 }
