@@ -195,15 +195,19 @@ export const exitNumEditorConfig = (t: (key: string) => string): EditorConfig =>
 };
 
 /**
- * 整体缩放：整块（盒高 / 字号 / 间距 / 留白）统一 ×0.9。
+ * 整体缩放：整块（牌面高 / 字号 / 间距 / 留白）统一 ×0.9。
  * 系数直接乘进每一个尺寸，而不是给盒子挂 CSS transform ——
  * transform 不改变布局盒大小，缩完左右会留下空隙（宽度还是原来的）。
+ * 注意：背景要铺满整行 64px（只把内容缩到 0.9 居中），
+ * 否则和相邻组件叠在一起时，只有中间 57.6px 盖住邻居，上下各露出 3.2px 的台阶。
  */
 const SCALE = 0.9;
-/** 行高 64px 上的牌面 = 1.5a（官方图纸里「出口编号」牌就是 1.5a 高，与号线牌同模数） */
-const ROW_H = 64 * SCALE;
+/** 行高：背景盒高度，与相邻组件对齐 */
+const ROW_H = 64;
+/** 牌面（内容）高度 = 1.5a（官方图纸里「出口编号」牌就是 1.5a 高，与号线牌同模数） */
+const PLATE_H = ROW_H * SCALE;
 /** a（已按 SCALE 缩放） */
-const MODULE = ROW_H / 1.5;
+const MODULE = PLATE_H / 1.5;
 /** 左右各留 5px（与其它组件一致） */
 const PAD_X = 5 * SCALE;
 /**
@@ -319,7 +323,17 @@ function ExitNum({
       background2={background2}
       style={{ height: ROW_H, width }}
     >
-      <svg width={width} height={ROW_H} data-fonts-ready={fontsReady}>
+      {/* 背景铺满整行，牌面内容按 0.9 缩好后垂直居中 */}
+      <div
+        style={{
+          height: ROW_H,
+          width,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "flex-start",
+        }}
+      >
+        <svg width={width} height={PLATE_H} data-fonts-ready={fontsReady}>
         {codeParts.map((part, index) => (
           <text
             key={`code-${index}`}
@@ -356,7 +370,8 @@ function ExitNum({
             {enText}
           </text>
         ) : null}
-      </svg>
+        </svg>
+      </div>
     </MultiRowBackground>
   );
 }
