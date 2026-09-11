@@ -1701,9 +1701,16 @@ export default function Editor({
           const px = mousePositionRef.current.x;
           const frac = rect?.width ? (px - rect.left) / rect.width : 0.5;
           if (frac < 1 / 6 || frac > 5 / 6) {
-            // 左/右端：去掉所有“容器内部区域”，让落点回到容器这个行级排序项，
-            // 从而在容器前/后插入到该行
-            pool = pool.filter(c => !isTwoRowArea(dataOf(c)));
+            // 左/右端：去掉容器「内部」区域（内部行 + 内部条目），让落点回到
+            // 容器这个行级排序项，从而在容器前/后插入到该行。
+            // 注意：过滤后可能一个都不剩（指针下只有容器内部区域），这时必须退回 base，
+            // 否则下面的 pool[0].id 会读到 undefined，整个画布直接白屏。
+            const innerArea = (data: Record<string, any>) =>
+              data.type === "two-row-container-row" || data.context === "two-row";
+            const withoutInnerAreas = pool.filter(
+              c => !innerArea(dataOf(c))
+            );
+            pool = withoutInnerAreas.length > 0 ? withoutInnerAreas : base;
           } else {
             return twoRowHits;
           }
@@ -1717,6 +1724,7 @@ export default function Editor({
 
         // 只命中行容器（行首/行尾的空白处）时，退回到该行内距离最近的元素，
         // 否则 overIndex 为 -1，整行都不会有动画
+        if (pool.length === 0) return base;
         const rowId = String(pool[0].id);
         if (/^row\d+$/.test(rowId)) {
           const rowItems = args.droppableContainers.filter(
