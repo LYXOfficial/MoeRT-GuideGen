@@ -28,7 +28,13 @@
     "emptyRowHint": "この行にコンポーネントをドラッグ",
     "showItemFrame": "コンポーネントの点線枠を表示",
     "width": "幅",
-    "showDividers": "区切り線を表示"
+    "showDividers": "区切り線を表示",
+    "removeRow": {
+      "title": "この行を削除",
+      "confirm": "この行を削除しますか？行内のコンポーネントは消去されます。",
+      "ok": "削除",
+      "cancel": "キャンセル"
+    }
   },
   "exportDialog": {
     "title": "標識をエクスポート",

@@ -4,7 +4,7 @@ import {
   SortableContext,
   horizontalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { InputNumber, Button, Typography, Switch } from "@douyinfe/semi-ui";
+import { InputNumber, Button, Typography, Switch, Modal } from "@douyinfe/semi-ui";
 import React, {
   useState,
   useImperativeHandle,
@@ -799,14 +799,30 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
 
     // 删除某一行
     const handleRemoveRow = (idx: number) => {
-      setRows(prev =>
-        prev.length > 1 ? prev.filter((_, i) => i !== idx) : prev
-      );
-      // 触发配置变化通知（包含撤销历史保存）
-      if (onConfigChange && !isRestoring) {
-        // 添加/删除行操作立即保存状态
-        onConfigChange(true);
+      const removeRow = () => {
+        setRows(prev =>
+          prev.length > 1 ? prev.filter((_, i) => i !== idx) : prev
+        );
+        // 触发配置变化通知（包含撤销历史保存）
+        if (onConfigChange && !isRestoring) {
+          // 添加/删除行操作立即保存状态
+          onConfigChange(true);
+        }
+      };
+
+      // 空行直接删；行里还有组件时先确认，避免手滑把一整行内容清掉
+      if ((rows[idx] ?? []).length === 0) {
+        removeRow();
+        return;
       }
+      Modal.confirm({
+        title: t("board.removeRow.title"),
+        content: t("board.removeRow.confirm"),
+        okText: t("board.removeRow.ok"),
+        cancelText: t("board.removeRow.cancel"),
+        okButtonProps: { type: "danger" },
+        onOk: removeRow,
+      });
     };
 
     return (
@@ -904,7 +920,8 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
                     marginRight: -48,
                   }}
                 >
-                  {idx > 0 && (
+                  {/* 只要不是只剩一行，每行（含第一行）都能删 */}
+                  {rows.length > 1 && (
                     <Button
                       type="danger"
                       size="small"

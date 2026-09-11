@@ -28,7 +28,13 @@
     "emptyRowHint": "이 행에 컴포넌트를 드래그",
     "showItemFrame": "컴포넌트 점선 테두리 표시",
     "width": "너비",
-    "showDividers": "구분선 표시"
+    "showDividers": "구분선 표시",
+    "removeRow": {
+      "title": "이 행 삭제",
+      "confirm": "이 행을 삭제할까요? 행 안의 구성 요소가 지워집니다.",
+      "ok": "삭제",
+      "cancel": "취소"
+    }
   },
   "exportDialog": {
     "title": "표지판 내보내기",

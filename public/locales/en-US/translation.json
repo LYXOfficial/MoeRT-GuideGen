@@ -28,7 +28,13 @@
     "emptyRowHint": "Drag components to this row",
     "showItemFrame": "Show component outlines",
     "width": "Width",
-    "showDividers": "Show dividers"
+    "showDividers": "Show dividers",
+    "removeRow": {
+      "title": "Delete this row",
+      "confirm": "Delete this row? The components in it will be removed.",
+      "ok": "Delete",
+      "cancel": "Cancel"
+    }
   },
   "exportDialog": {
     "title": "Export Sign",

@@ -28,7 +28,13 @@
     "emptyRowHint": "拖拽元件到此行",
     "showItemFrame": "元件虛線框",
     "width": "寬度",
-    "showDividers": "顯示分隔線"
+    "showDividers": "顯示分隔線",
+    "removeRow": {
+      "title": "刪除此行",
+      "confirm": "真的要刪除此行嗎？行內的組件將被清空。",
+      "ok": "刪除",
+      "cancel": "取消"
+    }
   },
   "exportDialog": {
     "title": "匯出指示牌",
