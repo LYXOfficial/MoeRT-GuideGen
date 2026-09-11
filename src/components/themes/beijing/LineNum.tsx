@@ -5,6 +5,7 @@ import {
   fontEn,
   fontZh,
   measureText,
+  normalizeSvgLine,
   useFontsReady,
   WEIGHT_VALUE,
 } from "./define/text";
@@ -209,8 +210,9 @@ function LineNum({
     background && background.length > 0 ? background : colors.background;
 
   const numText = (lineId ?? "").trim();
-  const zhText = textZh
-  const enText = textEn;
+  // 首尾空白去掉、制表换行当空格；中间的空格保留（渲染侧配 xmlSpace="preserve"）
+  const zhText = normalizeSvgLine(textZh);
+  const enText = normalizeSvgLine(textEn);
 
   const numFontSize = 42;
   const zhFontSize = 18;
@@ -355,6 +357,7 @@ function LineNum({
             fontFamily={fontFamilyEn}
             letterSpacing={zhSpacing}
             fill={fg}
+            xmlSpace="preserve"
           >
             {zhText}
           </text>
@@ -370,6 +373,7 @@ function LineNum({
             textAnchor={hasNum ? "end" : "middle"}
             fill={fg}
             fontFamily="Arial, Helvetica, sans-serif"
+            xmlSpace="preserve"
           >
             {enText}
           </text>
