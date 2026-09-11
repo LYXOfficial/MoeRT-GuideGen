@@ -303,12 +303,15 @@ function LineNum({
   const textX = hasNum
     ? numX + numSlotWidth + gap + textLeftNudge
     : textCenterX;
-  // 英文右对齐基准：「号线」右缘（英文比「号线」窄时，两者右缘齐平；
-  // 英文更宽时保持左对齐，避免右对齐后向左撞到线路号）
-  const zhRight = textX + zhRendered;
-  const enRight = Math.max(zhRight, textX + enRendered);
-  // text-anchor="end" 的锚点含末尾字距，补一个字距（px），再左移 1px（视觉协调）
-  const enAnchorX = hasNum ? enRight + enSpacing - 1 : textCenterX;
+  // 文字栏右缘 = 中文/英文里更宽的那个的右缘（色块右内边距就贴在它后面）
+  const textRight = textX + Math.max(zhRendered, enRendered);
+  // 有数字时：中文、英文都右对齐到这条右缘 ——
+  // 英文比「号线」长的时候，中文跟着往右走到英文右缘，而不是待在原地；
+  // 没有数字时两行整体在色块内居中（锚点 = 色块中心），不受影响。
+  // text-anchor="end" 的锚点含末尾字距，各自补一个自己的字距（px）；
+  // 英文再左移 1px 作视觉微调。
+  const zhAnchorX = hasNum ? textRight + zhSpacing : textCenterX;
+  const enAnchorX = hasNum ? textRight + enSpacing - 1 : textCenterX;
 
   return (
     <MultiRowBackground
@@ -349,8 +352,8 @@ function LineNum({
         ) : null}
         {zhText ? (
           <text
-            x={textX}
-            textAnchor={hasNum ? "start" : "middle"}
+            x={zhAnchorX}
+            textAnchor={hasNum ? "end" : "middle"}
             y={zhBaseline}
             fontSize={zhFontSize}
             fontWeight={WEIGHT_VALUE["bold"]}
