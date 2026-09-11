@@ -760,6 +760,325 @@
         "eastkowloon": "동구룡선",
         "southislandwest": "남항도선 (서구간)"
       }
+    },
+    "beijing": {
+      "displayName": "베이징(신형)",
+      "colors": {
+        "background": "바탕색",
+        "foreground": "전경색",
+        "textblue": "텍스트 블루",
+        "white": "흰색",
+        "border": "테두리",
+        "specline": "구분선(노랑)",
+        "divider": "구분선(흰색)",
+        "facility": "시설 연블루",
+        "facilityfemale": "여성 화장실 핑크",
+        "exit": "출구 그린",
+        "prohibit": "금지 레드",
+        "aedsubstrate": "AED 바탕 오렌지",
+        "line1": "1호선 / 바퉁선",
+        "line2": "2호선",
+        "line3": "3호선",
+        "line4": "4호선 / 다싱선",
+        "line5": "5호선",
+        "line6": "6호선",
+        "line7": "7호선",
+        "line8": "8호선",
+        "line9": "9호선",
+        "line10": "10호선",
+        "line11": "11호선",
+        "line12": "12호선",
+        "line13": "13호선",
+        "line14": "14호선",
+        "line15": "15호선",
+        "line16": "16호선",
+        "line17": "17호선",
+        "line18": "18호선",
+        "line19": "19호선",
+        "line22": "22호선",
+        "lineyizhuang": "이좡선",
+        "linefangshan": "팡산선 / 옌팡선",
+        "lines1": "S1선",
+        "linechangping": "창핑선",
+        "line28": "28호선",
+        "linexijiao": "시자오선 / 이좡 T1선",
+        "linecapitalairport": "서우두공항선",
+        "linedaxingairport": "다싱공항선",
+        "linetram": "트램"
+      },
+      "components": {
+        "Text": {
+          "displayName": "텍스트",
+          "props": {
+            "chinese": "중국어",
+            "english": "영어",
+            "weight": {
+              "normal": "표준",
+              "medium": "약간 굵게",
+              "bold": "굵게",
+              "displayName": "굵기"
+            },
+            "letterSpacing": "자간",
+            "fontSizeZh": "중국어 글자 크기",
+            "fontSizeEn": "영어 글자 크기",
+            "lineGap": "중영어 간격",
+            "align": {
+              "left": "왼쪽",
+              "center": "가운데",
+              "right": "오른쪽",
+              "displayName": "정렬"
+            },
+            "foreground": "전경색",
+            "background": "배경색",
+            "background2": "배경색(2행)"
+          }
+        },
+        "SpecLine": {
+          "displayName": "구분선",
+          "props": {
+            "width": "선 두께",
+            "foreground": "전경색",
+            "background": "배경색",
+            "background2": "배경색(2행)"
+          }
+        },
+        "Spacing": {
+          "displayName": "간격",
+          "props": {
+            "background": "배경색",
+            "background2": "배경색(2행)"
+          }
+        },
+        "Blank": {
+          "displayName": "빈 공간",
+          "props": {
+            "width": "너비",
+            "background": "배경색",
+            "background2": "배경색(2행)"
+          }
+        },
+        "LineNum": {
+          "displayName": "노선 번호 표지",
+          "props": {
+            "lineId": "노선 번호",
+            "colorKey": {
+              "displayName": "노선 색상"
+            },
+            "textZh": "중국어 텍스트(예: 号线)",
+            "textEn": "영어 텍스트(예: Line 1)",
+            "size": {
+              "displayName": "크기"
+            },
+            "extendLeft": "왼쪽 색상 블록 연장",
+            "extendRight": "오른쪽 색상 블록 연장",
+            "fontWeightZh": {
+              "displayName": "중국어 굵기"
+            },
+            "fontWeightEn": {
+              "displayName": "영어 굵기"
+            },
+            "foreground": "전경색",
+            "background": "배경색",
+            "background2": "배경색(두 번째 줄)"
+          }
+        },
+        "Arrow": {
+          "displayName": "화살표",
+          "props": {
+            "direction": {
+              "displayName": "방향"
+            },
+            "showText": "텍스트 표시",
+            "textZh": "중국어 텍스트",
+            "textEn": "영어 텍스트",
+            "align": {
+              "displayName": "정렬"
+            },
+            "foreground": "전경색",
+            "background": "배경색",
+            "background2": "배경색(두 번째 줄)"
+          }
+        },
+        "TrainDirection": {
+          "displayName": "승차 방향",
+          "props": {
+            "prefixZh": "중국어 접두어",
+            "prefixEn": "영어 접두어",
+            "destinationZh": "종착역(중국어)",
+            "destinationEn": "종착역(영어)",
+            "align": {
+              "displayName": "정렬"
+            },
+            "foreground": "전경색",
+            "background": "배경색",
+            "background2": "배경색(두 번째 줄)"
+          }
+        },
+        "LoopNextStation": {
+          "displayName": "순환선 방향 텍스트",
+          "props": {
+            "nextZh": "\"下一站\" 중국어",
+            "nextEn": "\"下一站\" 영어",
+            "stationZh": "역명(중국어)",
+            "stationEn": "역명(영어)",
+            "align": {
+              "displayName": "정렬"
+            },
+            "foreground": "전경색",
+            "background": "배경색",
+            "background2": "배경색(두 번째 줄)"
+          }
+        },
+        "DualText": {
+          "displayName": "두 줄 텍스트",
+          "props": {
+            "line1chinese": "1행 중국어",
+            "line1english": "1행 영어",
+            "line2chinese": "2행 중국어",
+            "line2english": "2행 영어",
+            "align": {
+              "displayName": "정렬"
+            },
+            "weight": {
+              "displayName": "굵기"
+            },
+            "letterSpacing": "자간",
+            "foreground": "전경색",
+            "background": "배경색",
+            "background2": "배경색(두 번째 줄)"
+          }
+        },
+        "ExitNum": {
+          "displayName": "출입구 번호",
+          "props": {
+            "exits": "출입구 번호",
+            "exitLetter": "영문 기호",
+            "exitNumber": "추가 숫자",
+            "directions": {
+              "displayName": "방위"
+            },
+            "textZh": "중국어 텍스트",
+            "textEn": "영어 텍스트",
+            "foreground": "전경색",
+            "background": "배경색",
+            "background2": "배경색(두 번째 줄)"
+          }
+        },
+        "Icon": {
+          "displayName": "아이콘",
+          "props": {
+            "icon": {
+              "displayName": "아이콘",
+              "escalator_left": "왼쪽 에스컬레이터",
+              "stairs_left": "왼쪽 계단",
+              "restroom": "화장실",
+              "restroom_accessible": "배리어프리 화장실",
+              "elevator": "엘리베이터",
+              "elevator_accessible": "배리어프리 엘리베이터",
+              "accessibility": "배리어프리",
+              "nursing_room": "수유실",
+              "aed": "AED",
+              "restroom_third": "제3 화장실",
+              "restroom_men": "남자 화장실",
+              "restroom_women": "여자 화장실",
+              "guide_dog": "안내견 환영",
+              "no_entry_dark": "진입 금지",
+              "no_entry_light": "진입 금지(밝은 바탕)",
+              "escalator_right": "오른쪽 에스컬레이터",
+              "stairs_right": "오른쪽 계단",
+              "ticket_vending": "자동 발매기",
+              "ticket_service": "발매/정산",
+              "inquiry": "안내",
+              "customer_service": "고객 서비스 센터",
+              "police": "경무실",
+              "help_button": "도움 요청 버튼",
+              "security_check": "승객 보안검색",
+              "luggage_check": "물품 보안검색",
+              "ramp": "경사로",
+              "lifting_platform": "리프트",
+              "accessibility_white": "배리어프리(흰색)",
+              "elderly": "노약자",
+              "stroller": "유모차",
+              "pregnant": "임산부",
+              "luggage": "큰 짐",
+              "brush_beijing": "붓 베이징",
+              "city_gate": "성문 실루엣",
+              "metro_a": "베이징 지하철 A",
+              "metro_b": "베이징 지하철 B",
+              "prohibited": "금지"
+            },
+            "rotation": {
+              "displayName": "회전"
+            },
+            "flipH": "좌우 반전",
+            "flipV": "상하 반전",
+            "foreground": "전경색(흰색/기타 그룹)",
+            "background": "배경색",
+            "background2": "배경색(두 번째 줄)"
+          }
+        },
+        "ExitIcon": {
+          "displayName": "출구 아이콘",
+          "props": {
+            "variant": {
+              "displayName": "형태"
+            },
+            "padding": {
+              "displayName": "여백"
+            },
+            "background": "배경색",
+            "background2": "배경색(두 번째 줄)"
+          }
+        }
+      },
+      "common": {
+        "weight": {
+          "normal": "표준",
+          "medium": "약간 굵게",
+          "bold": "굵게"
+        },
+        "size": {
+          "default": "기본",
+          "small": "작은 크기(넓은 간격)"
+        },
+        "direction": {
+          "left": "좌",
+          "right": "우",
+          "up": "상",
+          "down": "하",
+          "up-left": "좌상",
+          "up-right": "우상",
+          "down-left": "좌하",
+          "down-right": "우하",
+          "uturn-left": "좌회전 유턴",
+          "uturn-right": "우회전 유턴",
+          "back-left": "좌후방",
+          "back-right": "우후방"
+        },
+        "align": {
+          "left": "왼쪽 정렬",
+          "center": "가운데",
+          "right": "오른쪽 정렬"
+        },
+        "direction4": {
+          "east": "동",
+          "west": "서",
+          "south": "남",
+          "north": "북"
+        },
+        "padding": {
+          "none": "여백 없음",
+          "inset": "여백 있음"
+        },
+        "exitVariant": {
+          "exitA": "출구 A",
+          "exitB": "출구 B",
+          "exitC": "출구 C",
+          "exitLongA": "긴 출구 A",
+          "exitLongB": "긴 출구 B",
+          "emergency": "비상구"
+        }
+      }
     }
   }
 }

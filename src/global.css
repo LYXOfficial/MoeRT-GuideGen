@@ -9,7 +9,10 @@ html {
   overscroll-behavior: none;
 }
 body {
+  /* 移动端地址栏收放会让 100vh 变来变去、整页跟着跳；
+     dvh 跟随实际可视高度，收放时布局不再位移（不支持的浏览器退回 100vh） */
   height: 100vh;
+  height: 100dvh;
   width: 100%;
   overscroll-behavior: none;
   -webkit-tap-highlight-color: transparent;
@@ -17,6 +20,11 @@ body {
 #root {
   height: 100%;
   width: 100%;
+}
+/* 同上：外壳高度用 dvh，别用 100vh（Tailwind 的 h-screen） */
+.h-screen {
+  height: 100vh;
+  height: 100dvh;
 }
 
 /* 触屏下避免编辑器画布/按钮的交互被浏览器手势打断 */
@@ -112,6 +120,19 @@ body {
   .guide-item-frame:hover > .guide-item-dashed-frame {
     opacity: 1;
   }
+}
+
+/* 拖拽中的组件永远在最上层（否则上面那条 :hover !important 会把它压回 40） */
+.guide-item-frame.is-dragging {
+  z-index: 9999 !important;
+}
+
+/* 小到点不中的组件（1~3px 的分割线等，热区见 DraggableItem 的 hitPad）：
+   恒定压在邻居的 hover / 选中态之上（50 > 40），那圈透明热区才拿得到指针。
+   否则邻居的 -1px 挤压 + 置顶会把这几像素的线整个盖住，根本点不中。 */
+.guide-item-frame.guide-item-hit-expand,
+.guide-item-frame.guide-item-hit-expand:hover {
+  z-index: 50 !important;
 }
 
 .font-sans,

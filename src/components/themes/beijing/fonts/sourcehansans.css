@@ -1,0 +1,7 @@
+/*
+ * 北京新版字体：思源黑体（Source Han Sans / Noto Sans SC）——按要求引用云端字体。
+ * 使用 fonts.loli.net（Google Fonts 镜像，与参考站 vitool 一致），可按浏览器 UA 下发
+ * woff2 + unicode-range 子集；400/500/700 三个字重对应标准要求的 Normal/Medium/Bold。
+ * 拉丁字母与数字仍使用系统 Arial（标准 §1.1.4.3）。
+ */
+@import url("https://fonts.loli.net/css2?family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap");

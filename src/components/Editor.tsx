@@ -29,12 +29,14 @@ import {
   useSensor,
   useSensors,
   PointerSensor,
+  TouchSensor,
 } from "@dnd-kit/core";
 import themes from "./themes/themereg";
 import Header from "./Header";
 import { useTranslation } from "react-i18next";
 import { useUndoRedo } from "../hooks/useUndoRedo";
 import { useMediaQuery, useIsCompact } from "../hooks/useMediaQuery";
+import { getVisibleClientRect } from "../utils/visibleRect";
 
 interface EditorProps {
   guideHeight?: number;
@@ -1330,12 +1332,20 @@ export default function Editor({
     }
   };
 
-  // 拖拽传感器：统一用 PointerSensor + 距离激活。
+  // 拖拽传感器：PointerSensor（移动激活）+ TouchSensor（触屏长按激活）。
   // ① 监听挂在 document 上，跨行移动时节点被实时搬运/重挂载也不会断拖；
-  // ② 距离激活（不用长按延时），鼠标/触屏都是「按下去移动即拖起」，
-  //    轻点不动则不会误触发拖拽，点击编辑照常可用。
+  // ② 鼠标/板内组件仍是「按下去移动 8px 即拖起」，轻点不动则不会误触发，点击编辑照常；
+  // ③ 触屏多一条长按通道：组件列表/抽屉是可滚动的（touch-action: pan-y），
+  //    竖着拖会被浏览器判成滚动并丢掉 pointer/touch 事件，表现为「必须先横着拖一下、
+  //    再往上拖」才能拖出来。按住一小会儿激活后，TouchSensor 会 preventDefault 掉滚动，
+  //    所以竖着直接往上拖也进得去（长按之前列表仍可正常滚动）。
+  //    延时/容差取 250ms / 8px（dnd-kit 官方推荐值）：短按仍然是点按（正常弹编辑菜单），
+  //    按住不动 250ms 才转成拖拽，免得手快时列表先滚起来、看起来像整列被拖走。
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(TouchSensor, {
+      activationConstraint: { delay: 250, tolerance: 8 },
+    })
   );
 
   // ===== 移动端画布「适配 + 手势」 =====
@@ -1431,6 +1441,10 @@ export default function Editor({
   const handleTouchStart = useCallback(
     (e: React.TouchEvent) => {
       if (!isCoarsePointer || isEditingOpen) return;
+      // 正在拖组件（含从组件列表拖入）时，落在画布上的手指一律不算画布手势：
+      // 否则拖拽过程中另一根手指（或手掌）贴上来就会触发画布平移/双指缩放，
+      // 表现为「拖组件时整个网页/组件列表跟着缩放或位移」。
+      if (activeDrag) return;
       const t = e.touches;
       if (t.length === 1) {
         // 落在画板/组件上时交给 dnd-kit，只在空白处做画布平移
@@ -1457,12 +1471,14 @@ export default function Editor({
         };
       }
     },
-    [isCoarsePointer, isEditingOpen, pan, zoom]
+    [isCoarsePointer, isEditingOpen, pan, zoom, activeDrag]
   );
 
   const handleTouchMove = useCallback(
     (e: React.TouchEvent) => {
       if (!isCoarsePointer || isEditingOpen) return;
+      // 拖拽中不做画布手势（见 handleTouchStart）
+      if (activeDrag) return;
       const s = touchStateRef.current;
       const t = e.touches;
       if (s.mode === "pan" && t.length === 1) {
@@ -1478,12 +1494,34 @@ export default function Editor({
         }
       }
     },
-    [isCoarsePointer, isEditingOpen]
+    [isCoarsePointer, isEditingOpen, activeDrag]
   );
 
   const handleTouchEnd = useCallback(() => {
     touchStateRef.current.mode = "none";
   }, []);
+
+  // 一开始拖组件，就掐断可能正在进行中的画布手势，并把整页的原生手势
+  // （滚动 / 双指缩放）关掉，免得拖拽过程中页面和组件列表跟着动
+  useEffect(() => {
+    if (!activeDrag) return;
+    touchStateRef.current.mode = "none";
+    const previousTouchAction = document.body.style.touchAction;
+    document.body.style.touchAction = "none";
+    // 兜底：拖拽期间直接吃掉所有 touchmove 的默认行为（滚动 / 双指缩放），
+    // 底层可滚动区域（组件抽屉、组件列表）就不会跟着位移；
+    // 只 preventDefault，不影响 dnd-kit 读取坐标。
+    const blockTouchMove = (event: TouchEvent) => {
+      if (event.cancelable) event.preventDefault();
+    };
+    document.addEventListener("touchmove", blockTouchMove, {
+      passive: false,
+    });
+    return () => {
+      document.body.style.touchAction = previousTouchAction;
+      document.removeEventListener("touchmove", blockTouchMove);
+    };
+  }, [activeDrag]);
 
   // 组件抽屉显隐（带滑出动画：关→延迟卸载）
   const [paletteRendered, setPaletteRendered] = useState(false);
@@ -1556,7 +1594,37 @@ export default function Editor({
       measuring={{
         droppable: {
           strategy: MeasuringStrategy.Always,
-          measure: node => getClientRect(node, { ignoreTransform: true }),
+          measure: node => {
+            // 组件栏（删除区）只认屏幕上露出来的那块：
+            // 列表本身可滚动、移动端还藏在抽屉里，整块矩形会比看到的大很多，
+            // 拖到画布外、并没真的落到列表上也会被判成删除。
+            if (
+              node instanceof HTMLElement &&
+              node.dataset.trashRoot === "true"
+            ) {
+              const visible = getVisibleClientRect(node);
+              if (visible.width > 0 && visible.height > 0) {
+                return {
+                  top: visible.top,
+                  left: visible.left,
+                  width: visible.width,
+                  height: visible.height,
+                  right: visible.left + visible.width,
+                  bottom: visible.top + visible.height,
+                };
+              }
+              // 完全不在屏幕上（抽屉关着/滚出视口）：挪到视口外，等于不可命中
+              return {
+                top: -9999,
+                left: -9999,
+                width: 0,
+                height: 0,
+                right: -9999,
+                bottom: -9999,
+              };
+            }
+            return getClientRect(node, { ignoreTransform: true });
+          },
         },
       }}
       collisionDetection={args => {

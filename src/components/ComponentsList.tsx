@@ -2,8 +2,9 @@ import { useTranslation } from "react-i18next";
 import { Card, Typography, Select, Modal } from "@douyinfe/semi-ui";
 import themes from "./themes/themereg";
 import { useDraggable, useDroppable, useDndContext } from "@dnd-kit/core";
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { GuideItem } from "../interfaces/guide";
+import { getVisibleClientRect } from "../utils/visibleRect";
 
 interface ComponentsListProps {
   currentTheme: number;
@@ -47,7 +48,8 @@ const DraggableComponentItem: React.FC<ComponentItemProps> = ({
 
   // 跟随指针的是 DragOverlay，卡片本身留在原地当占位，
   // 否则卡片会被拖出侧栏，撑出横向滚动条。
-  // 触屏上用「移动激活」而非长按，且不设 touch-action:none，列表才能上下滚动
+  // touch-action: pan-y 让列表能上下滚动；触屏拖拽因此走 TouchSensor 的长按通道
+  // （见 Editor 的 sensors，150ms），按住后竖直方向也能直接拖出来。
   return (
     <div
       ref={setNodeRef}
@@ -108,6 +110,53 @@ export default function ComponentsList({
   const canDelete = Boolean(active?.data?.current?.boardItem);
   const showDeleteHint = isOver && canDelete;
 
+  // 遮罩只盖住列表在屏幕上露出来的那块（列表可滚动、移动端还在抽屉里，
+  // 整块 inset-0 会盖到屏幕外，看着像铺满了整个列表）。
+  // 同一块矩形也是 Editor 里删除区的命中范围（靠 data-trash-root 识别）。
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const attachRootRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      rootRef.current = node;
+      setNodeRef(node);
+    },
+    [setNodeRef]
+  );
+  const [hintRect, setHintRect] = useState<{
+    top: number;
+    left: number;
+    width: number;
+    height: number;
+  } | null>(null);
+  useEffect(() => {
+    if (!showDeleteHint) {
+      setHintRect(null);
+      return;
+    }
+    const update = () => {
+      const el = rootRef.current;
+      if (!el) return;
+      const visible = getVisibleClientRect(el);
+      const box = el.getBoundingClientRect();
+      setHintRect({
+        top: Math.round(visible.top - box.top),
+        left: Math.round(visible.left - box.left),
+        width: Math.round(visible.width),
+        height: Math.round(visible.height),
+      });
+    };
+    update();
+    window.addEventListener("resize", update);
+    // 捕获阶段才能收到内层滚动容器的 scroll
+    window.addEventListener("scroll", update, true);
+    return () => {
+      window.removeEventListener("resize", update);
+      window.removeEventListener("scroll", update, true);
+    };
+  }, [showDeleteHint]);
+
+  // 等量好可见矩形再显示，避免第一帧用 inset:0 闪一下整块遮罩
+  const hintVisible = showDeleteHint && hintRect != null;
+
   // 处理主题选择 - 添加防抖逻辑
   const handleThemeSelect = (themeIndex: number) => {
     if (themeIndex !== currentTheme) {
@@ -124,15 +173,26 @@ export default function ComponentsList({
 
   return (
     <div
-      ref={setNodeRef}
+      ref={attachRootRef}
+      data-trash-root="true"
       className={`${
         fullWidth ? "w-full border-t-0" : "w-75 border-r border-gray-200"
       } h-full relative overflow-hidden`}
     >
       <div
-        className={`absolute inset-0 z-20 box-border flex items-center justify-center border-2 border-dashed border-[#eb5050] bg-black/30 pointer-events-none transition-opacity duration-300 ${
-          showDeleteHint ? "opacity-100" : "opacity-0"
+        className={`absolute z-20 box-border flex items-center justify-center border-2 border-dashed border-[#eb5050] bg-black/30 pointer-events-none transition-opacity duration-300 ${
+          showDeleteHint && hintVisible ? "opacity-100" : "opacity-0"
         }`}
+        style={
+          hintRect
+            ? {
+                top: hintRect.top,
+                left: hintRect.left,
+                width: hintRect.width,
+                height: hintRect.height,
+              }
+            : { inset: 0 }
+        }
       >
         <span className="font-sans select-none px-4 text-center text-base font-semibold text-white">
           {t("componentsList.dropToDelete")}

@@ -65,12 +65,15 @@ const CustomColorPicker: React.FC<CustomColorPickerProps> = ({
       >
         {Object.entries(colors).map(([key, colorValue]) => (
           <Select.Option key={key} value={key}>
-            <div className="flex items-center gap-2">
+            <div className="flex min-w-0 items-center gap-2">
+              {/* shrink-0：颜色名较长时色块不能被压扁 */}
               <span
-                className="inline-block w-4 h-4 rounded-sm"
+                className="inline-block h-4 w-4 shrink-0 rounded-sm"
                 style={{ backgroundColor: colorValue }}
               />
-              {t(`${themes[currentTheme][0]}.colors.${key}`)}
+              <span className="truncate">
+                {t(`${themes[currentTheme][0]}.colors.${key}`)}
+              </span>
             </div>
           </Select.Option>
         ))}

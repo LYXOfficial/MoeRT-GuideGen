@@ -96,6 +96,7 @@ function NumAlphabet({
             x={0}
             y={52}
             fontSize={56}
+            fontFamily={"Frutiger, Helvetica, sans-serif"}
             letterSpacing={-3}
             fill={foreground}
           >

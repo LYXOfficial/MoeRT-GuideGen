@@ -90,10 +90,13 @@ export function GuideBoard({
     <div
       ref={setNodeRef}
       data-row={id}
-      className="min-h-16 overflow-x-hidden h-16 w-full flex align-center relative transition-colors duration-200 ease-in-out"
+      className="min-h-16 overflow-hidden h-16 w-full flex align-center relative transition-colors duration-200 ease-in-out"
       style={{
         transition: "all 200ms ease",
         background: isOver ? "#e6f7ff88" : undefined, // 拖拽时高亮
+        // 两个方向都 hidden：超出 64px 行的部分直接裁掉（不会出现滚动条，
+        // 也不会溢到相邻行上）
+        overflow: "hidden",
       }}
     >
       {hasContent ? (
@@ -288,17 +291,36 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
     const boardContentRef = useRef<HTMLDivElement>(null);
     const popupRef = useRef<HTMLDivElement>(null);
 
-    // 处理点击外部关闭编辑框
+    // 处理点击外部关闭编辑框。
+    // 用 mousedown 判定（和以前一致）：弹窗是自己的 DOM，点它内部不会被当成「点外部」；
+    // 触屏点按后浏览器会补发一对兼容性鼠标事件，其中 mousedown 紧跟在 pointerup 之后，
+    // 而菜单正是在 pointerup 里打开的 → 会被自己这次补发的 mousedown 立刻关掉。
+    // 所以加一个「刚打开 400ms 内不判外部」的宽限期来挡住它，而不是改用 pointerdown
+    //（pointerdown 会绕过 Semi 浮层内部只拦 mousedown 的保护，导致选下拉就把菜单关掉）。
+    const POPUP_SELECTOR = [
+      ".editing-popup",
+      ".semi-portal",
+      ".semi-popover",
+      ".semi-popover-wrapper",
+      ".semi-select-option-list",
+      ".semi-colorPicker-popover",
+      ".semi-dropdown",
+      ".semi-modal",
+      ".semi-tooltip-wrapper",
+    ].join(",");
+    const popupOpenedAtRef = useRef(0);
+    useEffect(() => {
+      if (editingItem) popupOpenedAtRef.current = Date.now();
+    }, [editingItem?.item?.id]);
     useEffect(() => {
       const handleClickOutside = (event: MouseEvent) => {
-        // 判断点击是否在编辑弹窗或 ColorPicker 的弹窗内
-        if (
-          editingItem &&
-          !(event.target as Element).closest(".editing-popup") &&
-          !(event.target as Element).closest(".semi-colorPicker-popover")
-        ) {
-          setEditingItem(null);
-        }
+        const target = event.target as Element | null;
+        if (!editingItem || !target?.closest) return;
+        // 刚打开的那一下（含触屏补发的 mousedown）不算「点外部」
+        if (Date.now() - popupOpenedAtRef.current < 400) return;
+        // 点在编辑弹窗、或它拉出来的任何浮层里：不算「点外部」
+        if (target.closest(POPUP_SELECTOR)) return;
+        setEditingItem(null);
       };
       document.addEventListener("mousedown", handleClickOutside);
       return () => {
@@ -805,7 +827,7 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
           {rows.map((row, idx) => (
             <React.Fragment key={`row-wrap-${idx}`}>
               <div className="flex items-center">
-                <div className="w-full overflow-x-hidden">
+                <div className="w-full overflow-hidden">
                   <SortableContext
                     id={`row${idx + 1}`}
                     items={row.map(i => i.id)}
