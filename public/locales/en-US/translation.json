@@ -1083,6 +1083,287 @@
           "emergency": "Emergency exit"
         }
       }
+    },
+    "beijingOld": {
+      "displayName": "Beijing Metro (Classic)",
+      "colors": {
+        "background": "Board background",
+        "foreground": "Foreground",
+        "textblue": "Text blue",
+        "white": "White",
+        "border": "Border",
+        "specline": "Divider (yellow)",
+        "divider": "Divider (white)",
+        "exit": "Exit green",
+        "prohibit": "Prohibit red",
+        "line1": "Line 1 / Batong Line",
+        "line2": "Line 2",
+        "line3": "Line 3",
+        "line4": "Line 4 / Daxing Line",
+        "line5": "Line 5",
+        "line6": "Line 6",
+        "line7": "Line 7",
+        "line8": "Line 8",
+        "line9": "Line 9",
+        "line10": "Line 10",
+        "line11": "Line 11",
+        "line12": "Line 12",
+        "line13": "Line 13",
+        "line14": "Line 14",
+        "line15": "Line 15",
+        "line16": "Line 16",
+        "line17": "Line 17",
+        "line18": "Line 18",
+        "line19": "Line 19",
+        "line22": "Line 22",
+        "line28": "Line 28",
+        "lineyizhuang": "Yizhuang Line",
+        "linefangshan": "Fangshan / Yanfang Line",
+        "lines1": "S1 Line",
+        "linechangping": "Changping Line",
+        "linexijiao": "Xijiao / Yizhuang T1 Line",
+        "linecapitalairport": "Capital Airport Express",
+        "linedaxingairport": "Daxing Airport Express"
+      },
+      "common": {
+        "weight": {
+          "normal": "Normal",
+          "medium": "Medium",
+          "bold": "Bold"
+        },
+        "direction": {
+          "left": "Left",
+          "right": "Right",
+          "up": "Up",
+          "down": "Down",
+          "up-left": "Upper left",
+          "up-right": "Upper right",
+          "down-left": "Lower left",
+          "down-right": "Lower right",
+          "uturn-left": "U-turn left",
+          "uturn-right": "U-turn right",
+          "back-left": "Back left",
+          "back-right": "Back right"
+        },
+        "direction4": {
+          "east": "East",
+          "west": "West",
+          "south": "South",
+          "north": "North"
+        },
+        "align": {
+          "left": "Left",
+          "center": "Center",
+          "right": "Right"
+        },
+        "size": {
+          "default": "Default",
+          "small": "Small (wide spacing)"
+        },
+        "padding": {
+          "none": "No padding",
+          "inset": "Inset"
+        },
+        "none": "None",
+        "toTrainVariant": {
+          "solid": "Solid",
+          "outline": "Outline"
+        }
+      },
+      "components": {
+        "Text": {
+          "displayName": "Text",
+          "props": {
+            "chinese": "Chinese",
+            "english": "English",
+            "weight": {
+              "normal": "Normal",
+              "medium": "Medium",
+              "bold": "Bold",
+              "displayName": "Weight"
+            },
+            "letterSpacing": "Letter spacing",
+            "fontSizeZh": "Chinese font size",
+            "fontSizeEn": "English font size",
+            "lineGap": "Chinese-English gap",
+            "align": {
+              "left": "Left",
+              "center": "Center",
+              "right": "Right",
+              "displayName": "Align"
+            },
+            "foreground": "Foreground",
+            "background": "Background"
+          }
+        },
+        "SpecLine": {
+          "displayName": "Divider",
+          "props": {
+            "width": "Width",
+            "foreground": "Foreground",
+            "background": "Background"
+          }
+        },
+        "Spacing": {
+          "displayName": "Spacing",
+          "props": {
+            "background": "Background"
+          }
+        },
+        "Blank": {
+          "displayName": "Blank Space",
+          "props": {
+            "width": "Width",
+            "background": "Background"
+          }
+        },
+        "LineNum": {
+          "displayName": "Line Number Sign",
+          "props": {
+            "lineId": "Line number",
+            "colorKey": {
+              "displayName": "Line color"
+            },
+            "textZh": "Chinese text (e.g. 号线)",
+            "textEn": "English text (e.g. Line 1)",
+            "size": {
+              "displayName": "Size"
+            },
+            "fontWeightZh": {
+              "displayName": "Chinese weight"
+            },
+            "fontWeightEn": {
+              "displayName": "English weight"
+            },
+            "foreground": "Foreground",
+            "background": "Background"
+          }
+        },
+        "Arrow": {
+          "displayName": "Arrow",
+          "props": {
+            "direction": {
+              "displayName": "Direction"
+            },
+            "foreground": "Foreground",
+            "background": "Background"
+          }
+        },
+        "ToTrain": {
+          "displayName": "To Train",
+          "props": {
+            "variant": {
+              "displayName": "Variant"
+            },
+            "foreground": "Foreground",
+            "plateColor": "Plate color",
+            "strokeColor": "Stroke color",
+            "background": "Background"
+          }
+        },
+        "TrainDirection": {
+          "displayName": "Train Direction",
+          "props": {
+            "prefixZh": "Chinese prefix",
+            "prefixEn": "English prefix",
+            "destinationZh": "Destination (Chinese)",
+            "destinationEn": "Destination (English)",
+            "align": {
+              "displayName": "Align"
+            },
+            "foreground": "Foreground",
+            "background": "Background"
+          }
+        },
+        "LoopNextStation": {
+          "displayName": "Loop Next Station",
+          "props": {
+            "nextZh": "\"Next station\" Chinese",
+            "nextEn": "\"Next station\" English",
+            "stationZh": "Station name (Chinese)",
+            "stationEn": "Station name (English)",
+            "align": {
+              "displayName": "Align"
+            },
+            "foreground": "Foreground",
+            "background": "Background"
+          }
+        },
+        "DualText": {
+          "displayName": "Dual Text",
+          "props": {
+            "line1chinese": "Line 1 Chinese",
+            "line1english": "Line 1 English",
+            "line2chinese": "Line 2 Chinese",
+            "line2english": "Line 2 English",
+            "align": {
+              "displayName": "Align"
+            },
+            "weight": {
+              "displayName": "Weight"
+            },
+            "letterSpacing": "Letter spacing",
+            "foreground": "Foreground",
+            "background": "Background"
+          }
+        },
+        "ExitNum": {
+          "displayName": "Exit Number",
+          "props": {
+            "exits": "Exit numbers",
+            "exitLetter": "Letter",
+            "exitNumber": "Extra digit",
+            "directions": {
+              "displayName": "Compass direction"
+            },
+            "textZh": "Chinese text",
+            "textEn": "English text",
+            "foreground": "Foreground",
+            "background": "Background"
+          }
+        },
+        "Icon": {
+          "displayName": "Icon",
+          "props": {
+            "icon": {
+              "displayName": "Icon",
+              "escalator_right": "Escalator (right)",
+              "stairs_right": "Stairs (right)",
+              "ticket_vending": "Self-service tickets",
+              "ticket_service": "Tickets / Fare adjustment",
+              "inquiry": "Inquiry",
+              "customer_service": "Customer service",
+              "police": "Police room",
+              "help_button": "Help button",
+              "security_check": "Passenger security check",
+              "luggage_check": "Luggage security check",
+              "ramp": "Accessible ramp",
+              "lifting_platform": "Lifting platform",
+              "accessibility_white": "Accessibility (white)",
+              "elderly": "Elderly",
+              "stroller": "With stroller",
+              "pregnant": "Pregnant",
+              "luggage": "With luggage"
+            },
+            "rotation": {
+              "displayName": "Rotation"
+            },
+            "flipH": "Flip horizontally",
+            "flipV": "Flip vertically",
+            "foreground": "Foreground (white/other groups)",
+            "background": "Background"
+          }
+        },
+        "ExitIcon": {
+          "displayName": "Exit Icon",
+          "props": {
+            "padding": {
+              "displayName": "Padding"
+            },
+            "background": "Background"
+          }
+        }
+      }
     }
   }
 }

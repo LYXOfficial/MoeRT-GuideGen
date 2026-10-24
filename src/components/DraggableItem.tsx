@@ -13,10 +13,12 @@ import ChongqingSpecLine from "./themes/chongqing/SpecLine";
 import ChengduSpecLine from "./themes/chengdu/SpecLine";
 import HongkongSpecLine from "./themes/hongkong/SpecLine";
 import BeijingSpecLine from "./themes/beijing/SpecLine";
+import BeijingOldSpecLine from "./themes/beijing-old/SpecLine";
 import ChongqingSpacing from "./themes/chongqing/Spacing";
 import ChengduSpacing from "./themes/chengdu/Spacing";
 import HongkongSpacing from "./themes/hongkong/Spacing";
 import BeijingSpacing from "./themes/beijing/Spacing";
+import BeijingOldSpacing from "./themes/beijing-old/Spacing";
 
 export default function DraggableItem({
   id,
@@ -110,12 +112,14 @@ export default function DraggableItem({
     childType === ChengduSpacing ||
     childType === ChongqingSpacing ||
     childType === HongkongSpacing ||
-    childType === BeijingSpacing;
+    childType === BeijingSpacing ||
+    childType === BeijingOldSpacing;
   const isSpecLine =
     childType === ChengduSpecLine ||
     childType === ChongqingSpecLine ||
     childType === HongkongSpecLine ||
-    childType === BeijingSpecLine;
+    childType === BeijingSpecLine ||
+    childType === BeijingOldSpecLine;
 
   // 组件之间为了压住 1px 接缝做了 -1px 相互挤压，而 hover / 选中又会把组件抬到邻居之上。
   // 命中测试同样按层级走，于是 1~3px 的分割线会被邻居整个盖住、基本点不到。
