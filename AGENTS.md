@@ -25,9 +25,11 @@ pnpm dev                                  # 开发服务器（5173 端口，常�
 - ✅ 北京**新版**主题（`src/components/themes/beijing/`，`THEME_INDEX = 3`）全部完成：
   LineNum / Text / DualText / LoopNextStation / Arrow / TrainDirection / ExitNum /
   ExitIcon / Icon / SpecLine / Spacing / Blank，`tsc -b`、biome、build 全绿，已提交。
+- ✅ **M8 北京旧版（2015 / 经典样式）主题已完成**（2026-10-24）：
+  `src/components/themes/beijing-old/`，THEME_INDEX 4，key `themes.beijingOld`，
+  tsc / biome / build 三绿已提交。要点见 §4 末尾「旧版主题」，遗留项见 §9。
 - ✅ 编辑器交互（PC + 移动端）：拖拽/点按判定、触屏长按、小元件热区、删除区可见矩形、
   编辑菜单稳定性、整页缩放禁用等，全部修复并提交（见 §7/§8）。
-- ⬜ **M8 北京旧版（2015 / 经典样式）主题：未开始** —— 这是本次交接的主任务，详见 §9。
 
 ## 3. 主题架构契约（新主题必须遵守）
 
@@ -211,35 +213,46 @@ python3 text_probe.py                                   # 解析 <use> 得到真
 26. 彻底禁止整页缩放 → viewport user-scalable=no。
 27. LineNum 英文比中文长时中文对齐英文（不影响无数字居中）→ 右对齐锚点。
 
-## 9. 交接任务：M8 北京旧版（2015 / 经典样式）
+## 9. 北京旧版（2015 / 经典样式）主题 —— 已完成，遗留项如下
 
-**目标**：新建 `src/components/themes/beijing-old/`，作为第 5 套主题（THEME_INDEX 4）接入。
+**已完成**（2026-10-24）：`src/components/themes/beijing-old/`，THEME_INDEX 4，key `themes.beijingOld`。
+- 底色 `#092f52`（vitool 经典模式 --mode-bg）；线路色沿用 vitool 官方 32 色板 hex；
+  「出口绿」#25aa41 与新版一致（visys p7 实测）。
+- **素材提取**：`docs/beijing/raw/extract_p7.py`（p7 专用提取器）+ `jobs-p7-old.json` /
+  `jobs-p5-old.json`（走 gen_batch.py）→ `beijing-old/icons/{arrow,exit,train,facilities}-real.tsx`。
+  燕尾箭头 ×8（左右 56.6×35.4pt、斜 43.4×43.5pt）、方形直角出口牌、乘车车头标
+  （实心 TrainSolid / 线稿 TrainOutline / 外框环 TrainFrame 三形态，可拆拼）、
+  方框设施图标 ×17（p5 第 13–29 格，图形自带圆角方框描边）。
+- **布局语境**：官方 DB11/T 657.2—2024 示例图（官方原版 PDF 已下载到 /tmp/bjold/，
+  docs/ 不入库）校准：**行高 = 1.5a、方形模块（车头标方块/线路牌/字母牌/设施框）= 1a ≈ 42.7px、
+  EXIT 绿块满行、元素间距 ≈ 0.25–0.4a、中文 ink ≈ 0.5a**。visys p7 手册网格是另一个语境
+  （行 = 1.4a，a = 56.6pt），两套 a 不要混用。
+- 组件差异：LineNum = 线路色圆角矩形（rx 0.075a、1.85a/1.95a 宽、数字 ink 0.742a 居中、
+  号线 0.4a + Line 0.188a 互相居中、墨迹间隙 0.303a/0.065a —— 用 canvas
+  actualBoundingBox 扣 bearing）；**无色带、无 small 档（有 size=small 缩放）**；
+  Arrow 只有 8 方向；**ToTrain 新组件**（图案=前景色、方块/描边颜色独立可空，
+  编辑器用 `nullableColorFormItem` + `NullableColorField`）；ExitNum = 白底圆角块
+  + 深蓝字母数字（块 1a、字母 ink 0.45H，完整版式待用户参考图校准）；
+  SpecLine = 单色白线（经典无黄线）；Icon = 17 个方框图标跟随前景色
+  （暗底/亮底复用同一套，靠前景/背景切换，**不做两套图标**）。
+- **旧版不做双行背景**：backgroundFormItems 只暴露一项背景色；组件 props 里的
+  background2 保留但永不进编辑器。
+- i18n：5 语言 `themes.beijingOld.*` 全套（components displayName 复制自新版同名组件，
+  ToTrain 自带五语）；colors 按旧版 colors.ts 键集过滤（37 键）。
 
-已知情报（来自之前会话与素材）：
-- 旧版经典底色 `#092f52`；旧标准衬底 C100 M60 Y0 K50、站外路引 C99 M94 Y1 K1
-  （新版才有的设施浅蓝/女卫粉/黄色分隔线、「线路色浅底→文字用蓝」规则在旧版**不存在**）。
-- 旧版线路色为 22 条共享色（2015 年集合，无 3 号线/12 号线/17/19/22/28 号线等新线）。
-- 旧版禁止/警告/指令类图标与新版不同。
-- **素材来源**：
-  - `visys.pdf` **第 7 页「经典样式 Classic Style」**（列车/线路色块等经典图形，可直接提取）；
-  - Central Go 套件的图标库自带「新版/经典」筛选（§6 vitool），经典版图标从
-    https://centralgo.site/download/ 下载对应包；本地 `vitool.js` 里也可能埋有经典素材
-    数据（assets 没抓全），先翻它。
-  - 旧版标准原文（2015 前后版本，DB11/T 657.2 旧版）**手上没有**，需要用户补或找官方库。
+**遗留 / 待用户输入**：
+1. ExitNum 完整版式（块尺寸/字号/间距）等用户发参考图后校准（当前是官方图 36 近似值）。
+2. 旧版禁止/警告类图标（visys p7 无此内容）——需要用户指路素材或按官方标准图近似。
+3. TrainDirection / LoopNextStation / DualText / Text 沿用新版字号体系，未按旧版标准复核。
+4. 旧版数字字体疑似窄体（p7「1」ink 宽高比 0.367 vs Arial 0.49），用户若提出再换 Helvetica/
+   其它窄体并调 numSpacing。
 
-落地步骤建议（照抄新版主题的成熟路径）：
-1. `src/components/themes/beijing-old/` 目录，`define/colors.ts`（旧配色 + 22 线路色）、
-   `define/text.ts` 可先 re-export 新版的工具；字体：旧版为黑体类 + Arial，先复用新版的
-   fonts css，具体以用户要求为准。
-2. 组件从新主题复制后按旧版样式改（LineNum 旧版无色带、底板即线路色或深蓝，以用户给的
-   截图为准；用户习惯逐个组件对着参考图抠数值，**等他发图再动手**）。
-3. `theme.ts` 注册 + `themereg.ts` 追加 + 5 语言 `themes.beijingOld.*` 全套文案
-   （含 colors / common / components，参考现有 beijing 块）。
-4. `DraggableItem.tsx` 注册 beijing-old 的 `SpecLine` / `Spacing`（§3-3，**必做**）。
-5. 旧版专属图标（禁止/警告/指令等）走 §5 管线重新提取，产出 `beijing-old/icons/*-real.tsx`。
-6. README「内置主题」行把「北京（旧样式）」转正；用户已经把 README 改成只提旧版待做。
-7. 验证：`tsc -b` + biome + build 三绿，5173 里切主题人工过一遍（拖拽/编辑菜单/双行容器/
-   移动端都别退化——§7 的交互坑对新主题同样生效）。
+**工具备忘**：
+- visual-reviewer subagent 识图仅供参考，矢量以 SVG 提取为准；官方 PDF 示例是位图
+  （pdfimages 确认），布局用「识图量比例 → a 模数换算」。
+- 网页验收：IAB 截图可用 `document.documentElement.style.zoom` 临时放大；
+  cua.drag 大概率触发页面刷新（zoom 等内存态会丢）；高清组件截图用页面内
+  `import("/node_modules/.vite/deps/modern-screenshot.js").domToPng(el, { scale })`。
 
 ## 10. 协作方式（重要）
 
