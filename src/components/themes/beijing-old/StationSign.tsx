@@ -55,13 +55,13 @@ export const stationSignEditorConfig = (
 
 const ROW_H = 64;
 const A = ROW_H / 1.5;
-/** 地徽高 0.6a，与名称列间距 0.25a（图 3 实测） */
-const LOGO_SIZE = A * 0.6;
-const LOGO_GAP = A * 0.25;
-/** 站名中文 ink 0.32H、拼音 cap 0.10H（图 3 实测） */
+/** 地徽高 1a（方形模块满高，官方图 3 地徽与线路牌同高） */
+const LOGO_SIZE = A;
+const LOGO_GAP = A * 0.2;
+/** 站名中文 ink 0.32H、拼音 cap 0.12H */
 const ZH_SIZE = (ROW_H * 0.32) / 0.88;
-const EN_SIZE = (ROW_H * 0.1) / 0.716;
-const NAME_GAP_Y = 3;
+const EN_SIZE = (ROW_H * 0.12) / 0.716;
+const NAME_GAP_Y = 5;
 const PAD_X = 5;
 
 function StationSign({

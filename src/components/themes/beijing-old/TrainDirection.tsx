@@ -86,20 +86,20 @@ const PREFIX_ZH_SIZE = (ROW_H * 0.345) / 0.88;
 const DEST_ZH_SIZE = PREFIX_ZH_SIZE;
 const PREFIX_EN_SIZE = (ROW_H * 0.155) / 0.716;
 const DEST_EN_SIZE = PREFIX_EN_SIZE;
-const PREFIX_WEIGHT: TextWeight = "bold";
-const DEST_WEIGHT: TextWeight = "bold";
-/** 英文同为粗体 */
-const EN_WEIGHT: TextWeight = "bold";
+const PREFIX_WEIGHT: TextWeight = "normal";
+const DEST_WEIGHT: TextWeight = "normal";
+/** 英文同为正常字重 */
+const EN_WEIGHT: TextWeight = "normal";
 const WORD_GAP = (ROW_H / 1.5) * 0.19;
 /** 始终存在的左右间距 */
 const PAD_X = 5;
 /** 英文相对对齐边向内收的像素（平衡拉丁字母侧边距的视觉） */
 const EN_INWARD = 1;
-/** 文字块按官方样例偏上：中文 ink 顶 = 0.15H */
+/** 文字块垂直居中（中文 ink + 间隙 + 英文 cap） */
 const ZH_INK = PREFIX_ZH_SIZE * 0.88;
 const EN_CAP = PREFIX_EN_SIZE * 0.716;
-const TEXT_GAP = ROW_H * 0.05;
-const TEXT_TOP = ROW_H * 0.15;
+const TEXT_GAP = 4;
+const TEXT_TOP = (ROW_H - (ZH_INK + TEXT_GAP + EN_CAP)) / 2;
 
 function TrainDirection({
   prefixZh = trainDirectionDefaultProps.prefixZh,

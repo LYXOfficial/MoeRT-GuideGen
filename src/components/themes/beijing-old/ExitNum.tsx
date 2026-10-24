@@ -1,6 +1,8 @@
-import { Button, Input, Typography } from "@douyinfe/semi-ui";
+import { Input, Typography } from "@douyinfe/semi-ui";
+import { useContext } from "react";
 import { fontEn, fontZh, measureText, useFontsReady } from "./define/text";
 import colors from "./define/colors";
+import { EditingPropsContext } from "../../EditingPropsContext";
 import type { EditorConfig } from "../../../interfaces/editor";
 import {
   MultiRowBackground,
@@ -12,18 +14,18 @@ import {
 /**
  * 出入口编号（经典样式，官方 DB11/T 657.2—2024 图 5 / 图 6）。
  *
- * 字母块 = **描边圆角方块**（非实心）：透明底 + 前景色描边 + 前景色字母，
- * 官方示例里描边与字母同色（深蓝底上白色）。两个形态：
+ * 字母块 = **描边圆角方块**（非实心）：透明底 + 前景色描边 + 前景色字母。
+ * 两个形态（出口最多 1 / 2 个，无需增删按钮）：
  *  - single：一块 1a 方块（行 = 1.5a）
- *  - double：两块 0.5a 方块上下叠、间隔 0.1a（visys p7 示例 C 的 A/B 叠块），
- *    供旁边的双行文字逐行对齐
- * 多个出口横向堆叠（图 5 的 A B 并排 = single 堆两个），暂不支持附加数字。
+ *  - double：两块 0.5a 方块上下叠、间隔 0.1a（visys p7 示例 C 的 A/B 叠块）；
+ *    第二行字母留空时该行整块（含边框）不渲染
+ * 字母每格只收一个字母（官方出入口编号规则：字母不含 I/O）。
  */
 export type ExitVariant = "single" | "double";
 
 export const EXIT_VARIANTS: ExitVariant[] = ["single", "double"];
 
-/** 一个出口编号：一个字母（多出口横向堆叠） */
+/** 一个出口编号：一个字母 */
 export interface ExitCode {
   letter: string;
 }
@@ -49,13 +51,12 @@ export const exitNumDefaultProps: ExitNumProps = {
   background2: colors.background,
 };
 
-const MAX_EXITS = 10;
-
 /**
- * 出口编号编辑器：一个出口一张卡片（一个字母输入），+/− 增删。
+ * 出口编号编辑器：输入框数量随形态固定（single 1 个 / double 2 个），
+ * 无增删按钮；GuideBoard 会向表单元素注入 value / onChange。
  */
-function ExitArrayEditor({
-  value = exitNumDefaultProps.exits,
+function ExitSlots({
+  value,
   onChange,
   t,
 }: {
@@ -64,7 +65,12 @@ function ExitArrayEditor({
   t: (key: string) => string;
 }) {
   const scope = "themes.beijingOld.components.ExitNum.props";
-  const exits = Array.isArray(value) ? value : [];
+  const editing = useContext(EditingPropsContext);
+  const variant = (editing?.variant as ExitVariant) ?? "single";
+  const count = variant === "double" ? 2 : 1;
+  const exits = Array.from({ length: count }, (_, i) => ({
+    letter: String((Array.isArray(value) ? value[i] : undefined)?.letter ?? ""),
+  }));
 
   const update = (index: number, next: string) => {
     onChange?.(
@@ -72,53 +78,23 @@ function ExitArrayEditor({
     );
   };
 
-  const addExit = () => {
-    if (exits.length >= MAX_EXITS) return;
-    onChange?.([...exits, { letter: "" }]);
-  };
-
-  const removeExit = () => {
-    if (exits.length === 0) return;
-    onChange?.(exits.slice(0, -1));
-  };
-
   return (
     <div className="space-y-3">
       {exits.map((exit, index) => (
-        <div
-          key={index}
-          className="border border-solid border-gray-300 p-3 rounded-sm"
-        >
-          <div className="flex items-center">
-            <Typography.Text size="small" className="w-16 mr-2">
-              {t(`${scope}.exitLetter`)}
-            </Typography.Text>
-            <Input
-              size="small"
-              value={exit.letter}
-              onChange={val => update(index, val)}
-              placeholder="A"
-              maxLength={2}
-            />
-          </div>
+        <div key={index} className="flex items-center">
+          <Typography.Text size="small" className="w-16 mr-2">
+            {t(`${scope}.exitLetter`)}
+            {count > 1 ? ` ${index + 1}` : ""}
+          </Typography.Text>
+          <Input
+            size="small"
+            value={exit.letter}
+            onChange={val => update(index, val.slice(-1).toUpperCase())}
+            placeholder={index === 0 ? "A" : "B"}
+            maxLength={1}
+          />
         </div>
       ))}
-
-      <div className="flex gap-2 align-center justify-center">
-        <Button
-          type="primary"
-          size="small"
-          onClick={addExit}
-          disabled={exits.length >= MAX_EXITS}
-        >
-          +
-        </Button>
-        {exits.length > 0 && (
-          <Button type="danger" size="small" onClick={removeExit}>
-            −
-          </Button>
-        )}
-      </div>
     </div>
   );
 }
@@ -130,7 +106,7 @@ export const exitNumEditorConfig = (t: (key: string) => string): EditorConfig =>
       {
         key: "exits",
         label: `${scope}.exits`,
-        element: <ExitArrayEditor t={t} />,
+        element: <ExitSlots t={t} />,
       },
       commonSelectFormItem(t, scope, "variant", "exitVariant", EXIT_VARIANTS),
       { key: "textZh", label: `${scope}.textZh`, element: <Input /> },
@@ -142,19 +118,21 @@ export const exitNumEditorConfig = (t: (key: string) => string): EditorConfig =>
 };
 
 const ROW_H = 64;
-/** a：行 = 1.5a（方形模块 = 1a ≈ 42.7px，官方门匾/出口标志口径） */
+/** a：行 = 1.5a（方形模块 = 1a ≈ 42.7px） */
 const A = ROW_H / 1.5;
-/** 描边圆角方块：single 1a 见方；double 每块 0.5a 见方、间隔 0.1a（示例 C 实测） */
+/** 描边宽 ≈ 0.04 块高（图 5 描边方块实测） */
 const STROKE_W = A * 0.04;
-/** 块内字母 ink ≈ 0.45 块高（官方图 36 实测），Arial cap = 0.716em */
-const LETTER_RATIO = 0.45;
-/** 块圆角 ≈ 0.1 块高（图 5 描边方块实测） */
+/** 块内字母 ink ≈ 0.67 块高（官方图 36：字母 ink 0.45H、块 ≈ 0.67H），Arial cap = 0.716em */
+const LETTER_RATIO = 0.67;
+/** 块圆角 ≈ 0.1 块高（图 5 实测） */
 const BLOCK_RADIUS = 0.1;
-/** 块与块（组与组）横向间距 */
+/** 组与组横向间距 */
 const STACK_GAP = A * 0.12;
+/** double 两块间隔 0.1a（示例 C 实测） */
+const DOUBLE_GAP = A * 0.1;
 /** 编号区与名称列之间 */
 const NAME_GAP = A * 0.25;
-/** 名称列中英文字号（对齐官方导向标志：中文 ink ≈ 0.3H、英文 cap ≈ 0.13H） */
+/** 名称列中英文字号（官方导向标志：中文 ink ≈ 0.3H、英文 cap ≈ 0.13H） */
 const ZH_SIZE = (ROW_H * 0.3) / 0.88;
 const EN_SIZE = (ROW_H * 0.13) / 0.716;
 
@@ -173,39 +151,36 @@ function ExitNum({
   const bg =
     background && background.length > 0 ? background : colors.background;
 
-  const safeExits = (Array.isArray(exits) ? exits : [])
-    .map(exit => ({ letter: String(exit?.letter ?? "").trim() }))
-    .filter(exit => exit.letter.length > 0);
   const isDouble = variant === "double";
+  // 槽位固定：single 1 个、double 2 个
+  const slots = Array.from({ length: isDouble ? 2 : 1 }, (_, i) =>
+    String((Array.isArray(exits) ? exits[i] : undefined)?.letter ?? "").trim()
+  );
+  // double 第二行字母为空 → 该行整块（含边框）不渲染
+  const rows = slots.filter(letter => letter.length > 0);
 
-  // 块几何：single 块 = 1a；double 每块 = 0.5a（上下两块 + 0.1a 间隔）
+  // 块几何：single 块 = 1a；double 每块 = 0.5a
   const blockSize = isDouble ? A / 2 : A;
   const blockRadius = blockSize * BLOCK_RADIUS;
   const letterSize = (blockSize * LETTER_RATIO) / 0.716;
-  const doubleGap = isDouble ? A * 0.1 : 0;
-  // double 组总高 = 2 块 + 间隔；single 组 = 1 块；整组垂直居中
-  const groupH = isDouble ? blockSize * 2 + doubleGap : blockSize;
+  // 组总高按实际行数，整组垂直居中
+  const groupH = rows.length > 0 ? blockSize * rows.length + DOUBLE_GAP * (rows.length - 1) : blockSize;
   const groupTop = (ROW_H - groupH) / 2;
 
-  // 分组：single 每出口一块横向排；double 两出口一组上下叠、组再横向排
-  // （官方示例 C 的 A / B 叠块 = 一组两块）
-  const groups: Array<Array<string>> = [];
-  if (isDouble) {
-    for (let i = 0; i < safeExits.length; i += 2) {
-      groups.push([
-        safeExits[i].letter,
-        safeExits[i + 1]?.letter ?? "",
-      ]);
-    }
-  } else {
-    safeExits.forEach(exit => groups.push([exit.letter]));
-  }
+  // single 每字母一块横向排；double 一组（每行一块）
   const blocks: Array<{ x: number; letters: string[] }> = [];
   let cursor = 0;
-  groups.forEach(letters => {
-    blocks.push({ x: cursor, letters });
-    cursor += blockSize + STACK_GAP;
-  });
+  if (isDouble) {
+    if (rows.length > 0) {
+      blocks.push({ x: 0, letters: rows });
+      cursor = blockSize + STACK_GAP;
+    }
+  } else {
+    rows.forEach(letter => {
+      blocks.push({ x: cursor, letters: [letter] });
+      cursor += blockSize + STACK_GAP;
+    });
+  }
   const codeWidth = Math.max(0, cursor - STACK_GAP);
 
   const zhText = (textZh ?? "").trim();
@@ -221,7 +196,7 @@ function ExitNum({
     Math.max(A / 2, codeWidth + (hasName ? NAME_GAP + nameWidth : 0))
   );
 
-  // 名称列：两行互相居中、整体垂直居中（同官方导向标志的对齐）
+  // 名称列：两行互相居中、整体垂直居中
   const nameX = codeWidth + NAME_GAP;
   const zhX = nameX + (nameWidth - zhWidth) / 2;
   const enX = nameX + (nameWidth - enWidth) / 2;
@@ -238,42 +213,38 @@ function ExitNum({
       style={{ height: ROW_H, width }}
     >
       <svg width={width} height={ROW_H} data-fonts-ready={fontsReady}>
-        {blocks.map((block, index) => (
-          <g key={`block-${index}`}>
-            {block.letters.map((ch, row) => (
-              <g key={row}>
-                <rect
-                  x={block.x + STROKE_W / 2}
-                  y={groupTop + row * (blockSize + doubleGap) + STROKE_W / 2}
-                  width={blockSize - STROKE_W}
-                  height={blockSize - STROKE_W}
-                  rx={blockRadius}
-                  fill="none"
-                  stroke={fg}
-                  strokeWidth={STROKE_W}
-                />
-                {ch ? (
-                  <text
-                    x={block.x + blockSize / 2}
-                    y={
-                      groupTop +
-                      row * (blockSize + doubleGap) +
-                      blockSize / 2 +
-                      (letterSize * 0.716) / 2
-                    }
-                    fontSize={letterSize}
-                    fontWeight={700}
-                    fill={fg}
-                    textAnchor="middle"
-                    fontFamily="Arial, Helvetica, sans-serif"
-                  >
-                    {ch}
-                  </text>
-                ) : null}
-              </g>
-            ))}
-          </g>
-        ))}
+        {blocks.map((block, index) =>
+          block.letters.map((ch, row) => (
+            <g key={`block-${index}-${row}`}>
+              <rect
+                x={block.x + STROKE_W / 2}
+                y={groupTop + row * (blockSize + DOUBLE_GAP) + STROKE_W / 2}
+                width={blockSize - STROKE_W}
+                height={blockSize - STROKE_W}
+                rx={blockRadius}
+                fill="none"
+                stroke={fg}
+                strokeWidth={STROKE_W}
+              />
+              <text
+                x={block.x + blockSize / 2}
+                y={
+                  groupTop +
+                  row * (blockSize + DOUBLE_GAP) +
+                  blockSize / 2 +
+                  (letterSize * 0.716) / 2
+                }
+                fontSize={letterSize}
+                fontWeight={700}
+                fill={fg}
+                textAnchor="middle"
+                fontFamily="Arial, Helvetica, sans-serif"
+              >
+                {ch}
+              </text>
+            </g>
+          ))
+        )}
         {zhText ? (
           <text
             x={zhX}

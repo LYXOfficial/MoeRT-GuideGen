@@ -56,12 +56,12 @@ export const dualTextDefaultProps: DualTextProps = {
 const A = 64 / 1.5;
 /** 中文 ink = 0.45 × 0.5a（出口 double 块内字母 ink），汉字 ink ≈ 0.88em */
 const ZH_SIZE = (A * 0.225) / 0.88;
-/** 英文 cap = 中文 ink 的 0.7 倍，Arial cap = 0.716em */
-const EN_SIZE = (A * 0.225 * 0.7) / 0.716;
+/** 英文 cap = 中文 ink 的 0.55 倍（Arial 大写显大），Arial cap = 0.716em */
+const EN_SIZE = (A * 0.225 * 0.55) / 0.716;
 /** 组中心距 = 0.5a 块 + 0.1a 间隔（对齐出口 double 方块） */
 const LINE_STEP = A * 0.6;
 /** 组内英文与中文的间隙 */
-const EN_GAP = 2;
+const EN_GAP = 4;
 const ROW_H = 64;
 /** 中易黑体单一字重，官方观感偏粗 */
 const TEXT_WEIGHT = 700;
