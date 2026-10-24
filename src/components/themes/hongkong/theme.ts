@@ -1,6 +1,13 @@
 import "./fonts/mtrsung.css";
 import "./fonts/notoserif.css";
 
+// 模块加载即发起字体请求：组件首次渲染前字体已在下载，
+// 把「字体未就绪」窗口压缩到最小（估宽仅剩网络极慢时的兜底）。
+if (typeof document !== "undefined") {
+  document.fonts?.load('16px "MTR Sung"').catch(() => {});
+  document.fonts?.load('16px "Noto Serif"').catch(() => {});
+}
+
 import Line, { lineDefaultProps } from "./Line.tsx";
 import Arrow, { arrowDefaultProps } from "./Arrow.tsx";
 import Icon, { iconDefaultProps } from "./Icon.tsx";

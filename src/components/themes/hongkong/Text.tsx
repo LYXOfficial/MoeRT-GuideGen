@@ -77,6 +77,14 @@ export const textEditorConfig = (t: (key: string) => string): EditorConfig => ({
   ],
 });
 
+/**
+ * 字体未就绪时的临时估宽：汉字 ≈1em、拉丁/数字 ≈0.55em。
+ * 就绪后再用 getBBox 精确重测，避免加载期组件缩成窄条。
+ */
+const estimateWidth = (zh: string, en: string, zhSize: number, enSize: number) =>
+  // 简单粗暴：统一 0.6 倍系数（估宽只是预加载兜底，宁可明显偏小也不溢出）
+  ([...zh].length * zhSize + [...en].length * enSize) * 0.35;
+
 export default function Text({
   chinese = textDefaultProps.chinese,
   english = textDefaultProps.english,
@@ -85,8 +93,12 @@ export default function Text({
   foreground = textDefaultProps.foreground,
   background = textDefaultProps.background,
 }: TextProps) {
+
   const textGroupRef = useRef<SVGGElement>(null);
-  const [svgWidth, setSvgWidth] = useState(0);
+  // 字体未就绪时先给临时估宽，加载完成后 getBBox 精确重测
+  const [svgWidth, setSvgWidth] = useState(() =>
+    estimateWidth(chinese ?? "", english ?? "", fontsize === "large" ? 28 : 22, fontsize === "large" ? 14 : 12)
+  );
 
   useEffect(() => {
     let mounted = true;
@@ -99,7 +111,11 @@ export default function Text({
     };
 
     (async () => {
-      await document.fonts.ready; // 等字体加载完成
+      await Promise.all([
+        document.fonts.load('16px "MTR Sung"'),
+        document.fonts.load('16px "Noto Serif"'),
+        document.fonts.ready,
+      ]); // 等字体加载完成
       if (mounted) measure();
     })();
 

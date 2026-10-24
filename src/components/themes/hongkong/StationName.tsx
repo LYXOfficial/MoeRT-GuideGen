@@ -60,6 +60,14 @@ export const stationNameEditorConfig = (
   ],
 });
 
+/**
+ * 字体未就绪时的临时估宽：汉字 ≈1em、拉丁/数字 ≈0.55em。
+ * 就绪后再用 getBBox 精确重测，避免加载期组件缩成窄条。
+ */
+const estimateWidth = (zh: string, en: string, zhSize: number, enSize: number) =>
+  // 简单粗暴：统一 0.6 倍系数（估宽只是预加载兜底，宁可明显偏小也不溢出）
+  ([...zh].length * zhSize + [...en].length * enSize) * 0.35;
+
 export default function StationName({
   chinese = stationNameDefaultProps.chinese,
   english = stationNameDefaultProps.english,
@@ -69,8 +77,13 @@ export default function StationName({
 }: StationNameProps) {
   const chineseRef = useRef<SVGTextElement>(null);
   const englishRef = useRef<SVGTextElement>(null);
-  const [chineseWidth, setChineseWidth] = useState(0);
-  const [englishWidth, setEnglishWidth] = useState(0);
+  // 字体未就绪时先给临时估宽，加载完成后 getBBox 精确重测
+  const [chineseWidth, setChineseWidth] = useState(() =>
+    estimateWidth(chinese ?? "", "", 36, 22)
+  );
+  const [englishWidth, setEnglishWidth] = useState(() =>
+    estimateWidth("", english ?? "", 36, 22)
+  );
 
   useEffect(() => {
     let mounted = true;
@@ -85,7 +98,11 @@ export default function StationName({
     };
 
     (async () => {
-      await document.fonts.ready;
+      await Promise.all([
+        document.fonts.load('16px "MTR Sung"'),
+        document.fonts.load('16px "Noto Serif"'),
+        document.fonts.ready,
+      ]);
       if (mounted) measure();
     })();
 
