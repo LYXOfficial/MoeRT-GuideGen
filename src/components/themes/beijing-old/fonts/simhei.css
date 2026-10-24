@@ -1,0 +1,6 @@
+/* 中易黑体（SimHei）：旧版经典样式的正文与数字字体，走 CDN 引入 */
+@font-face {
+  font-family: "SimHei";
+  src: url("https://img.0v0.my/fonts/SimHei.woff2") format("woff2");
+  font-display: swap;
+}

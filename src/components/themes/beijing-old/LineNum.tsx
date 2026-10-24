@@ -1,13 +1,12 @@
 import { Select } from "@douyinfe/semi-ui";
 import colors, { fontFamilyEn } from "./define/colors";
-import lines from "./define/lines";
+import lines, { findLine } from "./define/lines";
 import {
   fontEn,
   fontZh,
   measureText,
   normalizeSvgLine,
   useFontsReady,
-  WEIGHT_VALUE,
 } from "./define/text";
 import type { EditorConfig } from "../../../interfaces/editor";
 import {
@@ -56,7 +55,7 @@ export const lineNumDefaultProps: LineNumProps = {
   textZh: "号线",
   textEn: "Line 1",
   size: "default",
-  foreground: colors.foreground,
+  foreground: "", // 留空 = 白字；黄底线路自动用文字蓝
   background: colors.background,
   background2: colors.background,
 };
@@ -111,30 +110,36 @@ const ROW_H = 64;
 
 /** 牌高 1a：行 = 1.5a（官方 DB11/T 657.2—2024 示例图：方形模块 = 1a ≈ 2/3 行高） */
 const BLOCK_H = ROW_H / 1.5;
-/** 「Line N」字距（1 号线牌 glyph 实测 ≈ 0.06em，Arial 默认字距偏紧） */
-const EN_SPACING = 0.06;
-/** 圆角半径 0.075a（p7 底板 path 实测 rx 4.25 / 56.6） */
-const RADIUS = BLOCK_H * (4.25 / 56.6);
-/** 数字 ink 0.742a（1/10 号线牌实测 41.66–42.36 / 56.6），Arial cap = 0.716em */
-const NUM_SIZE = (BLOCK_H * 0.742) / 0.716;
-/** 「号线」ink 0.40a（汉字 ink = 0.88em） */
+/** 圆角半径 0.065a（官方样例牌顶行内缩 10px / 牌高 155px 实测） */
+const RADIUS = BLOCK_H * 0.065;
+/** 数字 ink 0.735a（官方样例「1」ink 高 0.735H 实测），Arial cap = 0.716em */
+const NUM_SIZE = (BLOCK_H * 0.735) / 0.716;
+/** 「号线」ink 0.40a（汉字 ink ≈ 0.88em） */
 const ZH_SIZE = (BLOCK_H * 0.4) / 0.88;
-/** 「Line N」cap 0.188a */
-const EN_SIZE = (BLOCK_H * 0.188) / 0.716;
-/** 文字栏（号线 ink + 0.089a 间隙 + Line cap）总高 0.677a，整体垂直居中 */
-const TEXT_COL_H = BLOCK_H * 0.677;
-/** 数字与文字栏间隙：一位数 0.303a、两位数 0.065a */
-const GAP_1 = BLOCK_H * 0.303;
-const GAP_2 = BLOCK_H * 0.065;
-/** 文字牌左右留白合计 0.52a（八通线牌实测两侧各 0.26a） */
-const TEXT_PLATE_PAD = BLOCK_H * 0.52;
-/** 数字牌宽：1.85a + 0.1a × (位数 - 1) */
-const PLATE_W_1DIGIT = BLOCK_H * 1.85;
-const PLATE_W_EXTRA = BLOCK_H * 0.1;
+/** 「Line N」cap 0.187a（官方样例实测，八通线的 0.239H 含 g 下降部） */
+const EN_SIZE = (BLOCK_H * 0.187) / 0.716;
+/** 文字栏（号线 ink + 0.097a 间隙 + Line cap）总高 0.684a，整体垂直居中 */
+const TEXT_COL_H = BLOCK_H * 0.684;
+/**
+ * 数字牌布局锚点（官方样例实测，单位 a，全部为 ink/几何锚点而非推算值）：
+ *  - 一位数（1 号线牌 W/H 1.852）：数字 ink x0 = 0.194a、文字栏 x0 = 0.769a、牌宽 1.852a
+ *  - 两位数（13 号线牌 W/H 1.926）：数字压缩后 ink x0 = 0.118a、文字栏 x0 = 0.955a、牌宽 1.926a
+ *  - 文字栏（号线/Line 两行互相居中）在两块官方牌里的 ink 宽同为 0.839a
+ */
+const ONE_DIGIT = { numX: 0.194, textX: 0.769, plateW: 1.852 };
+const TWO_DIGIT = { numX: 0.118, textX: 0.955, plateW: 1.926 };
+/** 官方文字栏 ink 宽（锚定文字栏中心用） */
+const TEXT_COL_INK = 0.839;
+/** 两位数及以上的数字横向压缩比例（同新版 numScale 的手法） */
+const NUM_COMPRESS = 0.8;
+/** 文字牌左右留白 0.194a（八通线牌实测左 0.194a / 右 0.175a） */
+const PAD_X = BLOCK_H * 0.194;
 /** 牌外左右留白 */
 const OUTER_MARGIN = 5;
 /** 小尺寸整体缩放（与新版口径一致） */
 const SMALL_SCALE = 0.62;
+/** 中易黑体单一字重，官方牌观感更粗 —— 数字/文字统一伪粗 700 */
+const PLATE_WEIGHT = 700;
 
 const NUM_INK = BLOCK_H * 0.742;
 const ZH_INK = BLOCK_H * 0.4;
@@ -153,8 +158,6 @@ function LineNum({
   const scale = size === "small" ? SMALL_SCALE : 1;
   const key = colorKey && colorKey in colors ? colorKey : "line1";
   const plateColor = (colors as Record<string, string>)[key];
-  const fg =
-    foreground && foreground.length > 0 ? foreground : colors.foreground;
   const bgColor =
     background && background.length > 0 ? background : colors.background;
 
@@ -162,22 +165,25 @@ function LineNum({
   const zhText = normalizeSvgLine(textZh);
   const enText = normalizeSvgLine(textEn);
 
-  const numFont = fontEn("medium", NUM_SIZE);
-  const zhFont = fontZh("medium", ZH_SIZE);
-  const enFont = fontEn("medium", EN_SIZE);
-  const numWidth = numText ? measureText(numText, numFont) : 0;
+  const numFont = fontEn(PLATE_WEIGHT, NUM_SIZE);
+  const zhFont = fontZh(PLATE_WEIGHT, ZH_SIZE);
+  const enFont = fontEn(PLATE_WEIGHT, EN_SIZE);
+  const digits = Array.from(numText).length;
+  // 两位数及以上：数字整体横向压缩（官方 13 号线牌实测）
+  const numScale = digits >= 2 ? NUM_COMPRESS : 1;
+  const m = digits >= 2 ? TWO_DIGIT : ONE_DIGIT;
   const zhWidth = zhText ? measureText(zhText, zhFont) : 0;
-  const enWidth = enText ? measureText(enText, enFont) : 0;
-
+  const enRendered = enText ? measureText(enText, enFont) : 0;
   const hasNum = Boolean(numText);
-  // 英文字距要计入排版宽度：rendered = measure + spacing × (字符数 - 1)
-  const enSpacing = EN_SPACING * EN_SIZE;
-  const enRendered =
-    enWidth + enSpacing * Math.max(0, Array.from(enText ?? "").length - 1);
   const textWidth = Math.max(zhWidth, enRendered);
-  // PDF 标注的数字↔文字间隙是「墨迹对墨迹」（1 号线牌 ink 实测 0.303a、
-  // 10 号线牌 0.065a）。measureText 给的是 advance 宽度，两端各带一段
-  // 空白边（bearing），直接用会显得间隙过大 —— 用 canvas 的 ink 边界
+  // 牌上文字色：默认按线路（黄底深蓝字），显式给了 foreground 则跟随
+  const textColor =
+    foreground && foreground.length > 0
+      ? foreground
+      : (findLine(Object.keys(colors).find(k => (colors as Record<string, string>)[k] === plateColor) ?? "")?.textColor ?? colors.foreground);
+  // PDF/官方样例标注的数字↔文字间隙是「墨迹对墨迹」（1 号线牌 ink 实测
+  // 0.303a、10 号线牌 0.065a）。measureText 给的是 advance 宽度，两端各带
+  // 一段空白边（bearing），直接用会显得间隙过大 —— 用 canvas 的 ink 边界
   // 把两侧 bearing 扣掉。
   const inkOf = (text: string, font: string) => {
     if (!text || typeof document === "undefined") return null;
@@ -192,33 +198,35 @@ function LineNum({
       right: m.actualBoundingBoxRight,
     };
   };
-  const numInk = hasNum ? inkOf(numText, numFont) : null;
+  const numInkRaw = hasNum ? inkOf(numText, numFont) : null;
+  const numInk = numInkRaw
+    ? {
+        advance: numInkRaw.advance * numScale,
+        left: numInkRaw.left * numScale,
+        right: numInkRaw.right * numScale,
+      }
+    : null;
   const zhInk = zhText ? inkOf(zhText, zhFont) : null;
   const numRightBearing = numInk ? Math.max(0, numInk.advance - numInk.right) : 0;
   const zhLeftBearing = zhInk ? Math.max(0, zhInk.left) : 0;
-  const gap = hasNum
-    ? Math.max(
-        1,
-        (numText.length >= 2 ? GAP_2 : GAP_1) - numRightBearing - zhLeftBearing
-      )
-    : 0;
+  void numRightBearing;
+  void zhLeftBearing;
 
-  // 牌宽：数字牌按位数固定（1.85a / 1.95a），文字牌按内容自适应；
-  // 内容过宽时（超长线路名）退化为内容 + 两侧 0.26a。
-  const digits = Math.max(1, Array.from(numText).length);
+  // 数字牌：官方锚点直接定位（数字 ink x0 / 文字栏 x0 / 牌宽），内容超宽时向右扩展
+  // 文字牌：内容贴左 0.194a，牌宽 = 内容 + 两侧边距
   const plateW = hasNum
     ? Math.max(
-        PLATE_W_1DIGIT + PLATE_W_EXTRA * (digits - 1),
-        numWidth + gap + textWidth + BLOCK_H * 0.2
+        m.plateW * BLOCK_H,
+        m.textX * BLOCK_H + textWidth + BLOCK_H * 0.15
       )
-    : Math.max(BLOCK_H, textWidth + TEXT_PLATE_PAD);
+    : Math.max(BLOCK_H, textWidth + PAD_X * 2);
 
-  // 内容整体水平居中
-  const contentW = hasNum ? numWidth + gap + textWidth : textWidth;
-  const contentX = (plateW - contentW) / 2;
-  const numX = contentX;
-  // 文字栏两行互相居中对齐（锚点 = 文字栏的中心，不是右缘）
-  const textCenterX = contentX + contentW - textWidth / 2;
+  // 数字 ink x0 锚定：numX = 目标 ink 位置 - 数字 ink 左 bearing（压缩后）
+  const numX = hasNum && numInk ? m.numX * BLOCK_H - numInk.left : PAD_X;
+  // 文字栏中心锚定：官方文字栏 ink 宽 0.839a，两行互相居中于栏中心
+  const textCenterX = hasNum
+    ? m.textX * BLOCK_H + (TEXT_COL_INK * BLOCK_H) / 2
+    : PAD_X + textWidth / 2;
   const zhX = textCenterX - zhWidth / 2;
   const enX = textCenterX - enRendered / 2;
 
@@ -254,25 +262,27 @@ function LineNum({
           fill={plateColor}
         />
         {numText ? (
-          <text
-            x={OUTER_MARGIN + numX}
-            y={numBaseline}
-            fontSize={NUM_SIZE}
-            fontWeight={WEIGHT_VALUE.medium}
-            fill={fg}
-            fontFamily={fontFamilyEn}
-            xmlSpace="preserve"
-          >
-            {numText}
-          </text>
+          <g transform={`translate(${OUTER_MARGIN + numX} 0) scale(${numScale} 1)`}>
+            <text
+              x={0}
+              y={numBaseline}
+              fontSize={NUM_SIZE}
+              fontWeight={PLATE_WEIGHT}
+              fill={textColor}
+              fontFamily={fontFamilyEn}
+              xmlSpace="preserve"
+            >
+              {numText}
+            </text>
+          </g>
         ) : null}
         {zhText ? (
           <text
             x={OUTER_MARGIN + zhX}
             y={zhBaseline}
             fontSize={ZH_SIZE}
-            fontWeight={WEIGHT_VALUE.medium}
-            fill={fg}
+            fontWeight={PLATE_WEIGHT}
+            fill={textColor}
             fontFamily={fontFamilyEn}
             xmlSpace="preserve"
           >
@@ -284,10 +294,9 @@ function LineNum({
             x={OUTER_MARGIN + enX}
             y={enBaseline}
             fontSize={EN_SIZE}
-            fontWeight={WEIGHT_VALUE.medium}
-            letterSpacing={EN_SPACING * EN_SIZE}
-            fill={fg}
-            fontFamily="Arial, Helvetica, sans-serif"
+            fontWeight={PLATE_WEIGHT}
+            fill={textColor}
+            fontFamily={fontFamilyEn}
             xmlSpace="preserve"
           >
             {enText}

@@ -1,3 +1,4 @@
+import "./fonts/simhei.css";
 import "./fonts/sourcehansans.css";
 import "./fonts/arial.css";
 
@@ -8,10 +9,8 @@ import ToTrain, { toTrainDefaultProps } from "./ToTrain.tsx";
 import TrainDirection, {
   trainDirectionDefaultProps,
 } from "./TrainDirection.tsx";
-import LoopNextStation, {
-  loopNextStationDefaultProps,
-} from "./LoopNextStation.tsx";
 import DualText, { dualTextDefaultProps } from "./DualText.tsx";
+import StationSign, { stationSignDefaultProps } from "./StationSign.tsx";
 import ExitNum, { exitNumDefaultProps } from "./ExitNum.tsx";
 import Icon, { iconDefaultProps } from "./Icon.tsx";
 import ExitIcon, { exitIconDefaultProps } from "./ExitIcon.tsx";
@@ -62,14 +61,14 @@ const theme: Theme = {
       defaultProps: trainDirectionDefaultProps,
     },
     {
-      displayName: "themes.beijingOld.components.LoopNextStation",
-      component: LoopNextStation,
-      defaultProps: loopNextStationDefaultProps,
-    },
-    {
       displayName: "themes.beijingOld.components.DualText",
       component: DualText,
       defaultProps: dualTextDefaultProps,
+    },
+    {
+      displayName: "themes.beijingOld.components.StationSign",
+      component: StationSign,
+      defaultProps: stationSignDefaultProps,
     },
     {
       displayName: "themes.beijingOld.components.ExitNum",

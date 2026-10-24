@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Input, InputNumber, Select } from "@douyinfe/semi-ui";
+import { Input, InputNumber, Select, Switch } from "@douyinfe/semi-ui";
 import colors from "./define/colors";
 import {
   fontEn,
@@ -8,6 +8,7 @@ import {
   useFontsReady,
   weightCss,
 } from "./define/text";
+import { fontFamilyEn, fontFamilyZh } from "./define/colors";
 import type { EditorConfig } from "../../../interfaces/editor";
 import {
   MultiRowBackground,
@@ -16,19 +17,21 @@ import {
 } from "./Background";
 
 /**
- * 两行文字（M4）：两行「中文 + 英文」的出口/街名结构。
+ * 双行文字（经典样式）：两行「中文 / 英文」逐行对齐出入口编号的两个描边方块
+ * （ExitNum 的 double 形态：每块 0.5a 见方、间隔 0.1a，块中心距 = 0.6a）。
  *
- * 版式按规范图实测（牌面 195×107 → 64px 行高），**字号与上下间距全部锁死**，
- * 不提供面板调节：
- *   中文 ink ≈0.150H → 字号 11px；英文 cap ≈0.075H → 字号 6.7px
- *   四条基线（占牌面高）：中文1 0.318H、英文1 0.449H、中文2 0.720H、英文2 0.841H
- * 不设换行宽度、也不自动换行（文本长度由用户自己控制）。
+ *  - 每行 = 中文一行 + 英文另起一行（英文在中文下方，基线随中文行）
+ *  - 每组（中文+英文）的中心对齐对应方块的中心：字号取块内字母 ink
+ *    （0.45 × 0.5a），英文 cap 为中文 ink 的 0.7 倍
+ *  - showEn = false 时只渲染两行中文（「东北口 / 西南口」这类无英文场合）
  */
 export interface DualTextProps {
   line1chinese: string;
   line1english: string;
   line2chinese: string;
   line2english: string;
+  /** 是否渲染行内英文（false = 纯两行中文） */
+  showEn?: boolean;
   align?: "left" | "center" | "right";
   letterSpacing?: number;
   foreground?: string;
@@ -37,10 +40,11 @@ export interface DualTextProps {
 }
 
 export const dualTextDefaultProps: DualTextProps = {
-  line1chinese: "玩命科学园",
-  line1english: "Shabuzhuchelehei",
-  line2chinese: "神田白八马女子学院",
-  line2english: "Xianzairenzhuizhechepao",
+  line1chinese: "东北口",
+  line1english: "Northeast Exit",
+  line2chinese: "西南口",
+  line2english: "Southwest Exit",
+  showEn: true,
   align: "left",
   letterSpacing: 0,
   foreground: colors.foreground,
@@ -48,26 +52,19 @@ export const dualTextDefaultProps: DualTextProps = {
   background2: colors.background,
 };
 
-/**
- * 字号锁死：按规范图实测后换算到 64px 行高。
- * 规范图牌面高 107px ↔ 本编辑器 64px（比例 0.598）：
- *   中文 ink 16px（0.150H）→ 9.6px ink → 字号 11px
- *   英文 cap 8px（0.075H）→ 4.8px cap → 字号 6.7px
- */
-const ZH_SIZE = 11;
-const EN_SIZE = 6.7;
-/**
- * 字重锁死（不再提供面板项）。
- * 注意：本项目把预置档位定义成 normal 400 / medium 600 / bold 800，
- * 这里需要的是 500（介于 normal 与 medium 之间），所以直接用数值，不占用档位。
- */
-const TEXT_WEIGHT = 500;
-/** 四条基线锁死（占 64px 行高的比例 × 64） */
-const R1_ZH_BASELINE = 20.4; // 0.318H
-const R1_EN_BASELINE = 28.7; // 0.449H
-const R2_ZH_BASELINE = 46.1; // 0.720H
-const R2_EN_BASELINE = 53.8; // 0.841H
+/** a（行 = 1.5a，与出口方块同一语境） */
+const A = 64 / 1.5;
+/** 中文 ink = 0.45 × 0.5a（出口 double 块内字母 ink），汉字 ink ≈ 0.88em */
+const ZH_SIZE = (A * 0.225) / 0.88;
+/** 英文 cap = 中文 ink 的 0.7 倍，Arial cap = 0.716em */
+const EN_SIZE = (A * 0.225 * 0.7) / 0.716;
+/** 组中心距 = 0.5a 块 + 0.1a 间隔（对齐出口 double 方块） */
+const LINE_STEP = A * 0.6;
+/** 组内英文与中文的间隙 */
+const EN_GAP = 2;
 const ROW_H = 64;
+/** 中易黑体单一字重，官方观感偏粗 */
+const TEXT_WEIGHT = 700;
 
 export const dualTextEditorConfig = (
   t: (key: string) => string
@@ -79,6 +76,11 @@ export const dualTextEditorConfig = (
       { key: "line1english", label: `${scope}.line1english`, element: <Input /> },
       { key: "line2chinese", label: `${scope}.line2chinese`, element: <Input /> },
       { key: "line2english", label: `${scope}.line2english`, element: <Input /> },
+      {
+        key: "showEn",
+        label: `${scope}.showEn`,
+        element: <Switch />,
+      },
       {
         key: "align",
         label: `${scope}.align.displayName`,
@@ -112,6 +114,7 @@ function DualText({
   line1english = dualTextDefaultProps.line1english,
   line2chinese = dualTextDefaultProps.line2chinese,
   line2english = dualTextDefaultProps.line2english,
+  showEn = dualTextDefaultProps.showEn,
   align = dualTextDefaultProps.align,
   letterSpacing = dualTextDefaultProps.letterSpacing,
   foreground = dualTextDefaultProps.foreground,
@@ -123,28 +126,27 @@ function DualText({
   const enFont = fontEn(TEXT_WEIGHT, EN_SIZE);
   const ls = letterSpacing ?? 0;
 
-  // 不换行：每段文字就是一行，宽度取四段里最宽者
+  // 两行内容：每行 = 中文 + （可选）跟随的英文
+  const rows = useMemo(
+    () => [
+      { zh: line1chinese, en: line1english },
+      { zh: line2chinese, en: line2english },
+    ],
+    [line1chinese, line1english, line2chinese, line2english]
+  );
+
   const layout = useMemo(() => {
     const widthOf = (text: string, size: number, font: string) =>
       measureText(text ?? "", font) +
       ls * size * Math.max(0, Array.from(text ?? "").length - 1);
-    const width = Math.max(
-      widthOf(line1chinese, ZH_SIZE, zhFont),
-      widthOf(line1english, EN_SIZE, enFont),
-      widthOf(line2chinese, ZH_SIZE, zhFont),
-      widthOf(line2english, EN_SIZE, enFont)
-    );
+    const lineWidth = (row: { zh: string; en: string }) => {
+      const zhW = widthOf(row.zh, ZH_SIZE, zhFont);
+      if (!showEn || !row.en) return zhW;
+      return Math.max(zhW, widthOf(row.en, EN_SIZE, enFont));
+    };
+    const width = Math.max(...rows.map(lineWidth), 1);
     return { width: Math.max(1, Math.ceil(width)) };
-  }, [
-    line1chinese,
-    line1english,
-    line2chinese,
-    line2english,
-    zhFont,
-    enFont,
-    ls,
-    fontsReady,
-  ]);
+  }, [rows, showEn, zhFont, enFont, ls, fontsReady]);
 
   const anchor =
     align === "center" ? "middle" : align === "right" ? "end" : "start";
@@ -154,27 +156,6 @@ function DualText({
       : align === "right"
         ? layout.width
         : 0;
-
-  const line = (
-    key: string,
-    text: string,
-    baseline: number,
-    size: number,
-    font: string
-  ) => (
-    <text
-      key={key}
-      x={0}
-      y={baseline}
-      fontSize={size}
-      fontWeight={weightCss(TEXT_WEIGHT)}
-      fill={foreground}
-      fontFamily={font}
-      letterSpacing={`${ls}em`}
-    >
-      {text}
-    </text>
-  );
 
   return (
     <MultiRowBackground
@@ -189,10 +170,44 @@ function DualText({
           data-fonts-ready={fontsReady}
         >
           <g transform={`translate(${groupX}, 0)`} textAnchor={anchor}>
-            {line("r1zh", line1chinese, R1_ZH_BASELINE, ZH_SIZE, zhFont)}
-            {line("r1en", line1english, R1_EN_BASELINE, EN_SIZE, enFont)}
-            {line("r2zh", line2chinese, R2_ZH_BASELINE, ZH_SIZE, zhFont)}
-            {line("r2en", line2english, R2_EN_BASELINE, EN_SIZE, enFont)}
+            {rows.map((row, index) => {
+              // 每组（中文+英文另起一行）的中心对齐对应方块的中心
+              const center = ROW_H / 2 + (index - 0.5) * LINE_STEP;
+              const zhInk = ZH_SIZE * 0.88;
+              const enCap = showEn && row.en ? EN_SIZE * 0.716 : 0;
+              const groupH = zhInk + (enCap ? EN_GAP + enCap : 0);
+              const zhBaseline = center - groupH / 2 + zhInk;
+              const enBaseline = zhBaseline + EN_GAP + enCap;
+              return (
+                <g key={index}>
+                  {row.zh ? (
+                    <text
+                      x={0}
+                      y={zhBaseline}
+                      fontSize={ZH_SIZE}
+                      fontWeight={weightCss(TEXT_WEIGHT)}
+                      fill={foreground}
+                      fontFamily={fontFamilyZh}
+                      letterSpacing={`${ls}em`}
+                    >
+                      {row.zh}
+                    </text>
+                  ) : null}
+                  {showEn && row.en ? (
+                    <text
+                      x={0}
+                      y={enBaseline}
+                      fontSize={EN_SIZE}
+                      fontWeight={weightCss(TEXT_WEIGHT)}
+                      fill={foreground}
+                      fontFamily={fontFamilyEn}
+                    >
+                      {row.en}
+                    </text>
+                  ) : null}
+                </g>
+              );
+            })}
           </g>
         </svg>
       </div>

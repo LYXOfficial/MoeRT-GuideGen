@@ -18,6 +18,9 @@ export interface LineDef {
   mergedWith?: string;
 }
 
+/** 黄底线路（7 号线 / 13 号线）牌上文字用文字蓝，其余白字 */
+const YELLOW_KEYS = new Set(["line7", "line13"]);
+
 const def = (
   id: string,
   nameZh: string,
@@ -30,7 +33,7 @@ const def = (
   nameEn,
   colorKey,
   color: (colors as Record<string, string>)[colorKey],
-  textColor: "white",
+  textColor: YELLOW_KEYS.has(colorKey) ? colors.textblue : "white",
   mergedWith,
 });
 

@@ -43,6 +43,7 @@ import {
   PregnantGlyph,
   LuggageGlyph,
 } from "./icons/facilities-real";
+import { CrossGlyph, GateArrowDownGlyph } from "./icons/gate-real";
 
 const COLOR_SCOPE = "themes.beijingOld.components.Icon.props.icon";
 /** 图标块尺寸与默认图形尺寸（与新版一致：四周各留 10px） */
@@ -66,6 +67,9 @@ const ENTRIES: IconEntry[] = [
   { key: "stroller", glyph: StrollerGlyph },
   { key: "pregnant", glyph: PregnantGlyph },
   { key: "luggage", glyph: LuggageGlyph },
+  // 自助设施通行（向下箭头）/ 禁止通行（叉形）：前景色指定，无固定配色
+  { key: "gate_arrow_down", glyph: GateArrowDownGlyph },
+  { key: "no_entry_cross", glyph: CrossGlyph },
 ];
 
 export const regicons = ENTRIES.map(entry => ({

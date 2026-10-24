@@ -1170,6 +1170,10 @@
         "toTrainVariant": {
           "solid": "ソリッド",
           "outline": "ライン"
+        },
+        "exitVariant": {
+          "single": "シングル",
+          "double": "2行"
         }
       },
       "components": {
@@ -1220,7 +1224,7 @@
           }
         },
         "LineNum": {
-          "displayName": "路線番号標",
+          "displayName": "路線標",
           "props": {
             "lineId": "路線番号",
             "colorKey": {
@@ -1277,20 +1281,6 @@
             "background": "背景色"
           }
         },
-        "LoopNextStation": {
-          "displayName": "環状線方向テキスト",
-          "props": {
-            "nextZh": "「下一站」中国語",
-            "nextEn": "「下一站」英語",
-            "stationZh": "駅名（中国語）",
-            "stationEn": "駅名（英語）",
-            "align": {
-              "displayName": "揃え"
-            },
-            "foreground": "前景色",
-            "background": "背景色"
-          }
-        },
         "DualText": {
           "displayName": "2行テキスト",
           "props": {
@@ -1298,6 +1288,7 @@
             "line1english": "1行目（英語）",
             "line2chinese": "2行目（中国語）",
             "line2english": "2行目（英語）",
+            "showEn": "英語を表示",
             "align": {
               "displayName": "揃え"
             },
@@ -1309,14 +1300,25 @@
             "background": "背景色"
           }
         },
+        "StationSign": {
+          "displayName": "駅名",
+          "props": {
+            "nameZh": "1行目（中国語）",
+            "nameEn": "1行目（英語）",
+            "showLogo": {
+              "displayName": "北京地铁图标"
+            },
+            "foreground": "前景色",
+            "background": "背景色"
+          }
+        },
         "ExitNum": {
           "displayName": "出入口番号",
           "props": {
             "exits": "出入口番号",
             "exitLetter": "英字",
-            "exitNumber": "追加数字",
-            "directions": {
-              "displayName": "方位"
+            "variant": {
+              "displayName": "形态"
             },
             "textZh": "中国語テキスト",
             "textEn": "英語テキスト",
@@ -1345,7 +1347,21 @@
               "elderly": "高齢者",
               "stroller": "ベビーカー",
               "pregnant": "妊婦",
-              "luggage": "大きな荷物"
+              "luggage": "大きな荷物",
+              "gate_arrow_down": {
+                "zh-CN": "自助设施通行",
+                "zh-TW": "自助設施通行",
+                "en-US": "Gate pass (down arrow)",
+                "ja-JP": "改札通行",
+                "ko-KR": "자동개찲 통과"
+              },
+              "no_entry_cross": {
+                "zh-CN": "禁止通行（叉）",
+                "zh-TW": "禁止通行（叉）",
+                "en-US": "No entry (cross)",
+                "ja-JP": "通行禁止（バツ）",
+                "ko-KR": "통행 금지 (십자)"
+              }
             },
             "rotation": {
               "displayName": "回転"

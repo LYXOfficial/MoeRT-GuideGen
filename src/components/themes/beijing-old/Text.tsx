@@ -41,7 +41,7 @@ export const textDefaultProps: TextProps = {
   align: "left",
   weight: "medium",
   letterSpacing: 0,
-  fontSizeZh: 25,
+  fontSizeZh: 22,
   fontSizeEn: 15,
   lineGap: 5,
   foreground: colors.foreground,
@@ -54,7 +54,7 @@ export const textDefaultProps: TextProps = {
 export const TEXT_FONT_SIZE_MIN = 8;
 export const TEXT_FONT_SIZE_MAX = 48;
 /** 默认字号（= textDefaultProps.fontSizeZh / fontSizeEn） */
-const DEFAULT_FONT_SIZE_ZH = 25;
+const DEFAULT_FONT_SIZE_ZH = 22;
 const DEFAULT_FONT_SIZE_EN = 15;
 
 // 行距：单行 fs×1.3；多行时中文 fs×1.05（汉字 ink 就有 0.88em，
@@ -294,7 +294,7 @@ export default function Text({
       zhLines,
       enLines,
       width: Math.max(1, Math.ceil(width)),
-      height: Math.max(64, Math.ceil(contentHeight) + 6),
+      height: Math.max(64, Math.ceil(contentHeight) + 2),
       zhInk,
       enCap,
       contentHeight,

@@ -6,7 +6,7 @@ import {
   WEIGHT_VALUE,
   type TextWeight,
 } from "./define/text";
-import colors from "./define/colors";
+import colors, { fontFamilyEn } from "./define/colors";
 import type { EditorConfig } from "../../../interfaces/editor";
 import { Select } from "@douyinfe/semi-ui";
 import {
@@ -76,20 +76,30 @@ export const trainDirectionEditorConfig = (
 };
 
 const ROW_H = 64;
-// 用户核对 PDF 后的更正：**「开往」与站名同字号、同一基线、无偏移**（仅字重不同）
-const PREFIX_ZH_SIZE = 25;
-const DEST_ZH_SIZE = 25;
-const PREFIX_EN_SIZE = 15;
-const DEST_EN_SIZE = 15;
-const PREFIX_WEIGHT: TextWeight = "normal";
-const DEST_WEIGHT: TextWeight = "medium";
-/** 英文不分前后缀都是粗体 */
+/**
+ * 官方样例校准（visys 经典示例 B「开往 牡丹园」截图实测）：
+ * 行 = 1.5a；中文 ink ≈ 0.345H（全粗）、英文 cap ≈ 0.155H；
+ * 文字块整体偏上：中文 ink 带 [0.15H, 0.50H]、英文 cap 带 [0.55H, 0.70H]。
+ * 「开往」与站名同字号同基线同字重，词间距 ≈ 0.19a（图中空格）。
+ */
+const PREFIX_ZH_SIZE = (ROW_H * 0.345) / 0.88;
+const DEST_ZH_SIZE = PREFIX_ZH_SIZE;
+const PREFIX_EN_SIZE = (ROW_H * 0.155) / 0.716;
+const DEST_EN_SIZE = PREFIX_EN_SIZE;
+const PREFIX_WEIGHT: TextWeight = "bold";
+const DEST_WEIGHT: TextWeight = "bold";
+/** 英文同为粗体 */
 const EN_WEIGHT: TextWeight = "bold";
-const WORD_GAP = 4;
+const WORD_GAP = (ROW_H / 1.5) * 0.19;
 /** 始终存在的左右间距 */
 const PAD_X = 5;
 /** 英文相对对齐边向内收的像素（平衡拉丁字母侧边距的视觉） */
 const EN_INWARD = 1;
+/** 文字块按官方样例偏上：中文 ink 顶 = 0.15H */
+const ZH_INK = PREFIX_ZH_SIZE * 0.88;
+const EN_CAP = PREFIX_EN_SIZE * 0.716;
+const TEXT_GAP = ROW_H * 0.05;
+const TEXT_TOP = ROW_H * 0.15;
 
 function TrainDirection({
   prefixZh = trainDirectionDefaultProps.prefixZh,
@@ -139,9 +149,9 @@ function TrainDirection({
   const enAnchorX = isRight
     ? width - PAD_X - EN_INWARD
     : PAD_X + EN_INWARD;
-  // 「开往」与站名共用一条基线（实测牌面 0.507H → 64px 行高 32.5），英文在下一行
-  const zhBaseline = 32.5;
-  const enBaseline = 49.3;
+  // 两行整体垂直居中（官方图 3：文字栏在 1a 内容带内居中）
+  const zhBaseline = TEXT_TOP + ZH_INK;
+  const enBaseline = zhBaseline + TEXT_GAP + EN_CAP;
 
   return (
     <MultiRowBackground
@@ -177,7 +187,7 @@ function TrainDirection({
           y={enBaseline}
           textAnchor={isRight ? "end" : "start"}
           fill={fg}
-          fontFamily="Arial, Helvetica, sans-serif"
+          fontFamily={fontFamilyEn}
         >
           <tspan
             fontSize={PREFIX_EN_SIZE}

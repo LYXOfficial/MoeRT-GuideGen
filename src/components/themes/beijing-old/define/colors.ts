@@ -59,9 +59,9 @@ const colors = {
 
 export default colors;
 
-/** 汉字字体：与新版共用思源黑体（云端 Noto Sans SC） */
+/** 汉字字体：中易黑体（旧版标准字体），回退到云端思源黑体 */
 export const fontFamilyZh =
-  '"Noto Sans SC", "Source Han Sans SC", "PingFang SC", "Microsoft YaHei", SimHei, sans-serif';
+  '"SimHei", "Noto Sans SC", "Source Han Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif';
 
-/** 拉丁字母/数字字体：Arial */
-export const fontFamilyEn = `Arial, ${fontFamilyZh}`;
+/** 拉丁字母/数字字体：Arial（官方样例西文度量与 Arial 吻合） */
+export const fontFamilyEn = "Arial, " + fontFamilyZh;

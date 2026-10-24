@@ -1168,6 +1168,10 @@
         "toTrainVariant": {
           "solid": "Solid",
           "outline": "Outline"
+        },
+        "exitVariant": {
+          "single": "Single",
+          "double": "Two rows"
         }
       },
       "components": {
@@ -1218,7 +1222,7 @@
           }
         },
         "LineNum": {
-          "displayName": "Line Number Sign",
+          "displayName": "Line Plate",
           "props": {
             "lineId": "Line number",
             "colorKey": {
@@ -1275,20 +1279,6 @@
             "background": "Background"
           }
         },
-        "LoopNextStation": {
-          "displayName": "Loop Next Station",
-          "props": {
-            "nextZh": "\"Next station\" Chinese",
-            "nextEn": "\"Next station\" English",
-            "stationZh": "Station name (Chinese)",
-            "stationEn": "Station name (English)",
-            "align": {
-              "displayName": "Align"
-            },
-            "foreground": "Foreground",
-            "background": "Background"
-          }
-        },
         "DualText": {
           "displayName": "Dual Text",
           "props": {
@@ -1296,6 +1286,7 @@
             "line1english": "Line 1 English",
             "line2chinese": "Line 2 Chinese",
             "line2english": "Line 2 English",
+            "showEn": "Show inline English",
             "align": {
               "displayName": "Align"
             },
@@ -1307,14 +1298,25 @@
             "background": "Background"
           }
         },
+        "StationSign": {
+          "displayName": "Station Name",
+          "props": {
+            "nameZh": "Line 1 Chinese",
+            "nameEn": "Line 1 English",
+            "showLogo": {
+              "displayName": "北京地铁图标"
+            },
+            "foreground": "Foreground",
+            "background": "Background"
+          }
+        },
         "ExitNum": {
           "displayName": "Exit Number",
           "props": {
             "exits": "Exit numbers",
             "exitLetter": "Letter",
-            "exitNumber": "Extra digit",
-            "directions": {
-              "displayName": "Compass direction"
+            "variant": {
+              "displayName": "形态"
             },
             "textZh": "Chinese text",
             "textEn": "English text",
@@ -1343,7 +1345,21 @@
               "elderly": "Elderly",
               "stroller": "With stroller",
               "pregnant": "Pregnant",
-              "luggage": "With luggage"
+              "luggage": "With luggage",
+              "gate_arrow_down": {
+                "zh-CN": "自助设施通行",
+                "zh-TW": "自助設施通行",
+                "en-US": "Gate pass (down arrow)",
+                "ja-JP": "改札通行",
+                "ko-KR": "자동개찲 통과"
+              },
+              "no_entry_cross": {
+                "zh-CN": "禁止通行（叉）",
+                "zh-TW": "禁止通行（叉）",
+                "en-US": "No entry (cross)",
+                "ja-JP": "通行禁止（バツ）",
+                "ko-KR": "통행 금지 (십자)"
+              }
             },
             "rotation": {
               "displayName": "Rotation"
