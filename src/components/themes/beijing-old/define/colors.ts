@@ -13,13 +13,12 @@
  */
 const colors = {
   // ===== 版面基础色（vitool COLOR_MODE_RULES：A 蓝色系深色底）=====
-  background: "#092f52", // 经典样式版面衬底（底色蓝·较浅）
+  background: "#0e3463", // 经典样式版面衬底（visys p7 印刷实测，用户校准值）
   foreground: "#ffffff", // --mode-item 前景（文字/图形）
   textblue: "#002538", // --mode-clsdark 文字蓝（较深，亮底/方块内文字用）
   white: "#ffffff",
   border: "#e5e7eb",
   // 经典样式没有新版黄色分隔线：分割线为单色（oth@bw.svg，深底白 / 浅底深蓝）
-  specline: "#ffffff", // --mode-divider：经典单色分割线（深底默认白）
   divider: "#ffffff",
 
   // ===== 图形符号色 =====

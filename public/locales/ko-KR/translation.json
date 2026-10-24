@@ -52,7 +52,7 @@
   },
   "saves": {
     "clear_local_button": "로컬 저장소 지우기",
-    "restore_failed": "저장 데이터를 불러오지 못했습니다: 구성 요소가 현재 테마와 맞지 않습니다. 저장 데이터를 보호하기 위해 자동 저장을 중지했습니다.",
+    "restore_failed": "구성 요소가 현재 테마와 맞지 않습니다. 저장 데이터를 보호하기 위해 자동 저장을 중지했습니다.",
     "clear_local_title": "로컬 저장소 지우기",
     "clear_local_confirm": "로컬 자동 저장을 지우고 페이지를 새로고침하시겠습니까? 이 작업은 취소할 수 없습니다.",
     "export_image": "이미지로 내보내기",
@@ -71,7 +71,12 @@
     },
     "export": {
       "success": "아카이브가 내보내졌습니다"
-    }
+    },
+    "restore_failed_title": "저장본 불러오기 실패",
+    "reset_archive": "저장 초기화",
+    "download_archive": "백업 다운로드",
+    "reset_confirm_title": "저장을 초기화할까요?",
+    "reset_confirm_content": "로컬 저장을 지우고 페이지를 새로고칩니다. 되돌릴 수 없습니다(먼저 백업 권장)."
   },
   "loading": {
     "message": "애플리케이션을 로드하는 중...",
@@ -864,7 +869,7 @@
           }
         },
         "LineNum": {
-          "displayName": "노선 번호 표지",
+          "displayName": "노선 판",
           "props": {
             "lineId": "노선 번호",
             "colorKey": {
@@ -1094,8 +1099,7 @@
         "textblue": "텍스트 블루",
         "white": "흰색",
         "border": "테두리",
-        "specline": "구분선(노랑)",
-        "divider": "구분선(흰색)",
+        "divider": "구분선",
         "exit": "출구 그린",
         "prohibit": "금지 레드",
         "line1": "1호선 / 바퉁선",
@@ -1223,7 +1227,17 @@
             "background": "배경색"
           }
         },
-        "LineNum": {
+        "Arrow": {
+          "displayName": "화살표",
+          "props": {
+            "direction": {
+              "displayName": "방향"
+            },
+            "foreground": "전경색",
+            "background": "배경색"
+          }
+        },
+        "Line": {
           "displayName": "노선 판",
           "props": {
             "lineId": "노선 번호",
@@ -1245,16 +1259,6 @@
             "background": "배경색"
           }
         },
-        "Arrow": {
-          "displayName": "화살표",
-          "props": {
-            "direction": {
-              "displayName": "방향"
-            },
-            "foreground": "전경색",
-            "background": "배경색"
-          }
-        },
         "ToTrain": {
           "displayName": "승차 아이콘",
           "props": {
@@ -1264,20 +1268,6 @@
             "foreground": "전경색",
             "plateColor": "판 색상",
             "strokeColor": "테두리 색상",
-            "background": "배경색"
-          }
-        },
-        "TrainDirection": {
-          "displayName": "승차 방향",
-          "props": {
-            "prefixZh": "중국어 접두어",
-            "prefixEn": "영어 접두어",
-            "destinationZh": "종착역(중국어)",
-            "destinationEn": "종착역(영어)",
-            "align": {
-              "displayName": "정렬"
-            },
-            "foreground": "전경색",
             "background": "배경색"
           }
         },
@@ -1300,28 +1290,24 @@
             "background": "배경색"
           }
         },
-        "StationSign": {
-          "displayName": "역명",
-          "props": {
-            "nameZh": "1행 중국어",
-            "nameEn": "1행 영어",
-            "showLogo": {
-              "displayName": "北京地铁图标"
-            },
-            "foreground": "전경색",
-            "background": "배경색"
-          }
-        },
-        "ExitNum": {
-          "displayName": "출입구 번호",
+        "ExitLetter": {
+          "displayName": "출구 알파벳",
           "props": {
             "exits": "출입구 번호",
             "exitLetter": "영문 기호",
             "variant": {
               "displayName": "形态"
             },
-            "textZh": "중국어 텍스트",
-            "textEn": "영어 텍스트",
+            "foreground": "전경색",
+            "background": "배경색"
+          }
+        },
+        "StationSign": {
+          "displayName": "역명",
+          "props": {
+            "nameZh": "1행 중국어",
+            "nameEn": "1행 영어",
+            "showLogo": "베이징 지하철 로고",
             "foreground": "전경색",
             "background": "배경색"
           }
@@ -1348,27 +1334,16 @@
               "stroller": "유모차",
               "pregnant": "임산부",
               "luggage": "큰 짐",
-              "gate_arrow_down": {
-                "zh-CN": "自助设施通行",
-                "zh-TW": "自助設施通行",
-                "en-US": "Gate pass (down arrow)",
-                "ja-JP": "改札通行",
-                "ko-KR": "자동개찲 통과"
-              },
-              "no_entry_cross": {
-                "zh-CN": "禁止通行（叉）",
-                "zh-TW": "禁止通行（叉）",
-                "en-US": "No entry (cross)",
-                "ja-JP": "通行禁止（バツ）",
-                "ko-KR": "통행 금지 (십자)"
-              }
+              "gate_arrow_down": "개찰 통과",
+              "no_entry_cross": "통행 금지 (십자)",
+              "no_entry_cross_framed": "통행 금지 (테두리)"
             },
             "rotation": {
               "displayName": "회전"
             },
             "flipH": "좌우 반전",
             "flipV": "상하 반전",
-            "foreground": "전경색(흰색/기타 그룹)",
+            "foreground": "전경색",
             "background": "배경색"
           }
         },

@@ -10,9 +10,8 @@ import {
 } from "./define/text";
 import type { EditorConfig } from "../../../interfaces/editor";
 import {
-  MultiRowBackground,
+  Background,
   backgroundFormItems,
-  commonSelectFormItem,
   digitFormItem,
   foregroundFormItem,
   textFormItem,
@@ -30,7 +29,7 @@ import {
  *  - 数字与文字栏的间隙：一位数 0.303a、两位数 0.065a（两组实测），
  *    内容整体在牌内水平居中。
  */
-export interface LineNumProps {
+export interface LineProps {
   /** 线路号；留空则为文字线路牌（如「八通线 / Batong Line」） */
   lineId?: string;
   /** 线路标志色（colors 的键），即牌面底色 */
@@ -39,25 +38,20 @@ export interface LineNumProps {
   textZh?: string;
   /** 英文文字，如「Line 1」「Batong Line」 */
   textEn?: string;
-  /** default = 满行尺寸；small = 小尺寸整体缩放 */
-  size?: "default" | "small";
   /** 前景色（牌内文字）；留空用白色 */
   foreground?: string;
   /** 底板色；留空用经典版面深蓝 */
   background?: string;
   /** 第二行背景色（上下分色） */
-  background2?: string;
 }
 
-export const lineNumDefaultProps: LineNumProps = {
+export const lineDefaultProps: LineProps = {
   lineId: "1",
   colorKey: "line1",
   textZh: "号线",
   textEn: "Line 1",
-  size: "default",
-  foreground: "", // 留空 = 白字；黄底线路自动用文字蓝
+  foreground: colors.foreground,
   background: colors.background,
-  background2: colors.background,
 };
 
 export const LINE_COLOR_KEYS: string[] = Array.from(
@@ -69,7 +63,7 @@ const lineColorFormItem = (
   t: (key: string) => string
 ): EditorConfig["forms"][number] => ({
   key: "colorKey",
-  label: "themes.beijingOld.components.LineNum.props.colorKey.displayName",
+  label: "themes.beijingOld.components.Line.props.colorKey.displayName",
   element: (
     <Select>
       {LINE_COLOR_KEYS.map(key => (
@@ -89,17 +83,16 @@ const lineColorFormItem = (
   ),
 });
 
-export const lineNumEditorConfig = (
+export const lineEditorConfig = (
   t: (key: string) => string
 ): EditorConfig => {
-  const scope = "themes.beijingOld.components.LineNum.props";
+  const scope = "themes.beijingOld.components.Line.props";
   return {
     forms: [
       digitFormItem(scope, "lineId", 2),
       lineColorFormItem(t),
       textFormItem(scope, "textZh"),
       textFormItem(scope, "textEn"),
-      commonSelectFormItem(t, scope, "size", "size", ["default", "small"]),
       foregroundFormItem(scope),
       ...backgroundFormItems(scope),
     ],
@@ -110,55 +103,50 @@ const ROW_H = 64;
 
 /** 牌高 1a：行 = 1.5a（官方 DB11/T 657.2—2024 示例图：方形模块 = 1a ≈ 2/3 行高） */
 const BLOCK_H = ROW_H / 1.5;
-/** 圆角半径 0.065a（官方样例牌顶行内缩 10px / 牌高 155px 实测） */
-const RADIUS = BLOCK_H * 0.065;
+/** 圆角半径 0.09a（放大对比官方样例目测校准） */
+const RADIUS = BLOCK_H * 0.09;
 /** 数字 ink 0.735a（官方样例「1」ink 高 0.735H 实测），Arial cap = 0.716em */
 const NUM_SIZE = (BLOCK_H * 0.735) / 0.716;
 /** 「号线」ink 0.40a（汉字 ink ≈ 0.88em） */
 const ZH_SIZE = (BLOCK_H * 0.4) / 0.88;
 /** 「Line N」cap 0.187a（官方样例实测，八通线的 0.239H 含 g 下降部） */
 const EN_SIZE = (BLOCK_H * 0.187) / 0.716;
-/** 文字栏总高（号线 ink + 间隙 + Line cap）= 0.684a（无数字时垂直居中用） */
-const TEXT_COL_H = BLOCK_H * 0.684;
-/** 「号线」ink 底到「Line N」cap 顶的间隙 0.097a（1 号线牌实测） */
-const TEXT_GAP_LINE = BLOCK_H * 0.097;
-const EN_CAP_H = BLOCK_H * 0.187;
 /**
  * 数字牌布局锚点（官方样例实测，单位 a）：
  *  - 一位数（1 号线牌 W/H 1.852）：数字 ink x0 = 0.194a、文字栏 x0 = 0.769a、牌宽 1.852a
  *  - 两位数（13 号线牌 W/H 1.926）：数字压缩后 ink x0 = 0.118a、文字栏 x0 = 0.955a、牌宽 1.926a
  *  - 文字栏（号线/Line 两行互相居中）在两块官方牌里的 ink 宽同为 0.839a
  */
-const ONE_DIGIT = { numX: 0.194, textX: 0.769, plateW: 1.852 };
-const TWO_DIGIT = { numX: 0.118, textX: 0.955, plateW: 1.926 };
+const ONE_DIGIT = { numX: 0.194, gap: 0.26, padR: 0.194, textX: 0.769, plateW: 1.852 };
+const TWO_DIGIT = { numX: 0.118, gap: 0.1, padR: 0.118, textX: 0.955, plateW: 1.926 };
+// 官方牌宽（一位 1.85a / 两位 1.95a）—— 内容不超宽时用固定值
 /** 官方文字栏 ink 宽（锚定文字栏中心用） */
 const TEXT_COL_INK = 0.839;
 /** 两位数及以上的数字横向压缩比例（同新版 numScale 的手法） */
 const NUM_COMPRESS = 0.9;
 /** 文字牌左右留白 0.194a（八通线牌实测左 0.194a / 右 0.175a） */
 const PAD_X = BLOCK_H * 0.194;
+/** 数字 ink 与文字栏之间的保底间隙（官方 13 号牌实测 ≈ 0.03a，很挤） */
+const MIN_GAP = BLOCK_H * 0.03;
 /** 牌外左右留白 */
 const OUTER_MARGIN = 5;
-/** 小尺寸整体缩放（与新版口径一致） */
-const SMALL_SCALE = 0.62;
 /** 数字用 Arial 原生粗度（官方样例数字笔画细）；汉字保持 700 观感 */
 const PLATE_WEIGHT = 400;
 
-const NUM_INK = BLOCK_H * 0.742;
-const ZH_INK = BLOCK_H * 0.4;
+const NUM_INK = NUM_SIZE * 0.716;
+/** SimHei 汉字 ink 顶到基线的距离（px，放大实测校准） */
+const ZH_ASCENT_PX = 15.24;
 
-function LineNum({
-  lineId = lineNumDefaultProps.lineId,
-  colorKey = lineNumDefaultProps.colorKey,
-  textZh = lineNumDefaultProps.textZh,
-  textEn = lineNumDefaultProps.textEn,
-  size = lineNumDefaultProps.size,
-  foreground = lineNumDefaultProps.foreground,
-  background = lineNumDefaultProps.background,
-  background2 = lineNumDefaultProps.background2,
-}: LineNumProps) {
+function Line({
+  lineId = lineDefaultProps.lineId,
+  colorKey = lineDefaultProps.colorKey,
+  textZh = lineDefaultProps.textZh,
+  textEn = lineDefaultProps.textEn,
+  foreground = lineDefaultProps.foreground,
+  background = lineDefaultProps.background,
+}: LineProps) {
   const fontsReady = useFontsReady();
-  const scale = size === "small" ? SMALL_SCALE : 1;
+  const scale = 1;
   const key = colorKey && colorKey in colors ? colorKey : "line1";
   const plateColor = (colors as Record<string, string>)[key];
   const bgColor =
@@ -172,19 +160,21 @@ function LineNum({
   const zhFont = fontZh(700, ZH_SIZE);
   const enFont = fontEn(400, EN_SIZE);
   const digits = Array.from(numText).length;
-  // 两位数及以上：数字整体横向压缩（官方 13 号线牌实测）
-  const numScale = digits >= 2 ? NUM_COMPRESS : 1;
   const m = digits >= 2 ? TWO_DIGIT : ONE_DIGIT;
+  /**
+   * 数字横向压缩：牌宽严格固定（一位 1.85a / 两位 1.95a），
+   * 数字可用宽 = 官方文字栏锚点 - 保底间隙 - 数字 ink 起点；
+   * 两位数默认压到 NUM_COMPRESS，任何数字超宽都进一步压缩 —— 换线路色/位数牌宽严格不变。
+   */
   /**
    * 数字字距按首位形态自适应：1 开头（字形窄、右侧空隙大）收得更紧，
    * 其余数字微收 —— 官方「13」号牌的「1」「3」墨迹间隙明显小于同字号排布。
    */
   const numSpacing =
-    digits >= 2 ? (numText.startsWith("1") ? -0.024 : -0.006) * NUM_SIZE : 0;
+    digits >= 2 ? (numText.startsWith("1") ? -0.032 : -0.012) * NUM_SIZE : 0;
   const enRendered = enText ? measureText(enText, enFont) : 0;
   const zhWidth = zhText ? measureText(zhText, zhFont) : 0;
   const hasNum = Boolean(numText);
-  const textWidth = Math.max(zhWidth, enRendered);
   const inkOf = (text: string, font: string) => {
     if (!text || typeof document === "undefined") return null;
     const ctx = document.createElement("canvas").getContext("2d");
@@ -196,6 +186,8 @@ function LineNum({
       // start 锚点下：ink 左缘偏移（汉字 ≈ 0）、ink 右缘偏移
       left: -m.actualBoundingBoxLeft,
       right: m.actualBoundingBoxRight,
+      // ink 顶到基线的真实距离（汉字 ink 高随字体/字重变化，不能靠模型值）
+      ascent: m.actualBoundingBoxAscent,
     };
   };
 
@@ -209,6 +201,12 @@ function LineNum({
   // 一段空白边（bearing），直接用会显得间隙过大 —— 用 canvas 的 ink 边界
   // 把两侧 bearing 扣掉。
   const numInkRaw = hasNum ? inkOf(numText, numFont) : null;
+  // letterSpacing 会收窄 ink 右缘：把它计入 ink 度量，保证排版与渲染一致
+  if (numInkRaw && numSpacing !== 0) {
+    numInkRaw.right += numSpacing * Math.max(0, digits - 1);
+  }
+
+  const numScale = digits >= 2 ? NUM_COMPRESS : 1;
   const numInk = numInkRaw
     ? {
         advance: numInkRaw.advance * numScale,
@@ -217,23 +215,35 @@ function LineNum({
       }
     : null;
 
-  // 数字牌：官方锚点直接定位（数字 ink x0 / 文字栏 x0 / 牌宽），内容超宽时向右扩展
-  // 文字牌：内容贴左 0.194a，牌宽 = 内容 + 两侧边距
-  const plateW = hasNum
-    ? Math.max(
-        m.plateW * BLOCK_H,
-        m.textX * BLOCK_H + textWidth + BLOCK_H * 0.15
-      )
-    : Math.max(BLOCK_H, textWidth + PAD_X * 2);
-
+  const numInkX0 = hasNum ? m.numX * BLOCK_H : 0;
+  const numInkW = numInk ? numInk.right - numInk.left : 0;
+  const padR = hasNum ? m.padR * BLOCK_H : PAD_X;
+  // 数字已被压缩到「ink 右 + 保底间隙 ≤ 官方文字栏锚点」（见 numScale），
+  // 因此文字栏恒落官方锚点、牌宽恒官方值；仅文字比官方栏宽长时扩展
+  const numInkRight = hasNum && numInk ? numInkX0 + numInkW : 0;
+  const textInkX0 = hasNum
+    ? Math.max(m.textX * BLOCK_H, numInkRight + MIN_GAP)
+    : PAD_X;
   // 数字 ink x0 锚定：numX = 目标 ink 位置 - 数字 ink 左 bearing（压缩后）
-  const numX = hasNum && numInk ? m.numX * BLOCK_H - numInk.left : PAD_X;
-  // 文字栏中心锚定：官方文字栏 ink 宽 0.839a，两行互相居中于栏中心
-  const textCenterX = m.textX * BLOCK_H + (TEXT_COL_INK * BLOCK_H) / 2;
-  const zhX = textCenterX - zhWidth / 2;
-  // 有数字时英文右对齐到文字栏右缘（官方样例「Line 1」贴齐「号线」右缘）
-  const textColRight = textCenterX + (TEXT_COL_INK * BLOCK_H) / 2;
-  const enX = textColRight - enRendered;
+  const numX = hasNum && numInk ? numInkX0 - numInk.left : PAD_X;
+  // 文字栏：ink 宽 = max(官方 0.839a, 中英实测 ink)，超宽时栏扩展、牌跟着撑
+  const zhInkM = zhText ? inkOf(zhText, zhFont) : null;
+  const enInkM = enText ? inkOf(enText, enFont) : null;
+  const zhInkW = zhInkM ? zhInkM.right - zhInkM.left : 0;
+  const enInkW = enInkM ? enInkM.right - enInkM.left : 0;
+  const colLeft = textInkX0;
+  const colInkW = Math.max(TEXT_COL_INK * BLOCK_H, zhInkW, enInkW, 1);
+  const colRight = colLeft + colInkW;
+  const plateW = hasNum ? colRight + padR : colRight + PAD_X;
+  // 有数字：中英文都按 ink 右对齐到栏右缘（官方样例「号线/Line 1」贴右）；
+  // 中文 700 是伪粗（SimHei 无 700 档），SVG 合成粗体使 ink 右缘比 canvas
+  // 实测（不合成）宽 ≈1.5px —— 右对齐时补偿掉，保证与英文 ink 右严格齐平
+  const zhX = hasNum
+    ? colRight - (zhInkM ? zhInkM.right : zhWidth) + (zhInkM ? 1.5 : 0)
+    : colLeft + (colInkW - zhWidth) / 2;
+  const enX = hasNum
+    ? colRight - (enInkM ? enInkM.right : enRendered)
+    : colLeft + (colInkW - enRendered) / 2;
 
   const totalWidth = OUTER_MARGIN * 2 + plateW;
   const blockY = (ROW_H - BLOCK_H) / 2;
@@ -243,15 +253,15 @@ function LineNum({
   const numBaseline = centerY + NUM_INK / 2;
   // 「号线」ink 顶与数字 ink 顶对齐（官方样例）；「Line N」沉到下方
   const numInkTop = numBaseline - NUM_INK;
-  const zhBaseline = hasNum
-    ? numInkTop + ZH_INK
-    : centerY - TEXT_COL_H / 2 + ZH_INK;
-  const enBaseline = zhBaseline + TEXT_GAP_LINE + EN_CAP_H;
+  // 「号线」ink 顶与数字 ink 顶对齐；SimHei 汉字 ascent 写死（SVG 渲染实测 0.52em）。
+  // 纯中文牌（无数字）与数字牌共用同一组基线，垂直位置完全一致。
+  const zhBaseline = numInkTop + ZH_ASCENT_PX;
+  // 英文 ink 底与数字 ink 底对齐（Arial 无下降字符时基线即 cap 底）
+  const enBaseline = numBaseline;
 
   return (
-    <MultiRowBackground
+    <Background
       background={bgColor}
-      background2={background2}
       style={{ height: ROW_H * scale, width: totalWidth * scale }}
     >
       <svg
@@ -311,11 +321,11 @@ function LineNum({
           </text>
         ) : null}
       </svg>
-    </MultiRowBackground>
+    </Background>
   );
 }
 
-LineNum.getEditorConfig = (t: (key: string) => string) =>
-  lineNumEditorConfig(t);
+Line.getEditorConfig = (t: (key: string) => string) =>
+  lineEditorConfig(t);
 
-export default LineNum;
+export default Line;

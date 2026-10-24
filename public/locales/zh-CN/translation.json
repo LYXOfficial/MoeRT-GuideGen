@@ -52,7 +52,7 @@
   },
   "saves": {
     "clear_local_button": "清除本地存档",
-    "restore_failed": "存档载入失败：里面的组件和当前主题对不上。已暂停自动保存以保护存档，请检查版本或重新导入。",
+    "restore_failed": "里面的组件和当前主题对不上。已暂停自动保存以保护存档，请检查版本或重新导入。",
     "clear_local_title": "清除本地存档",
     "clear_local_confirm": "确定要清除本地自动存档并刷新页面吗？此操作不可撤销。",
     "export_image": "导出为图片",
@@ -71,7 +71,12 @@
     },
     "export": {
       "success": "存档已导出"
-    }
+    },
+    "restore_failed_title": "存档载入失败",
+    "reset_archive": "重置存档",
+    "download_archive": "下载存档备份",
+    "reset_confirm_title": "确认重置存档？",
+    "reset_confirm_content": "重置将清空本地存档并刷新页面，此操作不可恢复（建议先下载备份）。"
   },
   "loading": {
     "message": "正在加载应用...",
@@ -882,7 +887,7 @@
           }
         },
         "LineNum": {
-          "displayName": "数字线路标",
+          "displayName": "线路标",
           "props": {
             "lineId": "线路号",
             "colorKey": {
@@ -1106,8 +1111,7 @@
         "textblue": "文字蓝",
         "white": "白色",
         "border": "边框",
-        "specline": "分隔线（黄）",
-        "divider": "分隔线（白）",
+        "divider": "分隔线",
         "exit": "出口绿",
         "prohibit": "禁止红",
         "line1": "1号线 / 八通线",
@@ -1235,7 +1239,17 @@
             "background": "背景色"
           }
         },
-        "LineNum": {
+        "Arrow": {
+          "displayName": "箭头",
+          "props": {
+            "direction": {
+              "displayName": "方向"
+            },
+            "foreground": "前景色",
+            "background": "背景色"
+          }
+        },
+        "Line": {
           "displayName": "线路标",
           "props": {
             "lineId": "线路号",
@@ -1251,16 +1265,6 @@
             "background": "背景色"
           }
         },
-        "Arrow": {
-          "displayName": "箭头",
-          "props": {
-            "direction": {
-              "displayName": "方向"
-            },
-            "foreground": "前景色",
-            "background": "背景色"
-          }
-        },
         "ToTrain": {
           "displayName": "乘车图标",
           "props": {
@@ -1270,20 +1274,6 @@
             "foreground": "前景色",
             "plateColor": "方块颜色",
             "strokeColor": "描边颜色",
-            "background": "背景色"
-          }
-        },
-        "TrainDirection": {
-          "displayName": "乘车方向",
-          "props": {
-            "prefixZh": "中文前缀",
-            "prefixEn": "英文前缀",
-            "destinationZh": "中文终点站",
-            "destinationEn": "英文终点站",
-            "align": {
-              "displayName": "对齐"
-            },
-            "foreground": "前景色",
             "background": "背景色"
           }
         },
@@ -1306,28 +1296,24 @@
             "background": "背景色"
           }
         },
-        "StationSign": {
-          "displayName": "站名",
-          "props": {
-            "nameZh": "第一行中文",
-            "nameEn": "第一行英文",
-            "showLogo": {
-              "displayName": "北京地铁图标"
-            },
-            "foreground": "前景色",
-            "background": "背景色"
-          }
-        },
-        "ExitNum": {
-          "displayName": "出入口编号",
+        "ExitLetter": {
+          "displayName": "出口字母",
           "props": {
             "exits": "出口编号",
             "exitLetter": "字母",
             "variant": {
               "displayName": "形态"
             },
-            "textZh": "中文文字",
-            "textEn": "英文文字",
+            "foreground": "前景色",
+            "background": "背景色"
+          }
+        },
+        "StationSign": {
+          "displayName": "站名",
+          "props": {
+            "nameZh": "第一行中文",
+            "nameEn": "第一行英文",
+            "showLogo": "北京地铁图标",
             "foreground": "前景色",
             "background": "背景色"
           }
@@ -1354,27 +1340,16 @@
               "stroller": "携带婴儿车",
               "pregnant": "孕妇",
               "luggage": "携带行李",
-              "gate_arrow_down": {
-                "zh-CN": "自助设施通行",
-                "zh-TW": "自助設施通行",
-                "en-US": "Gate pass (down arrow)",
-                "ja-JP": "改札通行",
-                "ko-KR": "자동개찲 통과"
-              },
-              "no_entry_cross": {
-                "zh-CN": "禁止通行（叉）",
-                "zh-TW": "禁止通行（叉）",
-                "en-US": "No entry (cross)",
-                "ja-JP": "通行禁止（バツ）",
-                "ko-KR": "통행 금지 (십자)"
-              }
+              "gate_arrow_down": "自助设施通行",
+              "no_entry_cross": "禁止通行（叉）",
+              "no_entry_cross_framed": "禁止通行（框）"
             },
             "rotation": {
               "displayName": "旋转"
             },
             "flipH": "水平翻转",
             "flipV": "垂直翻转",
-            "foreground": "前景色（白色组/其他组生效）",
+            "foreground": "前景色",
             "background": "背景色"
           }
         },

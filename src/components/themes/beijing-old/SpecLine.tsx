@@ -1,7 +1,7 @@
 import colors from "./define/colors";
 import type { EditorConfig } from "../../../interfaces/editor";
 import {
-  MultiRowBackground,
+  Background,
   backgroundFormItems,
   foregroundFormItem,
   numberFormItem,
@@ -12,15 +12,13 @@ export interface SpecLineProps {
   width?: number;
   foreground?: string;
   background?: string;
-  background2?: string;
 }
 
 // 经典样式分隔线为单色（oth@bw.svg）：深色底默认白色，可改前景色
 export const specLineDefaultProps: SpecLineProps = {
   width: 3,
-  foreground: colors.specline,
+  foreground: colors.divider,
   background: colors.background,
-  background2: colors.background,
 };
 
 export const specLineEditorConfig = (
@@ -37,13 +35,11 @@ function SpecLine({
   width = specLineDefaultProps.width,
   foreground = specLineDefaultProps.foreground,
   background = specLineDefaultProps.background,
-  background2 = specLineDefaultProps.background2,
 }: SpecLineProps) {
   const lineWidth = Math.max(1, width ?? 2);
   return (
-    <MultiRowBackground
+    <Background
       background={background}
-      background2={background2}
       className="z-10"
       style={{ width: lineWidth, height: 64 }}
     >
@@ -53,7 +49,7 @@ function SpecLine({
           fill={foreground}
         />
       </svg>
-    </MultiRowBackground>
+    </Background>
   );
 }
 

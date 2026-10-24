@@ -12,7 +12,7 @@ import GuideBoardCols, { type GuideBoardRef } from "./GuideBoard";
 import type { GuideItem } from "../interfaces/guide";
 import type { SaveData } from "../interfaces/editor";
 import Salt from "./Salt";
-import { Toast, Button } from "@douyinfe/semi-ui";
+import { Modal, Toast, Button } from "@douyinfe/semi-ui";
 import { IconClose } from "@douyinfe/semi-icons";
 import {
   DndContext,
@@ -507,6 +507,7 @@ export default function Editor({
       const saveData = JSON.parse(saved) as SaveData;
       if (saveData.version !== 1) return;
 
+
       // 记下存档里有多少个组件，初始化完成后用来校验是否真的还原成功
       archivedItemCountRef.current = (saveData.rows || []).reduce(
         (sum, row) => sum + (row?.length || 0),
@@ -613,9 +614,40 @@ export default function Editor({
           skipAutoSaveRef.current = true;
         }
         if (skipAutoSaveRef.current) {
-          Toast.error({
+          // 提供逃生通道：下载原始存档（可手动修/发 issue）或重置（二次确认）
+          Modal.error({
+            title: t("saves.restore_failed_title"),
             content: t("saves.restore_failed"),
-            duration: 10,
+            okText: t("saves.reset_archive"),
+            cancelText: t("saves.download_archive"),
+            centered: true,
+            onOk: () => {
+              Modal.confirm({
+                title: t("saves.reset_confirm_title"),
+                content: t("saves.reset_confirm_content"),
+                centered: true,
+                onOk: () => {
+                  localStorage.removeItem("guide-autosave");
+                  window.location.reload();
+                },
+              });
+            },
+            onCancel: () => {
+              const raw = localStorage.getItem("guide-autosave") ?? "{}";
+              const url = URL.createObjectURL(
+                new Blob([raw], { type: "application/json" })
+              );
+              const a = document.createElement("a");
+              a.href = url;
+              const stamp = new Date()
+                .toISOString()
+                .slice(0, 19)
+                .replace("T", "_")
+                .replace(/:/g, "-");
+              a.download = `moert-guidegen-backup_${stamp}.json`;
+              a.click();
+              URL.revokeObjectURL(url);
+            },
           });
         }
 

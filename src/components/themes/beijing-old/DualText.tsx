@@ -11,7 +11,7 @@ import {
 import { fontFamilyEn, fontFamilyZh } from "./define/colors";
 import type { EditorConfig } from "../../../interfaces/editor";
 import {
-  MultiRowBackground,
+  Background,
   backgroundFormItems,
   foregroundFormItem,
 } from "./Background";
@@ -36,26 +36,25 @@ export interface DualTextProps {
   letterSpacing?: number;
   foreground?: string;
   background?: string;
-  background2?: string;
 }
 
 export const dualTextDefaultProps: DualTextProps = {
-  line1chinese: "东北口",
-  line1english: "Northeast Exit",
-  line2chinese: "西南口",
-  line2english: "Southwest Exit",
+  line1chinese: "降弓用刑",
+  line1english: "Guaiwudongsanba",
+  line2chinese: "西二旗四惠东",
+  line2english: "Youshangdezaogaofeng",
   showEn: true,
   align: "left",
   letterSpacing: 0,
   foreground: colors.foreground,
   background: colors.background,
-  background2: colors.background,
 };
 
 /** a（行 = 1.5a，与出口方块同一语境） */
 const A = 64 / 1.5;
-/** 中文 ink = 0.45 × 0.5a（出口 double 块内字母 ink），汉字 ink ≈ 0.88em */
+/** 中文 ink：带英文 0.45 × 0.5a（对齐出口块字母）；纯中文 0.38a（占满行距） */
 const ZH_SIZE = (A * 0.225) / 0.88;
+const ZH_SIZE_BIG = (A * 0.32) / 0.88;
 /** 英文 cap = 中文 ink 的 0.55 倍（Arial 大写显大），Arial cap = 0.716em */
 const EN_SIZE = (A * 0.225 * 0.55) / 0.716;
 /** 组中心距 = 0.5a 块 + 0.1a 间隔（对齐出口 double 方块） */
@@ -119,10 +118,10 @@ function DualText({
   letterSpacing = dualTextDefaultProps.letterSpacing,
   foreground = dualTextDefaultProps.foreground,
   background = dualTextDefaultProps.background,
-  background2 = dualTextDefaultProps.background2,
 }: DualTextProps) {
   const fontsReady = useFontsReady();
-  const zhFont = fontZh(TEXT_WEIGHT, ZH_SIZE);
+  const zhSize = showEn ? ZH_SIZE : ZH_SIZE_BIG;
+  const zhFont = fontZh(TEXT_WEIGHT, zhSize);
   const enFont = fontEn(TEXT_WEIGHT, EN_SIZE);
   const ls = letterSpacing ?? 0;
 
@@ -140,7 +139,7 @@ function DualText({
       measureText(text ?? "", font) +
       ls * size * Math.max(0, Array.from(text ?? "").length - 1);
     const lineWidth = (row: { zh: string; en: string }) => {
-      const zhW = widthOf(row.zh, ZH_SIZE, zhFont);
+      const zhW = widthOf(row.zh, zhSize, zhFont);
       if (!showEn || !row.en) return zhW;
       return Math.max(zhW, widthOf(row.en, EN_SIZE, enFont));
     };
@@ -158,9 +157,8 @@ function DualText({
         : 0;
 
   return (
-    <MultiRowBackground
+    <Background
       background={background}
-      background2={background2}
       style={{ height: ROW_H }}
     >
       <div className="ml-1.25 mr-1.25" style={{ width: layout.width }}>
@@ -184,7 +182,7 @@ function DualText({
                     <text
                       x={0}
                       y={zhBaseline}
-                      fontSize={ZH_SIZE}
+                      fontSize={zhSize}
                       fontWeight={weightCss(TEXT_WEIGHT)}
                       fill={foreground}
                       fontFamily={fontFamilyZh}
@@ -211,7 +209,7 @@ function DualText({
           </g>
         </svg>
       </div>
-    </MultiRowBackground>
+    </Background>
   );
 }
 

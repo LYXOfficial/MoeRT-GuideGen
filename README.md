@@ -68,7 +68,9 @@ MTR字体来源于MTR Sung和思源宋体调整对齐拼接后的字体，对于
 
 成都地铁使用由微软雅黑拆分出西文部分的字体和中文系统字体回落，重庆轨道交通使用官方标准的所提到的Frutiger数字与Helvetica西文，中文回落为系统字体
 
-北京地铁参考：https://centralgo.site/download/，字体为思源黑体和 Arial
+北京地铁（新旧）参考：https://centralgo.site/download/，字体为思源黑体和 Arial
+
+北京地铁（旧）参考：https://dbba.sacinfo.org.cn/portal/online/dd07f66ad7286140d052b7664d1617f27d9e050cee986b8b2bad00737b873859 公共交通客运标志 第2部分：城市轨道交通 DB11/T 657.2-2024 
 
 ## 碎碎念
 
@@ -86,3 +88,13 @@ MTR字体来源于MTR Sung和思源宋体调整对齐拼接后的字体，对于
 附CRT新规范DBJ50/T-274-2024《轨道交通客运服务标志标准》（仅供参考）：
 
 https://www.kqqw.com/db50/452899.html
+
+## 特别鸣谢
+
+除了早年 Copilot 里蹬到的 Claude GPT Gemini外，后来北京地铁使用的模型是
+
+GLM-5.3 GLM-5.3-Flash DeepSeek-V4-Flash-Vision-Exp Deepseek-V4-Flash-0731 Deepseek-V4.1-Flash Deepseek-V4.1-Flash-1017
+
+以及工具 Claude Code、DeepSeek Harness、ZCode
+
+感谢Z/和k1s2y让我蹬到了虽然不太好用还有点慢但能用的GLM5.3F，感谢梁子开源的超便宜模型和 dsh。

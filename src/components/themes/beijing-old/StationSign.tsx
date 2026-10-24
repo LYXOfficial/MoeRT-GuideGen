@@ -4,7 +4,7 @@ import { fontEn, fontZh, measureText, useFontsReady } from "./define/text";
 import { MetroAGlyph } from "../beijing/icons/city-real";
 import type { EditorConfig } from "../../../interfaces/editor";
 import {
-  MultiRowBackground,
+  Background,
   backgroundFormItems,
   foregroundFormItem,
   textFormItem,
@@ -26,7 +26,6 @@ export interface StationSignProps {
   showLogo?: boolean;
   foreground?: string;
   background?: string;
-  background2?: string;
 }
 
 export const stationSignDefaultProps: StationSignProps = {
@@ -35,7 +34,6 @@ export const stationSignDefaultProps: StationSignProps = {
   showLogo: true,
   foreground: colors.foreground,
   background: colors.background,
-  background2: colors.background,
 };
 
 export const stationSignEditorConfig = (
@@ -55,13 +53,13 @@ export const stationSignEditorConfig = (
 
 const ROW_H = 64;
 const A = ROW_H / 1.5;
-/** 地徽高 1a（方形模块满高，官方图 3 地徽与线路牌同高） */
-const LOGO_SIZE = A;
+/** 地徽高 1.15a（超出方形模块一圈，官方图 3 地徽观感） */
+const LOGO_SIZE = A * 1.15;
 const LOGO_GAP = A * 0.2;
 /** 站名中文 ink 0.32H、拼音 cap 0.12H */
 const ZH_SIZE = (ROW_H * 0.32) / 0.88;
 const EN_SIZE = (ROW_H * 0.12) / 0.716;
-const NAME_GAP_Y = 5;
+const NAME_GAP_Y = 8;
 const PAD_X = 5;
 
 function StationSign({
@@ -70,7 +68,6 @@ function StationSign({
   showLogo = stationSignDefaultProps.showLogo,
   foreground = stationSignDefaultProps.foreground,
   background = stationSignDefaultProps.background,
-  background2 = stationSignDefaultProps.background2,
 }: StationSignProps) {
   const fontsReady = useFontsReady();
   const fg =
@@ -98,9 +95,8 @@ function StationSign({
   const enX = PAD_X + logoW + (nameWidth - enWidth) / 2;
 
   return (
-    <MultiRowBackground
+    <Background
       background={bg}
-      background2={background2}
       style={{ height: ROW_H, width }}
     >
       <svg width={width} height={ROW_H} data-fonts-ready={fontsReady}>
@@ -137,7 +133,7 @@ function StationSign({
           </text>
         ) : null}
       </svg>
-    </MultiRowBackground>
+    </Background>
   );
 }
 

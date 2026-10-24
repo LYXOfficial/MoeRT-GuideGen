@@ -3,7 +3,7 @@ import { InputNumber, Select, TextArea } from "@douyinfe/semi-ui";
 import colors, { fontFamilyEn, fontFamilyZh } from "./define/colors";
 import type { EditorConfig } from "../../../interfaces/editor";
 import {
-  MultiRowBackground,
+  Background,
   backgroundFormItems,
   foregroundFormItem,
 } from "./Background";
@@ -32,21 +32,19 @@ export interface TextProps {
   foreground?: string;
   background?: string;
   /** 第二行背景色（上下分色时使用） */
-  background2?: string;
 }
 
 export const textDefaultProps: TextProps = {
-  chinese: "乘车",
-  english: "Train",
+  chinese: "换乘",
+  english: "Transfer",
   align: "left",
-  weight: "medium",
-  letterSpacing: 0,
-  fontSizeZh: 22,
-  fontSizeEn: 15,
-  lineGap: 5,
+  weight: "bold",
+  letterSpacing: 0.1,
+  fontSizeZh: 23,
+  fontSizeEn: 14,
+  lineGap: 9,
   foreground: colors.foreground,
   background: colors.background,
-  background2: colors.background,
 };
 
 // 默认字号来自 visys.pdf/extra.ai 矢量图层实测（中文 25px、英文 15px = 0.6 倍）；
@@ -54,8 +52,8 @@ export const textDefaultProps: TextProps = {
 export const TEXT_FONT_SIZE_MIN = 8;
 export const TEXT_FONT_SIZE_MAX = 48;
 /** 默认字号（= textDefaultProps.fontSizeZh / fontSizeEn） */
-const DEFAULT_FONT_SIZE_ZH = 22;
-const DEFAULT_FONT_SIZE_EN = 15;
+const DEFAULT_FONT_SIZE_ZH = 23;
+const DEFAULT_FONT_SIZE_EN = 14;
 
 // 行距：单行 fs×1.3；多行时中文 fs×1.05（汉字 ink 就有 0.88em，
 // 之前用 0.65 会直接叠字）、英文 fs×1.2（拉丁 ink ≈0.97em）。
@@ -151,9 +149,6 @@ export const textEditorConfig = (
           <Select.Option value="normal">
             {t("themes.beijingOld.components.Text.props.weight.normal")}
           </Select.Option>
-          <Select.Option value="medium">
-            {t("themes.beijingOld.components.Text.props.weight.medium")}
-          </Select.Option>
           <Select.Option value="bold">
             {t("themes.beijingOld.components.Text.props.weight.bold")}
           </Select.Option>
@@ -225,7 +220,6 @@ export default function Text({
   lineGap = textDefaultProps.lineGap,
   foreground = textDefaultProps.foreground,
   background = textDefaultProps.background,
-  background2 = textDefaultProps.background2,
 }: TextProps) {
   const [fontsReady, setFontsReady] = useState(false);
 
@@ -312,6 +306,7 @@ export default function Text({
       : align === "right"
         ? layout.width
         : 0;
+  // 垂直居中：行距变化时文字块整体保持在行内居中
   const top = Math.max(0, (layout.height - layout.contentHeight) / 2);
   // 与上面的墨迹模型对齐：中文首行基线 = 墨迹顶 + ink 高；英文首行基线 = 中文末行基线下移 gap + cap
   const zhStart = top + layout.zhInk;
@@ -322,9 +317,8 @@ export default function Text({
     layout.enCap;
 
   return (
-    <MultiRowBackground
+    <Background
       background={background}
-      background2={background2}
       style={{ height: layout.height }}
     >
       <div className="ml-1.25 mr-1.25" style={{ width: layout.width }}>
@@ -367,7 +361,7 @@ export default function Text({
           </g>
         </svg>
       </div>
-    </MultiRowBackground>
+    </Background>
   );
 }
 

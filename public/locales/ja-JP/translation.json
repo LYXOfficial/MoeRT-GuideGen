@@ -52,7 +52,7 @@
   },
   "saves": {
     "clear_local_button": "ローカル保存を消去",
-    "restore_failed": "保存データの読み込みに失敗しました：コンポーネントが現在のテーマと一致しません。保存データを守るため自動保存を停止しました。",
+    "restore_failed": "コンポーネントが現在のテーマと一致しません。保存データを守るため自動保存を停止しました。",
     "clear_local_title": "ローカル保存を消去",
     "clear_local_confirm": "ローカルの自動保存を消去してページをリロードしてもよろしいですか？この操作は元に戻せません。",
     "export_image": "画像としてエクスポート",
@@ -71,7 +71,12 @@
     },
     "export": {
       "success": "アーカイブがエクスポートされました"
-    }
+    },
+    "restore_failed_title": "セーブデータの読み込みに失敗",
+    "reset_archive": "セーブをリセット",
+    "download_archive": "バックアップをダウンロード",
+    "reset_confirm_title": "セーブをリセットしますか？",
+    "reset_confirm_content": "ローカルのセーブを消去してページを再読み込みします。元に戻せません（先にバックアップを推奨）。"
   },
   "loading": {
     "message": "アプリケーションを読み込み中...",
@@ -864,7 +869,7 @@
           }
         },
         "LineNum": {
-          "displayName": "路線番号標",
+          "displayName": "路線標",
           "props": {
             "lineId": "路線番号",
             "colorKey": {
@@ -1094,8 +1099,7 @@
         "textblue": "文字用ブルー",
         "white": "白",
         "border": "枠線",
-        "specline": "仕切り線（黄）",
-        "divider": "仕切り線（白）",
+        "divider": "分割線",
         "exit": "出口グリーン",
         "prohibit": "禁止レッド",
         "line1": "1号線 / 八通線",
@@ -1223,7 +1227,17 @@
             "background": "背景色"
           }
         },
-        "LineNum": {
+        "Arrow": {
+          "displayName": "矢印",
+          "props": {
+            "direction": {
+              "displayName": "方向"
+            },
+            "foreground": "前景色",
+            "background": "背景色"
+          }
+        },
+        "Line": {
           "displayName": "路線標",
           "props": {
             "lineId": "路線番号",
@@ -1245,16 +1259,6 @@
             "background": "背景色"
           }
         },
-        "Arrow": {
-          "displayName": "矢印",
-          "props": {
-            "direction": {
-              "displayName": "方向"
-            },
-            "foreground": "前景色",
-            "background": "背景色"
-          }
-        },
         "ToTrain": {
           "displayName": "乗車アイコン",
           "props": {
@@ -1264,20 +1268,6 @@
             "foreground": "前景色",
             "plateColor": "プレートの色",
             "strokeColor": "縁取りの色",
-            "background": "背景色"
-          }
-        },
-        "TrainDirection": {
-          "displayName": "乗車方向",
-          "props": {
-            "prefixZh": "中国語プレフィックス",
-            "prefixEn": "英語プレフィックス",
-            "destinationZh": "終点駅（中国語）",
-            "destinationEn": "終点駅（英語）",
-            "align": {
-              "displayName": "揃え"
-            },
-            "foreground": "前景色",
             "background": "背景色"
           }
         },
@@ -1300,28 +1290,24 @@
             "background": "背景色"
           }
         },
-        "StationSign": {
-          "displayName": "駅名",
-          "props": {
-            "nameZh": "1行目（中国語）",
-            "nameEn": "1行目（英語）",
-            "showLogo": {
-              "displayName": "北京地铁图标"
-            },
-            "foreground": "前景色",
-            "background": "背景色"
-          }
-        },
-        "ExitNum": {
-          "displayName": "出入口番号",
+        "ExitLetter": {
+          "displayName": "出口アルファベット",
           "props": {
             "exits": "出入口番号",
             "exitLetter": "英字",
             "variant": {
               "displayName": "形态"
             },
-            "textZh": "中国語テキスト",
-            "textEn": "英語テキスト",
+            "foreground": "前景色",
+            "background": "背景色"
+          }
+        },
+        "StationSign": {
+          "displayName": "駅名",
+          "props": {
+            "nameZh": "1行目（中国語）",
+            "nameEn": "1行目（英語）",
+            "showLogo": "北京地下鉄ロゴ",
             "foreground": "前景色",
             "background": "背景色"
           }
@@ -1348,27 +1334,16 @@
               "stroller": "ベビーカー",
               "pregnant": "妊婦",
               "luggage": "大きな荷物",
-              "gate_arrow_down": {
-                "zh-CN": "自助设施通行",
-                "zh-TW": "自助設施通行",
-                "en-US": "Gate pass (down arrow)",
-                "ja-JP": "改札通行",
-                "ko-KR": "자동개찲 통과"
-              },
-              "no_entry_cross": {
-                "zh-CN": "禁止通行（叉）",
-                "zh-TW": "禁止通行（叉）",
-                "en-US": "No entry (cross)",
-                "ja-JP": "通行禁止（バツ）",
-                "ko-KR": "통행 금지 (십자)"
-              }
+              "gate_arrow_down": "改札通行",
+              "no_entry_cross": "通行禁止（バツ）",
+              "no_entry_cross_framed": "通行禁止（枠）"
             },
             "rotation": {
               "displayName": "回転"
             },
             "flipH": "左右反転",
             "flipV": "上下反転",
-            "foreground": "前景色（白色/その他グループ）",
+            "foreground": "前景色",
             "background": "背景色"
           }
         },

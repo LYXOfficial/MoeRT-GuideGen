@@ -2,7 +2,7 @@ import { Select } from "@douyinfe/semi-ui";
 import colors from "./define/colors";
 import { ExitClassicGlyph } from "./icons/exit-real";
 import type { EditorConfig } from "../../../interfaces/editor";
-import { MultiRowBackground, backgroundFormItems } from "./Background";
+import { Background, backgroundFormItems } from "./Background";
 
 /**
  * 出口图标（经典样式）：方形出口牌。
@@ -17,13 +17,11 @@ export interface ExitIconProps {
   padding?: "none" | "inset";
   /** 底板色 */
   background?: string;
-  background2?: string;
 }
 
 export const exitIconDefaultProps: ExitIconProps = {
   padding: "none",
   background: colors.background,
-  background2: colors.background,
 };
 
 export const exitIconEditorConfig = (
@@ -61,7 +59,6 @@ const ASPECT = 1;
 function ExitIcon({
   padding = exitIconDefaultProps.padding,
   background = exitIconDefaultProps.background,
-  background2 = exitIconDefaultProps.background2,
 }: ExitIconProps) {
   const isInset = padding === "inset";
   // 组件盒固定 64 高、背景两行始终铺满整盒；
@@ -72,9 +69,8 @@ function ExitIcon({
   const boxW = iconW + (isInset ? INSET_X * 2 : 0);
 
   return (
-    <MultiRowBackground
+    <Background
       background={background}
-      background2={background2}
       style={{ height: boxH, width: boxW }}
     >
       <div className="flex h-full w-full items-center justify-center">
@@ -83,7 +79,7 @@ function ExitIcon({
           <ExitClassicGlyph color={colors.white} ground={colors.exit} />
         </div>
       </div>
-    </MultiRowBackground>
+    </Background>
   );
 }
 

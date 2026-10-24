@@ -13,7 +13,7 @@ import colors from "./define/colors";
 import type { EditorConfig } from "../../../interfaces/editor";
 import type { GlyphBox, GlyphProps } from "./icons/glyph-types";
 import {
-  MultiRowBackground,
+  Background,
   backgroundFormItems,
   commonSelectFormItem,
   foregroundFormItem,
@@ -64,14 +64,12 @@ export interface ArrowProps {
   direction?: ArrowDirection;
   foreground?: string;
   background?: string;
-  background2?: string;
 }
 
 export const arrowDefaultProps: ArrowProps = {
-  direction: "up",
+  direction: "up-right",
   foreground: colors.foreground,
   background: colors.background,
-  background2: colors.background,
 };
 
 export const arrowEditorConfig = (t: (key: string) => string): EditorConfig => {
@@ -108,7 +106,6 @@ function Arrow({
   direction = arrowDefaultProps.direction,
   foreground = arrowDefaultProps.foreground,
   background = arrowDefaultProps.background,
-  background2 = arrowDefaultProps.background2,
 }: ArrowProps) {
   const fg =
     foreground && foreground.length > 0 ? foreground : colors.foreground;
@@ -122,9 +119,8 @@ function Arrow({
   const Glyph = ARROW_GLYPHS[dir] ?? ArrowUpGlyph;
 
   return (
-    <MultiRowBackground
+    <Background
       background={bg}
-      background2={background2}
       style={{ height: ROW_H, width: ROW_H }}
     >
       <svg width={ROW_H} height={ROW_H}>
@@ -136,7 +132,7 @@ function Arrow({
           y={(ROW_H - inkH) / 2}
         />
       </svg>
-    </MultiRowBackground>
+    </Background>
   );
 }
 

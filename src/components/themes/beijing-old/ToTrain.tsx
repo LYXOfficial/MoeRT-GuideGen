@@ -2,7 +2,7 @@ import colors from "./define/colors";
 import { TrainSolidGlyph, TrainFrameGlyph } from "./icons/train-real";
 import type { EditorConfig } from "../../../interfaces/editor";
 import {
-  MultiRowBackground,
+  Background,
   backgroundFormItems,
   foregroundFormItem,
   nullableColorFormItem,
@@ -23,7 +23,6 @@ export interface ToTrainProps {
   /** 描边颜色（外框环）；留空 = 无描边 */
   strokeColor?: string;
   background?: string;
-  background2?: string;
 }
 
 export const toTrainDefaultProps: ToTrainProps = {
@@ -31,7 +30,6 @@ export const toTrainDefaultProps: ToTrainProps = {
   plateColor: colors.line1,
   strokeColor: "",
   background: colors.background,
-  background2: colors.background,
 };
 
 export const toTrainEditorConfig = (t: (key: string) => string): EditorConfig => {
@@ -60,7 +58,6 @@ function ToTrain({
   plateColor = toTrainDefaultProps.plateColor,
   strokeColor = toTrainDefaultProps.strokeColor,
   background = toTrainDefaultProps.background,
-  background2 = toTrainDefaultProps.background2,
 }: ToTrainProps) {
   const fg =
     foreground && foreground.length > 0 ? foreground : colors.foreground;
@@ -73,9 +70,8 @@ function ToTrain({
   const trainY = (ROW_H - TRAIN_H) / 2;
 
   return (
-    <MultiRowBackground
+    <Background
       background={bg}
-      background2={background2}
       style={{ height: ROW_H, width: ROW_H }}
     >
       <svg width={ROW_H} height={ROW_H}>
@@ -94,7 +90,7 @@ function ToTrain({
           <TrainFrameGlyph color={strokeColor} width={PLATE} height={PLATE} x={x} y={x} />
         ) : null}
       </svg>
-    </MultiRowBackground>
+    </Background>
   );
 }
 

@@ -52,7 +52,7 @@
   },
   "saves": {
     "clear_local_button": "Clear Local Saves",
-    "restore_failed": "Failed to load the save: its components do not match the current theme. Auto-save has been paused to protect the save file.",
+    "restore_failed": "Its components do not match the current theme. Auto-save has been paused to protect the save file. Check the version or re-import.",
     "clear_local_title": "Clear Local Saves",
     "clear_local_confirm": "Are you sure you want to clear local autosave and refresh the page? This cannot be undone.",
     "export_image": "Export as Image",
@@ -71,7 +71,12 @@
     },
     "export": {
       "success": "Archive exported"
-    }
+    },
+    "restore_failed_title": "Failed to load save",
+    "reset_archive": "Reset save",
+    "download_archive": "Download backup",
+    "reset_confirm_title": "Reset the save?",
+    "reset_confirm_content": "This clears the local save and reloads the page. It cannot be undone (download a backup first)."
   },
   "loading": {
     "message": "Loading application...",
@@ -862,7 +867,7 @@
           }
         },
         "LineNum": {
-          "displayName": "Line Number Sign",
+          "displayName": "Line Plate",
           "props": {
             "lineId": "Line number",
             "colorKey": {
@@ -1092,8 +1097,7 @@
         "textblue": "Text blue",
         "white": "White",
         "border": "Border",
-        "specline": "Divider (yellow)",
-        "divider": "Divider (white)",
+        "divider": "Divider",
         "exit": "Exit green",
         "prohibit": "Prohibit red",
         "line1": "Line 1 / Batong Line",
@@ -1221,7 +1225,17 @@
             "background": "Background"
           }
         },
-        "LineNum": {
+        "Arrow": {
+          "displayName": "Arrow",
+          "props": {
+            "direction": {
+              "displayName": "Direction"
+            },
+            "foreground": "Foreground",
+            "background": "Background"
+          }
+        },
+        "Line": {
           "displayName": "Line Plate",
           "props": {
             "lineId": "Line number",
@@ -1243,16 +1257,6 @@
             "background": "Background"
           }
         },
-        "Arrow": {
-          "displayName": "Arrow",
-          "props": {
-            "direction": {
-              "displayName": "Direction"
-            },
-            "foreground": "Foreground",
-            "background": "Background"
-          }
-        },
         "ToTrain": {
           "displayName": "To Train",
           "props": {
@@ -1262,20 +1266,6 @@
             "foreground": "Foreground",
             "plateColor": "Plate color",
             "strokeColor": "Stroke color",
-            "background": "Background"
-          }
-        },
-        "TrainDirection": {
-          "displayName": "Train Direction",
-          "props": {
-            "prefixZh": "Chinese prefix",
-            "prefixEn": "English prefix",
-            "destinationZh": "Destination (Chinese)",
-            "destinationEn": "Destination (English)",
-            "align": {
-              "displayName": "Align"
-            },
-            "foreground": "Foreground",
             "background": "Background"
           }
         },
@@ -1298,28 +1288,24 @@
             "background": "Background"
           }
         },
-        "StationSign": {
-          "displayName": "Station Name",
-          "props": {
-            "nameZh": "Line 1 Chinese",
-            "nameEn": "Line 1 English",
-            "showLogo": {
-              "displayName": "北京地铁图标"
-            },
-            "foreground": "Foreground",
-            "background": "Background"
-          }
-        },
-        "ExitNum": {
-          "displayName": "Exit Number",
+        "ExitLetter": {
+          "displayName": "Exit Letters",
           "props": {
             "exits": "Exit numbers",
             "exitLetter": "Letter",
             "variant": {
               "displayName": "形态"
             },
-            "textZh": "Chinese text",
-            "textEn": "English text",
+            "foreground": "Foreground",
+            "background": "Background"
+          }
+        },
+        "StationSign": {
+          "displayName": "Station Name",
+          "props": {
+            "nameZh": "Line 1 Chinese",
+            "nameEn": "Line 1 English",
+            "showLogo": "Metro logo",
             "foreground": "Foreground",
             "background": "Background"
           }
@@ -1346,27 +1332,16 @@
               "stroller": "With stroller",
               "pregnant": "Pregnant",
               "luggage": "With luggage",
-              "gate_arrow_down": {
-                "zh-CN": "自助设施通行",
-                "zh-TW": "自助設施通行",
-                "en-US": "Gate pass (down arrow)",
-                "ja-JP": "改札通行",
-                "ko-KR": "자동개찲 통과"
-              },
-              "no_entry_cross": {
-                "zh-CN": "禁止通行（叉）",
-                "zh-TW": "禁止通行（叉）",
-                "en-US": "No entry (cross)",
-                "ja-JP": "通行禁止（バツ）",
-                "ko-KR": "통행 금지 (십자)"
-              }
+              "gate_arrow_down": "Gate pass (down arrow)",
+              "no_entry_cross": "No entry (cross)",
+              "no_entry_cross_framed": "No entry (framed)"
             },
             "rotation": {
               "displayName": "Rotation"
             },
             "flipH": "Flip horizontally",
             "flipV": "Flip vertically",
-            "foreground": "Foreground (white/other groups)",
+            "foreground": "Foreground",
             "background": "Background"
           }
         },

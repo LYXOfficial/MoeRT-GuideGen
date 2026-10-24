@@ -10,53 +10,24 @@ import themeColors from "./define/colors";
 import type { PropForm } from "../../../interfaces/editor";
 
 /**
- * 背景渲染器：旧版没有「上下分色」的双行背景，这里只按 background
- * 单色铺满（保留 MultiRowBackground 的名字与 hard-stop 渐变实现，
- * background2 不传即单色，避免动所有组件的调用结构）。
+ * 背景容器：单色铺满（旧版没有双行背景设计）。
  */
-export const backgroundRows = (
-  background?: string,
-  background2?: string
-): string[] => {
-  const rows = [background, background2].filter(
-    (c): c is string => typeof c === "string" && c.length > 0
-  );
-  return rows.length > 0 ? rows : ["transparent"];
-};
-
-export function MultiRowBackground({
+export function Background({
   background,
-  background2,
   className,
   style,
   children,
 }: {
   background?: string;
-  background2?: string;
   className?: string;
   style?: CSSProperties;
   children?: ReactNode;
 }) {
-  const rows = backgroundRows(background, background2);
-  // 用「硬停」渐变一次画完多行背景：原来是 flex 子块各占一半，
-  // 高度出现小数时（如组件被缩放 0.62，或 65px 高）两行之间会露出 1px 的缝。
-  const bgStyle: CSSProperties =
-    rows.length === 1
-      ? { backgroundColor: rows[0] }
-      : {
-          background: `linear-gradient(to bottom, ${rows
-            .map(
-              (color, index) =>
-                `${color} ${(index / rows.length) * 100}% ${
-                  ((index + 1) / rows.length) * 100
-                }%`
-            )
-            .join(", ")})`,
-        };
+  const bg =
+    background && background.length > 0 ? background : "transparent";
   return (
-    <div className={className} style={{ position: "relative", ...style }}>
-      <div aria-hidden style={{ position: "absolute", inset: 0, ...bgStyle }} />
-      <div style={{ position: "relative", height: "100%" }}>{children}</div>
+    <div className={className} style={{ backgroundColor: bg, ...style }}>
+      {children}
     </div>
   );
 }

@@ -3,15 +3,12 @@ import "./fonts/sourcehansans.css";
 import "./fonts/arial.css";
 
 import Text, { textDefaultProps } from "./Text.tsx";
-import LineNum, { lineNumDefaultProps } from "./LineNum.tsx";
+import Line, { lineDefaultProps } from "./Line.tsx";
 import Arrow, { arrowDefaultProps } from "./Arrow.tsx";
 import ToTrain, { toTrainDefaultProps } from "./ToTrain.tsx";
-import TrainDirection, {
-  trainDirectionDefaultProps,
-} from "./TrainDirection.tsx";
 import DualText, { dualTextDefaultProps } from "./DualText.tsx";
 import StationSign, { stationSignDefaultProps } from "./StationSign.tsx";
-import ExitNum, { exitNumDefaultProps } from "./ExitNum.tsx";
+import ExitLetter, { exitLetterDefaultProps } from "./ExitLetter.tsx";
 import Icon, { iconDefaultProps } from "./Icon.tsx";
 import ExitIcon, { exitIconDefaultProps } from "./ExitIcon.tsx";
 import SpecLine, { specLineDefaultProps } from "./SpecLine.tsx";
@@ -36,9 +33,9 @@ const theme: Theme = {
   fontFamily: fontFamilyZh,
   components: [
     {
-      displayName: "themes.beijingOld.components.LineNum",
-      component: LineNum,
-      defaultProps: lineNumDefaultProps,
+      displayName: "themes.beijingOld.components.Line",
+      component: Line,
+      defaultProps: lineDefaultProps,
     },
     {
       displayName: "themes.beijingOld.components.Text",
@@ -56,11 +53,6 @@ const theme: Theme = {
       defaultProps: toTrainDefaultProps,
     },
     {
-      displayName: "themes.beijingOld.components.TrainDirection",
-      component: TrainDirection,
-      defaultProps: trainDirectionDefaultProps,
-    },
-    {
       displayName: "themes.beijingOld.components.DualText",
       component: DualText,
       defaultProps: dualTextDefaultProps,
@@ -71,9 +63,9 @@ const theme: Theme = {
       defaultProps: stationSignDefaultProps,
     },
     {
-      displayName: "themes.beijingOld.components.ExitNum",
-      component: ExitNum,
-      defaultProps: exitNumDefaultProps,
+      displayName: "themes.beijingOld.components.ExitLetter",
+      component: ExitLetter,
+      defaultProps: exitLetterDefaultProps,
     },
     {
       displayName: "themes.beijingOld.components.Icon",
