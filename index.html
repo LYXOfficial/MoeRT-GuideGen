@@ -10,6 +10,25 @@
     <meta name="theme-color" content="#f9fafb" />
   </head>
   <body>
+    <script>
+      // 深浅色初始值：本地显式选择优先，否则跟随浏览器设置。
+      // 放在 body 开头、首帧渲染前执行，避免深色用户先看到一闪白屏。
+      (() => {
+        let mode = null;
+        try {
+          mode = localStorage.getItem("guide-theme-mode");
+        } catch {}
+        const dark =
+          mode === "dark" ||
+          (mode !== "light" &&
+            !!window.matchMedia &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches);
+        document.documentElement.classList.toggle("dark", dark);
+        document.body.setAttribute("theme-mode", dark ? "dark" : "light");
+        const meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute("content", dark ? "#16161a" : "#f9fafb");
+      })();
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

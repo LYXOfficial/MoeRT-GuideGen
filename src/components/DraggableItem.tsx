@@ -162,7 +162,10 @@ export default function DraggableItem({
     display: "inline-flex",
     alignItems: "center",
     cursor: "grab",
-    background: isDragging ? "#f0f0f0" : "transparent",
+    // 拖拽中的底色用变量下发：深色模式换成深灰（global.css 里定义）
+    background: isDragging
+      ? "var(--guide-item-drag-bg, #f0f0f0)"
+      : "transparent",
     zIndex: isDragging ? 9999 : selected ? 40 : isSpecLine ? 10 : 1,
     flex: inTwoRow ? "0 0 auto" : isSpacing ? "1" : "0 0 auto",
     width: (data && (data as any).parentWidth) || undefined,

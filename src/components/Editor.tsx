@@ -1802,7 +1802,7 @@ export default function Editor({
           )}
           <div
             ref={editorAreaRef}
-            className="flex-1 relative overflow-hidden bg-gray-50"
+            className="flex-1 relative overflow-hidden bg-gray-50 dark:bg-[#101014]"
             style={{
               cursor: isDragging ? "grabbing" : "default",
               // 触屏画布手势由 JS 处理（单指平移/双指缩放），禁用原生手势
@@ -1863,20 +1863,20 @@ export default function Editor({
         <Salt />
         {isCompact && paletteRendered && (
           <div
-            className={`mobile-palette-sheet fixed inset-x-0 bottom-0 z-50 flex flex-col rounded-t-2xl bg-white shadow-2xl border-t border-gray-200 overflow-hidden ${
+            className={`mobile-palette-sheet fixed inset-x-0 bottom-0 z-50 flex flex-col rounded-t-2xl bg-white dark:bg-[#16161a] shadow-2xl border-t border-gray-200 dark:border-[#2e2e35] overflow-hidden ${
               paletteOpen ? "" : "moert-sheet-closing"
             }`}
             style={{ maxHeight: "50vh", paddingBottom: "env(safe-area-inset-bottom)" }}
           >
             <div className="shrink-0 flex items-center justify-between gap-3 pl-4 pr-2 pt-2 pb-1">
-              <span className="font-sans font-bold text-sm text-gray-700">
+              <span className="font-sans font-bold text-sm text-gray-700 dark:text-gray-200">
                 {t("componentsList.title")}
               </span>
               <Button
                 theme="borderless"
                 icon={<IconClose />}
                 onClick={() => setPaletteOpen(false)}
-                style={{ color: "#111827" }}
+                style={{ color: "var(--semi-color-text-0, #111827)" }}
               />
             </div>
             <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain">

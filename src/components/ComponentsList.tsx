@@ -176,7 +176,9 @@ export default function ComponentsList({
       ref={attachRootRef}
       data-trash-root="true"
       className={`${
-        fullWidth ? "w-full border-t-0" : "w-75 border-r border-gray-200"
+        fullWidth
+          ? "w-full border-t-0"
+          : "w-75 border-r border-gray-200 dark:border-[#2e2e35]"
       } h-full relative overflow-hidden`}
     >
       <div

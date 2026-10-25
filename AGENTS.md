@@ -30,6 +30,8 @@ pnpm dev                                  # 开发服务器（5173 端口，常�
   tsc / biome / build 三绿已提交。要点见 §4 末尾「旧版主题」，遗留项见 §9。
 - ✅ 编辑器交互（PC + 移动端）：拖拽/点按判定、触屏长按、小元件热区、删除区可见矩形、
   编辑菜单稳定性、整页缩放禁用等，全部修复并提交（见 §7/§8）。
+- ✅ **全应用深色/浅色模式**（2026-10-25）：初始跟随浏览器 `prefers-color-scheme`，
+  手动切换后写 `localStorage['guide-theme-mode']` 覆盖。实现要点见 §7 末尾「深色模式」。
 
 ## 3. 主题架构契约（新主题必须遵守）
 
@@ -178,6 +180,19 @@ python3 text_probe.py                                   # 解析 <use> 得到真
 - `src/components/themes/chongqing/NumAlphabet.tsx` 是用户手改的（fontFamily Frutiger）——**不许 revert**。
 - 5173 上常年挂着 dev server；`docs/` 整体 gitignore，原始素材不会入库。
 - locales 手改时保持既有 JSON 风格（2 空格缩进 + 末尾换行），别整文件重排。
+
+**深色模式（2026-10-25，全应用）**
+- 双通道切换：`html.dark`（Tailwind v4 `@custom-variant dark`，global.css）+ `body[theme-mode=dark]`
+  （Semi 自带深色主题，semi.css 已含两套 token，无需额外引 CSS）。状态在
+  `src/hooks/useDarkMode.ts`，`index.html` body 开头有一段内联脚本首帧前套用（防闪白）。
+- 深色表面色对齐 Semi token：bg-0 `#16161a` / bg-1 `#232429` / 边框 `#2e2e35`～`#3a3b42`。
+- 覆盖元素级内联颜色时**不能上 `!important`**：导出流程靠内联 `border:none` 去掉画板外框，
+  `!important` 会盖过它把边框漏进导出图 —— 画板边框改用 `var(--guide-board-border-override, 主题色)`
+  方案（global.css 里 `html.dark` 定义 override）。
+- Semi Slider 把手写死 `--semi-color-white`，深色下要在 global.css 单独压成暗色。
+- 深色 hover 覆盖写在 `@media (hover: hover)` 里，天然避开触屏粘滞高亮（别挪回全局）。
+- 切换按钮位置（用户拍板）：桌面在右上按钮组**最右**（GitHub 之后）；移动端在「更多」
+  **左边（倒数第二）**。浅色显示月亮、深色显示太阳（IconMoon/IconSun）。
 
 ## 8. 用户反馈记录（每条都已修复，按时间序）
 

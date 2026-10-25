@@ -64,7 +64,8 @@ export const ExportDialog = ({
       // 开始导出，显示loading
       setIsExporting(true);
 
-      // 创建遮罩层
+      // 创建遮罩层（跟随当前深浅色模式）
+      const isDark = document.documentElement.classList.contains("dark");
       const mask = document.createElement("div");
       mask.id = "export-mask";
       mask.style.cssText = `
@@ -73,14 +74,14 @@ export const ExportDialog = ({
         left: 0;
         width: 100vw;
         height: 100vh;
-        background: rgba(255, 255, 255, 0.8);
+        background: ${isDark ? "rgba(22, 22, 26, 0.8)" : "rgba(255, 255, 255, 0.8)"};
         backdrop-filter: blur(4px);
         display: flex;
         align-items: center;
         justify-content: center;
         z-index: 9999;
         font-size: 16px;
-        color: #666;
+        color: ${isDark ? "#bfc2cc" : "#666"};
       `;
       mask.innerHTML = `
         <div style="
@@ -89,14 +90,14 @@ export const ExportDialog = ({
           align-items: center;
           gap: 16px;
           padding: 24px;
-          background: white;
+          background: ${isDark ? "#232429" : "white"};
           border-radius: 8px;
-          box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+          box-shadow: 0 4px 12px rgba(0,0,0,${isDark ? "0.4" : "0.1"});
         ">
           <div style="
             width: 32px;
             height: 32px;
-            border: 3px solid #e5e5e5;
+            border: 3px solid ${isDark ? "#3a3b42" : "#e5e5e5"};
             border-top-color: #1890ff;
             border-radius: 50%;
             animation: spin 1s linear infinite;

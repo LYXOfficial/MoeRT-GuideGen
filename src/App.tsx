@@ -62,12 +62,12 @@ function App() {
 
       {/* 全屏加载动画 */}
       {isLoading && (
-        <div className="fixed inset-0 z-1000 bg-white flex flex-col items-center justify-center">
+        <div className="fixed inset-0 z-1000 bg-white dark:bg-[#16161a] flex flex-col items-center justify-center">
           <Spin size="large" />
-          <div className="mt-4 text-lg text-gray-600 font-sans">
+          <div className="mt-4 text-lg text-gray-600 dark:text-gray-300 font-sans">
             {t("loading.message", "正在加载...")}
           </div>
-          <div className="mt-2 text-sm text-gray-400 font-sans">
+          <div className="mt-2 text-sm text-gray-400 dark:text-gray-500 font-sans">
             {!fontsLoaded && t("loading.fonts", "加载字体中...")}
             {fontsLoaded &&
               !archiveLoaded &&

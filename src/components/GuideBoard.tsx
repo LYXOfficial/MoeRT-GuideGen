@@ -833,7 +833,12 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
           ref={boardContentRef}
           style={{
             width: boardWidth,
-            borderColor: themes[currentTheme][1].colors.defaultBorder,
+            // 深色模式画布很暗，主题自带的深色边框会看不清：
+            // 用变量包一层，global.css 里 html.dark 覆盖（不用 !important，
+            // 否则会盖过导出时内联的 border:none，把边框漏进导出图）
+            borderColor: `var(--guide-board-border-override, ${
+              themes[currentTheme][1].colors.defaultBorder
+            })`,
             backgroundColor: themes[currentTheme][1].colors.defaultBackground,
             color: themes[currentTheme][1].colors.defaultForeground,
             fontFamily: themes[currentTheme][1].fontFamily,
@@ -998,7 +1003,7 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
         {editingItem &&
           createPortal(
             <div
-              className="editing-popup"
+              className="editing-popup bg-white dark:bg-[#232429]"
               onClick={e => e.stopPropagation()}
               ref={el => {
                 //@ts-ignore
@@ -1011,7 +1016,6 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
                 top: editingItem.position.y,
                 zIndex: 114,
                 padding: "16px",
-                backgroundColor: "white",
                 boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
                 borderRadius: "16px",
                 width: 200,
@@ -1082,7 +1086,7 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
                       </div>
                     ))}
                     {/* 添加删除按钮 */}
-                    <div className="mt-4 pt-4 border-t border-solid border-gray-200">
+                    <div className="mt-4 pt-4 border-t border-solid border-gray-200 dark:border-[#2e2e35]">
                       <Button
                         type="danger"
                         theme="outline"

@@ -91,6 +91,10 @@
       "backgroundColor": "Background Color"
     }
   },
+  "theme": {
+    "toDark": "Switch to dark mode",
+    "toLight": "Switch to light mode"
+  },
   "themes": {
     "chongqing": {
       "displayName": "Chongqing Rail Transit Style",

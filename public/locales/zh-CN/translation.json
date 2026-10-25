@@ -91,6 +91,10 @@
       "backgroundColor": "背景颜色"
     }
   },
+  "theme": {
+    "toDark": "切换到深色模式",
+    "toLight": "切换到浅色模式"
+  },
   "themes": {
     "chongqing": {
       "displayName": "重庆轨道交通风格",

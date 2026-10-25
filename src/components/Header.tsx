@@ -10,12 +10,15 @@ import {
   IconMenu,
   IconFullScreenStroked,
   IconMoreStroked,
+  IconMoon,
+  IconSun,
 } from "@douyinfe/semi-icons";
 import { Popover, List, Modal, Slider, Checkbox } from "@douyinfe/semi-ui";
 import { useTranslation } from "react-i18next";
 import { useState, type ComponentProps } from "react";
 import { ExportDialog } from "./ExportDialog";
 import { useIsCompact } from "../hooks/useMediaQuery";
+import { useDarkMode } from "../hooks/useDarkMode";
 
 interface HeaderProps {
   guideHeight?: number;
@@ -60,6 +63,7 @@ export default function Header({
   const { t, i18n } = useTranslation();
   const isCompact = useIsCompact();
   const [exportDialogVisible, setExportDialogVisible] = useState(false);
+  const { isDark, toggle: toggleDarkMode } = useDarkMode();
 
   // 语言选项
   const languages = [
@@ -87,7 +91,9 @@ export default function Header({
         renderItem={language => (
           <List.Item
             className={`cursor-pointer !px-3 !py-2 rounded-sm hover:bg-gray-100 flex items-center gap-2 font-sans ${
-              language.code === i18n.language ? "bg-blue-50 text-blue-600" : ""
+              language.code === i18n.language
+                ? "bg-blue-50 text-blue-600 dark:bg-blue-500/20 dark:text-blue-300"
+                : ""
             }`}
             onClick={() => handleLanguageChange(language.code)}
           >
@@ -102,7 +108,7 @@ export default function Header({
   // 移动端：品牌行 + 工具条（撤销/缩放/适配/加组件）+ “更多”溢出菜单
   if (isCompact) {
     const btn =
-      "flex items-center justify-center h-9 min-w-9 rounded-md px-2 text-gray-700 hover:bg-gray-100 active:bg-gray-200 transition-colors cursor-pointer touch-manipulation select-none";
+      "flex items-center justify-center h-9 min-w-9 rounded-md px-2 text-gray-700 hover:bg-gray-100 active:bg-gray-200 dark:text-gray-200 dark:active:bg-[#2f2f36] transition-colors cursor-pointer touch-manipulation select-none";
     const stepZoom = (delta: number) => {
       const v = zoom + delta;
       if (v >= 0.5 && v <= 4) onZoomChange?.(Math.round(v * 10) / 10);
@@ -137,7 +143,7 @@ export default function Header({
           </button>
           <button
             type="button"
-            className={`${btn} w-full justify-start gap-2 text-red-600 hover:bg-red-50`}
+            className={`${btn} w-full justify-start gap-2 text-red-600 hover:bg-red-50 dark:text-red-400`}
             onClick={() => {
               Modal.confirm({
                 title: t("saves.clear_local_title"),
@@ -160,7 +166,7 @@ export default function Header({
 
     return (
       <>
-        <header className="flex flex-col shrink-0 font-sans border-b border-gray-300 bg-white">
+        <header className="flex flex-col shrink-0 font-sans border-b border-gray-300 dark:border-[#2e2e35] bg-white dark:bg-[#16161a]">
           <div className="flex items-center gap-2 px-2 pt-2 pb-1">
             <img src="/favicon.ico" className="h-7 w-7 rounded-sm" />
             <span className="text-base font-bold truncate flex-1">
@@ -189,6 +195,15 @@ export default function Header({
                 <IconLanguage size="large" />
               </button>
             </Popover>
+            {/* 深色/浅色切换（「更多」左边）：浅色时显示月亮，深色时显示太阳 */}
+            <button
+              type="button"
+              className={`${btn} p-0`}
+              onClick={toggleDarkMode}
+              title={isDark ? t("theme.toLight") : t("theme.toDark")}
+            >
+              {isDark ? <IconSun size="large" /> : <IconMoon size="large" />}
+            </button>
             <Popover
               content={moreContent}
               trigger="click"
@@ -214,7 +229,7 @@ export default function Header({
               disabled={!canUndo}
               onClick={onUndo}
               className={`${btn} ${
-                canUndo ? "" : "text-gray-300 cursor-not-allowed"
+                canUndo ? "" : "text-gray-300 dark:text-gray-600 cursor-not-allowed"
               }`}
               title={t("saves.undo")}
             >
@@ -225,14 +240,14 @@ export default function Header({
               disabled={!canRedo}
               onClick={onRedo}
               className={`${btn} ${
-                canRedo ? "" : "text-gray-300 cursor-not-allowed"
+                canRedo ? "" : "text-gray-300 dark:text-gray-600 cursor-not-allowed"
               }`}
               title={t("saves.redo")}
             >
               <IconRedo size="large" />
             </button>
 
-            <div className="w-px h-6 mx-1 bg-gray-300" />
+            <div className="w-px h-6 mx-1 bg-gray-300 dark:bg-[#2e2e35]" />
 
             <button
               type="button"
@@ -284,7 +299,7 @@ export default function Header({
               className={`${btn} gap-1 rounded-lg border ${
                 paletteOpen
                   ? "bg-blue-500! text-white! border-blue-500!"
-                  : "border-gray-300"
+                  : "border-gray-300 dark:border-[#3a3b42]"
               }`}
               onClick={() => onTogglePalette?.(!paletteOpen)}
               title={t("componentsList.title")}
@@ -307,13 +322,13 @@ export default function Header({
 
   return (
     <>
-      <header className="h-12 flex items-center font-sans p-3 border-b border-gray-300">
+      <header className="h-12 flex items-center font-sans p-3 border-b border-gray-300 dark:border-[#2e2e35]">
         <img src="/favicon.ico" className="h-8 mr-2" />
         <span className="text-xl font-bold whitespace-nowrap">{t("title")}</span>
 
         {/* 缩放滑块 */}
         <div className="ml-6 flex items-center gap-2">
-          <span className="text-sm text-gray-600 whitespace-nowrap">{t("zoom.label")}</span>
+          <span className="text-sm text-gray-600 dark:text-gray-300 whitespace-nowrap">{t("zoom.label")}</span>
           <div className="w-32">
             <Slider
               min={0.5}
@@ -332,7 +347,7 @@ export default function Header({
               }
             />
           </div>
-          <span className="text-xs text-gray-500 w-8 text-center">
+          <span className="text-xs text-gray-500 dark:text-gray-400 w-8 text-center">
             {Math.round(zoom * 100)}%
           </span>
           {/* 一键适配画板到可视区域（与移动端同款） */}
@@ -350,7 +365,7 @@ export default function Header({
             checked={showItemFrame}
             onChange={e => onShowItemFrameChange?.(Boolean(e.target.checked))}
           >
-            <span className="text-sm text-gray-600 whitespace-nowrap">
+            <span className="text-sm text-gray-600 dark:text-gray-300 whitespace-nowrap">
               {t("board.showItemFrame")}
             </span>
           </Checkbox>
@@ -362,8 +377,8 @@ export default function Header({
             type="button"
             className={`transition duration-300 flex items-center p-1 rounded-sm ${
               canUndo
-                ? "hover:bg-gray-100 text-gray-700 hover:text-blue-500 cursor-pointer"
-                : "text-gray-300 cursor-not-allowed"
+                ? "hover:bg-gray-100 text-gray-700 dark:text-gray-200 hover:text-blue-500 cursor-pointer"
+                : "text-gray-300 dark:text-gray-600 cursor-not-allowed"
             }`}
             onClick={onUndo}
             disabled={!canUndo}
@@ -375,8 +390,8 @@ export default function Header({
             type="button"
             className={`transition duration-300 flex items-center p-1 rounded-sm ${
               canRedo
-                ? "hover:bg-gray-100 text-gray-700 hover:text-blue-500 cursor-pointer"
-                : "text-gray-300 cursor-not-allowed"
+                ? "hover:bg-gray-100 text-gray-700 dark:text-gray-200 hover:text-blue-500 cursor-pointer"
+                : "text-gray-300 dark:text-gray-600 cursor-not-allowed"
             }`}
             onClick={onRedo}
             disabled={!canRedo}
@@ -384,7 +399,7 @@ export default function Header({
           >
             <IconRedo size="extra-large" />
           </button>
-          <div className="w-px h-6 bg-gray-300"></div>
+          <div className="w-px h-6 bg-gray-300 dark:bg-[#2e2e35]"></div>
           <Popover
             content={languageSelector}
             trigger="hover"
@@ -445,6 +460,19 @@ export default function Header({
           >
             <IconGithubLogo size="extra-large" />
           </a>
+          {/* 深色/浅色切换（最右）：浅色时显示月亮，深色时显示太阳 */}
+          <button
+            type="button"
+            className="transition duration-300 hover:text-blue-400 flex items-center"
+            onClick={toggleDarkMode}
+            title={isDark ? t("theme.toLight") : t("theme.toDark")}
+          >
+            {isDark ? (
+              <IconSun size="extra-large" />
+            ) : (
+              <IconMoon size="extra-large" />
+            )}
+          </button>
         </div>
       </header>
       <ExportDialog

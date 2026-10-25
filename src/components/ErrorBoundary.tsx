@@ -44,20 +44,33 @@ export default class ErrorBoundary extends React.Component<
     if (!this.state.hasError) return this.props.children as React.ReactElement;
 
     const logs = getErrorLogs();
+    // 崩溃页跟随当前深浅色模式（应用层由 useDarkMode / index.html 内联脚本维护）
+    const isDark =
+      typeof document !== "undefined" &&
+      document.documentElement.classList.contains("dark");
     return (
       <div
         className="font-sans w-screen h-screen flex flex-col items-center justify-center p-6"
-        style={{ background: "#fff" }}
+        style={{ background: isDark ? "#16161a" : "#fff" }}
       >
         <div
           className="w-full max-w-3xl rounded-lg shadow-md p-5"
-          style={{ background: "#fafafa", border: "1px solid #eee" }}
+          style={{
+            background: isDark ? "#232429" : "#fafafa",
+            border: `1px solid ${isDark ? "#3a3b42" : "#eee"}`,
+          }}
         >
           <title>坏掉了！ - MoeRT_GuideGen</title>
           <h2 style={{ fontSize: 20, marginBottom: 8, textAlign: "center" }}>
             那...那个，网页坏掉惹QwQ～
           </h2>
-          <p style={{ color: "#666", marginBottom: 16, textAlign: "center" }}>
+          <p
+            style={{
+              color: isDark ? "#bfc2cc" : "#666",
+              marginBottom: 16,
+              textAlign: "center",
+            }}
+          >
             或许可以试试刷新或者清除存档的说，但是...如果这样子也没用的话，那就来{" "}
             <a
               href="https://github.com/lyxofficial/moert/guidegen/issue"

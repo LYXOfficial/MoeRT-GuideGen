@@ -91,6 +91,10 @@
       "backgroundColor": "배경색"
     }
   },
+  "theme": {
+    "toDark": "다크 모드로 전환",
+    "toLight": "라이트 모드로 전환"
+  },
   "themes": {
     "chongqing": {
       "displayName": "충칭 궤도교통 스타일",

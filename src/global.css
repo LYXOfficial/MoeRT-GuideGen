@@ -1,21 +1,51 @@
 @import "./blueaka.css";
 @import "tailwindcss";
 
+/* 深色模式走 class 策略：html.dark 由 useDarkMode / index.html 的内联脚本切换 */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --font-sans: "Blueaka", sans-serif;
 }
 
 html {
+  color-scheme: light;
   overscroll-behavior: none;
+}
+html.dark {
+  color-scheme: dark;
+}
+/* 拖拽中组件的底色（DraggableItem 用，深色下不能还是浅灰）；
+   画板外框深色下换半透明白，否则深色主题边框在暗画布上看不清
+   （边框导出前会被 border:none 去掉，这里只影响编辑时的观感） */
+html.dark {
+  --guide-item-drag-bg: #2a2a30;
+  --guide-board-border-override: rgba(255, 255, 255, 0.4);
+}
+
+/* Semi Slider 的把手写死了 --semi-color-white，深色顶栏上是一颗刺眼白点 */
+html.dark .semi-slider-handle,
+html.dark .semi-slider-handle:hover {
+  background-color: #4f5159;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.25),
+    0 4px 6px rgba(0, 0, 0, 0.4);
 }
 body {
   /* 移动端地址栏收放会让 100vh 变来变去、整页跟着跳；
      dvh 跟随实际可视高度，收放时布局不再位移（不支持的浏览器退回 100vh） */
   height: 100vh;
+  /* biome-ignore lint/suspicious/noDuplicateProperties: dvh 渐进增强，不支持时回退上面的 100vh */
   height: 100dvh;
   width: 100%;
   overscroll-behavior: none;
   -webkit-tap-highlight-color: transparent;
+  background-color: #fff;
+}
+/* 深色基底与 Semi 的暗色 bg-0 对齐（#16161a），文字取 Semi text-0（#f9f9f9） */
+html.dark body {
+  background-color: #16161a;
+  color: #f9f9f9;
 }
 #root {
   height: 100%;
@@ -24,6 +54,7 @@ body {
 /* 同上：外壳高度用 dvh，别用 100vh（Tailwind 的 h-screen） */
 .h-screen {
   height: 100vh;
+  /* biome-ignore lint/suspicious/noDuplicateProperties: dvh 渐进增强，不支持时回退上面的 100vh */
   height: 100dvh;
 }
 
@@ -76,6 +107,23 @@ body {
   }
   .hover\:shadow-lg:hover {
     box-shadow: none !important;
+  }
+}
+
+/* ===== 深色模式下的悬停色 ===== */
+/* 只在真支持 hover 的设备上生效，天然避开触屏粘滞高亮；
+   覆盖上面的浅色 hover 工具类（多一层 html.dark 提高优先级） */
+@media (hover: hover) {
+  html.dark .hover\:bg-gray-100:hover,
+  html.dark .hover\:bg-gray-50:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+  html.dark .hover\:bg-red-50:hover {
+    background-color: rgba(244, 63, 94, 0.18);
+  }
+  html.dark .hover\:text-blue-400:hover,
+  html.dark .hover\:text-blue-500:hover {
+    color: #6cb6ff;
   }
 }
 

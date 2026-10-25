@@ -91,6 +91,10 @@
       "backgroundColor": "背景色"
     }
   },
+  "theme": {
+    "toDark": "ダークモードに切り替え",
+    "toLight": "ライトモードに切り替え"
+  },
   "themes": {
     "chongqing": {
       "displayName": "重慶軌道交通スタイル",
