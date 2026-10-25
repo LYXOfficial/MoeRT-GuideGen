@@ -105,9 +105,17 @@ function TwoRowContainer({
       inners.forEach(inner => {
         let minLeft = Number.POSITIVE_INFINITY;
         let maxRight = Number.NEGATIVE_INFINITY;
+        let spacingTotal = 0;
         Array.from(inner.children).forEach(child => {
           if (!(child instanceof HTMLElement)) return;
-          if (child.dataset.guideSpacing === "true") return;
+          if (child.dataset.guideSpacing === "true") {
+            // 间距后面的组件 offsetLeft 包含间距已撑开的宽度，
+            // 只跳过元素本身不够——必须把间距宽度从跨度里扣掉，
+            // 否则「量宽 → 容器变宽 → 间距更宽 → 再量」每周期涨 1px 恶性循环。
+            // Spacing 是 flex:1 1 0%（固有宽度 0），扣掉撑出的部分正好是自然跨度。
+            spacingTotal += child.offsetWidth;
+            return;
+          }
           const left = child.offsetLeft;
           const right = left + child.offsetWidth;
           if (left < minLeft) minLeft = left;
@@ -115,7 +123,10 @@ function TwoRowContainer({
         });
         if (Number.isFinite(minLeft) && Number.isFinite(maxRight)) {
           // 布局 px 下的实际跨度；-1px 外边距造成的负起点也算在内
-          maxContent = Math.max(maxContent, maxRight - Math.min(minLeft, 0));
+          maxContent = Math.max(
+            maxContent,
+            Math.max(0, maxRight - Math.min(minLeft, 0) - spacingTotal)
+          );
         }
       });
 

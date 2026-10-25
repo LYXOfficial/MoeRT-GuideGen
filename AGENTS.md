@@ -194,6 +194,10 @@ python3 text_probe.py                                   # 解析 <use> 得到真
   现在统一改成：先量一次 + `fonts.ready` + `fonts` 的 `loadingdone` + 60/240/800ms 重试。
 - 间距（`flex:1`）不算进自然宽度：它撑开的是剩余空间，算进去会让容器越量越宽（死循环）。
   `DraggableItem` 给间距挂了 `data-guide-spacing="true"`，测量时跳过它。
+  **只跳过元素不够**（2026-10-26 恶性 bug）：间距后面的组件 `offsetLeft` 包含间距已撑开的
+  宽度，位置跨度仍会被污染 → 容器每测量周期涨 1px 永续变宽（实测 137px/s，只在间距
+  后面还有组件/间距在行首时触发）。必须把该行所有间距的 `offsetWidth` 累加后从跨度里
+  扣掉——Spacing 是 `flex:1 1 0%` 固有宽度 0，扣除后正好还原自然跨度。
 - `.two-row-inner` **必须 `alignItems: stretch`**：间距/空格是 `height:100%`，
   父级一旦是 `center` 它们就没有高度可撑，盒子塌成 0（容器里的间距/空格点不着就是这个）。
 - `minWidth` 是用户可调参数（编辑器里的「最小宽度」，下限 **30**）；内容更宽时以内容为准。
