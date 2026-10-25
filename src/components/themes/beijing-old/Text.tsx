@@ -39,7 +39,7 @@ export const textDefaultProps: TextProps = {
   english: "Transfer",
   align: "left",
   weight: "bold",
-  letterSpacing: 0.1,
+  letterSpacing: 0.15,
   fontSizeZh: 23,
   fontSizeEn: 14,
   lineGap: 9,
