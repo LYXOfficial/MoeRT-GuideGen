@@ -27,6 +27,8 @@ export default function DraggableItem({
   data,
   zoom = 1,
   selected = false,
+  flushLeft = false,
+  flushRight = false,
 }: {
   id: string;
   children: React.ReactNode;
@@ -36,6 +38,9 @@ export default function DraggableItem({
   zoom?: number;
   // 选中态：点击后在组件上盖一层淡淡的遮罩
   selected?: boolean;
+  /** 行内第一个 / 最后一个：取消该侧 -1px 的接缝负边距 */
+  flushLeft?: boolean;
+  flushRight?: boolean;
 }) {
   const {
     attributes,
@@ -106,7 +111,6 @@ export default function DraggableItem({
         y: transform.y / scale,
       }
     : null;
-  const inTwoRow = data && (data as any).context === "two-row";
   const childType = isValidElement(children) ? (children as ReactElement).type : null;
   const isSpacing =
     childType === ChengduSpacing ||
@@ -137,8 +141,12 @@ export default function DraggableItem({
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
+  // offsetWidth 是「布局 px」，而编辑区/双行容器都会整体缩放，
+  // 所以要先换算成屏幕上看到的宽度再和 HIT_TARGET 比，否则在缩小显示时
+  // 明明只有几像素宽的间距会被当成「够宽」而不补热区（间距/空格点不着的主因之一）。
+  const screenBoxWidth = (hitBoxWidth ?? 0) * (zoom || 1);
   const hitPad =
-    isSpecLine || (hitBoxWidth != null && hitBoxWidth > 0 && hitBoxWidth < HIT_TARGET)
+    isSpecLine || (hitBoxWidth != null && screenBoxWidth < HIT_TARGET)
       ? Math.min(
           MAX_HIT_PAD,
           Math.max(
@@ -167,13 +175,21 @@ export default function DraggableItem({
       ? "var(--guide-item-drag-bg, #f0f0f0)"
       : "transparent",
     zIndex: isDragging ? 9999 : selected ? 40 : isSpecLine ? 10 : 1,
-    flex: inTwoRow ? "0 0 auto" : isSpacing ? "1" : "0 0 auto",
+    // 间距组件永远可以被拉伸（双行容器里也是）：以前在容器内强制 0 0 auto，
+    // 于是双行容器里的「间距」完全不工作。行的宽度由容器给定
+    // （TwoRowContainer 会把每行撑到容器宽度），所以 flex:1 在这里是安全的；
+    // 行还是 fit-content（首帧、还没测出宽度）时间距自然收成 0，不会撑歪。
+    flex: isSpacing ? "1" : "0 0 auto",
     width: (data && (data as any).parentWidth) || undefined,
     opacity: isDragging ? 0.5 : 1,
     touchAction: "none",
     position: "relative" as const,
     willChange: "transform",
-    margin: "0 -1px",
+    // -1px 是为了和相邻组件互相压住接缝（避免中间露 1px 板底色）。
+    // 但行首 / 行尾那一侧没有邻居可压，负边距只会把组件顶出行外、
+    // 被 overflow:hidden 裁掉 1px —— 组件自己设了跟底板不同的背景色时，
+    // 那条缝就会露出底板的默认背景色（用户反馈「左右各有一条很小的缝」）。
+    margin: `0 ${flushRight ? 0 : -1}px 0 ${flushLeft ? 0 : -1}px`,
   };
 
   // 点按 = 选中/开编辑菜单；拖动 = 搬走。判定必须用 pointer 事件：
@@ -187,6 +203,9 @@ export default function DraggableItem({
     <div
       ref={attachRef}
       style={style}
+      // 标记弹性间距：双行容器量「自然宽度」时要把它排除掉，
+      // 否则间距撑开后会被算进内容宽度，容器越撑越宽（死循环）
+      data-guide-spacing={isSpacing ? "true" : undefined}
       {...attributes}
       {...dragListeners}
       // 注意：只能用 capture 变体。dnd-kit 的激活监听是通过 {...listeners}

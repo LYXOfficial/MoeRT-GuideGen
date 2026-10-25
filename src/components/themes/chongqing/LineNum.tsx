@@ -12,6 +12,8 @@ export interface LineNumProps {
   showText?: boolean;
   showRect?: boolean;
   align?: string;
+  foreground?: string;
+  background?: string;
 }
 
 export const lineNumDefaultProps: LineNumProps = {
@@ -22,6 +24,8 @@ export const lineNumDefaultProps: LineNumProps = {
   showText: true,
   showRect: true,
   align: "left",
+  foreground: colors.foreground,
+  background: colors.background,
 };
 
 export const lineNumEditorConfig = (
@@ -72,6 +76,16 @@ export const lineNumEditorConfig = (
         </Select>
       ),
     },
+    {
+      key: "foreground",
+      label: "themes.chongqing.components.LineNum.props.foreground",
+      element: <CustomColorPicker currentTheme={0} />,
+    },
+    {
+      key: "background",
+      label: "themes.chongqing.components.LineNum.props.background",
+      element: <CustomColorPicker currentTheme={0} />,
+    },
   ],
 });
 
@@ -83,6 +97,8 @@ function LineNum({
   showText = lineNumDefaultProps.showText,
   showRect = lineNumDefaultProps.showRect,
   align = lineNumDefaultProps.align,
+  foreground = lineNumDefaultProps.foreground ?? colors.foreground,
+  background = lineNumDefaultProps.background ?? colors.background,
 }: LineNumProps) {
   const numRef = useRef<SVGTextElement>(null);
   const textRef = useRef<SVGGElement>(null);
@@ -164,7 +180,7 @@ function LineNum({
   }, [num, showText, showRect, customChinese, customEnglish, align, collapsed]);
 
   return (
-    <div style={{ backgroundColor: colors.background }}>
+    <div style={{ backgroundColor: background }}>
       <div className="h-16 mr-1.25 ml-1.25" style={{ width: svgWidth }}>
         <svg width={svgWidth} height={64}>
           {/* 矩形 */}
@@ -177,7 +193,7 @@ function LineNum({
             y={isChinese ? 48 : 52}
             fontSize={isChinese ? 42 : 56}
             style={{ letterSpacing: "-3px" }}
-            fill={colors.foreground}
+            fill={foreground}
             fontFamily={isChinese ? undefined : "Frutiger, Helvetica, sans-serif"}
           >
             {num}
@@ -191,7 +207,7 @@ function LineNum({
                 y={32}
                 fontSize={22}
                 textAnchor={textAnchor}
-                fill={colors.foreground}
+                fill={foreground}
               >
                 {customChinese ?? (isChinese ? "线" : "号线")}
               </text>
@@ -200,7 +216,7 @@ function LineNum({
                 y={48}
                 fontSize={14}
                 textAnchor={textAnchor}
-                fill={colors.foreground}
+                fill={foreground}
               >
                 {customEnglish}
               </text>

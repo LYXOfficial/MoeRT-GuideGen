@@ -93,19 +93,29 @@ export default function ExitName({
     let mounted = true;
 
     const measure = () => {
-      if (exitNameGroupRef.current) {
-        const bbox = exitNameGroupRef.current.getBBox();
-        setSvgWidth(bbox.width);
-      }
+      if (!mounted || !exitNameGroupRef.current) return;
+      const bbox = exitNameGroupRef.current.getBBox();
+      // 只在真的变了才 set，避免 ResizeObserver / 定时器反复触发多余渲染
+      setSvgWidth(prev => (Math.abs(prev - bbox.width) < 0.4 ? prev : bbox.width));
     };
 
-    (async () => {
-      await document.fonts.ready; // 等字体加载完成
-      if (mounted) measure();
-    })();
+    // 先量一次（此时可能还是回退字体），字体就绪后再量、字体后续加载完再量。
+    // 只 await 一次 fonts.ready 的老写法有个坑：中文字体是 fonts.loli.net 的远程字体，
+    // 若它在这之后才真正加载完，量到的就一直是回退字体的宽度 —— 盒子比文字宽一截，
+    // 放在双行容器里就表现为「右边空一块、没贴紧」（用户反馈过）。
+    measure();
+    const fonts = document.fonts;
+    const onLoadingDone = () => measure();
+    fonts?.addEventListener?.("loadingdone", onLoadingDone);
+    fonts?.ready.then(measure).catch(() => {});
+    const timers = [60, 240, 800].map(ms => window.setTimeout(measure, ms));
 
     return () => {
       mounted = false;
+      fonts?.removeEventListener?.("loadingdone", onLoadingDone);
+      timers.forEach(t => {
+        window.clearTimeout(t);
+      });
     };
   }, [line1chinese, line1english, line2chinese, line2english]);
 

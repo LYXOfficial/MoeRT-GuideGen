@@ -1,0 +1,443 @@
+import type { SaveData } from "../interfaces/editor";
+import { createZipBlob } from "./zip";
+
+/**
+ * 多存档存储层。
+ *
+ * 布局：
+ *   guide-archives            -> { version, activeId, archives: [{id,name,createdAt,updatedAt}] }
+ *   guide-archive:<id>        -> SaveData
+ *   guide-autosave            -> 旧版单存档（仅用于一次性迁移）
+ *
+ * 索引和画板数据分开存：自动保存每 2 秒就会写一次画板数据，
+ * 若把所有存档塞进一个 JSON，每次保存都要把所有存档重新序列化，
+ * 既慢又容易在配额边缘把整个索引写坏。
+ */
+
+export const ARCHIVE_INDEX_KEY = "guide-archives";
+export const ARCHIVE_DATA_PREFIX = "guide-archive:";
+export const LEGACY_ARCHIVE_KEY = "guide-autosave";
+export const CLEARING_MARK_KEY = "guide-clearing";
+
+export interface ArchiveMeta {
+  id: string;
+  name: string;
+  createdAt: number;
+  updatedAt: number;
+}
+
+export interface ArchiveIndexState {
+  activeId: string;
+  archives: ArchiveMeta[];
+}
+
+interface StoredIndex {
+  version: number;
+  activeId?: string;
+  archives?: ArchiveMeta[];
+}
+
+const INDEX_VERSION = 1;
+
+function safeParse<T>(raw: string | null): T | null {
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw) as T;
+  } catch {
+    return null;
+  }
+}
+
+function readIndex(): StoredIndex | null {
+  try {
+    const parsed = safeParse<StoredIndex>(
+      localStorage.getItem(ARCHIVE_INDEX_KEY)
+    );
+    if (!parsed || parsed.version !== INDEX_VERSION) return null;
+    if (!Array.isArray(parsed.archives)) return null;
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+function writeIndex(index: StoredIndex): boolean {
+  try {
+    localStorage.setItem(ARCHIVE_INDEX_KEY, JSON.stringify(index));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function dataKey(id: string) {
+  return `${ARCHIVE_DATA_PREFIX}${id}`;
+}
+
+export function isSaveData(value: unknown): value is SaveData {
+  if (!value || typeof value !== "object") return false;
+  const data = value as Partial<SaveData>;
+  return (
+    data.version === 1 &&
+    Array.isArray(data.rows) &&
+    !!data.config &&
+    typeof data.config === "object"
+  );
+}
+
+export function createEmptySaveData(theme: string): SaveData {
+  return {
+    version: 1,
+    config: { width: 512, showSpecLine: true, theme },
+    rows: [[]],
+  };
+}
+
+function makeId(): string {
+  try {
+    if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
+      return crypto.randomUUID();
+    }
+  } catch {
+    // 非安全上下文（http + 内网 IP）里 randomUUID 可能不可用
+  }
+  return `a-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+/** 读取索引并把 activeId 修正到确实存在的存档上 */
+export function listArchives(): ArchiveIndexState {
+  const index = readIndex();
+  if (!index?.archives || index.archives.length === 0) {
+    return { activeId: "", archives: [] };
+  }
+  const archives = index.archives.filter(
+    archive => archive && typeof archive.id === "string"
+  );
+  if (archives.length === 0) return { activeId: "", archives: [] };
+
+  const activeId = archives.some(archive => archive.id === index.activeId)
+    ? (index.activeId as string)
+    : archives[0].id;
+  return { activeId, archives };
+}
+
+/**
+ * 首次启动 / 索引损坏时初始化。
+ * 旧版单存档（guide-autosave）会迁移成第一个存档，迁移成功后删除旧键，
+ * 避免以后清空索引时旧内容又“复活”。
+ */
+export function ensureArchives(options: {
+  defaultName: string;
+  legacyName: string;
+  theme: string;
+}): ArchiveIndexState {
+  const existing = listArchives();
+  if (existing.archives.length > 0) {
+    // 索引在、但当前存档数据丢了（写了一半 / 手动清理）：补一份空画板，
+    // 保证「当前存档」永远可读。
+    if (!loadArchiveData(existing.activeId)) {
+      saveArchiveData(
+        existing.activeId,
+        createEmptySaveData(options.theme),
+        { touchMeta: false }
+      );
+    }
+    return existing;
+  }
+
+  let migrated: SaveData | null = null;
+  try {
+    const legacy = safeParse<SaveData>(
+      localStorage.getItem(LEGACY_ARCHIVE_KEY)
+    );
+    if (isSaveData(legacy)) migrated = legacy;
+  } catch {
+    // 读不到就当没有旧存档
+  }
+
+  const now = Date.now();
+  const id = makeId();
+  const meta: ArchiveMeta = {
+    id,
+    name: migrated ? options.legacyName : options.defaultName,
+    createdAt: now,
+    updatedAt: now,
+  };
+  const index: StoredIndex = {
+    version: INDEX_VERSION,
+    activeId: id,
+    archives: [meta],
+  };
+
+  const data = migrated ?? createEmptySaveData(options.theme);
+  const writeOrderOk = (() => {
+    try {
+      localStorage.setItem(dataKey(id), JSON.stringify(data));
+      return true;
+    } catch {
+      return false;
+    }
+  })();
+  if (!writeOrderOk) {
+    // 连空画板都写不进去（隐私模式 / 配额满）：仍然返回一份内存索引，
+    // 让编辑器可以正常使用，只是不会持久化。
+    return { activeId: "", archives: [] };
+  }
+  writeIndex(index);
+  try {
+    if (migrated) localStorage.removeItem(LEGACY_ARCHIVE_KEY);
+  } catch {
+    // 删除失败无伤大雅，下次索引还在就不会再迁移
+  }
+  return { activeId: id, archives: [meta] };
+}
+
+export function getArchiveRaw(id: string): string | null {
+  if (!id) return null;
+  try {
+    return localStorage.getItem(dataKey(id));
+  } catch {
+    return null;
+  }
+}
+
+export function loadArchiveData(id: string): SaveData | null {
+  const raw = getArchiveRaw(id);
+  const parsed = safeParse<SaveData>(raw);
+  return isSaveData(parsed) ? parsed : null;
+}
+
+export function saveArchiveData(
+  id: string,
+  data: SaveData,
+  options: { touchMeta?: boolean } = {}
+): boolean {
+  if (!id) return false;
+  try {
+    localStorage.setItem(dataKey(id), JSON.stringify(data));
+  } catch {
+    return false;
+  }
+
+  if (options.touchMeta === false) return true;
+
+  const index = readIndex();
+  if (!index?.archives) return true;
+  const target = index.archives.find(archive => archive.id === id);
+  if (!target) return true;
+  target.updatedAt = Date.now();
+  writeIndex(index);
+  return true;
+}
+
+export function setActiveArchiveId(id: string): void {
+  const index = readIndex();
+  if (!index?.archives) return;
+  if (!index.archives.some(archive => archive.id === id)) return;
+  if (index.activeId === id) return;
+  index.activeId = id;
+  writeIndex(index);
+}
+
+export function createArchive(
+  name: string,
+  data: SaveData
+): ArchiveMeta | null {
+  const now = Date.now();
+  const meta: ArchiveMeta = {
+    id: makeId(),
+    name,
+    createdAt: now,
+    updatedAt: now,
+  };
+
+  const index = readIndex() ?? {
+    version: INDEX_VERSION,
+    activeId: meta.id,
+    archives: [],
+  };
+  if (!index.archives) index.archives = [];
+
+  try {
+    localStorage.setItem(dataKey(meta.id), JSON.stringify(data));
+  } catch {
+    return null;
+  }
+
+  index.archives.push(meta);
+  if (!index.activeId) index.activeId = meta.id;
+  if (!writeIndex(index)) {
+    try {
+      localStorage.removeItem(dataKey(meta.id));
+    } catch {}
+    return null;
+  }
+  return meta;
+}
+
+export function renameArchive(id: string, name: string): boolean {
+  const index = readIndex();
+  if (!index?.archives) return false;
+  const target = index.archives.find(archive => archive.id === id);
+  if (!target) return false;
+  target.name = name;
+  return writeIndex(index);
+}
+
+export function duplicateArchive(
+  id: string,
+  name: string
+): ArchiveMeta | null {
+  const source = loadArchiveData(id);
+  if (!source) return null;
+  // 深拷贝一份，避免两个存档共享同一批 props 对象（后续编辑互相影响）
+  const copy = safeParse<SaveData>(JSON.stringify(source));
+  if (!copy) return null;
+  return createArchive(name, copy);
+}
+
+/**
+ * 删除存档。索引里还有其他存档时把 activeId 挪到第一个；
+ * 删空时返回 activeId = ""，由调用方决定是否补一个空存档。
+ */
+export function deleteArchive(id: string): ArchiveIndexState {
+  const index = readIndex();
+  if (!index?.archives) return listArchives();
+  index.archives = index.archives.filter(archive => archive.id !== id);
+  try {
+    localStorage.removeItem(dataKey(id));
+  } catch {}
+
+  if (index.archives.length === 0) {
+    index.activeId = "";
+    writeIndex(index);
+    return { activeId: "", archives: [] };
+  }
+  if (!index.archives.some(archive => archive.id === index.activeId)) {
+    index.activeId = index.archives[0].id;
+  }
+  writeIndex(index);
+  return listArchives();
+}
+
+/** 把某个存档重置成空画板（保留存档条目和名字） */
+export function resetArchiveData(id: string, theme: string): boolean {
+  return saveArchiveData(id, createEmptySaveData(theme));
+}
+
+/**
+ * 崩溃页用的整包备份：把所有存档（含主题对不上、无法还原的存档）
+ * 原样打成一个 JSON，换设备 / 修好之后还能导回来。
+ */
+export interface ArchiveBundle {
+  type: "moert-guidegen-archives";
+  version: 1;
+  exportedAt: number;
+  activeId: string;
+  archives: Array<{ name: string; data: SaveData }>;
+}
+
+export function createArchiveBundle(): ArchiveBundle | null {
+  const state = listArchives();
+  if (state.archives.length === 0) return null;
+  const items: ArchiveBundle["archives"] = [];
+  for (const meta of state.archives) {
+    const data = loadArchiveData(meta.id);
+    if (data) items.push({ name: meta.name, data });
+  }
+  if (items.length === 0) return null;
+  return {
+    type: "moert-guidegen-archives",
+    version: 1,
+    exportedAt: Date.now(),
+    activeId: state.activeId,
+    archives: items,
+  };
+}
+
+export function isArchiveBundle(value: unknown): value is ArchiveBundle {
+  if (!value || typeof value !== "object") return false;
+  const bundle = value as Partial<ArchiveBundle>;
+  if (bundle.type !== "moert-guidegen-archives") return false;
+  if (!Array.isArray(bundle.archives)) return false;
+  return bundle.archives.every(
+    item =>
+      !!item &&
+      typeof item.name === "string" &&
+      isSaveData(item.data)
+  );
+}
+
+/** 文件名用时间戳：YYYY-MM-DD_HH-mm-ss（不含冒号，Windows 也能存） */
+export function makeTimestamp(date = new Date()): string {
+  const pad = (value: number) => String(value).padStart(2, "0");
+  return [
+    `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`,
+    `${pad(date.getHours())}-${pad(date.getMinutes())}-${pad(date.getSeconds())}`,
+  ].join("_");
+}
+
+export function safeFileStem(name: string): string {
+  return name.replace(/[\\/:*?"<>|]+/g, "_").trim() || "archive";
+}
+
+/** moert-guidegen-save-存档名_时间戳.json */
+export function archiveFileName(name: string): string {
+  return `moert-guidegen-save-${safeFileStem(name)}_${makeTimestamp()}.json`;
+}
+
+export function downloadBlob(blob: Blob, filename: string): void {
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = filename;
+  anchor.click();
+  // 立刻回收会让部分浏览器来不及取数据，下一轮事件循环再释放
+  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+export function downloadJson(text: string, filename: string): void {
+  downloadBlob(new Blob([text], { type: "application/json" }), filename);
+}
+
+/**
+ * 导出全部存档为 zip：压缩包里每个存档一个 .json，
+ * 内容和「单独下载某个存档」完全一致（就是 localStorage 里的原始文本）。
+ * 返回实际打包的存档数量（0 = 没有可导出的）。
+ */
+export function exportAllArchivesZip(): number {
+  const state = listArchives();
+  const entries: Array<{ name: string; content: string }> = [];
+  for (const meta of state.archives) {
+    const raw = getArchiveRaw(meta.id);
+    if (!raw) continue;
+    entries.push({ name: archiveFileName(meta.name), content: raw });
+  }
+  if (entries.length === 0) return 0;
+  downloadBlob(
+    createZipBlob(entries),
+    `moert-guidegen-saves_${makeTimestamp()}.zip`
+  );
+  return entries.length;
+}
+
+/** 清除全部本地存档（含旧版单存档键）；调用方负责刷新页面 */
+export function clearAllArchives(): void {
+  try {
+    const keys: string[] = [];
+    for (let i = 0; i < localStorage.length; i += 1) {
+      const key = localStorage.key(i);
+      if (
+        key &&
+        (key === ARCHIVE_INDEX_KEY ||
+          key === LEGACY_ARCHIVE_KEY ||
+          key.startsWith(ARCHIVE_DATA_PREFIX))
+      ) {
+        keys.push(key);
+      }
+    }
+    for (const key of keys) localStorage.removeItem(key);
+  } catch {
+    // 隐私模式下 clear 失败也不该阻塞页面刷新
+  }
+}

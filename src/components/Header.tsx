@@ -1,10 +1,8 @@
 import {
+  IconFolderOpen,
   IconGithubLogo,
   IconImage,
-  IconImport,
-  IconUpload,
   IconLanguage,
-  IconDeleteStroked,
   IconUndo,
   IconRedo,
   IconMenu,
@@ -13,7 +11,7 @@ import {
   IconMoon,
   IconSun,
 } from "@douyinfe/semi-icons";
-import { Popover, List, Modal, Slider, Checkbox } from "@douyinfe/semi-ui";
+import { Popover, List, Slider, Checkbox } from "@douyinfe/semi-ui";
 import { useTranslation } from "react-i18next";
 import { useState, type ComponentProps } from "react";
 import { ExportDialog } from "./ExportDialog";
@@ -22,8 +20,6 @@ import { useDarkMode } from "../hooks/useDarkMode";
 
 interface HeaderProps {
   guideHeight?: number;
-  onImport?: () => void;
-  onExport?: () => void;
   zoom?: number;
   onZoomChange?: (zoom: number) => void;
   disableZoom?: boolean;
@@ -31,7 +27,6 @@ interface HeaderProps {
   onRedo?: () => void;
   canUndo?: boolean;
   canRedo?: boolean;
-  onClearHistory?: () => void;
   /** 是否显示组件的灰色边框（不影响布局，也不会被导出） */
   showItemFrame?: boolean;
   onShowItemFrameChange?: (show: boolean) => void;
@@ -40,12 +35,13 @@ interface HeaderProps {
   /** 移动端：底部组件抽屉是否打开 */
   paletteOpen?: boolean;
   onTogglePalette?: (open: boolean) => void;
+  /** 当前存档名（存档管理按钮的提示 / 移动端菜单副标题） */
+  currentArchiveName?: string;
+  onOpenArchives?: () => void;
 }
 
 export default function Header({
   guideHeight = 0,
-  onImport,
-  onExport,
   zoom = 1,
   onZoomChange,
   disableZoom = false,
@@ -53,12 +49,13 @@ export default function Header({
   onRedo,
   canUndo = false,
   canRedo = false,
-  onClearHistory,
   showItemFrame = true,
   onShowItemFrameChange,
   onFitToView,
   paletteOpen = false,
   onTogglePalette,
+  currentArchiveName = "",
+  onOpenArchives,
 }: HeaderProps) {
   const { t, i18n } = useTranslation();
   const isCompact = useIsCompact();
@@ -120,45 +117,23 @@ export default function Header({
           <button
             type="button"
             className={`${btn} w-full justify-start gap-2`}
+            onClick={onOpenArchives}
+          >
+            <IconFolderOpen />
+            <span className="text-sm">{t("saves.archives.title")}</span>
+          </button>
+          {currentArchiveName && (
+            <div className="px-2 pb-1 -mt-0.5 text-[11px] text-gray-400 dark:text-gray-500 truncate">
+              {t("saves.archives.menuHint", { name: currentArchiveName })}
+            </div>
+          )}
+          <button
+            type="button"
+            className={`${btn} w-full justify-start gap-2`}
             onClick={() => setExportDialogVisible(true)}
           >
             <IconImage />
             <span className="text-sm">{t("saves.export_image")}</span>
-          </button>
-          <button
-            type="button"
-            className={`${btn} w-full justify-start gap-2`}
-            onClick={onExport}
-          >
-            <IconImport />
-            <span className="text-sm">{t("saves.save_project")}</span>
-          </button>
-          <button
-            type="button"
-            className={`${btn} w-full justify-start gap-2`}
-            onClick={onImport}
-          >
-            <IconUpload />
-            <span className="text-sm">{t("saves.load_project")}</span>
-          </button>
-          <button
-            type="button"
-            className={`${btn} w-full justify-start gap-2 text-red-600 hover:bg-red-50 dark:text-red-400`}
-            onClick={() => {
-              Modal.confirm({
-                title: t("saves.clear_local_title"),
-                content: t("saves.clear_local_confirm"),
-                onOk: () => {
-                  localStorage.setItem("guide-clearing", "1");
-                  localStorage.removeItem("guide-autosave");
-                  onClearHistory?.();
-                  location.reload();
-                },
-              });
-            }}
-          >
-            <IconDeleteStroked />
-            <span className="text-sm">{t("saves.clear_local_button")}</span>
           </button>
         </div>
       </div>
@@ -342,9 +317,10 @@ export default function Header({
                 }
               }}
               showBoundary={false}
-              tipFormatter={value =>
-                `${Math.round((typeof value === "number" ? value : 1) * 100)}%`
-              }
+              // 顶栏贴着窗口上沿，Semi 的数值气泡固定往上弹、会被窗口裁掉
+              // （它的 autoAdjustOverflow 以 body 为容器判断，body 比视口高 → 永远不翻转）。
+              // 右边那个百分比是实时更新的，气泡纯属重复，直接关掉。
+              tooltipVisible={false}
             />
           </div>
           <span className="text-xs text-gray-500 dark:text-gray-400 w-8 text-center">
@@ -371,7 +347,7 @@ export default function Header({
           </Checkbox>
         </div>
 
-        <div className="flex items-center ml-auto gap-4">
+        <div className="flex items-center ml-auto gap-4 min-w-0">
           {/* 撤销/重做按钮 */}
           <button
             type="button"
@@ -413,45 +389,28 @@ export default function Header({
               <IconLanguage size="extra-large" />
             </a>
           </Popover>
-          <a
-            className="transition duration-300 hover:text-red-500 flex items-center"
-            onClick={() => {
-              Modal.confirm({
-                title: t("saves.clear_local_title"),
-                content: t("saves.clear_local_confirm"),
-                onOk: () => {
-                  // 标记清理状态，避免 Editor 在重载前再次自动保存
-                  localStorage.setItem("guide-clearing", "1");
-                  localStorage.removeItem("guide-autosave");
-                  if (onClearHistory) onClearHistory();
-                  location.reload();
-                },
-              });
-            }}
-            title={t("saves.clear_local_button")}
+          {/* 多存档管理：PC 端图标旁显示当前存档名；长名字截断，避免顶栏溢出 */}
+          <button
+            type="button"
+            className="transition duration-300 hover:text-blue-400 flex items-center gap-1.5 min-w-0 shrink max-w-32 xl:max-w-48 text-gray-700 dark:text-gray-200"
+            onClick={onOpenArchives}
+            title={
+              currentArchiveName
+                ? `${t("saves.archives.title")} · ${currentArchiveName}`
+                : t("saves.archives.title")
+            }
           >
-            <IconDeleteStroked size="extra-large" />
-          </a>
+            <IconFolderOpen size="extra-large" />
+            <span className="min-w-0 text-sm truncate whitespace-nowrap">
+              {currentArchiveName || t("saves.archives.title")}
+            </span>
+          </button>
           <a
             className="transition duration-300 hover:text-blue-400 flex items-center"
             onClick={() => setExportDialogVisible(true)}
             title={t("saves.export_image")}
           >
             <IconImage size="extra-large" />
-          </a>
-          <a
-            className="transition duration-300 hover:text-blue-400 flex items-center"
-            onClick={onExport}
-            title={t("saves.save_project")}
-          >
-            <IconImport size="extra-large" />
-          </a>
-          <a
-            className="transition duration-300 hover:text-blue-400 flex items-center"
-            onClick={onImport}
-            title={t("saves.load_project")}
-          >
-            <IconUpload size="extra-large" />
           </a>
           <a
             href="https://github.com/lyxofficial/moert-guidegen"

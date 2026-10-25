@@ -12,6 +12,7 @@ import GuideBoardCols, { type GuideBoardRef } from "./GuideBoard";
 import type { GuideItem } from "../interfaces/guide";
 import type { SaveData } from "../interfaces/editor";
 import Salt from "./Salt";
+import ArchiveDialog from "./ArchiveDialog";
 import { Modal, Toast, Button } from "@douyinfe/semi-ui";
 import { IconClose } from "@douyinfe/semi-icons";
 import {
@@ -37,21 +38,98 @@ import { useTranslation } from "react-i18next";
 import { useUndoRedo } from "../hooks/useUndoRedo";
 import { useMediaQuery, useIsCompact } from "../hooks/useMediaQuery";
 import { getVisibleClientRect } from "../utils/visibleRect";
+import * as archiveStore from "../utils/archiveStore";
+import type { ArchiveMeta } from "../utils/archiveStore";
 
 interface EditorProps {
   guideHeight?: number;
   onArchiveLoaded?: () => void;
 }
 
+/** 撤销历史里的一条组件（纯数据，不含 React 元素） */
+interface HistoryItem {
+  id: string;
+  type: string;
+  props: Record<string, any>;
+}
+
 // 撤销/重做状态类型
 interface EditorState {
-  rows: GuideItem[][];
+  rows: HistoryItem[][];
   config: {
     width: number;
     showSpecLine: boolean;
   };
   currentTheme: number;
 }
+
+const delay = (ms: number) =>
+  new Promise<void>(resolve => window.setTimeout(resolve, ms));
+
+/** 存档用：剥掉 element（React 节点）和容器上的回调，只留可序列化的数据 */
+const stripGuideItem = (
+  item: GuideItem
+): { id: string; type: string; props: Record<string, any> } => {
+  const props: any = { ...(item.props || {}) };
+  // element 不保存
+  delete props.element;
+  // children 若存在，为数组则递归剥离元素
+  if (Array.isArray(props.children)) {
+    props.children = props.children.map((row: any[]) =>
+      (row || []).map((child: any) =>
+        stripGuideItem({
+          id: child.id,
+          type: child.type,
+          props: child.props,
+          element: child.element,
+        } as GuideItem)
+      )
+    );
+  }
+  return { id: item.id, type: item.type, props };
+};
+
+/**
+ * 撤销历史里存的形态：只留 {id,type,props} 纯数据 + 配置 + 主题。
+ *
+ * 必须剥掉 element。撤销/重做还原（GuideBoard.restoreState）会用
+ * `{ key, ...props, id, currentTheme }` 重建 React 元素，而组件刚从列表拖进来时
+ * 走的是 `{ ...props, id, currentTheme }`（没有 key）——两者序列化结果不一样。
+ * 以前历史直接存 getState() 快照、再用 JSON.stringify 比"内容是否相同"，
+ * 于是撤销之后紧接着的一次自动保存（内容其实没变）会被当成新操作 push 进去，
+ * 顺手把 redo 分支截掉：**撤销完重做只能走一步，之后 redo 永远是灰的**。
+ */
+const normalizeHistoryState = (state: EditorState): EditorState => ({
+  rows: (state.rows || []).map(row =>
+    (row || []).map(item => stripGuideItem(item as unknown as GuideItem))
+  ),
+  config: {
+    width: state.config.width,
+    showSpecLine: state.config.showSpecLine,
+  },
+  currentTheme: state.currentTheme,
+});
+
+/** 存档里有多少个顶层组件（用于判断“有内容却还原成空画板”） */
+const countSavedItems = (saveData: SaveData) =>
+  (saveData.rows || []).reduce((sum, row) => sum + (row?.length || 0), 0);
+
+/**
+ * 反推存档真正的主题：
+ * 组件名自带主题前缀（themes.<主题>.components.<组件>）。
+ * 旧版本曾把 config.theme 写错，只信 config 会让组件全部匹配不到。
+ */
+const resolveThemeIndex = (saveData: SaveData) => {
+  const firstType =
+    (saveData.rows || []).flat().find(item => item?.type)?.type ?? "";
+  const matched = /^(themes\.[^.]+)\./.exec(firstType);
+  const themeFromItems =
+    matched && themes.some(([name]) => name === matched[1]) ? matched[1] : null;
+  const themeName = themeFromItems ?? saveData.config?.theme;
+  return themes.findIndex(([name]) => name === themeName);
+};
+
+const { downloadJson } = archiveStore;
 
 export default function Editor({
   guideHeight = 0,
@@ -74,13 +152,26 @@ export default function Editor({
   const currentThemeRef = useRef(0);
   currentThemeRef.current = currentTheme;
   const [isImporting, setIsImporting] = useState(false); // 添加导入状态标志
-  const [isUndoRedoing, setIsUndoRedoing] = useState(false); // 添加撤销/重做状态标志
   const lastChangeRef = useRef(Date.now());
   const autoSaveIntervalMs = 2000; // 自动保存间隔
   // 存档保护：还原失败（比如主题对不上、组件找不到）时置位，
   // 之后一律不再自动保存，避免用空白画板把用户的存档覆盖掉
   const skipAutoSaveRef = useRef(false);
   const archivedItemCountRef = useRef(0);
+
+  // ===== 多存档 =====
+  const [archives, setArchives] = useState<ArchiveMeta[]>([]);
+  const [activeArchiveId, setActiveArchiveId] = useState("");
+  const activeArchiveIdRef = useRef("");
+  // 切换存档 / 恢复期间冻结自动保存：此时画板还是旧数据、活动存档已经/即将换成新的，
+  // 任何一次写入都会把旧画板塞进另一个存档
+  const suspendSaveRef = useRef(false);
+  // 上一次真正写进 localStorage 的内容（内容没变就不写，省配额、也不白刷 updatedAt）
+  const lastSavedJsonRef = useRef("");
+  const [archiveDialogVisible, setArchiveDialogVisible] = useState(false);
+  // 当前存档主题对不上、无法还原时弹出的引导（只能去存档管理处理）
+  const [restoreFailedVisible, setRestoreFailedVisible] = useState(false);
+  const quotaToastAtRef = useRef(0);
 
   // 撤销/重做状态管理
   const initialState: EditorState = {
@@ -94,90 +185,120 @@ export default function Editor({
     redo,
     canUndo,
     canRedo,
+    pause: pauseHistory,
+    resume: resumeHistory,
     clear: clearHistory,
-  } = useUndoRedo(initialState);
+    reset: resetHistory,
+  } = useUndoRedo(initialState, 50, normalizeHistoryState);
 
-  // 记录状态到历史记录（防抖处理）
-  const saveCurrentState = useCallback(() => {
-    if (guideBoardRef.current && !isImporting && !isUndoRedoing) {
-      const { rows, config } = guideBoardRef.current.getState();
-      const state: EditorState = {
-        rows,
-        config,
-        currentTheme,
-      };
-      saveState(state);
+  /** 当前画板的纯数据快照（进撤销历史 / 做内容比较用） */
+  const buildHistoryState = useCallback((): EditorState | null => {
+    const board = guideBoardRef.current;
+    if (!board) return null;
+    const { rows, config } = board.getState();
+    return normalizeHistoryState({
+      rows: rows as unknown as HistoryItem[][],
+      config,
+      // 主题用 ref：撤销到别的主题时，闭包里的 currentTheme 可能还是旧值
+      currentTheme: currentThemeRef.current,
+    });
+  }, []);
+
+  // 记录状态到历史记录（防抖处理；immediate=true 立即落账）
+  const saveCurrentState = useCallback(
+    (immediate = false) => {
+      if (!guideBoardRef.current || isImporting) return;
+      const state = buildHistoryState();
+      if (!state) return;
+      saveState(state, immediate);
+    },
+    [buildHistoryState, saveState, isImporting]
+  );
+
+  // ===== 撤销/重做的还原链路 =====
+  // 还原期间要挡住画板上的过渡态（旧 rows + 新主题、重建过程中的空行），
+  // 之前用一个 200ms 的布尔量硬挡，既挡不干净（配置防抖 500ms 后才落账），
+  // 又会把用户在这 200ms 里做的真实修改丢掉。
+  const restoreTimerRef = useRef<number | null>(null);
+  const releaseTimerRef = useRef<number | null>(null);
+  // persistCurrentState 在这段代码后面才定义（依赖它会让 useCallback 提前取值），
+  // 用 ref 转一道
+  const persistRef = useRef<(force?: boolean) => boolean>(() => false);
+
+  const clearRestoreTimers = useCallback(() => {
+    if (restoreTimerRef.current !== null) {
+      window.clearTimeout(restoreTimerRef.current);
+      restoreTimerRef.current = null;
     }
-  }, [saveState, currentTheme, isImporting, isUndoRedoing]);
+    if (releaseTimerRef.current !== null) {
+      window.clearTimeout(releaseTimerRef.current);
+      releaseTimerRef.current = null;
+    }
+  }, []);
+
+  /** 把一份历史快照灌回画板（主题不同时先切主题） */
+  const applyHistorySnapshot = useCallback(
+    (snapshot: EditorState) => {
+      if (!guideBoardRef.current) return;
+      clearRestoreTimers();
+      pauseHistory();
+
+      const restoreData = {
+        rows: snapshot.rows.map(row =>
+          row.map(item => ({
+            id: item.id,
+            type: item.type,
+            props: item.props,
+          }))
+        ),
+        config: snapshot.config,
+      };
+
+      const apply = () => {
+        restoreTimerRef.current = null;
+        guideBoardRef.current?.restoreState(restoreData);
+        // 等 GuideBoard 内部 isRestoring 的收尾 + 配置变更链路走完再放开历史
+        releaseTimerRef.current = window.setTimeout(() => {
+          releaseTimerRef.current = null;
+          resumeHistory();
+          // 撤销/重做也是一次真实的状态变更，尽快落盘
+          lastChangeRef.current = Date.now();
+          persistRef.current();
+        }, 120);
+      };
+
+      if (snapshot.currentTheme !== currentThemeRef.current) {
+        // 先切主题，等组件按新主题重挂完再灌数据。
+        // ref 立刻同步：500ms 的配置防抖读的是 ref，否则会把画板存成旧主题
+        currentThemeRef.current = snapshot.currentTheme;
+        setCurrentTheme(snapshot.currentTheme);
+        restoreTimerRef.current = window.setTimeout(apply, 150);
+      } else {
+        apply();
+      }
+    },
+    [clearRestoreTimers, pauseHistory, resumeHistory]
+  );
 
   // 撤销操作
   const handleUndo = useCallback(() => {
+    // 先把还没落账的最近一次修改记进历史：
+    // 否则防抖没走完就撤销，撤销点会比用户的预期多退一格，之后的自动保存
+    // 还会把"撤销前"的内容当成新操作压进去
+    saveCurrentState(true);
     const previousState = undo();
-    if (previousState && guideBoardRef.current) {
-      // 设置撤销/重做状态，防止触发自动保存
-      setIsUndoRedoing(true);
-
-      // 恢复状态（转换数据格式）
-      const restoreData = {
-        rows: previousState.rows.map(row =>
-          row.map(item => ({
-            id: item.id,
-            type: item.type,
-            props: item.props,
-          }))
-        ),
-        config: previousState.config,
-      };
-
-      // 如果需要切换主题，先切主题再恢复，等待主题生效
-      if (previousState.currentTheme !== currentTheme) {
-        setCurrentTheme(previousState.currentTheme);
-        setTimeout(() => {
-          guideBoardRef.current?.restoreState(restoreData);
-          // 在恢复完成后再清除撤销/重做标志，避免自动保存提前触发
-          setTimeout(() => setIsUndoRedoing(false), 200);
-        }, 150);
-      } else {
-        // 主题未变化，直接恢复
-        guideBoardRef.current.restoreState(restoreData);
-        // 延迟清除撤销/重做状态
-        setTimeout(() => setIsUndoRedoing(false), 200);
-      }
-    }
-  }, [undo, currentTheme, canUndo]);
+    if (!previousState) return;
+    applyHistorySnapshot(previousState);
+  }, [applyHistorySnapshot, saveCurrentState, undo]);
 
   // 重做操作
   const handleRedo = useCallback(() => {
+    saveCurrentState(true);
     const nextState = redo();
-    if (nextState && guideBoardRef.current) {
-      // 设置撤销/重做状态，防止触发自动保存
-      setIsUndoRedoing(true);
+    if (!nextState) return;
+    applyHistorySnapshot(nextState);
+  }, [applyHistorySnapshot, redo, saveCurrentState]);
 
-      // 恢复状态（转换数据格式）
-      const restoreData = {
-        rows: nextState.rows.map(row =>
-          row.map(item => ({
-            id: item.id,
-            type: item.type,
-            props: item.props,
-          }))
-        ),
-        config: nextState.config,
-      };
-
-      // 如果主题不同，切换主题并等待后再恢复
-      if (nextState.currentTheme !== currentTheme) {
-        setCurrentTheme(nextState.currentTheme);
-        setTimeout(() => {
-          guideBoardRef.current?.restoreState(restoreData);
-          setTimeout(() => setIsUndoRedoing(false), 200);
-        }, 150);
-      } else {
-        guideBoardRef.current.restoreState(restoreData);
-        setTimeout(() => setIsUndoRedoing(false), 200);
-      }
-    }
-  }, [redo, currentTheme, canRedo]);
   const [zoom, setZoom] = useState(1);
   // 组件灰框：只是编辑时的辅助线，用 CSS 变量下发，导出前会被临时关掉
   const [showItemFrame, setShowItemFrame] = useState(() => {
@@ -234,16 +355,20 @@ export default function Editor({
 
       if (isInInput) return;
 
-      // Ctrl+Z 撤销
-      if (e.ctrlKey && e.key === "z" && !e.shiftKey) {
+      // 撤销/重做：Windows/Linux 用 Ctrl，macOS 用 Cmd
+      const modifier = e.ctrlKey || e.metaKey;
+      if (!modifier || e.altKey) return;
+      const key = e.key.toLowerCase();
+
+      // Ctrl/Cmd+Z 撤销（Shift 反向 = 重做）
+      if (key === "z") {
         e.preventDefault();
-        handleUndo();
+        if (e.shiftKey) handleRedo();
+        else handleUndo();
+        return;
       }
-      // Ctrl+Y 或 Ctrl+Shift+Z 重做
-      else if (
-        (e.ctrlKey && e.key === "y") ||
-        (e.ctrlKey && e.shiftKey && e.key === "Z")
-      ) {
+      // Ctrl+Y 重做
+      if (key === "y" && !e.shiftKey) {
         e.preventDefault();
         handleRedo();
       }
@@ -354,127 +479,11 @@ export default function Editor({
     };
   }, [isDragging, dragStart]);
 
-  // 导出存档
-  const stripGuideItem = (
-    item: GuideItem
-  ): { id: string; type: string; props: Record<string, any> } => {
-    const props: any = { ...(item.props || {}) };
-    // element 不保存
-    delete props.element;
-    // children 若存在，为数组则递归剥离元素
-    if (Array.isArray(props.children)) {
-      props.children = props.children.map((row: any[]) =>
-        (row || []).map((child: any) =>
-          stripGuideItem({
-            id: child.id,
-            type: child.type,
-            props: child.props,
-            element: child.element,
-          } as GuideItem)
-        )
-      );
-    }
-    return { id: item.id, type: item.type, props };
-  };
-
-  const exportSaveData = () => {
-    if (!guideBoardRef.current) return;
+  // ===== 存档数据 =====
+  const buildSaveData = useCallback((): SaveData | null => {
+    if (!guideBoardRef.current) return null;
     const { rows, config } = guideBoardRef.current.getState();
-    const saveData: SaveData = {
-      version: 1,
-      config: {
-        ...config,
-        theme: themes[currentTheme][0],
-      },
-      rows: rows.map(row => row.map(stripGuideItem)),
-    };
-
-    // 下载文件
-    const blob = new Blob([JSON.stringify(saveData, null, 2)], {
-      type: "application/json",
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `MoeRT_GuideGen_Save_${Date.now()}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-    Toast.success(t("saves.export.success"));
-  };
-
-  // 导入存档
-  const importSaveData = () => {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = ".json";
-    input.onchange = async e => {
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (!file) return;
-
-      try {
-        const text = await file.text();
-        const saveData = JSON.parse(text) as SaveData;
-
-        if (saveData.version !== 1) {
-          throw new Error(t("saves.import.unsupportedVersion"));
-        }
-
-        // 用户主动导入了新存档，解除保护
-        skipAutoSaveRef.current = false;
-        archivedItemCountRef.current = 0;
-        // 设置导入状态，防止主题变化触发保存
-        setIsImporting(true);
-
-        // 设置主题并等待状态更新
-        await new Promise<void>(resolve => {
-          const themeIndex = themes.findIndex(
-            ([name]) => name === saveData.config.theme
-          );
-          if (themeIndex !== -1) {
-            // 先设置主题
-            setCurrentTheme(themeIndex);
-            // 等待主题更新完成
-            setTimeout(() => {
-              if (guideBoardRef.current) {
-                // 恢复状态
-                guideBoardRef.current.restoreState(saveData);
-                // 更新上一次主题引用，防止自动保存触发主题重置
-                prevThemeRef.current = themeIndex;
-                // 清除导入状态
-                setIsImporting(false);
-                Toast.success(t("saves.import.success"));
-                // 清空撤销历史并保存当前状态
-                clearHistory();
-                setTimeout(() => saveCurrentState(), 100);
-              }
-              resolve();
-            }, 100);
-          } else {
-            // 如果主题没有改变，直接恢复状态
-            if (guideBoardRef.current) {
-              guideBoardRef.current.restoreState(saveData);
-              Toast.success(t("saves.import.success"));
-              // 清空撤销历史并保存当前状态
-              clearHistory();
-              setTimeout(() => saveCurrentState(), 100);
-            }
-            setIsImporting(false);
-            resolve();
-          }
-        });
-      } catch (err) {
-        setIsImporting(false);
-        Toast.error(`${t("saves.import.error")}: ${(err as Error).message}`);
-      }
-    };
-    input.click();
-  };
-
-  // 自动保存 - 使用 useCallback 避免闭包问题
-  const saveToLocalStorage = useCallback(() => {
-    if (!guideBoardRef.current || skipAutoSaveRef.current) return;
-    const { rows, config } = guideBoardRef.current.getState();
-    const saveData: SaveData = {
+    return {
       version: 1,
       config: {
         ...config,
@@ -485,81 +494,289 @@ export default function Editor({
       },
       rows: rows.map(row => row.map(stripGuideItem)),
     };
-    try {
-      localStorage.setItem("guide-autosave", JSON.stringify(saveData));
-    } catch {
-      // 写入失败（配额/隐私模式）时静默跳过，不影响编辑
-    }
-    lastChangeRef.current = Date.now();
-  }, []); // 依赖为空，主题通过 currentThemeRef 读取
+  }, []);
 
-  // 从 LocalStorage 加载
-  const loadFromLocalStorage = async () => {
-    try {
-      // 若用户刚清理本地存档，跳过加载
-      if (localStorage.getItem("guide-clearing") === "1") {
-        localStorage.removeItem("guide-clearing");
-        return;
+  // 把当前画板写进「活动存档」；内容和上次写入完全一致时跳过
+  // （既省 localStorage 配额，也避免每 2 秒无意义地刷新 updatedAt）
+  const persistCurrentState = useCallback(
+    (force = false) => {
+      if (
+        !guideBoardRef.current ||
+        skipAutoSaveRef.current ||
+        suspendSaveRef.current
+      ) {
+        return false;
       }
-      const saved = localStorage.getItem("guide-autosave");
-      if (!saved) return;
+      const id = activeArchiveIdRef.current;
+      if (!id) return false;
+      const saveData = buildSaveData();
+      if (!saveData) return false;
 
-      const saveData = JSON.parse(saved) as SaveData;
-      if (saveData.version !== 1) return;
+      const serialized = JSON.stringify(saveData);
+      if (!force && serialized === lastSavedJsonRef.current) return true;
 
+      const ok = archiveStore.saveArchiveData(id, saveData);
+      if (ok) {
+        lastSavedJsonRef.current = serialized;
+        lastChangeRef.current = Date.now();
+      } else {
+        const now = Date.now();
+        if (now - quotaToastAtRef.current > 5000) {
+          quotaToastAtRef.current = now;
+          Toast.error(t("saves.archives.saveFailedQuota"));
+        }
+      }
+      return ok;
+    },
+    [buildSaveData, t]
+  );
 
-      // 记下存档里有多少个组件，初始化完成后用来校验是否真的还原成功
-      archivedItemCountRef.current = (saveData.rows || []).reduce(
-        (sum, row) => sum + (row?.length || 0),
-        0
-      );
+  // 给撤销/重做的还原链路用（那边定义在它前面，只能走 ref）
+  persistRef.current = persistCurrentState;
 
-      return new Promise<void>(resolve => {
-        // 组件名自带主题前缀（themes.<主题>.components.<组件>），
-        // 用它反推真实主题，修掉旧版本写错 config.theme 的存档，
-        // 否则组件一个都匹配不上，画板会变成空的
-        const firstType =
-          (saveData.rows || []).flat().find(item => item?.type)?.type ?? "";
-        const matched = /^(themes\.[^.]+)\./.exec(firstType);
-        const themeFromItems =
-          matched && themes.some(([name]) => name === matched[1])
-            ? matched[1]
-            : null;
-        const themeName = themeFromItems ?? saveData.config.theme;
-        const themeIndex = themes.findIndex(([name, _]) => name === themeName);
+  const refreshArchiveList = useCallback(() => {
+    const state = archiveStore.listArchives();
+    setArchives(state.archives);
+    return state;
+  }, []);
 
-        // 存档里的主题在当前版本里不存在：还原只会把组件全部丢掉，
-        // 干脆不还原，并锁住自动保存，至少把存档原样留着
-        if (themeIndex === -1 && archivedItemCountRef.current > 0) {
-          skipAutoSaveRef.current = true;
-          resolve();
+  const makeDefaultArchiveName = useCallback(() => {
+    const { archives: list } = archiveStore.listArchives();
+    const names = new Set(list.map(archive => archive.name));
+    let index = list.length + 1;
+    let name = t("saves.archives.defaultName", { index });
+    while (names.has(name)) {
+      index += 1;
+      name = t("saves.archives.defaultName", { index });
+    }
+    return name;
+  }, [t]);
+
+  const uniqueArchiveName = useCallback((base: string) => {
+    const { archives: list } = archiveStore.listArchives();
+    const names = new Set(list.map(archive => archive.name));
+    if (!names.has(base)) return base;
+    let index = 2;
+    while (names.has(`${base} (${index})`)) index += 1;
+    return `${base} (${index})`;
+  }, []);
+
+  /**
+   * 把一份存档数据应用到底层画板（主题 → 数据 → 重置撤销基线）。
+   * 期间冻结自动保存，避免旧画板被写进新存档。
+   */
+  const applySaveData = useCallback(
+    async (saveData: SaveData) => {
+      const themeIndex = resolveThemeIndex(saveData);
+      const itemCount = countSavedItems(saveData);
+      let targetTheme = themeIndex;
+      if (themeIndex === -1) {
+        // 未知主题 + 有内容：restoreState 会把组件全部丢掉，拒绝还原，
+        // 交给调用方锁住自动保存，至少把原始存档留着
+        if (itemCount > 0) return false;
+        targetTheme = currentThemeRef.current;
+      }
+
+      suspendSaveRef.current = true;
+      // 撤销/重做里挂着「切主题 150ms 后再灌数据」的定时器：切换存档/导入时
+      // 必须先撤掉它，否则它稍后会把旧存档的历史快照灌进刚载入的新存档
+      clearRestoreTimers();
+      resumeHistory();
+      try {
+        if (targetTheme !== currentThemeRef.current) {
+          setCurrentTheme(targetTheme);
+          await delay(120);
+        }
+        if (!guideBoardRef.current) return false;
+        guideBoardRef.current.restoreState(saveData);
+        // 更新上一次主题引用，防止自动保存触发主题重置
+        prevThemeRef.current = targetTheme;
+        // 等 React 提交 restoreState 的 rows，再以它作为撤销基线：
+        // 否则 clearHistory 会保留上一个存档的状态，撤销一次就跨存档了
+        await delay(120);
+        const board = guideBoardRef.current.getState();
+        resetHistory(
+          normalizeHistoryState({
+            rows: board.rows as unknown as HistoryItem[][],
+            config: board.config,
+            currentTheme: targetTheme,
+          })
+        );
+        return true;
+      } finally {
+        window.setTimeout(() => {
+          suspendSaveRef.current = false;
+        }, 80);
+      }
+    },
+    [clearRestoreTimers, resetHistory, resumeHistory]
+  );
+
+  /** 切换活动存档：先把当前画板落盘，再恢复目标存档 */
+  const switchArchive = useCallback(
+    async (id: string, options: { persist?: boolean; silent?: boolean } = {}) => {
+      if (!id) return false;
+      if (id === activeArchiveIdRef.current) return true;
+
+      if (options.persist !== false) persistCurrentState(true);
+
+      const targetName =
+        archiveStore.listArchives().archives.find(archive => archive.id === id)
+          ?.name ?? "";
+      let saveData = archiveStore.loadArchiveData(id);
+      if (!saveData) {
+        saveData = archiveStore.createEmptySaveData(
+          themes[currentThemeRef.current][0]
+        );
+        archiveStore.saveArchiveData(id, saveData);
+      }
+
+      const ok = await applySaveData(saveData);
+      if (!ok) {
+        if (!options.silent) {
+          Toast.error(t("saves.archives.switchFailed"));
+        }
+        return false;
+      }
+
+      activeArchiveIdRef.current = id;
+      setActiveArchiveId(id);
+      archiveStore.setActiveArchiveId(id);
+      skipAutoSaveRef.current = false;
+      archivedItemCountRef.current = 0;
+      lastSavedJsonRef.current = JSON.stringify(saveData);
+      setRestoreFailedVisible(false);
+      refreshArchiveList();
+      if (!options.silent) {
+        Toast.success(
+          t("saves.archives.switchSuccess", { name: targetName })
+        );
+      }
+      return true;
+    },
+    [applySaveData, persistCurrentState, refreshArchiveList, t]
+  );
+
+  // 导入工程 JSON：不覆盖当前画板，而是生成一个新存档并切过去
+  const importSaveData = () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".json";
+    input.onchange = async e => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+
+      try {
+        setIsImporting(true);
+        const text = await file.text();
+        const parsed: unknown = JSON.parse(text);
+
+        // 崩溃页导出的整包备份：逐个恢复成新存档（不覆盖现有存档）
+        if (archiveStore.isArchiveBundle(parsed)) {
+          const created: ArchiveMeta[] = [];
+          for (const item of parsed.archives) {
+            const baseName =
+              item.name.trim().slice(0, 60) ||
+              t("saves.archives.untitled");
+            const name = uniqueArchiveName(baseName);
+            const meta = archiveStore.createArchive(name, item.data);
+            if (meta) created.push(meta);
+          }
+          if (created.length === 0) throw new Error(t("saves.import.error"));
+
+          refreshArchiveList();
+          // 优先切到一个能正常还原的存档；整包可能包含修复用的坏存档
+          const target = created.find(meta => {
+            const data = archiveStore.loadArchiveData(meta.id);
+            return (
+              !!data &&
+              (countSavedItems(data) === 0 || resolveThemeIndex(data) !== -1)
+            );
+          });
+          if (target) {
+            await switchArchive(target.id, { persist: true, silent: true });
+          }
+          Toast.success(
+            t("saves.import.bundleCreated", { count: created.length })
+          );
+          // 导入后保持存档管理弹窗打开，方便继续管理
           return;
         }
 
-        if (themeIndex !== -1 && themeIndex !== currentTheme) {
-          // 先设置主题
-          setCurrentTheme(themeIndex);
-          // 更新上一次主题引用，防止自动保存触发主题重置
-          prevThemeRef.current = themeIndex;
-          // 等待主题更新
-          setTimeout(() => {
-            if (guideBoardRef.current) {
-              guideBoardRef.current.restoreState(saveData);
-              resolve();
-            }
-          }, 100);
-        } else {
-          // 如果主题没变，直接恢复状态
-          if (guideBoardRef.current) {
-            guideBoardRef.current.restoreState(saveData);
-            resolve();
-          }
+        if (!archiveStore.isSaveData(parsed)) {
+          throw new Error(t("saves.import.unsupportedVersion"));
         }
+        if (
+          resolveThemeIndex(parsed) === -1 &&
+          countSavedItems(parsed) > 0
+        ) {
+          throw new Error(t("saves.import.unsupportedTheme"));
+        }
+
+        const fileStem = file.name
+          .replace(/\.json$/i, "")
+          .trim()
+          .slice(0, 60);
+        const name = uniqueArchiveName(
+          fileStem || t("saves.archives.untitled")
+        );
+        const meta = archiveStore.createArchive(name, parsed);
+        if (!meta) throw new Error(t("saves.import.error"));
+
+        const ok = await switchArchive(meta.id, {
+          persist: true,
+          silent: true,
+        });
+        if (!ok) {
+          archiveStore.deleteArchive(meta.id);
+          refreshArchiveList();
+          throw new Error(t("saves.import.error"));
+        }
+        Toast.success(t("saves.import.created", { name }));
+        // 导入后保持存档管理弹窗打开，方便继续切换 / 重命名 / 删除
+      } catch (err) {
+        Toast.error(`${t("saves.import.error")}: ${(err as Error).message}`);
+      } finally {
+        setIsImporting(false);
+      }
+    };
+    input.click();
+  };
+
+  // 启动时载入「活动存档」（旧的单存档会自动迁移成第一个存档）
+  const loadActiveArchive = async () => {
+    try {
+      // 用户刚点了「清除本地存档」：跳过迁移，直接给一张空画板
+      if (localStorage.getItem(archiveStore.CLEARING_MARK_KEY) === "1") {
+        localStorage.removeItem(archiveStore.CLEARING_MARK_KEY);
+        localStorage.removeItem(archiveStore.LEGACY_ARCHIVE_KEY);
+      }
+
+      const state = archiveStore.ensureArchives({
+        defaultName: t("saves.archives.defaultName", { index: 1 }),
+        legacyName: t("saves.archives.legacyName"),
+        theme: themes[currentThemeRef.current][0],
       });
+      setArchives(state.archives);
+      if (!state.activeId) return;
+
+      activeArchiveIdRef.current = state.activeId;
+      setActiveArchiveId(state.activeId);
+
+      const saveData = archiveStore.loadArchiveData(state.activeId);
+      if (!saveData) return;
+
+      // 记下存档里有多少个组件，初始化完成后用来校验是否真的还原成功
+      archivedItemCountRef.current = countSavedItems(saveData);
+      lastSavedJsonRef.current = JSON.stringify(saveData);
+
+      const ok = await applySaveData(saveData);
+      if (!ok) skipAutoSaveRef.current = true;
     } catch {
-      // 加载自动存档失败
+      // 加载失败时保持默认空画板
     }
   };
+
 
   // 记录上一次的主题，用于检测变化
   const [isInitialized, setIsInitialized] = useState(false);
@@ -568,19 +785,180 @@ export default function Editor({
 
   // 监听配置变化并触发保存
   const handleConfigChange = () => {
-    // 未初始化时不保存，避免循环
-    if (!isInitialized || isUndoRedoing) return;
+    // 未初始化时不保存，避免循环；切换存档/导入期间也一律不落盘
+    // （撤销/重做期间的过渡态由 useUndoRedo 的 pause 挡，不再靠时间窗口）
+    if (!isInitialized || isImporting) return;
 
     if (configChangeTimeoutRef.current) {
       window.clearTimeout(configChangeTimeoutRef.current);
     }
     configChangeTimeoutRef.current = window.setTimeout(() => {
+      if (suspendSaveRef.current) return;
       lastChangeRef.current = Date.now();
-      saveToLocalStorage();
+      persistCurrentState();
       // 保存到撤销/重做历史
       saveCurrentState();
     }, 500);
   };
+
+  // ===== 多存档操作 =====
+  const openArchiveDialog = useCallback(() => {
+    // 打开前先把最新内容落盘，弹窗里的更新时间 / 组件数才是准的
+    persistCurrentState();
+    refreshArchiveList();
+    setArchiveDialogVisible(true);
+  }, [persistCurrentState, refreshArchiveList]);
+
+  const getArchiveSummary = useCallback(
+    (id: string) => {
+      const data = archiveStore.loadArchiveData(id);
+      if (!data) return null;
+      const themeKey = data.config?.theme ?? "";
+      const knownTheme = themes.some(([name]) => name === themeKey);
+      const themeName = knownTheme
+        ? t(`${themeKey}.displayName`, { defaultValue: themeKey })
+        : t("saves.archives.unknownTheme");
+      return {
+        rows: data.rows?.length ?? 0,
+        items: countSavedItems(data),
+        themeName,
+      };
+    },
+    [t]
+  );
+
+  const handleCreateArchive = useCallback(async () => {
+    if (suspendSaveRef.current) return false;
+    const name = makeDefaultArchiveName();
+    const data = archiveStore.createEmptySaveData(
+      themes[currentThemeRef.current][0]
+    );
+    const meta = archiveStore.createArchive(name, data);
+    if (!meta) {
+      Toast.error(t("saves.archives.saveFailedQuota"));
+      return false;
+    }
+    refreshArchiveList();
+    // 先把当前画板存进旧存档，再切到新存档
+    const ok = await switchArchive(meta.id, { persist: true, silent: true });
+    if (ok) {
+      Toast.success(t("saves.archives.createSuccess", { name }));
+    } else {
+      Toast.error(t("saves.archives.switchFailed"));
+    }
+    return ok;
+  }, [
+    makeDefaultArchiveName,
+    refreshArchiveList,
+    switchArchive,
+    t,
+  ]);
+
+  const handleRenameArchive = useCallback(
+    (id: string, name: string) => {
+      const trimmed = name.trim().slice(0, 60);
+      if (!trimmed) return;
+      archiveStore.renameArchive(id, trimmed);
+      refreshArchiveList();
+      Toast.success(t("saves.archives.renameSuccess"));
+    },
+    [refreshArchiveList, t]
+  );
+
+  const handleDuplicateArchive = useCallback(
+    (id: string) => {
+      const source = archiveStore
+        .listArchives()
+        .archives.find(archive => archive.id === id);
+      if (!source) return;
+      const name = uniqueArchiveName(
+        `${source.name} ${t("saves.archives.copySuffix")}`.slice(0, 60)
+      );
+      const meta = archiveStore.duplicateArchive(id, name);
+      if (!meta) {
+        Toast.error(t("saves.archives.saveFailedQuota"));
+        return;
+      }
+      refreshArchiveList();
+      Toast.success(t("saves.archives.duplicateSuccess", { name }));
+    },
+    [refreshArchiveList, t, uniqueArchiveName]
+  );
+
+  const handleDeleteArchive = useCallback(
+    async (id: string) => {
+      const before = archiveStore
+        .listArchives()
+        .archives.find(archive => archive.id === id);
+      const wasActive = id === activeArchiveIdRef.current;
+
+      let state = archiveStore.deleteArchive(id);
+      // 最后一个存档被删掉：自动补一个空存档，编辑器永远有「当前存档」
+      if (state.archives.length === 0) {
+        const meta = archiveStore.createArchive(
+          makeDefaultArchiveName(),
+          archiveStore.createEmptySaveData(themes[currentThemeRef.current][0])
+        );
+        if (meta) state = archiveStore.listArchives();
+      }
+      refreshArchiveList();
+
+      if (wasActive && state.activeId) {
+        // 画板还停在被删存档的内容上：不要落盘（persist:false），
+        // 否则会把刚删掉的内容写进新活动存档
+        await switchArchive(state.activeId, { persist: false, silent: true });
+      }
+      if (before) {
+        Toast.success(
+          t("saves.archives.deleteSuccess", { name: before.name })
+        );
+      }
+    },
+    [
+      makeDefaultArchiveName,
+      refreshArchiveList,
+      switchArchive,
+      t,
+    ]
+  );
+
+  const handleDownloadArchive = useCallback(
+    (id: string) => {
+      const raw = archiveStore.getArchiveRaw(id);
+      if (!raw) return;
+      const meta = archiveStore
+        .listArchives()
+        .archives.find(archive => archive.id === id);
+      downloadJson(
+        raw,
+        archiveStore.archiveFileName(meta?.name ?? "archive")
+      );
+      Toast.success(t("saves.archives.downloadSuccess"));
+    },
+    [t]
+  );
+
+  // 导出全部存档：打包成 zip，包内每个存档一个 json（内容和单独下载完全一致）
+  const handleExportAllArchives = useCallback(() => {
+    // 先把当前画板落盘，保证导出的就是用户看到的这份
+    persistCurrentState();
+    const count = archiveStore.exportAllArchivesZip();
+    if (count === 0) return;
+    Toast.success(t("saves.archives.exportAllSuccess", { count }));
+  }, [persistCurrentState, t]);
+
+  // 清除全部本地存档（Header 的红色按钮 / 崩溃页共用）
+  const handleClearLocal = useCallback(() => {
+    suspendSaveRef.current = true;
+    try {
+      archiveStore.clearAllArchives();
+      localStorage.setItem(archiveStore.CLEARING_MARK_KEY, "1");
+    } catch {
+      // 隐私模式下写标记失败也无所谓，刷新后最多迁移一次旧存档
+    }
+    clearHistory();
+    window.location.reload();
+  }, [clearHistory]);
 
   // 监听主题变化
   useEffect(() => {
@@ -600,12 +978,12 @@ export default function Editor({
     const init = async () => {
       try {
         // 1. 确保完全加载
-        await loadFromLocalStorage();
+        await loadActiveArchive();
         // 等待一下，确保 DOM 更新完成
         await new Promise(resolve => setTimeout(resolve, 100));
 
         // 存档里有内容、还原后却是空画板 → 说明组件没匹配上（多半是主题对不上）。
-        // 这时候必须锁住自动保存，否则 2 秒后就会用空白画板覆盖掉存档。
+        // 这时候必须锁住自动保存，否则 2 秒后就会用空白画板覆盖掉这个存档。
         const restoredCount =
           guideBoardRef.current
             ?.getState()
@@ -614,44 +992,13 @@ export default function Editor({
           skipAutoSaveRef.current = true;
         }
         if (skipAutoSaveRef.current) {
-          // 提供逃生通道：下载原始存档（可手动修/发 issue）或重置（二次确认）
-          Modal.error({
-            title: t("saves.restore_failed_title"),
-            content: t("saves.restore_failed"),
-            okText: t("saves.reset_archive"),
-            cancelText: t("saves.download_archive"),
-            centered: true,
-            onOk: () => {
-              Modal.confirm({
-                title: t("saves.reset_confirm_title"),
-                content: t("saves.reset_confirm_content"),
-                centered: true,
-                onOk: () => {
-                  localStorage.removeItem("guide-autosave");
-                  window.location.reload();
-                },
-              });
-            },
-            onCancel: () => {
-              const raw = localStorage.getItem("guide-autosave") ?? "{}";
-              const url = URL.createObjectURL(
-                new Blob([raw], { type: "application/json" })
-              );
-              const a = document.createElement("a");
-              a.href = url;
-              const stamp = new Date()
-                .toISOString()
-                .slice(0, 19)
-                .replace("T", "_")
-                .replace(/:/g, "-");
-              a.download = `moert-guidegen-backup_${stamp}.json`;
-              a.click();
-              URL.revokeObjectURL(url);
-            },
-          });
+          // 不在错误弹窗里直接删/导出：多存档下应该让用户进存档管理，
+          // 自己决定切换、删除还是下载（其他存档都在那里）
+          setRestoreFailedVisible(true);
         }
 
-        prevThemeRef.current = currentTheme;
+        // 用 ref：主题可能在 applySaveData 里切过，闭包里的 currentTheme 还是 0
+        prevThemeRef.current = currentThemeRef.current;
         setIsInitialized(true);
         // 通知App组件档案加载完成
         onArchiveLoaded?.();
@@ -678,35 +1025,21 @@ export default function Editor({
     };
   }, []); // 移除 onArchiveLoaded 依赖，防止重复初始化
 
-  // 设置自动保存定时器 - 恢复正常的2秒定时保存
+  // 定时自动保存：只写「活动存档」，内容没变时 persistCurrentState 内部直接跳过
   useEffect(() => {
     if (!isInitialized) return;
 
     const saveInterval = window.setInterval(() => {
-      // 检查是否需要保存：距离上次变化超过1秒
+      // 距离上次变化超过 1 秒才尝试保存
       if (Date.now() - lastChangeRef.current > 1000) {
-        if (!guideBoardRef.current || skipAutoSaveRef.current) return;
-        const { rows, config } = guideBoardRef.current.getState();
-        const saveData: SaveData = {
-          version: 1,
-          config: {
-            ...config,
-            theme: themes[currentThemeRef.current][0],
-          },
-          rows: rows.map(row => row.map(stripGuideItem)),
-        };
-        try {
-          localStorage.setItem("guide-autosave", JSON.stringify(saveData));
-        } catch {
-          // 写入失败时静默跳过
-        }
+        persistCurrentState();
       }
     }, autoSaveIntervalMs); // 2秒间隔
 
     return () => {
       clearInterval(saveInterval);
     };
-  }, [isInitialized, currentTheme]); // 重新添加必要的依赖
+  }, [isInitialized, persistCurrentState]);
 
   // 隐藏指示线（只有真的在显示时才更新，避免拖拽过程中无谓的重渲染）
   const hideDropIndicator = useCallback(() => {
@@ -714,6 +1047,32 @@ export default function Editor({
       prev.show ? { show: false, x: 0, y: 0, height: 0 } : prev
     );
   }, []);
+
+  // 兜底：插入指示线（那根 2px 的浅蓝竖线）只能活在「一次拖拽」里。
+  // 以前只靠 onDragEnd / onDragCancel 收线 —— 指针如果在窗口外松开、或者 dnd-kit
+  // 没收到 pointerup，线就会一直留在画板上（用户反馈「有时候小蓝条会残留」）。
+  // 这里再加几道保险：任何一次按下 / 抬起 / 取消 / 失焦 / 切标签页都收线，
+  // 拖拽状态清空（activeDrag = null）时也收。
+  useEffect(() => {
+    if (!dropIndicator.show) return;
+    const hide = () => hideDropIndicator();
+    window.addEventListener("pointerdown", hide, true);
+    window.addEventListener("pointerup", hide, true);
+    window.addEventListener("pointercancel", hide, true);
+    window.addEventListener("blur", hide);
+    document.addEventListener("visibilitychange", hide);
+    return () => {
+      window.removeEventListener("pointerdown", hide, true);
+      window.removeEventListener("pointerup", hide, true);
+      window.removeEventListener("pointercancel", hide, true);
+      window.removeEventListener("blur", hide);
+      document.removeEventListener("visibilitychange", hide);
+    };
+  }, [dropIndicator.show, hideDropIndicator]);
+
+  useEffect(() => {
+    if (!activeDrag && dropIndicator.show) hideDropIndicator();
+  }, [activeDrag, dropIndicator.show, hideDropIndicator]);
 
   // 从组件列表拖入时，计算并显示插入位置的蓝线
   const updateDropIndicator = (
@@ -1714,8 +2073,8 @@ export default function Editor({
         }
 
         // 双行容器区域优先（拖进容器时按容器行处理）。
-        // 但「普通单行组件」拖到双行容器整块的左/右端时，应视为在容器前/后插入到该行，
-        // 否则容器在最左/最右时，压根没法把组件插到它旁边。
+        // 但「普通单行组件」拖到双行容器整块的左端时，应视为在容器前插入到该行，
+        // 否则容器贴着行首时，压根没法把组件插到它前面。
         const twoRowHits = pool.filter(collision =>
           isTwoRowArea(dataOf(collision))
         );
@@ -1723,18 +2082,24 @@ export default function Editor({
           activeData.context === "two-row" ||
           draggedType.includes("TwoRowContainer");
         if (twoRowHits.length > 0 && !isTwoRowActive) {
-          // 拿「整个双行容器」的外包盒判断落点（而不是容器内某个窄条目），
-          // 左右各留 1/3，避免只能钻小缝隙
           const dc = (twoRowHits[0]?.data?.droppableContainer ?? {}) as any;
           const node = (dc.node?.current ?? dc.node) as HTMLElement | null;
           const el = node?.closest?.(".two-row-container") as HTMLElement | null;
           const rect =
             el?.getBoundingClientRect?.() ?? dc.rect?.current ?? dc.rect ?? null;
           const px = mousePositionRef.current.x;
-          const frac = rect?.width ? (px - rect.left) / rect.width : 0.5;
-          if (frac < 1 / 6 || frac > 5 / 6) {
-            // 左/右端：去掉容器「内部」区域（内部行 + 内部条目），让落点回到
-            // 容器这个行级排序项，从而在容器前/后插入到该行。
+          // 以前左右各留 1/6 宽边带都判成「插到容器前/后」，容器一窄（比如 98px）
+          // 行尾那 1/6 正好是「往这一行末尾追加」的位置，结果被甩到右边的主行里
+          // （用户实测：拖到行尾总是插进更右边的主行）。
+          // 现在只保留左端一条窄边带（容器贴着行首时插到它前面用），
+          // 右端一律当作「追加到这一行末尾」。
+          // 边带必须跟容器宽度成比例：容器被设成 30px 最小宽时，固定 20px 会把大半个
+          // 容器都判成「前面插」，压根拖不进容器。
+          const edgePx = rect ? Math.min(20, rect.width * 0.15) : 0;
+          const nearLeftEdge = !!rect && px < rect.left + edgePx;
+          if (nearLeftEdge) {
+            // 去掉容器「内部」区域（内部行 + 内部条目），让落点回到
+            // 容器这个行级排序项，从而在容器前插入到该行。
             // 注意：过滤后可能一个都不剩（指针下只有容器内部区域），这时必须退回 base，
             // 否则下面的 pool[0].id 会读到 undefined，整个画布直接白屏。
             const innerArea = (data: Record<string, any>) =>
@@ -1744,7 +2109,13 @@ export default function Editor({
             );
             pool = withoutInnerAreas.length > 0 ? withoutInnerAreas : base;
           } else {
-            return twoRowHits;
+            // 行级命中要排在裸容器前面：over 落在「容器本身」时落点处理认不出
+            // containerId / rowIndex，会静默退回主行。
+            const usableOver = (data: Record<string, any>) =>
+              !!data.containerId && typeof data.rowIndex === "number";
+            return [...twoRowHits].sort(
+              (a, b) => Number(usableOver(dataOf(b))) - Number(usableOver(dataOf(a)))
+            );
           }
         } else if (twoRowHits.length > 0) {
           return twoRowHits;
@@ -1776,8 +2147,6 @@ export default function Editor({
     >
       <div className="flex flex-col h-screen">
         <Header
-          onExport={exportSaveData}
-          onImport={importSaveData}
           onUndo={handleUndo}
           onRedo={handleRedo}
           canUndo={canUndo}
@@ -1786,12 +2155,15 @@ export default function Editor({
           zoom={zoom}
           onZoomChange={setZoom}
           disableZoom={isEditingOpen}
-          onClearHistory={clearHistory}
           showItemFrame={showItemFrame}
           onShowItemFrameChange={setShowItemFrame}
           onFitToView={fitToView}
           paletteOpen={paletteOpen}
           onTogglePalette={() => setPaletteOpen(open => !open)}
+          currentArchiveName={
+            archives.find(archive => archive.id === activeArchiveId)?.name ?? ""
+          }
+          onOpenArchives={openArchiveDialog}
         />
         <div className="flex h-0 flex-1">
           {!isCompact && (
@@ -1861,6 +2233,56 @@ export default function Editor({
           </div>
         </div>
         <Salt />
+        <ArchiveDialog
+          visible={archiveDialogVisible}
+          onCancel={() => setArchiveDialogVisible(false)}
+          archives={archives}
+          activeId={activeArchiveId}
+          getSummary={getArchiveSummary}
+          onSwitch={async id => {
+            const ok = await switchArchive(id);
+            if (ok) setArchiveDialogVisible(false);
+            return ok;
+          }}
+          onCreate={async () => {
+            // 新建后保持弹窗打开：用户还要在列表里接着管理
+            await handleCreateArchive();
+          }}
+          onImport={importSaveData}
+          onClearAll={handleClearLocal}
+          onRename={handleRenameArchive}
+          onDuplicate={handleDuplicateArchive}
+          onDelete={handleDeleteArchive}
+          onDownload={handleDownloadArchive}
+          onExportAll={handleExportAllArchives}
+        />
+        {/* 存档还原失败：不再直接给「删除 / 导出」，统一引导进存档管理 */}
+        <Modal
+          title={t("saves.restore_failed_title")}
+          visible={restoreFailedVisible}
+          onCancel={() => setRestoreFailedVisible(false)}
+          centered
+          width={460}
+          style={{ maxWidth: "calc(100vw - 24px)" }}
+          footer={
+            <div className="flex justify-end pt-2">
+              <Button
+                theme="solid"
+                type="primary"
+                onClick={() => {
+                  setRestoreFailedVisible(false);
+                  openArchiveDialog();
+                }}
+              >
+                {t("saves.open_archives")}
+              </Button>
+            </div>
+          }
+        >
+          <p className="m-0 text-sm leading-6 text-gray-600 dark:text-gray-300">
+            {t("saves.restore_failed")}
+          </p>
+        </Modal>
         {isCompact && paletteRendered && (
           <div
             className={`mobile-palette-sheet fixed inset-x-0 bottom-0 z-50 flex flex-col rounded-t-2xl bg-white dark:bg-[#16161a] shadow-2xl border-t border-gray-200 dark:border-[#2e2e35] overflow-hidden ${

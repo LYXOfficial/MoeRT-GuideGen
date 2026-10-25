@@ -8,6 +8,7 @@ export interface LineProps {
   lineColor: string;
   chinese: string;
   english: string;
+  foreground?: string;
   background?: string;
   align?: "left" | "center" | "right"; // 添加对齐选项
 }
@@ -16,6 +17,7 @@ export const lineDefaultProps: LineProps = {
   lineColor: colors.tsuenwanline,
   chinese: "荃灣綫",
   english: "Tsuen Wan Line",
+  foreground: colors.foreground,
   background: colors.background,
   align: "left", // 默认居中对齐
 };
@@ -55,6 +57,11 @@ export const lineEditorConfig = (t: (key: string) => string): EditorConfig => ({
       element: <CustomColorPicker currentTheme={2} />,
     },
     {
+      key: "foreground",
+      label: "themes.hongkong.components.Line.props.foreground",
+      element: <CustomColorPicker currentTheme={2} />,
+    },
+    {
       key: "background",
       label: "themes.hongkong.components.Line.props.background",
       element: <CustomColorPicker currentTheme={2} />,
@@ -74,7 +81,8 @@ export default function Line({
   chinese = lineDefaultProps.chinese,
   english = lineDefaultProps.english,
   lineColor = lineDefaultProps.lineColor,
-  background = lineDefaultProps.background,
+  foreground = lineDefaultProps.foreground ?? colors.foreground,
+  background = lineDefaultProps.background ?? colors.background,
   align = lineDefaultProps.align,
 }: LineProps) {
   const lineGroupRef = useRef<SVGGElement>(null);
@@ -155,10 +163,10 @@ export default function Line({
               height={40}
               fill={lineColor}
             />
-            <text x={0} y={34} fontSize={22} fill={colors.foreground}>
+            <text x={0} y={34} fontSize={22} fill={foreground}>
               {chinese}
             </text>
-            <text x={0} y={48} fontSize={10} fill={colors.foreground}>
+            <text x={0} y={48} fontSize={10} fill={foreground}>
               {english}
             </text>
           </g>

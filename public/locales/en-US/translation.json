@@ -51,10 +51,11 @@
     "success": "Export successful!"
   },
   "saves": {
-    "clear_local_button": "Clear Local Saves",
-    "restore_failed": "Its components do not match the current theme. Auto-save has been paused to protect the save file. Check the version or re-import.",
-    "clear_local_title": "Clear Local Saves",
-    "clear_local_confirm": "Are you sure you want to clear local autosave and refresh the page? This cannot be undone.",
+    "clear_local_button": "Clear All Saves",
+    "restore_failed": "The components in the current save do not match the current theme, so auto-save is paused to protect it. Open Save Management to switch to another save, or delete / download this one. Other saves are unaffected.",
+    "open_archives": "Open Save Management",
+    "clear_local_title": "Clear All Saves",
+    "clear_local_confirm": "Are you sure you want to clear all local saves and refresh the page? Every save will be deleted. This cannot be undone.",
     "export_image": "Export as Image",
     "save_project": "Save Project Locally",
     "load_project": "Import Project",
@@ -67,7 +68,10 @@
     "import": {
       "success": "Import successful",
       "error": "Import failed",
-      "unsupportedVersion": "Unsupported save version"
+      "unsupportedVersion": "Unsupported save version",
+      "unsupportedTheme": "The theme used by this save does not exist in this version",
+      "created": "Import successful — saved as \"{{name}}\"",
+      "bundleCreated": "Imported {{count}} saves"
     },
     "export": {
       "success": "Archive exported"
@@ -76,7 +80,48 @@
     "reset_archive": "Reset save",
     "download_archive": "Download backup",
     "reset_confirm_title": "Reset the save?",
-    "reset_confirm_content": "This clears the local save and reloads the page. It cannot be undone (download a backup first)."
+    "reset_confirm_content": "Reset clears the current save's canvas and reloads the page. It cannot be undone (download a backup first). Other saves are unaffected.",
+    "archives": {
+      "title": "Manage Saves",
+      "menuHint": "Current save: {{name}}",
+      "hint": "Click a save to switch. Every change is auto-saved into the current save.",
+      "new": "New Save",
+      "importSave": "Import Save",
+      "defaultName": "Save {{index}}",
+      "legacyName": "My Save",
+      "untitled": "Untitled Save",
+      "copySuffix": "Copy",
+      "rename": "Rename",
+      "renamePlaceholder": "Save name",
+      "duplicate": "Duplicate",
+      "download": "Download this save",
+      "delete": "Delete save",
+      "load": "Switch to this save",
+      "current": "Current",
+      "meta": "{{rows}} rows · {{items}} components",
+      "updatedAt": "Updated {{time}}",
+      "switchSuccess": "Switched to \"{{name}}\"",
+      "switchFailed": "Failed to load the save (the original save is untouched)",
+      "createSuccess": "Created \"{{name}}\"",
+      "renameSuccess": "Save renamed",
+      "duplicateSuccess": "Created a copy \"{{name}}\"",
+      "deleteSuccess": "Deleted \"{{name}}\"",
+      "deleteConfirmTitle": "Delete this save?",
+      "deleteConfirmContent": "\"{{name}}\" will be permanently deleted. This cannot be undone.",
+      "deleteActiveConfirmContent": "\"{{name}}\" is the save you are editing. Deleting it will switch to another save automatically. This cannot be undone.",
+      "deleteLastContent": "\"{{name}}\" is the only save. Deleting it will create a new empty save automatically.",
+      "downloadSuccess": "Save downloaded",
+      "storageHint": "Saves live in this browser's local storage. Clearing browser data or switching devices will lose them, so download a backup regularly.",
+      "saveFailedQuota": "Local storage is full, so the save failed. Download a backup or delete an old save first.",
+      "clearAll": "Clear All Saves",
+      "clearAllConfirmTitle": "Clear all saves?",
+      "clearAllConfirmContent": "All local saves will be permanently deleted and the page will reload. This cannot be undone.",
+      "cancel": "Cancel",
+      "empty": "No saves yet",
+      "unknownTheme": "Unknown theme",
+      "exportAll": "Export All Saves (zip)",
+      "exportAllSuccess": "Exported {{count}} saves"
+    }
   },
   "loading": {
     "message": "Loading application...",
@@ -184,7 +229,9 @@
             },
             "lineColor": "Line Color",
             "showText": "Show Text Behind",
-            "showRect": "Show color block"
+            "showRect": "Show color block",
+            "foreground": "Foreground",
+            "background": "Background Color"
           }
         },
         "LineText": {
@@ -197,7 +244,9 @@
               "left": "Left",
               "right": "Right"
             },
-            "lineColor": "Line Color"
+            "lineColor": "Line Color",
+            "foreground": "Foreground",
+            "background": "Background Color"
           }
         },
         "NumAlphabet": {
@@ -230,7 +279,9 @@
           "displayName": "Station Name",
           "props": {
             "chinese": "Chinese Name",
-            "english": "English Name"
+            "english": "English Name",
+            "foreground": "Foreground",
+            "background": "Background Color"
           }
         },
         "Text": {
@@ -420,7 +471,9 @@
             },
             "lineColor": "Line Color",
             "showText": "Show Text Behind",
-            "showRect": "Show color block"
+            "showRect": "Show color block",
+            "foreground": "Foreground",
+            "background": "Background Color"
           }
         },
         "LineText": {
@@ -433,7 +486,9 @@
               "left": "Left",
               "right": "Right"
             },
-            "lineColor": "Line Color"
+            "lineColor": "Line Color",
+            "foreground": "Foreground",
+            "background": "Background Color"
           }
         },
         "NumAlphabet": {
@@ -466,7 +521,9 @@
           "displayName": "Station Name",
           "props": {
             "chinese": "Chinese Name",
-            "english": "English Name"
+            "english": "English Name",
+            "foreground": "Foreground",
+            "background": "Background Color"
           }
         },
         "Text": {
@@ -490,7 +547,9 @@
             "color": "Line Color",
             "lineNum": "Line Number",
             "stationNum": "Station Number",
-            "lines": "Line List"
+            "lines": "Line List",
+            "foreground": "Foreground",
+            "background": "Background Color"
           }
         },
         "Direction": {
@@ -512,6 +571,7 @@
         "TwoRowContainer": {
           "displayName": "Two-Row Container",
           "props": {
+            "minWidth": "Min Width",
             "background": "Background Color"
           }
         }
@@ -664,7 +724,8 @@
             "lineColor": "Line Color",
             "align": {
               "displayName": "Alignment"
-            }
+            },
+            "foreground": "Foreground"
           }
         },
         "Exit": {

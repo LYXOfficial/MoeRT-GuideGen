@@ -3,6 +3,13 @@ import { useTranslation } from "react-i18next";
 import Editor from "./components/Editor";
 import { useEffect, useState } from "react";
 import { Toast, Spin } from "@douyinfe/semi-ui";
+import { installPortalClamp } from "./utils/portalClamp";
+
+// DEV-only：用于构造真正的 React 全局崩溃页（与存档 / 画板无关）。
+// 生产构建里这个分支会被 import.meta.env.DEV 消除。
+function DevGlobalCrash(): null {
+  throw new Error("GuideGen DEV global crash test");
+}
 
 function App() {
   const { t } = useTranslation();
@@ -10,6 +17,30 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [fontsLoaded, setFontsLoaded] = useState(false);
   const [archiveLoaded, setArchiveLoaded] = useState(false);
+  const [devCrash, setDevCrash] = useState(false);
+
+  // Semi 浮层（下拉/取色板等挂在 body 上的弹层）越界时推回视口内，
+  // 否则编辑弹窗里的二级浮层会超出屏幕下沿、并把整页撑出滚动条
+  useEffect(() => installPortalClamp(), []);
+
+  // ?__crash_test=1：挂载后再触发一次更新，让子组件在 render 期抛错进 ErrorBoundary；
+  // 先把 query 去掉，刷新即可恢复。不在首次 render 直接 throw（React 会重试首帧）。
+  useEffect(() => {
+    if (!import.meta.env.DEV) return;
+    if (new URLSearchParams(window.location.search).get("__crash_test") !== "1") {
+      return;
+    }
+    try {
+      window.history.replaceState(
+        null,
+        "",
+        window.location.pathname + window.location.hash
+      );
+    } catch {
+      // 去掉 query 失败也不影响本次构造
+    }
+    setDevCrash(true);
+  }, []);
 
   // 监听字体加载
   useEffect(() => {
@@ -77,6 +108,7 @@ function App() {
       )}
 
       <Editor guideHeight={guideHeight} onArchiveLoaded={handleArchiveLoaded} />
+      {devCrash && <DevGlobalCrash />}
       <Toast />
     </div>
   );

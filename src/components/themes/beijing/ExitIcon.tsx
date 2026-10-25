@@ -165,7 +165,11 @@ function ExitIcon({
   const boxH = ROW_H;
   const iconH = ROW_H - (isInset ? INSET * 2 : 0);
   const iconW = Math.round(iconH * spec.aspect);
-  const boxW = iconW + (isInset ? INSET_X * 2 : 0);
+  // 图形左右各留 5px：这段留白必须算进盒宽。
+  // 之前把 ml/mr 加在 w-full 的居中层上 —— w-full 已经是父盒宽度，
+  // 再叠 5+5 的外边距就多出 10px，右边直接溢出组件（用户实测到的问题）。
+  const SIDE_GAP = 3;
+  const boxW = iconW + (isInset ? INSET_X * 2 : SIDE_GAP * 2);
   const Glyph = spec.glyph;
 
   return (

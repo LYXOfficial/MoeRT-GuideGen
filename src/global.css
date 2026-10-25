@@ -51,6 +51,12 @@ html.dark body {
   height: 100%;
   width: 100%;
 }
+/* 全应用固定视口，禁止整页滚动：Semi 浮层挂在 body 上、以 body 为定位容器，
+   超出视口时会把 document 撑出竖向滚动条（浮层本身由 portalClamp 推回视口） */
+html,
+body {
+  overflow: hidden;
+}
 /* 同上：外壳高度用 dvh，别用 100vh（Tailwind 的 h-screen） */
 .h-screen {
   height: 100vh;

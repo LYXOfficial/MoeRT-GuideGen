@@ -94,7 +94,7 @@ export default function ComponentsList({
   onThemeChange,
   fullWidth = false,
 }: ComponentsListProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const theme = themes[currentTheme][1];
   const components = theme.components;
   const [themeChangeVisible, setThemeChangeVisible] = useState(false);
@@ -206,6 +206,10 @@ export default function ComponentsList({
             {t("componentsList.theme")}
           </Typography.Title>
           <Select
+            // Semi 的 Select 会把选项列表缓存住：切换语言后其余文案都变了，
+            // 这一列主题名还停在首次渲染时的语言（首次渲染时 i18n 资源可能还没到，
+            // 拿到的是 zh-CN 兜底值）。语言变了就整只 Select 重挂一次，标签才会跟着刷新。
+            key={i18n.language}
             value={currentTheme}
             onChange={value => handleThemeSelect(value as number)}
             className="w-full mt-2"

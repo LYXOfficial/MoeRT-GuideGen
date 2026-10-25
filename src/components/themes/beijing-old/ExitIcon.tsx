@@ -66,7 +66,9 @@ function ExitIcon({
   const boxH = ROW_H;
   const iconH = ROW_H - (isInset ? INSET * 2 : 0);
   const iconW = Math.round(iconH * ASPECT);
-  const boxW = iconW + (isInset ? INSET_X * 2 : 0);
+  // 图形左右各留 5px：留白要算进盒宽，margin 叠在 w-full 上会多出 10px 溢出（同新版）
+  const SIDE_GAP = 3;
+  const boxW = iconW + (isInset ? INSET_X * 2 : SIDE_GAP * 2);
 
   return (
     <Background

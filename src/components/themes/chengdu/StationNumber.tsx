@@ -22,9 +22,12 @@ function LineArrayEditor({
 
   const handleAddLine = () => {
     if (lines.length >= 4) return; // 最多4个线路
+    // 新条目不要照抄「1 / 01」：以前每次都复制相同的一行，
+    // key 撞在一起（React 报 duplicate key）→ 新胶囊根本画不出来，看起来像「+ 点了没反应」
+    const next = lines.length + 1;
     const newLine = {
-      lineNum: "1",
-      stationNum: "01",
+      lineNum: String(next),
+      stationNum: String(next).padStart(2, "0"),
       color: colors.line1,
     };
     onChange?.([...lines, newLine]);
@@ -121,6 +124,8 @@ export const stationNumberDefaultProps: StationNumberProps = {
       color: colors.line1,
     },
   ],
+  foreground: colors.foreground,
+  background: colors.background,
 };
 
 export const stationNumberEditorConfig = (
@@ -132,32 +137,59 @@ export const stationNumberEditorConfig = (
       label: "themes.chengdu.components.StationNumber.props.lines",
       element: <LineArrayEditor />,
     },
+    {
+      key: "foreground",
+      label: "themes.chengdu.components.StationNumber.props.foreground",
+      element: <CustomColorPicker currentTheme={1} />,
+    },
+    {
+      key: "background",
+      label: "themes.chengdu.components.StationNumber.props.background",
+      element: <CustomColorPicker currentTheme={1} />,
+    },
   ],
 });
 
 export default function StationNumber({
   lines = stationNumberDefaultProps.lines,
+  foreground = stationNumberDefaultProps.foreground ?? colors.foreground,
+  background = stationNumberDefaultProps.background ?? colors.background,
 }: StationNumberProps) {
+  // 一行能竖着排几个：胶囊 15 高 + 行距 5，上下只留 4px 内边距（64 - 8 = 56 → 3 个刚好 55）
+  // 以前上下各 10px 内边距，只剩 44 可用，装满 3 个就会挤成两列（用户反馈「三个站分两列很别扭」）。
+  // 所以 1~3 个一律竖着一列，超过 3 个才换第二列，列数按 3 个/列算宽度。
+  const ROWS_PER_COLUMN = 3;
+  const PILL_W = 35;
+  const PILL_H = 15;
+  const PILL_GAP = 5;
+  const PAD_X = 20;
+  const columns = Math.max(1, Math.ceil(lines.length / ROWS_PER_COLUMN));
+  // 一个列里塞到 3 个时，纵向整体缩一点（胶囊高度和行距一起收），
+  // 否则 3×15 + 2×5 = 55 几乎顶满 64，看着挤成一坨、上下没留白
+  const vScale = lines.length >= ROWS_PER_COLUMN ? 0.85 : 1;
+  const pillH = PILL_H * vScale;
+  const rowGap = PILL_GAP * vScale;
+
   return (
-    <div className="h-16 flex" style={{ backgroundColor: colors.background }}>
+    <div className="h-16 flex" style={{ backgroundColor: background }}>
       <div
-        className="h-16 mt-auto mb-auto p-2.5 flex flex-col flex-wrap gap-1.25 items-center justify-center"
+        className="h-16 mt-auto mb-auto py-1 px-2.5 flex flex-col flex-wrap items-center justify-center"
         style={{
-          width:
-            (35 * (lines.length + (lines.length % 2))) / 2 +
-            (5 * (lines.length - (lines.length % 2))) / 2 +
-            20,
+          width: columns * PILL_W + (columns - 1) * PILL_GAP + PAD_X,
+          gap: rowGap,
         }}
       >
-        {lines.map(line => (
+        {lines.map((line, index) => (
           <div
-            className="w-8.75 h-3.75 border-[1.4px] rounded-[10px] border-solid flex items-center justify-center"
+            className="w-8.75 border-[1.4px] rounded-[10px] border-solid flex items-center justify-center"
             style={{
+              height: pillH,
               borderColor: line.color,
-              backgroundColor: colors.foreground,
+              backgroundColor: foreground,
               fontFamily: "'Segoe UI', Helvetica, sans-serif",
             }}
-            key={`${line.lineNum}${line.stationNum}`}
+            // 带上下标：两三行填成一样的号（1/01）时也不会撞 key
+            key={`${line.lineNum}-${line.stationNum}-${index}`}
           >
             <div
               style={{

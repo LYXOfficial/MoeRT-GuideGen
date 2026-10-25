@@ -2,14 +2,19 @@ import { useRef, useState, useEffect } from "react";
 import type { EditorConfig } from "../../../interfaces/editor";
 import { Input, TextArea } from "@douyinfe/semi-ui";
 import colors from "./define/colors";
+import CustomColorPicker from "../../CustomColorPicker";
 
 export interface StationNameProps {
   chinese: string;
   english: string;
+  foreground?: string;
+  background?: string;
 }
 export const stationNameDefaultProps: StationNameProps = {
   chinese: "红旗河沟",
   english: "Hongqihegou",
+  foreground: colors.foreground,
+  background: colors.background,
 };
 
 export const stationNameEditorConfig = (
@@ -26,12 +31,24 @@ export const stationNameEditorConfig = (
       label: "themes.chongqing.components.StationName.props.english",
       element: <TextArea />,
     },
+    {
+      key: "foreground",
+      label: "themes.chongqing.components.StationName.props.foreground",
+      element: <CustomColorPicker currentTheme={0} />,
+    },
+    {
+      key: "background",
+      label: "themes.chongqing.components.StationName.props.background",
+      element: <CustomColorPicker currentTheme={0} />,
+    },
   ],
 });
 
 function StationName({
   chinese = stationNameDefaultProps.chinese,
   english = stationNameDefaultProps.english,
+  foreground = stationNameDefaultProps.foreground ?? colors.foreground,
+  background = stationNameDefaultProps.background ?? colors.background,
 }: StationNameProps) {
   const textGroupRef = useRef<SVGGElement>(null);
   const [svgWidth, setSvgWidth] = useState(0);
@@ -62,7 +79,7 @@ function StationName({
   const baseY = englishLines.length > 1 ? 42 : 48;
 
   return (
-    <div style={{ backgroundColor: colors.background }}>
+    <div style={{ backgroundColor: background }}>
       <div className="h-16 ml-1.25 mr-1.25" style={{ width: svgWidth }}>
         <svg className="h-full" width={svgWidth} height={64}>
           <g ref={textGroupRef}>
@@ -72,7 +89,7 @@ function StationName({
               fontSize={24}
               fontWeight="bold"
               textAnchor="middle"
-              fill={colors.foreground}
+              fill={foreground}
             >
               {chinese}
             </text>
@@ -82,7 +99,7 @@ function StationName({
               fontSize={englishLines.length > 1 ? 12 : 14}
               fontWeight="bold"
               textAnchor="middle"
-              fill={colors.foreground}
+              fill={foreground}
             >
               {englishLines.map((line, idx) => (
                 <tspan

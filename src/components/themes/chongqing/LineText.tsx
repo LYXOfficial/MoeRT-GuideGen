@@ -9,6 +9,8 @@ export interface LineTextProps {
   chinese?: string;
   english?: string;
   align?: string;
+  foreground?: string;
+  background?: string;
 }
 
 export const lineTextDefaultProps: LineTextProps = {
@@ -16,6 +18,8 @@ export const lineTextDefaultProps: LineTextProps = {
   chinese: "璧铜线",
   english: "Bitong Line",
   align: "left",
+  foreground: colors.foreground,
+  background: colors.background,
 };
 
 export const lineTextEditorConfig = (
@@ -51,6 +55,16 @@ export const lineTextEditorConfig = (
         </Select>
       ),
     },
+    {
+      key: "foreground",
+      label: "themes.chongqing.components.LineText.props.foreground",
+      element: <CustomColorPicker currentTheme={0} />,
+    },
+    {
+      key: "background",
+      label: "themes.chongqing.components.LineText.props.background",
+      element: <CustomColorPicker currentTheme={0} />,
+    },
   ],
 });
 
@@ -59,6 +73,8 @@ function LineText({
   chinese = lineTextDefaultProps.chinese,
   english = lineTextDefaultProps.english,
   align = lineTextDefaultProps.align,
+  foreground = lineTextDefaultProps.foreground ?? colors.foreground,
+  background = lineTextDefaultProps.background ?? colors.background,
 }: LineTextProps) {
   const textGroupRef = useRef<SVGGElement>(null);
   const [svgWidth, setSvgWidth] = useState(0);
@@ -117,7 +133,7 @@ function LineText({
     align === "left" ? rectWidth + margin : svgWidth - rectWidth - margin; // 让文字紧挨矩形左边
 
   return (
-    <div style={{ backgroundColor: colors.background }}>
+    <div style={{ backgroundColor: background }}>
       <div className="h-16 ml-1.25 mr-1.25" style={{ width: svgWidth }}>
         <svg className="h-full" width={svgWidth} height={64}>
           {/* 矩形 */}
@@ -135,26 +151,26 @@ function LineText({
             transform={`translate(${textTranslateX}, 0)`}
             textAnchor={align === "right" ? "end" : "start"}
           >
-            <text x={0} y={32} fontSize={22} fill={colors.foreground}>
+            <text x={0} y={32} fontSize={22} fill={foreground}>
               {chineseSegs.map((seg, idx) =>
                 seg.isDigit ? (
                   <tspan
                     key={idx}
                     dy={seg.dy}
                     fontSize={30}
-                    fill={colors.foreground}
+                    fill={foreground}
                     fontFamily="Frutiger, Helvetica, sans-serif"
                   >
                     {seg.seg}
                   </tspan>
                 ) : (
-                  <tspan key={idx} dy={seg.dy} fill={colors.foreground}>
+                  <tspan key={idx} dy={seg.dy} fill={foreground}>
                     {seg.seg}
                   </tspan>
                 )
               )}
             </text>
-            <text x={0} y={48} fontSize={12} fill={colors.foreground}>
+            <text x={0} y={48} fontSize={12} fill={foreground}>
               {english}
             </text>
           </g>

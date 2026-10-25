@@ -1,8 +1,7 @@
 # AGENTS.md — 交接文档（北京导视主题）
 
-> 最后更新：2026-10-24。交接自上一任 agent（实现了北京**新版**主题 + 编辑器交互修复）。
-> 下一阶段目标：**M8 北京旧版（2015 / 经典样式）导视组件库**。
-> 提交现状：HEAD = `a1ab3b2`，工作区干净。
+> 最后更新：2026-10-25。多存档管理与崩溃页导出已完成（tsc / biome / build 三绿，回归测试见 §8-28~34）。
+> 下一阶段目标：**M8 北京旧版（2015 / 经典样式）导视组件库**。（已实现）
 
 ---
 
@@ -32,6 +31,9 @@ pnpm dev                                  # 开发服务器（5173 端口，常�
   编辑菜单稳定性、整页缩放禁用等，全部修复并提交（见 §7/§8）。
 - ✅ **全应用深色/浅色模式**（2026-10-25）：初始跟随浏览器 `prefers-color-scheme`，
   手动切换后写 `localStorage['guide-theme-mode']` 覆盖。实现要点见 §7 末尾「深色模式」。
+- ✅ **多存档管理**（2026-10-25）：`src/utils/archiveStore.ts` + `src/components/ArchiveDialog.tsx`。
+  顶栏文件夹入口 + 当前存档名；新建 / 切换 / 重命名 / 创建副本 / 下载 / 删除 / 导入（单存档或整包）/
+  清除全部；自动保存只写活动存档；旧单存档自动迁移。要点见 §7 末尾「多存档」。
 
 ## 3. 主题架构契约（新主题必须遵守）
 
@@ -143,6 +145,10 @@ python3 text_probe.py                                   # 解析 <use> 得到真
 
 **布局 / CSS**
 - 组件盒高必须 64px 铺满整行（ExitNum 台阶教训，§4）。
+- **画板左右不能留 1px 内边距**（`pl-px pr-px` 已删）：组件设了跟底板不同的背景色时，
+  那 1px 会在最左/最右各露一条底板色，导出图里也是。行首/行尾的组件同时要
+  `flushLeft/flushRight`（不给 -1px 负边距），否则它会被行容器的 `overflow:hidden` 裁掉 1px，
+  同样露底板色。
 - 行容器 `overflow` 必须两轴都 `hidden`（`overflow-x-hidden` 会把另一轴变 auto 冒出滚动条）；
   溢出内容直接裁掉是用户要求。
 - 行与行背景接缝：MultiRowBackground 用 hard-stop 渐变，别用两个 div。
@@ -175,6 +181,40 @@ python3 text_probe.py                                   # 解析 <use> 得到真
   `touchmove` preventDefault + `body touch-action:none`；viewport 已加
   `maximum-scale=1.0, user-scalable=no`。
 
+**双行容器（2026-10-25 重做，成都主题 `chengdu/TwoRowContainer.tsx`）**
+- 布局模型：容器宽度 `W = max(30, minWidth, 最宽行内容跨度 × 0.5 + 1)`；两行等宽，
+  行外层 `width:100%`、内层 `.two-row-inner`（未缩放布局）宽度写死 `W / SCALE`。
+  **间距能撑开的前提就是内层有个确定宽度**，`fit-content` 时间距只会收成 0。
+- 量宽度要用**子元素实际占据的区间**（`max(offsetLeft+offsetWidth) - min(offsetLeft)`），
+  不能累加各自 `offsetWidth`：组件之间靠 `margin: 0 -1px` 压接缝，累加会把每条缝隙都算成宽度，
+  条目越多右边剩的空越大（实测 2 条 4px、7 条 9px，就是用户看到的「右边空一块没贴紧」）。
+- 文本类组件（出口名称/站点名称/文字/线路标/方向）宽度来自 `getBBox()`。**只 `await` 一次
+  `document.fonts.ready` 会留下残影**：中文字体是 fonts.loli.net 的远程字体，若它在这之后才加载完，
+  量到的一直是回退字体的宽度 → 盒子比文字宽一截（同样表现为「空一块」）。
+  现在统一改成：先量一次 + `fonts.ready` + `fonts` 的 `loadingdone` + 60/240/800ms 重试。
+- 间距（`flex:1`）不算进自然宽度：它撑开的是剩余空间，算进去会让容器越量越宽（死循环）。
+  `DraggableItem` 给间距挂了 `data-guide-spacing="true"`，测量时跳过它。
+- `.two-row-inner` **必须 `alignItems: stretch`**：间距/空格是 `height:100%`，
+  父级一旦是 `center` 它们就没有高度可撑，盒子塌成 0（容器里的间距/空格点不着就是这个）。
+- `minWidth` 是用户可调参数（编辑器里的「最小宽度」，下限 **30**）；内容更宽时以内容为准。
+- 拖入落点：**行尾一律算「追加到这一行」**。以前左右各留 1/6 宽边带都判成「插到容器前/后」，
+  容器窄（98px）时行尾那 1/6 正好被甩到右边的主行里（用户实测）。现在只有左端一条
+  `min(20px, 宽度×0.15)` 的窄边带判「插到容器前」，且边带必须跟宽度成比例，
+  否则 30px 宽的容器有一大半区域拖不进去。行级命中（带 `containerId`/`rowIndex`）
+  要排在裸容器前面，`over` 落在容器本身时落点处理认不出目标行、会静默退回主行。
+
+**浮层贴边（2026-10-25）**
+- 编辑弹窗（`.editing-popup`）定位带 `anchor`（触发组件的矩形）：**右侧放不下就翻到左侧**
+  （以前只是把弹窗夹回视口，组件靠右时正好盖住组件）；垂直和组件顶对齐，下方溢出就上移贴边。
+- 颜色面板（296×344）除了自己算 `topLeft/bottomLeft`，还在打开后连跟 ~90 帧做**视口纠偏**：
+  用 CSS 独立属性 `translate` 写内联（不能用 `transform` —— Semi 入场动画在 transform 上，
+  `fill-mode: forwards` 会盖住内联值）。**每帧要先把自己的 translate 清掉再量**，
+  否则量到的是纠偏后的位置、下一帧算出 0 又推回去，来回振荡（实测就卡在这个坑里）。
+  纠偏要连跟而不是量一次：Semi 会在入场动画结束后再定位一次。
+- 间距/空格的命中热区改成按**屏幕宽度**判断（`offsetWidth × zoom < 14`）：
+  原来直接拿布局 px 比，双行容器（×0.5）里明明只有 4~9px 宽的间距被当成「够宽」而不补热区。
+- 窄屏（390px）实测：编辑弹窗、颜色面板、Select 下拉都能完整落在视口内。
+
 **工程**
 - `pnpm lint` 不可用（无 eslint 配置），用 `pnpm exec biome check`。
 - `src/components/themes/chongqing/NumAlphabet.tsx` 是用户手改的（fontFamily Frutiger）——**不许 revert**。
@@ -193,6 +233,44 @@ python3 text_probe.py                                   # 解析 <use> 得到真
 - 深色 hover 覆盖写在 `@media (hover: hover)` 里，天然避开触屏粘滞高亮（别挪回全局）。
 - 切换按钮位置（用户拍板）：桌面在右上按钮组**最右**（GitHub 之后）；移动端在「更多」
   **左边（倒数第二）**。浅色显示月亮、深色显示太阳（IconMoon/IconSun）。
+
+**多存档（2026-10-25）**
+- 存储布局：`guide-archives`（索引 `{version,activeId,archives:[{id,name,createdAt,updatedAt}]}`）
+  + `guide-archive:<id>`（每个存档一份 SaveData）；旧 `guide-autosave` 首次启动自动迁移成
+  「我的存档」后删除；清除全部时一并清理。
+- 自动保存只写 `activeArchiveIdRef` 指向的存档；`persistCurrentState` 内容没变直接跳过。
+  切换/导入期间用 `suspendSaveRef` 冻结写入，避免把旧画板塞进新存档。
+- `ArchiveDialog`：新建/导入后**不关弹窗**；切换成功才关；列表固定按 `createdAt` 排序
+  （切换不得跳位），活动行会滚进可视区；三颗动作按钮（导入/新建/清除）`height:28 /
+  padding:4px 0`。**导入/新建两颗按钮并排一行**（`flex-nowrap` + `whitespace-nowrap`），
+  说明文字与按钮同一行、放不下才整组换行；弹窗 `width 600`（560 时正文只剩 282px，
+  而一行要 300px，会被挤断行且右边漏一大块空白）。
+- **浮层贴边会被裁**：Semi 的 `autoAdjustOverflow` 以 `getPopupContainer()`（默认 body）为容器
+  判溢出，body 比视口高 → 它永远觉得"放得下"，所以顶栏/屏幕下沿的 Popover、Tooltip 不会翻转。
+  Select 有自己一套定位逻辑，没这问题。已处理：`CustomColorPicker` 按可视空间自己算
+  `position: topLeft / bottomLeft`（pointerdown 时量，`rePosKey` 跟着变）；
+  顶栏缩放滑块的数值气泡（固定 `position="top"`，必定被窗口上沿裁掉）直接
+  `tooltipVisible={false}`，右边那格百分比本来就在实时更新。
+- 顶栏：桌面文件夹图标 + 当前存档名（`max-w-32 xl:max-w-48` + truncate，hover 跟随顶栏主题蓝）；
+  移动端只在「更多」里；顶栏已移除清除/导入/保存项目图标。
+- 还原失败（主题对不上）：不直接删除/导出，弹窗只给「进入存档管理」，由用户自己切换/删除/下载。
+- 撤销/重做（2026-10-25 重写，见 §8-35）：切换存档或导入后用 `useUndoRedo.reset(state)` 重建基线。
+  历史存在 `useRef` 里同步读写，`canUndo/canRedo` 靠一个 revision 计数器刷新；
+  `saveState` / `undo` / `redo` 全部走 `normalizeHistoryState()`（剥 element → 稳定序列化）
+  再和 `history[currentIndex]` 比内容，相同就不追加 —— 否则撤销后的自动保存会把 redo 分支截掉。
+- 下载名：`moert-guidegen-save-<存档名>_<YYYY-MM-DD_HH-mm-ss>.json`；
+  「导出全部存档」现在打 **zip**：`src/utils/zip.ts`（手写 store 模式 ZIP，无第三方依赖，
+  崩溃页也能直接用），包内每个存档一个 `moert-guidegen-save-<存档名>_<时间戳>.json`，
+  内容和「单独下载某个存档」完全一致（就是 localStorage 里的原始文本）。
+  存档管理底部「清除全部存档」左边也有同一个按钮。
+  旧的整包 JSON `{type:"moert-guidegen-archives", ...}` 仍可**导入**（兼容老备份），只是不再导出。
+- 崩溃页导出：ErrorBoundary 的「导出存档」打开纯 HTML 弹窗（**不依赖 Semi / React 主题**），
+  列出全部存档、每行可单独导出；「导出全部存档」同样打 zip（复用 `exportAllArchivesZip`）。
+  深色只写 `@media (prefers-color-scheme: dark)` 的 CSS，不用 JS 判断（崩溃时 JS 状态不可靠）。
+- DEV-only 全局崩溃页验收：打开 `http://127.0.0.1:5173/?__crash_test=1`，App 挂载后 setState
+  让 `DevGlobalCrash` 在 render 期 `throw`（与存档 / 画板无关，是真正的 React 全局 ErrorBoundary），
+  不改 localStorage；URL 里的 query 会被移除，刷新即恢复。仅用于测崩溃页导出，
+  生产构建里这段分支会被 `import.meta.env.DEV` 去掉。
 
 ## 8. 用户反馈记录（每条都已修复，按时间序）
 
@@ -227,6 +305,30 @@ python3 text_probe.py                                   # 解析 <use> 得到真
 25. 「填充→间距」「空白→空格」改名（5 语言）。
 26. 彻底禁止整页缩放 → viewport user-scalable=no。
 27. LineNum 英文比中文长时中文对齐英文（不影响无数字居中）→ 右对齐锚点。
+28. 多存档管理：新建 / 切换 / 重命名 / 副本 / 下载 / 删除 / 导入 / 清除全部；自动保存只写活动存档，
+    旧单存档自动迁移（见 §7「多存档」）。
+29. 顶栏移除清除 / 导入 / 保存项目图标，入口改文件夹图标 + 当前存档名；长名字截断 + tooltip，
+    hover 跟随主题蓝。弹窗内导入 / 新建 / 清除按钮统一 `height:28 / padding:4px 0`。
+30. 新建存档、导入存档成功后**不关闭**存档管理弹窗；切换存档成功才关；列表按创建序稳定，
+    活动行自动滚进可视区。
+31. 存档载入失败不再直接给「删除 / 导出」，统一引导进存档管理；失败 toast 改
+    「存档载入失败（原存档未受影响）」。
+32. 导出名统一 `moert-guidegen-save-存档名_时间戳.json`；崩溃页增加「导出全部存档」整包备份，
+    存档管理支持整包导入。
+33. 损坏存档生成器只用于报错 UI 验收，验收完成后已删除（勿再往生产 UI 加测试入口）。
+34. 崩溃页导出改为类似存档管理的弹窗：单存档 / 全部存档；深色只做
+    `prefers-color-scheme` CSS；初始存档名已确认随浏览器语言（en `Save 1` / ja `保存 1` /
+    ko `저장 1`）。
+35. 「redo 有严重问题」→ 实测症状：**撤销一次之后 redo 只能走一步，约 0.8 秒后按钮永久变灰**。
+    根因链：撤销 → 200ms 后 `isUndoRedoing=false` → 重渲染让 GuideBoard 拿到新的
+    `onConfigChange` → 其 10ms 防抖触发 → Editor 的 500ms 配置防抖到点 → `saveCurrentState()`
+    → `JSON.stringify(getState())` 和 `history[currentIndex]` 不相等（还原时
+    `restoreState` 用 `{key, ...props}` 重建 React 元素，新建时是 `{...props}`、element 的
+    `key`/`_owner` 不同）→ 被当成新操作 push，顺手 `splice(index+1)` 把 redo 分支删了。
+    重写要点：历史搬到 `useRef` 同步读写（连按不再丢步）、`normalizeHistoryState` 剥掉 element
+    再比内容、`stableSerialize` 键名排序后比较、撤销/重做前先 `flush()` 未落账的防抖状态、
+    还原期间用 `pause/resume` 挡过渡态（不再用 200ms 时间窗，那会把用户这期间的真实修改丢掉）、
+    还原后关掉属性弹窗（旧 props 快照会让撤销掉的内容复活）、Ctrl+Shift+Z / Cmd+Z 支持。
 
 ## 9. 北京旧版（2015 / 经典样式）主题 —— 已完成，遗留项如下
 
@@ -276,4 +378,10 @@ python3 text_probe.py                                   # 解析 <use> 得到真
 - 用户习惯「发截图 + 一句话」，先用 PIL 量像素再动手，数值要有出处（PDF pt、a 模数、
   截图实测），修完在回复里给出测量表。
 - 视觉验收靠 5173 热更新；每次改动结束跑三件套（tsc / biome / build）。
+- **小改动不要反复开浏览器验证**（用户明确提过）：改个文案、翻译键、按钮顺序、加一个 key 这类，
+  跑完三件套直接回报改了什么就够，验收交给用户刷新看。只有「像素几何 / 布局塌陷 / 拖拽落点」
+  这类光看图就能看出问题的改动，才做**一次**针对性实测（量一对数字或截一张图），
+  不要为了验证去重建场景、连点几十次、反复 reload —— 有那时间早该去改下一处了。
+  另一个 agent 并发改文件时尤其别硬耗：dev server 被它改崩了，验证必然超时，直接收手。
 - 图标几何永远走提取管线，别手绘。
+- 不要在根目录新建任何测试文件/临时文件/截图文件/占位文件（.playwright-mcp下的文件除外，它们是被gitignore了的），应该放到系统的 temp 目录，如`/tmp/` `C:\Users\xxx\Appdata\Local\temp`

@@ -51,10 +51,11 @@
     "success": "エクスポート成功！"
   },
   "saves": {
-    "clear_local_button": "ローカル保存を消去",
-    "restore_failed": "コンポーネントが現在のテーマと一致しません。保存データを守るため自動保存を停止しました。",
-    "clear_local_title": "ローカル保存を消去",
-    "clear_local_confirm": "ローカルの自動保存を消去してページをリロードしてもよろしいですか？この操作は元に戻せません。",
+    "clear_local_button": "すべての保存データを消去",
+    "restore_failed": "現在の保存データのコンポーネントが現在のテーマと一致しないため、保護のため自動保存を停止しました。保存データ管理から別の保存データに切り替えるか、この保存データを削除／ダウンロードしてください。他の保存データには影響しません。",
+    "open_archives": "保存データ管理を開く",
+    "clear_local_title": "すべての保存データを消去",
+    "clear_local_confirm": "すべてのローカル保存を消去してページをリロードしますか？すべての保存データが削除され、元に戻せません。",
     "export_image": "画像としてエクスポート",
     "save_project": "プロジェクトをローカルに保存",
     "load_project": "プロジェクトをインポート",
@@ -67,7 +68,10 @@
     "import": {
       "success": "インポート成功",
       "error": "インポート失敗",
-      "unsupportedVersion": "サポートされていないバージョン"
+      "unsupportedVersion": "サポートされていないバージョン",
+      "unsupportedTheme": "この保存データのテーマは現在のバージョンに存在しません",
+      "created": "インポートしました — 「{{name}}」として保存されました",
+      "bundleCreated": "{{count}} 件の保存データをインポートしました"
     },
     "export": {
       "success": "アーカイブがエクスポートされました"
@@ -76,7 +80,48 @@
     "reset_archive": "セーブをリセット",
     "download_archive": "バックアップをダウンロード",
     "reset_confirm_title": "セーブをリセットしますか？",
-    "reset_confirm_content": "ローカルのセーブを消去してページを再読み込みします。元に戻せません（先にバックアップを推奨）。"
+    "reset_confirm_content": "リセットすると現在の保存データのキャンバス内容が消去され、ページが再読み込みされます。元に戻せません（先にバックアップを推奨）。他の保存データには影響しません。",
+    "archives": {
+      "title": "保存データ管理",
+      "menuHint": "現在の保存データ：{{name}}",
+      "hint": "保存データをタップすると切り替わります。変更は現在の保存データに自動保存されます。",
+      "new": "保存データを作成",
+      "importSave": "保存データをインポート",
+      "defaultName": "保存 {{index}}",
+      "legacyName": "マイ保存データ",
+      "untitled": "無題の保存データ",
+      "copySuffix": "コピー",
+      "rename": "名前を変更",
+      "renamePlaceholder": "保存データ名を入力",
+      "duplicate": "コピーを作成",
+      "download": "この保存データをダウンロード",
+      "delete": "保存データを削除",
+      "load": "この保存データに切り替え",
+      "current": "現在",
+      "meta": "{{rows}} 行 · {{items}} 個のコンポーネント",
+      "updatedAt": "{{time}} 更新",
+      "switchSuccess": "「{{name}}」に切り替えました",
+      "switchFailed": "保存データを読み込めませんでした（元のデータはそのままです）",
+      "createSuccess": "「{{name}}」を作成しました",
+      "renameSuccess": "保存データ名を変更しました",
+      "duplicateSuccess": "コピー「{{name}}」を作成しました",
+      "deleteSuccess": "「{{name}}」を削除しました",
+      "deleteConfirmTitle": "この保存データを削除しますか？",
+      "deleteConfirmContent": "「{{name}}」は完全に削除されます。この操作は元に戻せません。",
+      "deleteActiveConfirmContent": "「{{name}}」は編集中の保存データです。削除すると別の保存データに自動で切り替わります。この操作は元に戻せません。",
+      "deleteLastContent": "「{{name}}」は最後の保存データです。削除すると新しい空の保存データが自動作成されます。",
+      "downloadSuccess": "保存データをダウンロードしました",
+      "storageHint": "保存データはこのブラウザのローカルストレージにあります。ブラウザデータの消去や端末の変更で失われるため、定期的にバックアップをダウンロードしてください。",
+      "saveFailedQuota": "ローカルストレージの空き容量が不足しているため保存できません。バックアップをダウンロードするか、古い保存データを削除してください。",
+      "clearAll": "すべての保存データを消去",
+      "clearAllConfirmTitle": "すべての保存データを消去しますか？",
+      "clearAllConfirmContent": "すべてのローカル保存データが完全に削除され、ページが再読み込みされます。元に戻せません。",
+      "cancel": "キャンセル",
+      "empty": "保存データがありません",
+      "unknownTheme": "不明なテーマ",
+      "exportAll": "すべてのセーブを書き出す（zip）",
+      "exportAllSuccess": "{{count}} 件のセーブを書き出しました"
+    }
   },
   "loading": {
     "message": "アプリケーションを読み込み中...",
@@ -184,7 +229,9 @@
             },
             "lineColor": "路線色",
             "showText": "後ろのテキストを表示",
-            "showRect": "色ブロックを表示"
+            "showRect": "色ブロックを表示",
+            "foreground": "前景色",
+            "background": "背景色"
           }
         },
         "LineText": {
@@ -197,7 +244,9 @@
               "left": "左",
               "right": "右"
             },
-            "lineColor": "路線色"
+            "lineColor": "路線色",
+            "foreground": "前景色",
+            "background": "背景色"
           }
         },
         "NumAlphabet": {
@@ -230,7 +279,9 @@
           "displayName": "駅名",
           "props": {
             "chinese": "中国語名",
-            "english": "英語名"
+            "english": "英語名",
+            "foreground": "前景色",
+            "background": "背景色"
           }
         },
         "Text": {
@@ -420,7 +471,9 @@
             },
             "lineColor": "路線色",
             "showText": "後ろのテキストを表示",
-            "showRect": "色ブロックを表示"
+            "showRect": "色ブロックを表示",
+            "foreground": "前景色",
+            "background": "背景色"
           }
         },
         "LineText": {
@@ -433,7 +486,9 @@
               "left": "左",
               "right": "右"
             },
-            "lineColor": "路線色"
+            "lineColor": "路線色",
+            "foreground": "前景色",
+            "background": "背景色"
           }
         },
         "NumAlphabet": {
@@ -466,7 +521,9 @@
           "displayName": "駅名",
           "props": {
             "chinese": "中国語名",
-            "english": "英語名"
+            "english": "英語名",
+            "foreground": "前景色",
+            "background": "背景色"
           }
         },
         "Text": {
@@ -490,7 +547,9 @@
             "color": "路線色",
             "lineNum": "路線番号",
             "stationNum": "駅番号",
-            "lines": "路線リスト"
+            "lines": "路線リスト",
+            "foreground": "前景色",
+            "background": "背景色"
           }
         },
         "Direction": {
@@ -512,6 +571,7 @@
         "TwoRowContainer": {
           "displayName": "2行コンテナ",
           "props": {
+            "minWidth": "最小幅",
             "background": "背景色"
           }
         }
@@ -664,7 +724,8 @@
             "lineColor": "路線カラー",
             "align": {
               "displayName": "配置"
-            }
+            },
+            "foreground": "前景色"
           }
         },
         "Exit": {

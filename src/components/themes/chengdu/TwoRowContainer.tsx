@@ -2,6 +2,7 @@ import { useMemo, useState, memo, useLayoutEffect, useRef } from "react";
 // removed useDndMonitor - will be handled globally in Editor
 import { useDroppable } from "@dnd-kit/core";
 import { SortableContext, horizontalListSortingStrategy } from "@dnd-kit/sortable";
+import { InputNumber } from "@douyinfe/semi-ui";
 import DraggableItem from "../../DraggableItem";
 import themes from "../themereg";
 import type { GuideItem } from "../../../interfaces/guide";
@@ -18,6 +19,8 @@ export interface TwoRowContainerProps {
   children?: TwoRowChildren; // 作为数据来源（与导出/还原兼容）
   onItemClick?: (e: React.MouseEvent, item: GuideItem) => void;
   background?: string;
+  /** 容器最小宽度（px，屏幕上看到的宽度）。内容更宽时以内容为准 */
+  minWidth?: number;
   /** 当前被选中（编辑中）的条目 id：命中时给容器内对应条目盖选中遮罩 */
   selectedId?: string;
   /**
@@ -27,9 +30,13 @@ export interface TwoRowContainerProps {
   preview?: boolean;
 }
 
+/** 容器最小宽度下限（px）：用户可调，但不会再低于这个值 */
+const MIN_WIDTH_FLOOR = 30;
+
 export const twoRowContainerDefaultProps: Partial<TwoRowContainerProps> = {
   children: [[], []],
   background: colors.background,
+  minWidth: 80,
 };
 
 const SCALE = 0.5;
@@ -40,6 +47,7 @@ function TwoRowContainer({
   children: initialChildren = [[], []],
   onItemClick,
   background,
+  minWidth = 80,
   selectedId,
   preview = false,
 }: TwoRowContainerProps) {
@@ -83,31 +91,51 @@ function TwoRowContainer({
     const measureWidth = () => {
       const inners = root.querySelectorAll<HTMLDivElement>(".two-row-inner");
       if (!inners.length) {
-        setMeasuredWidth(80); // 最小宽度
+        setMeasuredWidth(Math.max(MIN_WIDTH_FLOOR, minWidth)); // 最小宽度
         return;
       }
 
-      // 用 offsetWidth（不受 scale transform 影响）乘缩放系数得到可见宽度。
-      // 之前用 getBoundingClientRect（已被 scale 缩小）再除以 2，导致容器比实际内容窄、
-      // 最长行尾部被裁切；且 rect 受拖拽 transform 影响，宽度会闪动、插入动画奇怪。
-      let maxW = 0;
-      inners.forEach(el => {
-        if (el.offsetWidth > 0) {
-          maxW = Math.max(maxW, el.offsetWidth);
+      // 直接量「子元素实际占据的横向区间」（offsetLeft/offsetWidth）而不是累加各自宽度：
+      // 组件之间靠 margin: 0 -1px 互相压接缝，累加会把每个条目的 ±2px 都算进去，
+      // 条目越多右边剩的空隙越大（实测 2 个条目空 4px、7 个条目空 9px，越长越明显）。
+      // 间距组件（flex:1）跳过：它撑开的是剩余空间，算进去会让容器越量越宽（死循环）。
+      // 用 offsetLeft/offsetWidth 而不是 getBoundingClientRect：后者已经被 scale(0.5) 缩过、
+      // 还会带上拖拽 transform，量出来的宽度会抖。
+      let maxContent = 0;
+      inners.forEach(inner => {
+        let minLeft = Number.POSITIVE_INFINITY;
+        let maxRight = Number.NEGATIVE_INFINITY;
+        Array.from(inner.children).forEach(child => {
+          if (!(child instanceof HTMLElement)) return;
+          if (child.dataset.guideSpacing === "true") return;
+          const left = child.offsetLeft;
+          const right = left + child.offsetWidth;
+          if (left < minLeft) minLeft = left;
+          if (right > maxRight) maxRight = right;
+        });
+        if (Number.isFinite(minLeft) && Number.isFinite(maxRight)) {
+          // 布局 px 下的实际跨度；-1px 外边距造成的负起点也算在内
+          maxContent = Math.max(maxContent, maxRight - Math.min(minLeft, 0));
         }
       });
 
-      const finalWidth = Math.max(80, Math.ceil(maxW * SCALE) + 4);
-      setMeasuredWidth(prev =>
-        prev === finalWidth ? prev : finalWidth
+      // 两行取较宽的那行；再和用户设的最小宽度取大值。
+      // 只留 1px 余量：条目右侧有 -1px 外边距，再少可能被容器 overflow 裁掉一个像素。
+      const finalWidth = Math.max(
+        MIN_WIDTH_FLOOR,
+        minWidth,
+        Math.ceil(maxContent * SCALE) + 1
       );
+      setMeasuredWidth(prev => (prev === finalWidth ? prev : finalWidth));
     };
 
     // 立即测量一次
     measureWidth();
 
-    // 用 ResizeObserver 持续跟踪内部行的尺寸（增删条目、文字/字体变宽等都会自动触发），
-    // 保证容器宽度自动跟随最宽行，不会“丢失”自动调整
+    // 用 ResizeObserver 持续跟踪尺寸（增删条目、文字/字体变宽等都会自动触发），
+    // 保证容器宽度自动跟随最宽行，不会“丢失”自动调整。
+    // 注意也要观察内层的**每个子元素**：内层宽度现在是写死的（容器宽 / SCALE），
+    // 子元素变宽变窄不会改变内层宽度，只盯内层的话收不到通知（字体替换、属性变长等就会漏）。
     let ro: ResizeObserver | null = null;
     if (typeof ResizeObserver !== "undefined") {
       ro = new ResizeObserver(measureWidth);
@@ -115,6 +143,9 @@ function TwoRowContainer({
         .querySelectorAll<HTMLDivElement>(".two-row-inner")
         .forEach(el => {
           ro?.observe(el);
+          Array.from(el.children).forEach(child => {
+            if (child instanceof HTMLElement) ro?.observe(child);
+          });
         });
     }
 
@@ -124,7 +155,10 @@ function TwoRowContainer({
       ro?.disconnect();
       clearTimeout(timer);
     };
-  }, [rows, finalBgColor]);
+  }, [rows, finalBgColor, minWidth]);
+
+  // 容器宽度：测出来的自然宽度（已含 minWidth）为准；还没测出来的第一帧用最小宽度兜底
+  const containerWidth = Math.max(MIN_WIDTH_FLOOR, minWidth, measuredWidth ?? 0);
 
   // All drag handling moved to Editor.tsx for unified state management
 
@@ -142,7 +176,7 @@ function TwoRowContainer({
         flexDirection: "column",
         position: "relative",
         width: measuredWidth ? `${measuredWidth}px` : "fit-content",
-        minWidth: 80,
+        minWidth: containerWidth,
         height: 64, // 严格固定高度 64
         overflow: "hidden",
         outline: isOverContainer ? "1px dashed #91caff" : undefined,
@@ -191,6 +225,9 @@ function TwoRowContainer({
           rowIndex={rowIdx}
           selectedId={selectedId}
           preview={preview}
+          // 行铺满容器：内层是「未缩放」布局，宽度要除以 SCALE，
+          // 这样里面的间距（flex:1）才有剩余空间可撑
+          rowWidth={measuredWidth ? measuredWidth / SCALE : null}
         />
       ))}
     </div>
@@ -206,6 +243,7 @@ const TwoRowRow = memo(function TwoRowRow({
   rowIndex,
   selectedId,
   preview = false,
+  rowWidth = null,
 }: {
   id: string;
   items: string[];
@@ -215,6 +253,8 @@ const TwoRowRow = memo(function TwoRowRow({
   rowIndex: number;
   selectedId?: string;
   preview?: boolean;
+  /** 内层（未缩放）布局宽度；null = 还没量出来，先用 fit-content */
+  rowWidth?: number | null;
 }) {
   const { setNodeRef, isOver } = useDroppable({
     id,
@@ -232,8 +272,10 @@ const TwoRowRow = memo(function TwoRowRow({
       ref={setNodeRef}
       className="two-row-container-row"
       style={{
-        width: "fit-content", // 宽度跟随内部内容
-        minWidth: 80,
+        // 行宽跟随容器（两行等宽），里面 flex:1 的间距才有空间可撑；
+        // 还没量出宽度时退回 fit-content，避免首帧被裁
+        width: rowWidth ? "100%" : "fit-content",
+        minWidth: 0,
         height: 32, // 每行布局高度 32
         overflow: "visible", // 始终显示完整内容，避免拖拽时被裁剪
         background: isOver ? "#e6f7ff66" : undefined,
@@ -244,9 +286,13 @@ const TwoRowRow = memo(function TwoRowRow({
       <div
         style={{
           display: "flex",
-          alignItems: "center",
+          // 必须是 stretch：间距/空格是 height:100%，父级一旦是 center 它们就没有高度可撑，
+          // 盒子塌成 0（容器里的间距/空格点不着就是这个原因）。
+          // 其它组件本身就是 64 高，拉伸不会有变化。
+          alignItems: "stretch",
           gap: 0,
-          width: "fit-content",
+          // 内层是未缩放的 64px 布局，要撑满容器就得除以缩放系数
+          width: rowWidth ? `${rowWidth}px` : "fit-content",
           minWidth: 40, // 确保空行也有最小宽度
           minHeight: 64, // 内容原始高度 64
           transform: `scale(${SCALE})`,
@@ -258,7 +304,7 @@ const TwoRowRow = memo(function TwoRowRow({
       >
         <SortableContext items={items} strategy={horizontalListSortingStrategy}>
           {renderItems.length > 0 ? (
-            renderItems.map(item =>
+            renderItems.map((item, itemIndex) =>
               // 预览副本里只画静态内容，不再注册可拖拽项，
               // 否则会和面板上真身的同名元素抢注册
               preview ? (
@@ -273,6 +319,10 @@ const TwoRowRow = memo(function TwoRowRow({
                   key={item.id}
                   id={item.id}
                   zoom={SCALE}
+                  // 行首/行尾取消那侧负边距：容器的 overflow:hidden 会把它裁掉，
+                  // 组件背景与容器背景不同色时边上就露一条缝
+                  flushLeft={itemIndex === 0}
+                  flushRight={itemIndex === renderItems.length - 1}
                   selected={selectedId === item.id}
                   data={{
                     context: "two-row",
@@ -321,6 +371,11 @@ export const twoRowContainerEditorConfig = (
   _t: (key: string) => string
 ): EditorConfig => ({
   forms: [
+    {
+      key: "minWidth",
+      label: "themes.chengdu.components.TwoRowContainer.props.minWidth",
+      element: <InputNumber min={MIN_WIDTH_FLOOR} step={10} />,
+    },
     {
       key: "background",
       label: "themes.chengdu.components.TwoRowContainer.props.background",

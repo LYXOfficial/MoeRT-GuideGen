@@ -12,6 +12,8 @@ export interface LineNumProps {
   showText?: boolean;
   showRect?: boolean;
   align?: string;
+  foreground?: string;
+  background?: string;
 }
 
 export const lineNumDefaultProps: LineNumProps = {
@@ -22,6 +24,8 @@ export const lineNumDefaultProps: LineNumProps = {
   showText: true,
   showRect: true,
   align: "left",
+  foreground: colors.foreground,
+  background: colors.background,
 };
 
 export const lineNumEditorConfig = (
@@ -72,6 +76,16 @@ export const lineNumEditorConfig = (
         </Select>
       ),
     },
+    {
+      key: "foreground",
+      label: "themes.chengdu.components.LineNum.props.foreground",
+      element: <CustomColorPicker currentTheme={1} />,
+    },
+    {
+      key: "background",
+      label: "themes.chengdu.components.LineNum.props.background",
+      element: <CustomColorPicker currentTheme={1} />,
+    },
   ],
 });
 
@@ -83,6 +97,8 @@ function LineNum({
   showText = lineNumDefaultProps.showText,
   showRect = lineNumDefaultProps.showRect,
   align = lineNumDefaultProps.align,
+  foreground = lineNumDefaultProps.foreground ?? colors.foreground,
+  background = lineNumDefaultProps.background ?? colors.background,
 }: LineNumProps) {
   const numRef = useRef<SVGTextElement>(null);
   const textRef = useRef<SVGGElement>(null);
@@ -163,17 +179,36 @@ function LineNum({
       }
     };
 
-    document.fonts.ready.then(() => {
+    // 先量一次（可能是回退字体），字体就绪后再量、之后每次字体加载完再量。
+    // 中文字体是 fonts.loli.net 的远程字体：只 await 一次 fonts.ready 的话，
+    // 字体若在这之后才加载完，宽度就一直是回退字体的值 —— 盒子比文字宽一截，
+    // 放进双行容器就是「右边空一块、没贴紧」（用户反馈过）。
+    measure();
+    const fonts = document.fonts;
+    const onFontsLoadingDone = () => {
       if (mounted) measure();
-    });
+    };
+    fonts?.addEventListener?.("loadingdone", onFontsLoadingDone);
+    fonts?.ready.then(() => {
+      if (mounted) measure();
+    }).catch(() => {});
+    const fontRetryTimers = [60, 240, 800].map(ms =>
+      window.setTimeout(() => {
+        if (mounted) measure();
+      }, ms)
+    );
 
     return () => {
       mounted = false;
+      fonts?.removeEventListener?.("loadingdone", onFontsLoadingDone);
+      fontRetryTimers.forEach(t => {
+        window.clearTimeout(t);
+      });
     };
   }, [num, showText, showRect, customChinese, customEnglish, align, collapsed]);
 
   return (
-    <div style={{ backgroundColor: colors.background }}>
+    <div style={{ backgroundColor: background }}>
       <div className="h-16 mr-1.25 ml-1.25" style={{ width: svgWidth }}>
         <svg width={svgWidth} height={64}>
           {align === "right" ? (
@@ -187,7 +222,7 @@ function LineNum({
                 fontSize={isChinese ? 42 : 50}
                 fontWeight={400}
                 style={{ letterSpacing: "-3px" }}
-                fill={colors.foreground}
+                fill={foreground}
               >
                 {num}
               </text>
@@ -199,7 +234,7 @@ function LineNum({
                     y={32}
                     fontSize={22}
                     textAnchor={textAnchor}
-                    fill={colors.foreground}
+                    fill={foreground}
                   >
                     {customChinese ?? (isChinese ? "线" : "号线")}
                   </text>
@@ -208,7 +243,7 @@ function LineNum({
                     y={48}
                     fontSize={14}
                     textAnchor={textAnchor}
-                    fill={colors.foreground}
+                    fill={foreground}
                   >
                     {customEnglish}
                   </text>
@@ -229,7 +264,7 @@ function LineNum({
                 y={isChinese ? 48 : 52}
                 fontSize={isChinese ? 42 : 50}
                 style={{ letterSpacing: "-3px" }}
-                fill={colors.foreground}
+                fill={foreground}
               >
                 {num}
               </text>
@@ -241,7 +276,7 @@ function LineNum({
                     y={32}
                     fontSize={22}
                     textAnchor={textAnchor}
-                    fill={colors.foreground}
+                    fill={foreground}
                   >
                     {customChinese ?? (isChinese ? "线" : "号线")}
                   </text>
@@ -250,7 +285,7 @@ function LineNum({
                     y={48}
                     fontSize={14}
                     textAnchor={textAnchor}
-                    fill={colors.foreground}
+                    fill={foreground}
                   >
                     {customEnglish}
                   </text>

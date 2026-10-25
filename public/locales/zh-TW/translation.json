@@ -51,10 +51,11 @@
     "success": "匯出成功！"
   },
   "saves": {
-    "clear_local_button": "清除本地存檔",
-    "restore_failed": "裡面的組件和當前主題對不上。已暫停自動保存以保護存檔，請檢查版本或重新導入。",
-    "clear_local_title": "清除本地存檔",
-    "clear_local_confirm": "確定要清除本地自動存檔並刷新頁面嗎？此操作無法撤銷。",
+    "clear_local_button": "清除全部存檔",
+    "restore_failed": "目前存檔裡的組件和目前主題對不上，已暫停自動儲存以保護它。你可以進入存檔管理切換到其他存檔，或刪除 / 下載這個存檔；其他存檔不受影響。",
+    "open_archives": "進入存檔管理",
+    "clear_local_title": "清除全部存檔",
+    "clear_local_confirm": "確定要清除全部本機存檔並重新整理頁面嗎？所有存檔都會被刪除，此操作無法復原。",
     "export_image": "匯出為圖片",
     "save_project": "保存專案到本地",
     "load_project": "匯入專案",
@@ -67,7 +68,10 @@
     "import": {
       "success": "匯入成功",
       "error": "匯入失敗",
-      "unsupportedVersion": "不支援的存檔版本"
+      "unsupportedVersion": "不支援的存檔版本",
+      "unsupportedTheme": "存檔使用的主題在目前版本中不存在",
+      "created": "匯入成功，已保存為存檔「{{name}}」",
+      "bundleCreated": "已匯入 {{count}} 個存檔"
     },
     "export": {
       "success": "存檔已匯出"
@@ -76,7 +80,48 @@
     "reset_archive": "重置存檔",
     "download_archive": "下載存檔備份",
     "reset_confirm_title": "確認重置存檔？",
-    "reset_confirm_content": "重置將清空本地存檔並重新整理頁面，此操作不可復原（建議先下載備份）。"
+    "reset_confirm_content": "重置將清空目前存檔的畫板內容並重新整理頁面，此操作無法復原（建議先下載備份），其他存檔不受影響。",
+    "archives": {
+      "title": "存檔管理",
+      "menuHint": "目前存檔：{{name}}",
+      "hint": "點按存檔即可切換，所有改動會自動儲存在目前存檔中。",
+      "new": "新增存檔",
+      "importSave": "匯入存檔",
+      "defaultName": "存檔 {{index}}",
+      "legacyName": "我的存檔",
+      "untitled": "未命名存檔",
+      "copySuffix": "副本",
+      "rename": "重新命名",
+      "renamePlaceholder": "輸入存檔名稱",
+      "duplicate": "建立副本",
+      "download": "下載此存檔",
+      "delete": "刪除存檔",
+      "load": "切換到此存檔",
+      "current": "目前",
+      "meta": "{{rows}} 行 · {{items}} 個組件",
+      "updatedAt": "更新於 {{time}}",
+      "switchSuccess": "已切換到「{{name}}」",
+      "switchFailed": "存檔載入失敗（原存檔未受影響）",
+      "createSuccess": "已新增「{{name}}」",
+      "renameSuccess": "已重新命名存檔",
+      "duplicateSuccess": "已建立副本「{{name}}」",
+      "deleteSuccess": "已刪除「{{name}}」",
+      "deleteConfirmTitle": "刪除這個存檔？",
+      "deleteConfirmContent": "「{{name}}」將被永久刪除，此操作無法復原。",
+      "deleteActiveConfirmContent": "「{{name}}」是目前正在編輯的存檔，刪除後會自動切換到另一個存檔，此操作無法復原。",
+      "deleteLastContent": "「{{name}}」是最後一個存檔，刪除後會自動新增一個空存檔。",
+      "downloadSuccess": "存檔已下載",
+      "storageHint": "存檔保存在目前瀏覽器本機，清理瀏覽器資料或更換裝置後將無法復原，請及時下載備份。",
+      "saveFailedQuota": "瀏覽器本機儲存空間不足，存檔保存失敗。請先下載備份或刪除舊存檔。",
+      "clearAll": "清除全部存檔",
+      "clearAllConfirmTitle": "清除全部存檔？",
+      "clearAllConfirmContent": "所有本機存檔都會被永久刪除並重新整理頁面，此操作無法復原。",
+      "cancel": "取消",
+      "empty": "還沒有存檔",
+      "unknownTheme": "未知主題",
+      "exportAll": "匯出全部存檔（zip）",
+      "exportAllSuccess": "已匯出 {{count}} 個存檔"
+    }
   },
   "loading": {
     "message": "正在載入應用程式...",
@@ -184,7 +229,9 @@
             },
             "lineColor": "線路顏色",
             "showText": "是否顯示後面的文本",
-            "showRect": "是否顯示色塊"
+            "showRect": "是否顯示色塊",
+            "foreground": "前景色",
+            "background": "背景色"
           }
         },
         "LineText": {
@@ -197,7 +244,9 @@
               "left": "左",
               "right": "右"
             },
-            "lineColor": "線路顏色"
+            "lineColor": "線路顏色",
+            "foreground": "前景色",
+            "background": "背景色"
           }
         },
         "NumAlphabet": {
@@ -230,7 +279,9 @@
           "displayName": "站點名稱",
           "props": {
             "chinese": "中文名",
-            "english": "英文名"
+            "english": "英文名",
+            "foreground": "前景色",
+            "background": "背景色"
           }
         },
         "Text": {
@@ -420,7 +471,9 @@
             },
             "lineColor": "線路顏色",
             "showText": "是否顯示後面的文本",
-            "showRect": "是否顯示色塊"
+            "showRect": "是否顯示色塊",
+            "foreground": "前景色",
+            "background": "背景色"
           }
         },
         "LineText": {
@@ -433,7 +486,9 @@
               "left": "左",
               "right": "右"
             },
-            "lineColor": "線路顏色"
+            "lineColor": "線路顏色",
+            "foreground": "前景色",
+            "background": "背景色"
           }
         },
         "NumAlphabet": {
@@ -466,7 +521,9 @@
           "displayName": "站點名稱",
           "props": {
             "chinese": "中文名",
-            "english": "英文名"
+            "english": "英文名",
+            "foreground": "前景色",
+            "background": "背景色"
           }
         },
         "Text": {
@@ -490,7 +547,9 @@
             "color": "線路色",
             "lineNum": "線路編號",
             "stationNum": "站點編號",
-            "lines": "線路列表"
+            "lines": "線路列表",
+            "foreground": "前景色",
+            "background": "背景色"
           }
         },
         "Direction": {
@@ -512,6 +571,7 @@
         "TwoRowContainer": {
           "displayName": "雙行容器",
           "props": {
+            "minWidth": "最小寬度",
             "background": "背景色"
           }
         }
@@ -664,7 +724,8 @@
             "lineColor": "路線顏色",
             "align": {
               "displayName": "對齊"
-            }
+            },
+            "foreground": "前景色"
           }
         },
         "Exit": {

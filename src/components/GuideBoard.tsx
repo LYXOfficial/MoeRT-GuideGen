@@ -136,6 +136,8 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
     const [editingItem, setEditingItem] = useState<{
       item: GuideItem;
       position: { x: number; y: number };
+      /** 触发弹窗的组件矩形：定位时据此决定往左还是往右弹（position 是算出来的结果） */
+      anchor?: { left: number; right: number; top: number; bottom: number };
       parentId?: string;
     } | null>(null);
     const configChangeTimeoutRef = useRef<number | null>(null);
@@ -176,6 +178,12 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
           setEditingItem({
             item: clicked,
             position: { x: rect.right, y: rect.top },
+            anchor: {
+              left: rect.left,
+              right: rect.right,
+              top: rect.top,
+              bottom: rect.bottom,
+            },
             parentId: item.id,
           });
         },
@@ -347,22 +355,45 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
 
         let newX = editingItem.position.x;
         let newY = editingItem.position.y;
+        const anchor = editingItem.anchor;
 
-        // 检查右边界
-        if (newX + width > viewportWidth - margin) {
-          newX = viewportWidth - width - margin;
-        }
-        // 检查下边界
-        if (newY + height > viewportHeight - margin) {
-          newY = viewportHeight - height - margin;
-        }
-        // 检查左边界
-        if (newX < margin) {
-          newX = margin;
-        }
-        // 检查上边界
-        if (newY < margin) {
-          newY = margin;
+        if (anchor) {
+          // 水平：优先贴在组件右侧；右边放不下就翻到左侧。
+          // 以前只是把弹窗「夹」回视口，组件靠右时弹窗会被推到最右边、
+          // 正好盖住组件本身（用户截图反馈过）。
+          const rightX = anchor.right;
+          const leftX = anchor.left - width;
+          if (rightX + width <= viewportWidth - margin) {
+            newX = rightX;
+          } else if (leftX >= margin) {
+            newX = leftX;
+          } else {
+            // 两侧都放不下：夹回视口内（此时只能盖住组件，聊胜于无）
+            newX = Math.min(Math.max(rightX, margin), viewportWidth - width - margin);
+          }
+
+          // 垂直：和组件顶部对齐；下方溢出就整体上移，上移后还越界就贴边
+          const maxY = viewportHeight - height - margin;
+          if (anchor.top <= maxY) {
+            newY = anchor.top;
+          } else {
+            newY = Math.min(anchor.bottom - height, maxY);
+          }
+          if (newY < margin) newY = margin;
+        } else {
+          // 老数据没有 anchor：沿用「夹回视口」的兜底
+          if (newX + width > viewportWidth - margin) {
+            newX = viewportWidth - width - margin;
+          }
+          if (newY + height > viewportHeight - margin) {
+            newY = viewportHeight - height - margin;
+          }
+          if (newX < margin) {
+            newX = margin;
+          }
+          if (newY < margin) {
+            newY = margin;
+          }
         }
 
         if (
@@ -394,6 +425,9 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
           
           // 设置恢复状态标志，暂停配置变化通知
           setIsRestoring(true);
+          // 编辑弹窗里存的是旧组件的 props 快照：撤销/重做/切换存档后如果还开着，
+          // 改一下属性就会把撤销掉的内容写回去（old props 复活）。直接关掉最安全。
+          setEditingItem(null);
 
           const restoredRows = state.rows.map((row: SavedItem[]) => {
             return row
@@ -632,6 +666,12 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
                       setEditingItem({
                         item: clickedItem,
                         position: { x: rect.right, y: rect.top },
+                        anchor: {
+                          left: rect.left,
+                          right: rect.right,
+                          top: rect.top,
+                          bottom: rect.bottom,
+                        },
                         parentId: containerId,
                       });
                     },
@@ -682,6 +722,12 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
                         setEditingItem({
                           item: clickedItem,
                           position: { x: rect.right, y: rect.top },
+                          anchor: {
+                            left: rect.left,
+                            right: rect.right,
+                            top: rect.top,
+                            bottom: rect.bottom,
+                          },
                           parentId: containerId,
                         });
                       },
@@ -760,6 +806,12 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
                     setEditingItem({
                       item: clickedItem,
                       position: { x: rect.right, y: rect.top },
+                      anchor: {
+                        left: rect.left,
+                        right: rect.right,
+                        top: rect.top,
+                        bottom: rect.bottom,
+                      },
                       parentId: containerId,
                     });
                   },
@@ -829,7 +881,10 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
       <div className="flex flex-col items-center">
         {/* GuideBoard 区域 */}
         <div
-          className="border-2 pl-px pr-px border-solid flex flex-col guide-board select-none"
+          className="border-2 border-solid flex flex-col guide-board select-none"
+          // 以前这里还有 pl-px pr-px：那 1px 内边距会在左右各露出一条底板背景色，
+          // 组件自己设了别的背景色时特别明显（用户反馈「左右各有一条很小的缝」）。
+          // 行内的接缝靠组件自身 -1px 负边距压住，画板不需要再留这 1px。
           ref={boardContentRef}
           style={{
             width: boardWidth,
@@ -856,11 +911,16 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
                   >
                     <GuideBoard id={`row${idx + 1}`}>
                       {row.length > 0 ? (
-                        row.map(item => (
+                        row.map((item, itemIndex) => (
                           <DraggableItem
                             key={item.id}
                             id={item.id}
                             zoom={zoom}
+                            // 行首/行尾取消那侧的 -1px 负边距：
+                            // 否则它会被行容器的 overflow:hidden 裁掉 1px，
+                            // 组件背景与底板不同色时就会在边上露出底板色
+                            flushLeft={itemIndex === 0}
+                            flushRight={itemIndex === row.length - 1}
                             selected={editingItem?.item.id === item.id}
                             data={{
                               type: "guide-item",
@@ -878,6 +938,12 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
                                 position: {
                                   x: rect.right,
                                   y: rect.top,
+                                },
+                                anchor: {
+                                  left: rect.left,
+                                  right: rect.right,
+                                  top: rect.top,
+                                  bottom: rect.bottom,
                                 },
                               });
                             }}
@@ -1019,6 +1085,11 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
                 boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
                 borderRadius: "16px",
                 width: 200,
+                // 弹窗内容可能比视口还高（如站点编号的卡片列表），
+                // 翻转/贴边都救不了「本身放不下」的情况：封顶后内部滚动。
+                // 用 dvh 跟随移动端地址栏收放（与项目其它地方一致）。
+                maxHeight: "calc(100dvh - 32px)",
+                overflowY: "auto",
                 fontFamily: themes[currentTheme][1].fontFamily,
               }}
             >
