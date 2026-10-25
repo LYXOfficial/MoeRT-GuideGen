@@ -141,7 +141,7 @@ export default function StationNumber({
   return (
     <div className="h-16 flex" style={{ backgroundColor: colors.background }}>
       <div
-        className="h-16 mt-auto mb-auto p-2.5 flex flex-col flex-wrap gap-1.25 align-center justify-center"
+        className="h-16 mt-auto mb-auto p-2.5 flex flex-col flex-wrap gap-1.25 items-center justify-center"
         style={{
           width:
             (35 * (lines.length + (lines.length % 2))) / 2 +
@@ -151,11 +151,11 @@ export default function StationNumber({
       >
         {lines.map(line => (
           <div
-            className="w-8.75 h-3.75 border rounded-[10px] border-solid flex align-center justify-center"
+            className="w-8.75 h-3.75 border-[1.4px] rounded-[10px] border-solid flex items-center justify-center"
             style={{
               borderColor: line.color,
               backgroundColor: colors.foreground,
-              fontFamily: "'Sogoe UI', Helvetica, sans-serif",
+              fontFamily: "'Segoe UI', Helvetica, sans-serif",
             }}
             key={`${line.lineNum}${line.stationNum}`}
           >
@@ -164,22 +164,26 @@ export default function StationNumber({
                 width: 17,
                 textAlign: "center",
                 color: line.color,
-                fontSize: 11,
-                lineHeight: "12px",
+                fontSize: 10,
+                lineHeight: "11px",
               }}
             >
               {line.lineNum}
             </div>
-            <div
-              style={{ width: 1, height: 15, backgroundColor: line.color }}
-            ></div>
+            {/* 分隔线 = 本格的 1px 左边框：与胶囊描边同为 border stroke，
+               任何缩放下粗细一致；align-self:stretch 拉满内高，贴合上下边框 */}
             <div
               style={{
                 width: 17,
                 textAlign: "center",
                 color: line.color,
-                fontSize: 11,
-                lineHeight: "12px",
+                fontSize: 10,
+                lineHeight: "11px",
+                alignSelf: "stretch",
+                borderLeft: `1.4px solid ${line.color}`,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
               }}
             >
               {line.stationNum}
