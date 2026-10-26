@@ -36,34 +36,59 @@ export function installPortalClamp(): () => void {
     return () => {};
   }
 
+  // 自触发保护：
+  // clampAll 自己会写 el.style.translate，而观察器盯的是全站 style/class 变化 ——
+  // 若「写进去的值」和「读回来的序列化值」不完全一致（例如 `12px 0px` 读回 `12px`），
+  // 就会 写 → 触发回调 → 再写 …… 死循环，表现是整个页面卡死（线上点开主题下拉就中招）。
+  // 所以：① 运行期间置 running，回调直接忽略；② 写完 takeRecords() 丢掉自己产生的记录；
+  // ③ 比较用数值差值，而不是序列化字符串。
+  let observer: MutationObserver | null = null;
+  let running = false;
+  let pendingAgain = false;
+
   const clampAll = () => {
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
-    document
-      .querySelectorAll<HTMLElement>(".semi-portal-inner")
-      .forEach(el => {
-        if (el.getBoundingClientRect().width === 0) return;
-        // 当前 translate 从 rect 里减掉，还原 Semi 定位的原始位置
-        const cur = parseTranslate(getComputedStyle(el).translate);
-        const rect = el.getBoundingClientRect();
-        const rawLeft = rect.left - cur.x;
-        const rawRight = rect.right - cur.x;
-        const rawTop = rect.top - cur.y;
-        const rawBottom = rect.bottom - cur.y;
-        let dx = 0;
-        let dy = 0;
-        if (rawBottom > vh - MARGIN) dy = vh - MARGIN - rawBottom;
-        if (rawTop + dy < MARGIN) dy = MARGIN - rawTop;
-        if (rawRight > vw - MARGIN) dx = vw - MARGIN - rawRight;
-        if (rawLeft + dx < MARGIN) dx = MARGIN - rawLeft;
-        // dx/dy 是相对「Semi 原始定位」的完整偏移（raw 已把当前 translate 减掉），
-        // 直接作为目标值写入；稳定后 want 与现值相同，不再产生突变
-        const want = dx || dy ? `${dx}px ${dy}px` : "";
-        if (el.style.translate !== want) el.style.translate = want;
-      });
+    if (running) {
+      pendingAgain = true;
+      return;
+    }
+    running = true;
+    try {
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      document
+        .querySelectorAll<HTMLElement>(".semi-portal-inner")
+        .forEach(el => {
+          if (el.getBoundingClientRect().width === 0) return;
+          // 当前 translate 从 rect 里减掉，还原 Semi 定位的原始位置
+          const cur = parseTranslate(getComputedStyle(el).translate);
+          const rect = el.getBoundingClientRect();
+          const rawLeft = rect.left - cur.x;
+          const rawRight = rect.right - cur.x;
+          const rawTop = rect.top - cur.y;
+          const rawBottom = rect.bottom - cur.y;
+          let dx = 0;
+          let dy = 0;
+          if (rawBottom > vh - MARGIN) dy = vh - MARGIN - rawBottom;
+          if (rawTop + dy < MARGIN) dy = MARGIN - rawTop;
+          if (rawRight > vw - MARGIN) dx = vw - MARGIN - rawRight;
+          if (rawLeft + dx < MARGIN) dx = MARGIN - rawLeft;
+          // 已经在目标位置（误差 < 0.5px）就一个字都别写，否则又会触发观察器
+          if (Math.abs(cur.x - dx) < 0.5 && Math.abs(cur.y - dy) < 0.5) return;
+          el.style.translate = dx || dy ? `${dx}px ${dy}px` : "";
+        });
+    } finally {
+      running = false;
+      // 丢掉本函数自己写入引发的 mutation 记录
+      observer?.takeRecords();
+      if (pendingAgain) {
+        pendingAgain = false;
+        queueMicrotask(clampAll);
+      }
+    }
   };
 
-  const observer = new MutationObserver(records => {
+  observer = new MutationObserver(records => {
+    if (running) return;
     for (const r of records) {
       if (r.type === "childList" || r.attributeName) {
         clampAll();
@@ -82,7 +107,7 @@ export function installPortalClamp(): () => void {
   window.addEventListener("scroll", clampAll, true);
 
   return () => {
-    observer.disconnect();
+    observer?.disconnect();
     window.removeEventListener("resize", clampAll);
     window.removeEventListener("scroll", clampAll, true);
   };
