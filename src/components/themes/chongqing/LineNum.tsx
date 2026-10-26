@@ -73,6 +73,9 @@ export const lineNumEditorConfig = (
           <Select.Option value="right">
             {t("themes.chongqing.components.LineNum.props.align.right")}
           </Select.Option>
+          <Select.Option value="right2">
+            {t("themes.chongqing.components.LineNum.props.align.right2")}
+          </Select.Option>
         </Select>
       ),
     },
@@ -134,13 +137,14 @@ function LineNum({
           // 无色块：去掉色块及其两侧预留的间隙，按左右对齐把内容贴边排布
           const contentW =
             numBBox.width + (showText ? GAP + textBBox.width : 0);
-          if (align === "left") {
+          if (align === "left" || align === "right2") {
+            // 右（2）同成都：数字在左、文字在右
             setRectX(0);
             setNumX(0);
             setTextOffsetX(showText ? numBBox.width + GAP : 0);
             setTextAnchor("start");
           } else {
-            // 右对齐（重庆顺序：文字在左、数字在右）→ 数字贴右缘
+            // 右（1）（重庆顺序：文字在左、数字在右）→ 数字贴右缘
             setRectX(0);
             setNumX(contentW - numBBox.width);
             setTextOffsetX(showText ? contentW - numBBox.width - GAP : 0);
@@ -157,6 +161,12 @@ function LineNum({
             setRectX(0);
             setNumX(rectWidth + 5);
             setTextOffsetX(rectWidth + numBBox.width + margin);
+            setTextAnchor("start");
+          } else if (align === "right2") {
+            // 右（2）同成都：数字、文字、色块，色块贴右缘
+            setRectX(totalWidth - rectWidth);
+            setNumX(0);
+            setTextOffsetX(numBBox.width + GAP);
             setTextAnchor("start");
           } else {
             setRectX(totalWidth - rectWidth);

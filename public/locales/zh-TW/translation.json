@@ -225,7 +225,8 @@
             "align": {
               "displayName": "對齊",
               "left": "左",
-              "right": "右"
+              "right": "右（1）",
+              "right2": "右（2）"
             },
             "lineColor": "線路顏色",
             "showText": "是否顯示後面的文本",

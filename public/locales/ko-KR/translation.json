@@ -225,7 +225,8 @@
             "align": {
               "displayName": "정렬",
               "left": "왼쪽",
-              "right": "오른쪽"
+              "right": "오른쪽 (1)",
+              "right2": "오른쪽 (2)"
             },
             "lineColor": "노선 색상",
             "showText": "뒤의 텍스트 표시",

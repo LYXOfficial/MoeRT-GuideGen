@@ -225,7 +225,8 @@
             "align": {
               "displayName": "Alignment",
               "left": "Left",
-              "right": "Right"
+              "right": "Right (1)",
+              "right2": "Right (2)"
             },
             "lineColor": "Line Color",
             "showText": "Show Text Behind",
