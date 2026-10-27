@@ -97,7 +97,7 @@ function NumAlphabet({
             y={52}
             fontSize={56}
             fontFamily={"Frutiger, Helvetica, sans-serif"}
-            letterSpacing={-3}
+            letterSpacing={0}
             fill={foreground}
           >
             {text}
