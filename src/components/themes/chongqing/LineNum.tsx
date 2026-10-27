@@ -149,9 +149,6 @@ function LineNum({
   const [numX, setNumX] = useState(0);
   const [rectX, setRectX] = useState(0);
   const [textAnchor, setTextAnchor] = useState<"start" | "end">("start");
-  // 中文那行的实际宽度：右（2）对齐时英文要右对齐到它的右缘
-  const zhRef = useRef<SVGTextElement>(null);
-  const [zhWidth, setZhWidth] = useState(0);
 
   // 当前色块档位的尺寸/字号
   const RS = RECT_STYLES[rectMode ?? "narrow"];
@@ -169,7 +166,6 @@ function LineNum({
       if (numRef.current) {
         const numBBox = numRef.current.getBBox();
         const textBBox = textRef.current?.getBBox() ?? { width: 0 };
-        setZhWidth(zhRef.current?.getBBox().width ?? 0);
         const rectWidth = RS.w;
         const pad = RS.pad;
         // 数字和「号线」之间的间距：原来 10 太散、4 又贴太紧，取中间的 7
@@ -281,7 +277,6 @@ function LineNum({
           {showText && (
             <g ref={textRef} transform={`translate(${textOffsetX},0)`}>
               <text
-                ref={zhRef}
                 x={0}
                 y={RS.zhY}
                 fontSize={RS.zhFont}
@@ -290,13 +285,14 @@ function LineNum({
               >
                 {customChinese ?? (isChinese ? "线" : "号线")}
               </text>
-              {/* 右（2）对齐是「文字在数字右侧、左端起排」，英文比中文短时会显得
-                  左边对齐很散 —— 这里让英文右对齐到中文右缘（其余对齐方式不变） */}
+              {/* 英文跟中文同一个起点/终点（跟着 textAnchor 走）：
+                  右（2）是「数字在左、文字在右」左端起排，英文变长就往右长，
+                  不能右对齐到中文右缘 —— 那样英文比中文长时会向左压到数字上 */}
               <text
-                x={align === "right2" ? zhWidth : 0}
+                x={0}
                 y={RS.enY}
                 fontSize={RS.enFont}
-                textAnchor={align === "right2" ? "end" : textAnchor}
+                textAnchor={textAnchor}
                 fill={foreground}
               >
                 {customEnglish}
