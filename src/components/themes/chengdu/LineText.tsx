@@ -65,9 +65,9 @@ export const lineTextEditorConfig = (
       element: (
         <RectModeSelect
 
-          labelDefault={t("themes.chengdu.components.LineText.props..default")}
+          labelDefault={t("themes.chengdu.components.LineText.props.rectMode.default")}
 
-          labelNarrow={t("themes.chengdu.components.LineText.props..narrow")}
+          labelNarrow={t("themes.chengdu.components.LineText.props.rectMode.narrow")}
 
         />
       ),

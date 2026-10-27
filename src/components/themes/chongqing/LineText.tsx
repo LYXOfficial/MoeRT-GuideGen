@@ -65,9 +65,9 @@ export const lineTextEditorConfig = (
       element: (
         <RectModeSelect
 
-          labelDefault={t("themes.chongqing.components.LineText.props..default")}
+          labelDefault={t("themes.chongqing.components.LineText.props.rectMode.default")}
 
-          labelNarrow={t("themes.chongqing.components.LineText.props..narrow")}
+          labelNarrow={t("themes.chongqing.components.LineText.props.rectMode.narrow")}
 
         />
       ),

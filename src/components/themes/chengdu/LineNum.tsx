@@ -72,9 +72,9 @@ export const lineNumEditorConfig = (
       element: (
         <RectModeSelect
 
-          labelDefault={t("themes.chengdu.components.LineNum.props..default")}
+          labelDefault={t("themes.chengdu.components.LineNum.props.rectMode.default")}
 
-          labelNarrow={t("themes.chengdu.components.LineNum.props..narrow")}
+          labelNarrow={t("themes.chengdu.components.LineNum.props.rectMode.narrow")}
 
         />
       ),
