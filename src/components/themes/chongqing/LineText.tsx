@@ -4,6 +4,7 @@ import { Input, Select } from "@douyinfe/semi-ui";
 import type { EditorConfig } from "../../../interfaces/editor";
 import CustomColorPicker from "../../CustomColorPicker";
 import RectModeSelect from "../../RectModeSelect";
+import { normalizeSvgLine } from "../../../utils/svgText";
 
 export interface LineTextProps {
   lineColor: string;
@@ -108,9 +109,13 @@ function LineText({
   const RS = RECT_STYLES[rectMode ?? "narrow"];
   const rectWidth = RS.w;
   // 供 JSX 内嵌闭包安全使用
-  const chineseText = chinese ?? lineTextDefaultProps.chinese ?? "";
+  // 只把制表/换行换成空格（首尾、中间的空格全部保留），渲染侧配 xmlSpace="preserve"
+  // 量宽和渲染必须用同一个串，否则空格数对不上（多空格被折叠/被丢掉的老毛病）
+  const chineseText = normalizeSvgLine(chinese ?? lineTextDefaultProps.chinese);
+  const englishText = normalizeSvgLine(english);
   // 中英文都为空 → 只保留色块，去掉色块与文字之间本应存在的间距
-  const textEmpty = !chineseText.trim() && !(english ?? "").trim();
+  // 只有空白的字段按「空」算（渲染时空格照旧保留）
+  const textEmpty = !chineseText.trim() && !englishText.trim();
 
   useEffect(() => {
     let mounted = true;
@@ -151,7 +156,7 @@ function LineText({
         window.clearTimeout(t);
       });
     };
-  }, [chinese, english]);
+  }, [chineseText, englishText]);
 
   // 汉字里的数字分段出来，单独放大（fontSize 32、字体 Frutiger）+ dy 偏移；
   // SVG 的 dy 对后续 tspan 是累积的，所以逐段维护偏移、给每段显式 dy：
@@ -198,7 +203,7 @@ function LineText({
             transform={`translate(${textTranslateX}, 0)`}
             textAnchor={align === "right" ? "end" : "start"}
           >
-            <text x={0} y={32} fontSize={22} fill={foreground}>
+            <text x={0} y={32} fontSize={22} fill={foreground} xmlSpace="preserve">
               {chineseSegs.map((seg, idx) =>
                 seg.isDigit ? (
                   <tspan
@@ -217,8 +222,8 @@ function LineText({
                 )
               )}
             </text>
-            <text x={0} y={48} fontSize={12} fill={foreground}>
-              {english}
+            <text x={0} y={48} fontSize={12} fill={foreground} xmlSpace="preserve">
+              {englishText}
             </text>
           </g>
         </svg>

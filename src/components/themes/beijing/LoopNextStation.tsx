@@ -1,4 +1,5 @@
 import {
+  normalizeSvgLine,
   fontEn,
   fontZh,
   measureText,
@@ -110,10 +111,10 @@ function LoopNextStation({
   const bg =
     background && background.length > 0 ? background : colors.background;
 
-  const nZh = (nextZh ?? "").trim();
-  const nEn = (nextEn ?? "").trim();
-  const sZh = (stationZh ?? "").trim();
-  const sEn = (stationEn ?? "").trim();
+  const nZh = normalizeSvgLine(nextZh);
+  const nEn = normalizeSvgLine(nextEn);
+  const sZh = normalizeSvgLine(stationZh);
+  const sEn = normalizeSvgLine(stationEn);
 
   const nextZhFont = fontZh(NEXT_WEIGHT, NEXT_ZH_SIZE);
   const nextEnFont = fontEn(NEXT_WEIGHT, NEXT_EN_SIZE);
@@ -160,7 +161,7 @@ function LoopNextStation({
           fontWeight={NEXT_WEIGHT}
           fill={fg}
           textAnchor={anchor}
-        >
+          xmlSpace="preserve">
           {nZh}
         </text>
         {/* 小英文横向压缩 0.9：以当前对齐的基准边为原点缩放，
@@ -176,7 +177,7 @@ function LoopNextStation({
             fill={fg}
             textAnchor={anchor}
             fontFamily="Arial, Helvetica, sans-serif"
-          >
+            xmlSpace="preserve">
             {nEn}
           </text>
         </g>
@@ -187,7 +188,7 @@ function LoopNextStation({
           fontWeight={STATION_WEIGHT}
           fill={fg}
           textAnchor={anchor}
-        >
+          xmlSpace="preserve">
           {sZh}
         </text>
         <text
@@ -198,7 +199,7 @@ function LoopNextStation({
           fill={fg}
           textAnchor={anchor}
           fontFamily="Arial, Helvetica, sans-serif"
-        >
+          xmlSpace="preserve">
           {sEn}
         </text>
       </svg>

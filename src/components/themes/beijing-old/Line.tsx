@@ -152,7 +152,7 @@ function Line({
   const bgColor =
     background && background.length > 0 ? background : colors.background;
 
-  const numText = (lineId ?? "").trim();
+  const numText = normalizeSvgLine(lineId);
   const zhText = normalizeSvgLine(textZh);
   const enText = normalizeSvgLine(textEn);
 
@@ -174,7 +174,7 @@ function Line({
     digits >= 2 ? (numText.startsWith("1") ? -0.032 : -0.012) * NUM_SIZE : 0;
   const enRendered = enText ? measureText(enText, enFont) : 0;
   const zhWidth = zhText ? measureText(zhText, zhFont) : 0;
-  const hasNum = Boolean(numText);
+  const hasNum = Boolean(numText.trim());
   const inkOf = (text: string, font: string) => {
     if (!text || typeof document === "undefined") return null;
     const ctx = document.createElement("canvas").getContext("2d");

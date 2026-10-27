@@ -1,5 +1,6 @@
 import { Button, Input, Select, Typography } from "@douyinfe/semi-ui";
 import {
+  normalizeSvgLine,
   fontEn,
   fontZh,
   measureText,
@@ -297,8 +298,8 @@ function ExitNum({
       ? dirWords[0] + dirWords.slice(1).map(w => w.toLowerCase()).join("")
       : "";
 
-  const zhText = [(textZh ?? "").trim(), dirZh].filter(Boolean).join("");
-  const enText = [(textEn ?? "").trim(), dirEn].filter(Boolean).join(" ");
+  const zhText = [normalizeSvgLine(textZh), dirZh].filter(Boolean).join("");
+  const enText = [normalizeSvgLine(textEn), dirEn].filter(Boolean).join(" ");
   const zhWidth = zhText ? measureText(zhText, zhFont) : 0;
   const enWidth = enText ? measureText(enText, enFont) : 0;
 
@@ -343,7 +344,7 @@ function ExitNum({
             fontWeight={WEIGHT_VALUE.medium}
             fill={fg}
             fontFamily="Arial, Helvetica, sans-serif"
-          >
+            xmlSpace="preserve">
             {part.text}
           </text>
         ))}
@@ -354,7 +355,7 @@ function ExitNum({
             fontSize={ZH_SIZE}
             fontWeight={WEIGHT_VALUE.medium}
             fill={fg}
-          >
+            xmlSpace="preserve">
             {zhText}
           </text>
         ) : null}
@@ -366,7 +367,7 @@ function ExitNum({
             fontWeight={WEIGHT_VALUE.medium}
             fill={fg}
             fontFamily="Arial, Helvetica, sans-serif"
-          >
+            xmlSpace="preserve">
             {enText}
           </text>
         ) : null}

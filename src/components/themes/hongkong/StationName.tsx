@@ -3,6 +3,7 @@ import colors from "./define/colors";
 import type { EditorConfig } from "../../../interfaces/editor";
 import { Input, Select } from "@douyinfe/semi-ui";
 import CustomColorPicker from "../../CustomColorPicker";
+import { normalizeSvgLine } from "../../../utils/svgText";
 
 export interface StationNameProps {
   chinese: string;
@@ -77,12 +78,16 @@ export default function StationName({
 }: StationNameProps) {
   const chineseRef = useRef<SVGTextElement>(null);
   const englishRef = useRef<SVGTextElement>(null);
+  // 只把制表/换行换成空格（首尾、中间的空格全部保留），渲染侧配 xmlSpace="preserve"
+  // 量宽和渲染必须用同一个串，否则空格数对不上（多空格被折叠/被丢掉的老毛病）
+  const zhText = normalizeSvgLine(chinese);
+  const enText = normalizeSvgLine(english);
   // 字体未就绪时先给临时估宽，加载完成后 getBBox 精确重测
   const [chineseWidth, setChineseWidth] = useState(() =>
-    estimateWidth(chinese ?? "", "", 36, 22)
+    estimateWidth(zhText, "", 36, 22)
   );
   const [englishWidth, setEnglishWidth] = useState(() =>
-    estimateWidth("", english ?? "", 36, 22)
+    estimateWidth("", enText, 36, 22)
   );
 
   useEffect(() => {
@@ -109,7 +114,7 @@ export default function StationName({
     return () => {
       mounted = false;
     };
-  }, [chinese, english]);
+  }, [zhText, enText]);
 
   const totalWidth = chineseWidth + englishWidth + 10;
   let groupX = 0;
@@ -134,8 +139,8 @@ export default function StationName({
               fontSize={36}
               fill={foreground}
               dominantBaseline="middle"
-            >
-              {chinese}
+              xmlSpace="preserve">
+              {zhText}
             </text>
             <text
               ref={englishRef}
@@ -144,8 +149,8 @@ export default function StationName({
               fontSize={22}
               fill={foreground}
               dominantBaseline="middle"
-            >
-              {english}
+              xmlSpace="preserve">
+              {enText}
             </text>
           </g>
         </svg>

@@ -4,6 +4,7 @@ import type { EditorConfig } from "../../../interfaces/editor";
 import { Input, Select, Switch } from "@douyinfe/semi-ui";
 import CustomColorPicker from "../../CustomColorPicker";
 import RectModeSelect from "../../RectModeSelect";
+import { normalizeSvgLine } from "../../../utils/svgText";
 
 export interface LineNumProps {
   num: string;
@@ -149,11 +150,16 @@ function LineNum({
 
   // 当前色块档位的尺寸/字号
   const RS = RECT_STYLES[rectMode ?? "narrow"];
+  // 只把制表/换行换成空格（首尾、中间的空格全部保留），渲染侧配 xmlSpace="preserve"
+  // 量宽和渲染必须用同一个串，否则空格数对不上（多空格被折叠/被丢掉的老毛病）
   const isChinese = /[\u4e00-\u9fa5]/.test(num);
+  const numText = normalizeSvgLine(num);
+  const zhText = normalizeSvgLine(customChinese ?? (isChinese ? "线" : "号线"));
+  const enText = normalizeSvgLine(customEnglish);
   // 数字为空 且（关闭文字 或 中英文都为空）→ 只保留色块，去掉与文字之间的间距
-  const numEmpty = !(num ?? "").trim();
-  const textEmptyBoth =
-    !(customChinese ?? "").trim() && !(customEnglish ?? "").trim();
+  // 只有空白的字段按「空」算（但渲染时那串空格照旧保留，见 normalizeSvgLine）
+  const numEmpty = !numText.trim();
+  const textEmptyBoth = !zhText.trim() && !enText.trim();
   const collapsed = numEmpty && (!showText || textEmptyBoth);
 
   useEffect(() => {
@@ -250,7 +256,7 @@ function LineNum({
         window.clearTimeout(t);
       });
     };
-  }, [num, showText, showRect, customChinese, customEnglish, align, collapsed, rectMode]);
+  }, [numText, showText, showRect, zhText, enText, align, collapsed, rectMode]);
 
   return (
     <div style={{ backgroundColor: background }}>
@@ -268,8 +274,8 @@ function LineNum({
                 fontWeight={400}
                 style={{ letterSpacing: "-3px" }}
                 fill={foreground}
-              >
-                {num}
+                xmlSpace="preserve">
+                {numText}
               </text>
               {/* 文字组 */}
               {showText && (
@@ -280,8 +286,8 @@ function LineNum({
                     fontSize={RS.zhFont}
                     textAnchor={textAnchor}
                     fill={foreground}
-                  >
-                    {customChinese ?? (isChinese ? "线" : "号线")}
+                    xmlSpace="preserve">
+                    {zhText}
                   </text>
                   <text
                     x={0}
@@ -289,8 +295,8 @@ function LineNum({
                     fontSize={RS.enFont}
                     textAnchor={textAnchor}
                     fill={foreground}
-                  >
-                    {customEnglish}
+                    xmlSpace="preserve">
+                    {enText}
                   </text>
                 </g>
               )}
@@ -310,8 +316,8 @@ function LineNum({
                 fontSize={isChinese ? RS.numFontZh : RS.numFontLatn}
                 style={{ letterSpacing: "-3px" }}
                 fill={foreground}
-              >
-                {num}
+                xmlSpace="preserve">
+                {numText}
               </text>
               {/* 文字组 */}
               {showText && (
@@ -322,8 +328,8 @@ function LineNum({
                     fontSize={RS.zhFont}
                     textAnchor={textAnchor}
                     fill={foreground}
-                  >
-                    {customChinese ?? (isChinese ? "线" : "号线")}
+                    xmlSpace="preserve">
+                    {zhText}
                   </text>
                   <text
                     x={0}
@@ -331,8 +337,8 @@ function LineNum({
                     fontSize={RS.enFont}
                     textAnchor={textAnchor}
                     fill={foreground}
-                  >
-                    {customEnglish}
+                    xmlSpace="preserve">
+                    {enText}
                   </text>
                 </g>
               )}

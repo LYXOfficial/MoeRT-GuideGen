@@ -4,6 +4,7 @@ import type { EditorConfig } from "../../../interfaces/editor";
 import { Input, Select, Switch } from "@douyinfe/semi-ui";
 import CustomColorPicker from "../../CustomColorPicker";
 import RectModeSelect from "../../RectModeSelect";
+import { normalizeSvgLine } from "../../../utils/svgText";
 
 export interface LineNumProps {
   num: string;
@@ -155,10 +156,15 @@ function LineNum({
   // 当前色块档位的尺寸/字号
   const RS = RECT_STYLES[rectMode ?? "narrow"];
   const isChinese = /[\u4e00-\u9fa5]/.test(num);
+  // 只把制表/换行换成空格（首尾、中间的空格全部保留），渲染侧配 xmlSpace="preserve"
+  // 量宽和渲染必须用同一个串，否则空格数对不上（多空格被折叠/被丢掉的老毛病）
+  const numText = normalizeSvgLine(num);
+  const zhText = normalizeSvgLine(customChinese ?? (isChinese ? "线" : "号线"));
+  const enText = normalizeSvgLine(customEnglish);
   // 数字为空 且（关闭文字 或 中英文都为空）→ 只保留色块，去掉与文字之间的间距
-  const numEmpty = !(num ?? "").trim();
-  const textEmptyBoth =
-    !(customChinese ?? "").trim() && !(customEnglish ?? "").trim();
+  // 只有空白的字段按「空」算（但渲染时那串空格照旧保留，见 normalizeSvgLine）
+  const numEmpty = !numText.trim();
+  const textEmptyBoth = !zhText.trim() && !enText.trim();
   const collapsed = numEmpty && (!showText || textEmptyBoth);
 
   useEffect(() => {
@@ -255,7 +261,7 @@ function LineNum({
         window.clearTimeout(t);
       });
     };
-  }, [num, showText, showRect, customChinese, customEnglish, align, collapsed, rectMode]);
+  }, [numText, showText, showRect, zhText, enText, align, collapsed, rectMode]);
 
   // 右（2）是「数字在左、文字在右」：文字块从数字右边起排，中文/英文统一右对齐到块右缘
   const isRight2 = align === "right2";
@@ -278,8 +284,9 @@ function LineNum({
             style={{ letterSpacing: "-3px" }}
             fill={foreground}
             fontFamily={isChinese ? undefined : "Frutiger, Helvetica, sans-serif"}
+            xmlSpace="preserve"
           >
-            {num}
+            {numText}
           </text>
 
           {/* 文字组 */}
@@ -291,8 +298,9 @@ function LineNum({
                 fontSize={RS.zhFont}
                 textAnchor={textAlignAnchor}
                 fill={foreground}
+                xmlSpace="preserve"
               >
-                {customChinese ?? (isChinese ? "线" : "号线")}
+                {zhText}
               </text>
               {/* 右（2）：中文、英文右缘对齐到文字块右缘（textW = 中英较宽者）。
                   锚点取 textW 而不是「中文宽度」，英文比中文长时整块向右长，
@@ -303,8 +311,9 @@ function LineNum({
                 fontSize={RS.enFont}
                 textAnchor={textAlignAnchor}
                 fill={foreground}
+                xmlSpace="preserve"
               >
-                {customEnglish}
+                {enText}
               </text>
             </g>
           )}

@@ -1,4 +1,5 @@
 import {
+  normalizeSvgLine,
   fontEn,
   fontZh,
   measureText,
@@ -107,10 +108,10 @@ function TrainDirection({
   const bg =
     background && background.length > 0 ? background : colors.background;
 
-  const zhPrefix = (prefixZh ?? "").trim();
-  const zhDest = (destinationZh ?? "").trim();
-  const enPrefix = (prefixEn ?? "").trim();
-  const enDest = (destinationEn ?? "").trim();
+  const zhPrefix = normalizeSvgLine(prefixZh);
+  const zhDest = normalizeSvgLine(destinationZh);
+  const enPrefix = normalizeSvgLine(prefixEn);
+  const enDest = normalizeSvgLine(destinationEn);
 
   const zhPrefixFont = fontZh(PREFIX_WEIGHT, PREFIX_ZH_SIZE);
   const zhDestFont = fontZh(DEST_WEIGHT, DEST_ZH_SIZE);
@@ -156,7 +157,7 @@ function TrainDirection({
           y={zhBaseline}
           textAnchor={isRight ? "end" : "start"}
           fill={fg}
-        >
+          xmlSpace="preserve">
           <tspan
             fontSize={PREFIX_ZH_SIZE}
             fontWeight={WEIGHT_VALUE[PREFIX_WEIGHT]}
@@ -178,7 +179,7 @@ function TrainDirection({
           textAnchor={isRight ? "end" : "start"}
           fill={fg}
           fontFamily="Arial, Helvetica, sans-serif"
-        >
+          xmlSpace="preserve">
           <tspan
             fontSize={PREFIX_EN_SIZE}
             fontWeight={WEIGHT_VALUE[EN_WEIGHT]}

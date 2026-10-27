@@ -209,8 +209,9 @@ function LineNum({
   const plateColor =
     background && background.length > 0 ? background : colors.background;
 
-  const numText = (lineId ?? "").trim();
-  // 首尾空白去掉、制表换行当空格；中间的空格保留（渲染侧配 xmlSpace="preserve"）
+  const numText = normalizeSvgLine(lineId);
+  // 只把制表/换行换成空格（首尾、中间的空格全部保留），渲染侧配 xmlSpace="preserve"
+  // 量宽和渲染必须用同一个串，否则空格数对不上（多空格被折叠/被丢掉的老毛病）
   const zhText = normalizeSvgLine(textZh);
   const enText = normalizeSvgLine(textEn);
 
@@ -250,7 +251,11 @@ function LineNum({
       )
     : 0;
 
-  const gap = numText && (zhText || enText) ? spec.blockH * NUM_GAP_RATIO : 0;
+  // 只有空白的字段按「空」算（渲染时空格照旧保留）
+  const gap =
+    numText.trim() && (zhText.trim() || enText.trim())
+      ? spec.blockH * NUM_GAP_RATIO
+      : 0;
   // 字距必须计入排版宽度。注意单位：SVG 的 letter-spacing 无单位时按「用户单位(px)」算，
   // 本文件数字字距 numSpacing 也是 px（-3/-5），所以这里同样按 px：
   //   rendered = measureText + spacing × (字数-1)
@@ -265,7 +270,7 @@ function LineNum({
   const textLeftNudge = 5; // 文字栏（号线 / Line N）再右移
   const contentLeft = spec.padX + numLeftNudge;
   // 没有线路号时：中英文整体居中，色块按内容自适应（左右等边距）
-  const hasNum = Boolean(numText);
+  const hasNum = Boolean(numText.trim());
   const sidePad = spec.padX + numLeftNudge;
   const contentWidth = hasNum
     ? numSlotWidth + gap + textLeftNudge + textWidth
@@ -345,7 +350,7 @@ function LineNum({
               fontWeight={WEIGHT_VALUE["medium"]}
               fill={fg}
               fontFamily={fontFamilyEn}
-            >
+              xmlSpace="preserve">
               {numText}
             </text>
           </g>

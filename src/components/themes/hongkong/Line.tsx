@@ -3,6 +3,7 @@ import colors from "./define/colors";
 import type { EditorConfig } from "../../../interfaces/editor";
 import { Input, Select } from "@douyinfe/semi-ui";
 import CustomColorPicker from "../../CustomColorPicker";
+import { normalizeSvgLine } from "../../../utils/svgText";
 
 export interface LineProps {
   lineColor: string;
@@ -85,6 +86,10 @@ export default function Line({
   background = lineDefaultProps.background ?? colors.background,
   align = lineDefaultProps.align,
 }: LineProps) {
+  // 只把制表/换行换成空格（首尾、中间的空格全部保留），渲染侧配 xmlSpace="preserve"
+  // 量宽和渲染必须用同一个串，否则空格数对不上（多空格被折叠/被丢掉的老毛病）
+  const zhText = normalizeSvgLine(chinese);
+  const enText = normalizeSvgLine(english);
   const lineGroupRef = useRef<SVGGElement>(null);
   // 字体未就绪时先给临时估宽，加载完成后 getBBox 精确重测
   const [svgWidth, setSvgWidth] = useState(() =>
@@ -115,7 +120,7 @@ export default function Line({
     return () => {
       mounted = false;
     };
-  }, [chinese, english]);
+  }, [zhText, enText]);
 
   const padding = 8;
   const totalWidth = svgWidth + padding * 2;
@@ -130,11 +135,11 @@ export default function Line({
         <svg className="h-full" width={totalWidth} height={64}>
           {/* 隐藏的测量组 */}
           <g ref={measureGroupRef} visibility="hidden">
-            <text x={0} y={34} fontSize={22}>
-              {chinese}
+            <text x={0} y={34} fontSize={22} xmlSpace="preserve">
+              {zhText}
             </text>
-            <text x={0} y={48} fontSize={10}>
-              {english}
+            <text x={0} y={48} fontSize={10} xmlSpace="preserve">
+              {enText}
             </text>
           </g>
 
@@ -163,11 +168,11 @@ export default function Line({
               height={40}
               fill={lineColor}
             />
-            <text x={0} y={34} fontSize={22} fill={foreground}>
-              {chinese}
+            <text x={0} y={34} fontSize={22} fill={foreground} xmlSpace="preserve">
+              {zhText}
             </text>
-            <text x={0} y={48} fontSize={10} fill={foreground}>
-              {english}
+            <text x={0} y={48} fontSize={10} fill={foreground} xmlSpace="preserve">
+              {enText}
             </text>
           </g>
         </svg>

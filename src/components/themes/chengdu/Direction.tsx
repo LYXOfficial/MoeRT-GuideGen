@@ -3,6 +3,7 @@ import colors from "./define/colors";
 import type { EditorConfig } from "../../../interfaces/editor";
 import { Input, Select } from "@douyinfe/semi-ui";
 import CustomColorPicker from "../../CustomColorPicker";
+import { normalizeSvgLine } from "../../../utils/svgText";
 
 export interface DirectionProps {
   tochinese: string;
@@ -85,6 +86,12 @@ export default function Direction({
 }: DirectionProps) {
   const directionGroupRef = useRef<SVGGElement>(null);
   const [svgWidth, setSvgWidth] = useState(0);
+  // 只把制表/换行换成空格（首尾、中间的空格全部保留），渲染侧配 xmlSpace="preserve"
+  // 量宽和渲染必须用同一个串，否则空格数对不上（多空格被折叠/被丢掉的老毛病）
+  const toZh = normalizeSvgLine(tochinese);
+  const toEn = normalizeSvgLine(toenglish);
+  const viaZh = normalizeSvgLine(viachinese);
+  const viaEn = normalizeSvgLine(viaenglish);
 
   useEffect(() => {
     let mounted = true;
@@ -122,7 +129,7 @@ export default function Direction({
         window.clearTimeout(t);
       });
     };
-  }, [tochinese, toenglish, viachinese, viaenglish]);
+  }, [toZh, toEn, viaZh, viaEn]);
 
   // 对齐时的起始 x 坐标
   let groupX = 0;
@@ -137,17 +144,17 @@ export default function Direction({
             transform={`translate(${groupX}, 0)`}
             textAnchor={align === "right" ? "end" : "start"}
           >
-            <text x={0} y={24} fontSize={17} fill={foreground}>
-              {tochinese}
+            <text x={0} y={24} fontSize={17} fill={foreground} xmlSpace="preserve">
+              {toZh}
             </text>
-            <text x={0} y={35} fontSize={10} fill={foreground}>
-              {toenglish}
+            <text x={0} y={35} fontSize={10} fill={foreground} xmlSpace="preserve">
+              {toEn}
             </text>
-            <text x={0} y={48} fontSize={12} fill={foreground}>
-              {viachinese}
+            <text x={0} y={48} fontSize={12} fill={foreground} xmlSpace="preserve">
+              {viaZh}
             </text>
-            <text x={0} y={57} fontSize={8} fill={foreground}>
-              {viaenglish}
+            <text x={0} y={57} fontSize={8} fill={foreground} xmlSpace="preserve">
+              {viaEn}
             </text>
           </g>
         </svg>

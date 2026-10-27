@@ -208,7 +208,7 @@ function ExitLetter({
                   fill={fg}
                   textAnchor="middle"
                   fontFamily="Arial, Helvetica, sans-serif"
-                >
+                  xmlSpace="preserve">
                   {ch}
                 </text>
               </g>

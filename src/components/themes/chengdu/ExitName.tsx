@@ -3,6 +3,7 @@ import colors from "./define/colors";
 import type { EditorConfig } from "../../../interfaces/editor";
 import { Input, Select } from "@douyinfe/semi-ui";
 import CustomColorPicker from "../../CustomColorPicker";
+import { normalizeSvgLine } from "../../../utils/svgText";
 
 export interface ExitNameProps {
   line1chinese: string;
@@ -88,6 +89,12 @@ export default function ExitName({
 }: ExitNameProps) {
   const exitNameGroupRef = useRef<SVGGElement>(null);
   const [svgWidth, setSvgWidth] = useState(0);
+  // 只把制表/换行换成空格（首尾、中间的空格全部保留），渲染侧配 xmlSpace="preserve"
+  // 量宽和渲染必须用同一个串，否则空格数对不上（多空格被折叠/被丢掉的老毛病）
+  const l1zh = normalizeSvgLine(line1chinese);
+  const l1en = normalizeSvgLine(line1english);
+  const l2zh = normalizeSvgLine(line2chinese);
+  const l2en = normalizeSvgLine(line2english);
 
   useEffect(() => {
     let mounted = true;
@@ -117,7 +124,7 @@ export default function ExitName({
         window.clearTimeout(t);
       });
     };
-  }, [line1chinese, line1english, line2chinese, line2english]);
+  }, [l1zh, l1en, l2zh, l2en]);
 
   // 对齐时的起始 x 坐标
   let groupX = 0;
@@ -139,17 +146,17 @@ export default function ExitName({
                   : "start"
             }
           >
-            <text x={0} y={20} fontSize={14} fill={foreground}>
-              {line1chinese}
+            <text x={0} y={20} fontSize={14} fill={foreground} xmlSpace="preserve">
+              {l1zh}
             </text>
-            <text x={0} y={29} fontSize={7} fill={foreground}>
-              {line1english}
+            <text x={0} y={29} fontSize={7} fill={foreground} xmlSpace="preserve">
+              {l1en}
             </text>
-            <text x={0} y={47} fontSize={14} fill={foreground}>
-              {line2chinese}
+            <text x={0} y={47} fontSize={14} fill={foreground} xmlSpace="preserve">
+              {l2zh}
             </text>
-            <text x={0} y={56} fontSize={7} fill={foreground}>
-              {line2english}
+            <text x={0} y={56} fontSize={7} fill={foreground} xmlSpace="preserve">
+              {l2en}
             </text>
           </g>
         </svg>

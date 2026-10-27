@@ -133,9 +133,12 @@ python3 text_probe.py                                   # 解析 <use> 得到真
 - SVG `letterSpacing` 无单位 = px，不是 em；宽度公式 `rendered = measureText + spacing × (字符数-1)`。
 - `fontZh(500, …)` 曾因 `WEIGHT_VALUE[500]` 为 undefined 得到 `"undefined 11px…"` → canvas 回退字体
   → 量宽偏小、文字被裁。`weightCss` 现在接受数字；`TEXT_WEIGHT = 500` 必须同时喂测量和 fontWeight。
-- SVG `<text>` 默认 `xml:space="default"` 会**折叠连续空格**，而 measureText 按原字符串计宽 →
-  「英文多空格只显示一个、色块却变长」。已用 `normalizeSvgLine` + `xmlSpace="preserve"` 修复
-  （仅 LineNum；Text/DualText/LoopNextStation/TrainDirection/ExitNum 还没加，用户未要求）。
+- SVG `<text>` 默认 `xml:space="default"` 会**折叠连续空格、丢掉首尾空格**，而 measureText /
+  `getBBox` 按原字符串计宽 → 「打多个空格只显示一个、盒子却按多个空格算宽」或「空格完全不算」。
+  **全主题所有文字组件**已统一修复（2026-10-28）：`src/utils/svgText.ts` 的
+  `normalizeSvgLine`（只把制表/换行换成空格，**首尾空格保留、不 trim**）+ 渲染侧
+  `xmlSpace="preserve"`，量宽与渲染用同一个串。新增文字组件照此办理。
+  注意：判断「字段是否为空」仍用 `.trim()`（只有空格的字段按空处理），但渲染时那串空格照旧保留。
 - 中文 ink ≈ 0.88em、拉丁 cap ≈ 0.716em，所有基线都用 ink 推导，别用 fontSize 居中。
 
 **图标 / 视图箱**

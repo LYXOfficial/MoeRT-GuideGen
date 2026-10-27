@@ -3,6 +3,7 @@ import type { EditorConfig } from "../../../interfaces/editor";
 import { Input } from "@douyinfe/semi-ui";
 import CustomColorPicker from "../../CustomColorPicker";
 import { useEffect, useState } from "react";
+import { normalizeSvgLine } from "../../../utils/svgText";
 export interface ExitProps {
   letter: string;
   background?: string;
@@ -39,6 +40,9 @@ function Exit({
   letter = exitDefaultProps.letter,
   background = exitDefaultProps.background,
 }: ExitProps) {
+  // 只把制表/换行换成空格（首尾、中间的空格全部保留），渲染侧配 xmlSpace="preserve"
+  // 量宽和渲染必须用同一个串，否则空格数对不上（多空格被折叠/被丢掉的老毛病）
+  const letterText = normalizeSvgLine(letter);
   const [baseline, setBaseline] = useState(LETTER_BOX.cy + FONT_SIZE * 0.36);
 
   useEffect(() => {
@@ -47,7 +51,7 @@ function Exit({
       const ctx = document.createElement("canvas").getContext("2d");
       if (!ctx) return;
       ctx.font = `${FONT_SIZE}px ${FONT_STACK}`;
-      const m = ctx.measureText(letter);
+      const m = ctx.measureText(letterText);
       const ascent = m.actualBoundingBoxAscent;
       const descent = m.actualBoundingBoxDescent;
       if (!Number.isFinite(ascent) || (!ascent && !descent)) return;
@@ -62,7 +66,7 @@ function Exit({
     return () => {
       mounted = false;
     };
-  }, [letter]);
+  }, [letterText]);
 
   return (
     <div style={{ background: background }}>
@@ -77,8 +81,8 @@ function Exit({
             fontSize={FONT_SIZE}
             textAnchor="middle"
             fill={colors.foreground}
-          >
-            {letter}
+            xmlSpace="preserve">
+            {letterText}
           </text>
         </svg>
       </div>

@@ -1,6 +1,12 @@
 import { Switch } from "@douyinfe/semi-ui";
 import colors from "./define/colors";
-import { fontEn, fontZh, measureText, useFontsReady } from "./define/text";
+import {
+  normalizeSvgLine,
+  fontEn,
+  fontZh,
+  measureText,
+  useFontsReady,
+} from "./define/text";
 import { MetroAGlyph } from "../beijing/icons/city-real";
 import type { EditorConfig } from "../../../interfaces/editor";
 import {
@@ -75,8 +81,8 @@ function StationSign({
   const bg =
     background && background.length > 0 ? background : colors.background;
 
-  const zhText = (nameZh ?? "").trim();
-  const enText = (nameEn ?? "").trim();
+  const zhText = normalizeSvgLine(nameZh);
+  const enText = normalizeSvgLine(nameEn);
   const zhFont = fontZh(700, ZH_SIZE);
   const enFont = fontEn(700, EN_SIZE);
   const zhWidth = zhText ? measureText(zhText, zhFont) : 0;
@@ -116,7 +122,7 @@ function StationSign({
             fontSize={ZH_SIZE}
             fontWeight={700}
             fill={fg}
-          >
+            xmlSpace="preserve">
             {zhText}
           </text>
         ) : null}
@@ -128,7 +134,7 @@ function StationSign({
             fontWeight={700}
             fill={fg}
             fontFamily="Arial, Helvetica, sans-serif"
-          >
+            xmlSpace="preserve">
             {enText}
           </text>
         ) : null}

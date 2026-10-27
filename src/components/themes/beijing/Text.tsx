@@ -7,6 +7,7 @@ import {
   backgroundFormItems,
   foregroundFormItem,
 } from "./Background";
+import { normalizeSvgLines } from "../../../utils/svgText";
 
 export type TextWeight = "normal" | "medium" | "bold";
 
@@ -261,8 +262,8 @@ export default function Text({
   const limit = 0;
 
   const layout = useMemo(() => {
-    const zhLines = wrapText(chinese, zhFont, limit);
-    const enLines = wrapText(english, enFont, limit);
+    const zhLines = wrapText(normalizeSvgLines(chinese).join("\n"), zhFont, limit);
+    const enLines = wrapText(normalizeSvgLines(english).join("\n"), enFont, limit);
     const widthOf = (lines: string[], font: string, size: number) =>
       Math.max(
         0,
@@ -336,7 +337,7 @@ export default function Text({
               fill={foreground}
               fontFamily={fontFamilyZh}
               letterSpacing={`${ls}em`}
-            >
+              xmlSpace="preserve">
               {layout.zhLines.map((line, index) => (
                 <tspan
                   key={index}
@@ -353,7 +354,7 @@ export default function Text({
               fill={foreground}
               fontFamily={fontFamilyEn}
               letterSpacing={`${ls}em`}
-            >
+              xmlSpace="preserve">
               {layout.enLines.map((line, index) => (
                 <tspan
                   key={index}

@@ -3,6 +3,7 @@ import colors from "./define/colors";
 import type { EditorConfig } from "../../../interfaces/editor";
 import { Input, Select } from "@douyinfe/semi-ui";
 import CustomColorPicker from "../../CustomColorPicker";
+import { normalizeSvgLine } from "../../../utils/svgText";
 
 export interface TextProps {
   chinese: string;
@@ -93,11 +94,15 @@ export default function Text({
   foreground = textDefaultProps.foreground,
   background = textDefaultProps.background,
 }: TextProps) {
+  // 只把制表/换行换成空格（首尾、中间的空格全部保留），渲染侧配 xmlSpace="preserve"
+  // 量宽和渲染必须用同一个串，否则空格数对不上（多空格被折叠/被丢掉的老毛病）
+  const zhText = normalizeSvgLine(chinese);
+  const enText = normalizeSvgLine(english);
 
   const textGroupRef = useRef<SVGGElement>(null);
   // 字体未就绪时先给临时估宽，加载完成后 getBBox 精确重测
   const [svgWidth, setSvgWidth] = useState(() =>
-    estimateWidth(chinese ?? "", english ?? "", fontsize === "large" ? 28 : 22, fontsize === "large" ? 14 : 12)
+    estimateWidth(zhText, enText, fontsize === "large" ? 28 : 22, fontsize === "large" ? 14 : 12)
   );
 
   useEffect(() => {
@@ -122,7 +127,7 @@ export default function Text({
     return () => {
       mounted = false;
     };
-  }, [chinese, english]);
+  }, [zhText, enText]);
 
   // 对齐时的起始 x 坐标
   let groupX = 0;
@@ -149,16 +154,16 @@ export default function Text({
               y={34}
               fontSize={fontsize === "large" ? 28 : 22}
               fill={foreground}
-            >
-              {chinese}
+              xmlSpace="preserve">
+              {zhText}
             </text>
             <text
               x={0}
               y={fontsize === "large" ? 52 : 48}
               fontSize={fontsize === "large" ? 14 : 12}
               fill={foreground}
-            >
-              {english}
+              xmlSpace="preserve">
+              {enText}
             </text>
           </g>
         </svg>

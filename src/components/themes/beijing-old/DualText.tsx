@@ -15,6 +15,7 @@ import {
   backgroundFormItems,
   foregroundFormItem,
 } from "./Background";
+import { normalizeSvgLine } from "../../../utils/svgText";
 
 /**
  * 双行文字（经典样式）：两行「中文 / 英文」逐行对齐出入口编号的两个描边方块
@@ -126,10 +127,12 @@ function DualText({
   const ls = letterSpacing ?? 0;
 
   // 两行内容：每行 = 中文 + （可选）跟随的英文
+  // 只把制表/换行换成空格（首尾、中间的空格全部保留），渲染侧配 xmlSpace="preserve"
+  // 量宽和渲染必须用同一个串，否则空格数对不上（多空格被折叠/被丢掉的老毛病）
   const rows = useMemo(
     () => [
-      { zh: line1chinese, en: line1english },
-      { zh: line2chinese, en: line2english },
+      { zh: normalizeSvgLine(line1chinese), en: normalizeSvgLine(line1english) },
+      { zh: normalizeSvgLine(line2chinese), en: normalizeSvgLine(line2english) },
     ],
     [line1chinese, line1english, line2chinese, line2english]
   );
@@ -187,7 +190,7 @@ function DualText({
                       fill={foreground}
                       fontFamily={fontFamilyZh}
                       letterSpacing={`${ls}em`}
-                    >
+                      xmlSpace="preserve">
                       {row.zh}
                     </text>
                   ) : null}
@@ -199,7 +202,7 @@ function DualText({
                       fontWeight={weightCss(TEXT_WEIGHT)}
                       fill={foreground}
                       fontFamily={fontFamilyEn}
-                    >
+                      xmlSpace="preserve">
                       {row.en}
                     </text>
                   ) : null}

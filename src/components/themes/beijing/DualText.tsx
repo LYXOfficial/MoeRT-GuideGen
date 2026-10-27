@@ -14,6 +14,7 @@ import {
   backgroundFormItems,
   foregroundFormItem,
 } from "./Background";
+import { normalizeSvgLine } from "../../../utils/svgText";
 
 /**
  * 两行文字（M4）：两行「中文 + 英文」的出口/街名结构。
@@ -123,28 +124,26 @@ function DualText({
   const enFont = fontEn(TEXT_WEIGHT, EN_SIZE);
   const ls = letterSpacing ?? 0;
 
+  // 只把制表/换行换成空格（首尾、中间的空格全部保留），渲染侧配 xmlSpace="preserve"
+  // 量宽和渲染必须用同一个串，否则空格数对不上（多空格被折叠/被丢掉的老毛病）
+  const r1zh = normalizeSvgLine(line1chinese);
+  const r1en = normalizeSvgLine(line1english);
+  const r2zh = normalizeSvgLine(line2chinese);
+  const r2en = normalizeSvgLine(line2english);
+
   // 不换行：每段文字就是一行，宽度取四段里最宽者
   const layout = useMemo(() => {
     const widthOf = (text: string, size: number, font: string) =>
       measureText(text ?? "", font) +
       ls * size * Math.max(0, Array.from(text ?? "").length - 1);
     const width = Math.max(
-      widthOf(line1chinese, ZH_SIZE, zhFont),
-      widthOf(line1english, EN_SIZE, enFont),
-      widthOf(line2chinese, ZH_SIZE, zhFont),
-      widthOf(line2english, EN_SIZE, enFont)
+      widthOf(r1zh, ZH_SIZE, zhFont),
+      widthOf(r1en, EN_SIZE, enFont),
+      widthOf(r2zh, ZH_SIZE, zhFont),
+      widthOf(r2en, EN_SIZE, enFont)
     );
     return { width: Math.max(1, Math.ceil(width)) };
-  }, [
-    line1chinese,
-    line1english,
-    line2chinese,
-    line2english,
-    zhFont,
-    enFont,
-    ls,
-    fontsReady,
-  ]);
+  }, [r1zh, r1en, r2zh, r2en, zhFont, enFont, ls, fontsReady]);
 
   const anchor =
     align === "center" ? "middle" : align === "right" ? "end" : "start";
@@ -171,7 +170,7 @@ function DualText({
       fill={foreground}
       fontFamily={font}
       letterSpacing={`${ls}em`}
-    >
+      xmlSpace="preserve">
       {text}
     </text>
   );
@@ -189,10 +188,10 @@ function DualText({
           data-fonts-ready={fontsReady}
         >
           <g transform={`translate(${groupX}, 0)`} textAnchor={anchor}>
-            {line("r1zh", line1chinese, R1_ZH_BASELINE, ZH_SIZE, zhFont)}
-            {line("r1en", line1english, R1_EN_BASELINE, EN_SIZE, enFont)}
-            {line("r2zh", line2chinese, R2_ZH_BASELINE, ZH_SIZE, zhFont)}
-            {line("r2en", line2english, R2_EN_BASELINE, EN_SIZE, enFont)}
+            {line("r1zh", r1zh, R1_ZH_BASELINE, ZH_SIZE, zhFont)}
+            {line("r1en", r1en, R1_EN_BASELINE, EN_SIZE, enFont)}
+            {line("r2zh", r2zh, R2_ZH_BASELINE, ZH_SIZE, zhFont)}
+            {line("r2en", r2en, R2_EN_BASELINE, EN_SIZE, enFont)}
           </g>
         </svg>
       </div>

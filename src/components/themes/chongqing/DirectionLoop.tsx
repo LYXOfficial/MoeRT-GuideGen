@@ -3,6 +3,7 @@ import colors from "./define/colors";
 import type { EditorConfig } from "../../../interfaces/editor";
 import { Input, Select } from "@douyinfe/semi-ui";
 import CustomColorPicker from "../../CustomColorPicker";
+import { normalizeSvgLine } from "../../../utils/svgText";
 
 export interface DirectionLoopProps {
   tochinese: string;
@@ -86,6 +87,12 @@ export default function DirectionLoop({
 }: DirectionLoopProps) {
   const directionGroupRef = useRef<SVGGElement>(null);
   const [svgWidth, setSvgWidth] = useState(0);
+  // 只把制表/换行换成空格（首尾、中间的空格全部保留），渲染侧配 xmlSpace="preserve"
+  // 量宽和渲染必须用同一个串，否则空格数对不上（多空格被折叠/被丢掉的老毛病）
+  const tipZh = normalizeSvgLine(tipchinese);
+  const tipEn = normalizeSvgLine(tipenglish);
+  const toZh = normalizeSvgLine(tochinese);
+  const toEn = normalizeSvgLine(toenglish);
 
   useEffect(() => {
     let mounted = true;
@@ -105,7 +112,7 @@ export default function DirectionLoop({
     return () => {
       mounted = false;
     };
-  }, [tochinese, toenglish, tipchinese, tipenglish]);
+  }, [toZh, toEn, tipZh, tipEn]);
 
   // 对齐时的起始 x 坐标
   let groupX = 0;
@@ -120,17 +127,17 @@ export default function DirectionLoop({
             transform={`translate(${groupX}, 0)`}
             textAnchor={align === "right" ? "end" : "start"}
           >
-            <text x={0} y={15} fontSize={12} fill={foreground}>
-              {tipchinese}
+            <text x={0} y={15} fontSize={12} fill={foreground} xmlSpace="preserve">
+              {tipZh}
             </text>
-            <text x={0} y={23} fontSize={8} fill={foreground}>
-              {tipenglish}
+            <text x={0} y={23} fontSize={8} fill={foreground} xmlSpace="preserve">
+              {tipEn}
             </text>
-            <text x={0} y={42} fontSize={20} fill={foreground}>
-              {tochinese}
+            <text x={0} y={42} fontSize={20} fill={foreground} xmlSpace="preserve">
+              {toZh}
             </text>
-            <text x={0} y={57} fontSize={14} fill={foreground}>
-              {toenglish}
+            <text x={0} y={57} fontSize={14} fill={foreground} xmlSpace="preserve">
+              {toEn}
             </text>
           </g>
         </svg>

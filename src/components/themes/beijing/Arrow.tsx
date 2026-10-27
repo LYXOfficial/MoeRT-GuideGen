@@ -15,6 +15,7 @@ import {
   ArrowBackRightGlyph,
 } from "./icons/arrow-real";
 import {
+  normalizeSvgLine,
   fontEn,
   fontZh,
   measureText,
@@ -190,9 +191,10 @@ function Arrow({
     foreground && foreground.length > 0 ? foreground : colors.foreground;
   const bg =
     background && background.length > 0 ? background : colors.background;
-  const zhText = (textZh ?? "").trim();
-  const enText = (textEn ?? "").trim();
-  const withText = Boolean(showText) && Boolean(zhText || enText);
+  const zhText = normalizeSvgLine(textZh);
+  const enText = normalizeSvgLine(textEn);
+  // 只有空白的字段按「空」算（渲染时空格照旧保留）
+  const withText = Boolean(showText) && Boolean(zhText.trim() || enText.trim());
 
   const zhFont = fontZh(TEXT_WEIGHT, TEXT_ZH_SIZE);
   const enFont = fontEn(TEXT_WEIGHT, TEXT_EN_SIZE);
@@ -250,7 +252,7 @@ function Arrow({
                 fontWeight={WEIGHT_VALUE[TEXT_WEIGHT]}
                 fill={fg}
                 textAnchor={textAnchor}
-              >
+                xmlSpace="preserve">
                 {zhText}
               </text>
             ) : null}
@@ -263,7 +265,7 @@ function Arrow({
                 fill={fg}
                 textAnchor={textAnchor}
                 fontFamily="Arial, Helvetica, sans-serif"
-              >
+                xmlSpace="preserve">
                 {enText}
               </text>
             ) : null}

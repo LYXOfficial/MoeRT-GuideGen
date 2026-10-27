@@ -33,15 +33,15 @@ export const fontEn = (weight: TextWeight | number, size: number): string =>
   `${weightCss(weight)} ${size}px ${fontFamilyEn}`;
 
 /**
- * 单行文本在 SVG <text> 里的空白预处理：制表/换行按 SVG 规则先变成空格，首尾空白去掉，
- * 中间的空格原样保留。
+ * 单行文本在 SVG <text> 里的空白预处理：制表/换行按 SVG 规则先变成空格，
+ * 首尾和中间的空格全部原样保留（用户要求首尾空格也算进去）。
  *
  * 配合 <text xmlSpace="preserve"> 使用时，连续空格会被真的画出来（默认的
  * xml:space="default" 会把它们折叠成一个），而 measureText 本来就是按实际字符数算宽度的，
  * 两边这才对得上；否则会出现「英文打了多个空格只显示一个、下面的色块却越打越长」。
  */
-export const normalizeSvgLine = (text?: string | null): string =>
-  (text ?? "").replace(/[\t\n\r]/g, " ").trim();
+// 实现统一放在 utils/svgText，避免各主题各写一份、行为跑偏
+export { normalizeSvgLine } from "../../../../utils/svgText";
 
 let measureCtx: CanvasRenderingContext2D | null = null;
 

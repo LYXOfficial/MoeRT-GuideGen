@@ -3,6 +3,7 @@ import type { EditorConfig } from "../../../interfaces/editor";
 import { Input, TextArea } from "@douyinfe/semi-ui";
 import colors from "./define/colors";
 import CustomColorPicker from "../../CustomColorPicker";
+import { normalizeSvgLine, normalizeSvgLines } from "../../../utils/svgText";
 
 export interface StationNameProps {
   chinese: string;
@@ -74,7 +75,10 @@ function StationName({
   }, [chinese, english]);
 
   // 按换行符分割英文
-  const englishLines = english.split(/\r?\n/);
+  // 只把制表/换行换成空格（首尾、中间的空格全部保留），渲染侧配 xmlSpace="preserve"
+  // 量宽和渲染必须用同一个串，否则空格数对不上（多空格被折叠/被丢掉的老毛病）
+  const zhText = normalizeSvgLine(chinese);
+  const englishLines = normalizeSvgLines(english);
   const lineHeight = 14; // 英文行高
   const baseY = englishLines.length > 1 ? 42 : 48;
 
@@ -90,8 +94,9 @@ function StationName({
               fontWeight="bold"
               textAnchor="middle"
               fill={foreground}
+              xmlSpace="preserve"
             >
-              {chinese}
+              {zhText}
             </text>
             <text
               x={svgWidth / 2}
@@ -100,6 +105,7 @@ function StationName({
               fontWeight="bold"
               textAnchor="middle"
               fill={foreground}
+              xmlSpace="preserve"
             >
               {englishLines.map((line, idx) => (
                 <tspan

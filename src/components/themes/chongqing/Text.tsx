@@ -3,6 +3,7 @@ import colors from "./define/colors";
 import type { EditorConfig } from "../../../interfaces/editor";
 import { Input, Select } from "@douyinfe/semi-ui";
 import CustomColorPicker from "../../CustomColorPicker";
+import { normalizeSvgLine } from "../../../utils/svgText";
 
 export interface TextProps {
   chinese: string;
@@ -71,7 +72,10 @@ export default function Text({
   const textGroupRef = useRef<SVGGElement>(null);
   const [svgWidth, setSvgWidth] = useState(0);
   // 供 JSX 内嵌闭包安全使用
-  const chineseText = chinese ?? textDefaultProps.chinese ?? "";
+  // 只把制表/换行换成空格（首尾、中间的空格全部保留），渲染侧配 xmlSpace="preserve"
+  // 量宽和渲染必须用同一个串，否则空格数对不上（多空格被折叠/被丢掉的老毛病）
+  const chineseText = normalizeSvgLine(chinese ?? textDefaultProps.chinese);
+  const englishText = normalizeSvgLine(english);
 
   useEffect(() => {
     let mounted = true;
@@ -91,7 +95,7 @@ export default function Text({
     return () => {
       mounted = false;
     };
-  }, [chinese, english]);
+  }, [chineseText, englishText]);
 
   // 汉字里的数字分段出来，单独放大 + dy 偏移；dy 会累积，
   // 因此逐段维护偏移并给每段显式 dy，避免越排越歪。
@@ -130,7 +134,7 @@ export default function Text({
                   : "start"
             }
           >
-            <text x={0} y={32} fontSize={22} fill={foreground}>
+            <text x={0} y={32} fontSize={22} fill={foreground} xmlSpace="preserve">
               {chineseSegs.map((seg, idx) =>
                 seg.isDigit ? (
                   <tspan
@@ -149,8 +153,8 @@ export default function Text({
                 )
               )}
             </text>
-            <text x={0} y={48} fontSize={14} fill={foreground}>
-              {english}
+            <text x={0} y={48} fontSize={14} fill={foreground} xmlSpace="preserve">
+              {englishText}
             </text>
           </g>
         </svg>

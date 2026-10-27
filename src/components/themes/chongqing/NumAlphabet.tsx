@@ -3,6 +3,7 @@ import colors from "./define/colors";
 import type { EditorConfig } from "../../../interfaces/editor";
 import { Input, Select } from "@douyinfe/semi-ui";
 import CustomColorPicker from "../../CustomColorPicker";
+import { normalizeSvgLine } from "../../../utils/svgText";
 export interface NumAlphabetProps {
   text: string;
   foreground?: string;
@@ -57,6 +58,9 @@ function NumAlphabet({
   background = numAlphabetDefaultProps.background,
   type = numAlphabetDefaultProps.type,
 }: NumAlphabetProps) {
+  // 只把制表/换行换成空格（首尾、中间的空格全部保留），渲染侧配 xmlSpace="preserve"
+  // 量宽和渲染必须用同一个串，否则空格数对不上（多空格被折叠/被丢掉的老毛病）
+  const numText = normalizeSvgLine(text);
   const numRef = useRef<SVGTextElement>(null);
   const [svgWidth, setSvgWidth] = useState(0);
 
@@ -78,7 +82,7 @@ function NumAlphabet({
     return () => {
       mounted = false;
     };
-  }, [text]);
+  }, [numText]);
 
   return (
     <div style={{ background: background }}>
@@ -99,8 +103,9 @@ function NumAlphabet({
             fontFamily={"Frutiger, Helvetica, sans-serif"}
             letterSpacing={0}
             fill={foreground}
+            xmlSpace="preserve"
           >
-            {text}
+            {numText}
           </text>
         </svg>
       </div>
