@@ -149,6 +149,8 @@ function LineNum({
   const [numX, setNumX] = useState(0);
   const [rectX, setRectX] = useState(0);
   const [textAnchor, setTextAnchor] = useState<"start" | "end">("start");
+  // 文字块宽度（中文/英文取宽的那个）：右（2）时中文和英文都右对齐到它的右缘
+  const [textW, setTextW] = useState(0);
 
   // 当前色块档位的尺寸/字号
   const RS = RECT_STYLES[rectMode ?? "narrow"];
@@ -166,6 +168,8 @@ function LineNum({
       if (numRef.current) {
         const numBBox = numRef.current.getBBox();
         const textBBox = textRef.current?.getBBox() ?? { width: 0 };
+        // 文字组宽度 = 中文/英文里更宽的那个（与锚点无关，左排/右排都是它）
+        setTextW(textBBox.width);
         const rectWidth = RS.w;
         const pad = RS.pad;
         // 数字和「号线」之间的间距：原来 10 太散、4 又贴太紧，取中间的 7
@@ -253,6 +257,11 @@ function LineNum({
     };
   }, [num, showText, showRect, customChinese, customEnglish, align, collapsed, rectMode]);
 
+  // 右（2）是「数字在左、文字在右」：文字块从数字右边起排，中文/英文统一右对齐到块右缘
+  const isRight2 = align === "right2";
+  const textAlignX = isRight2 ? textW : 0;
+  const textAlignAnchor = isRight2 ? "end" : textAnchor;
+
   return (
     <div style={{ backgroundColor: background }}>
       <div className="h-16 mr-1.25 ml-1.25" style={{ width: svgWidth }}>
@@ -277,22 +286,22 @@ function LineNum({
           {showText && (
             <g ref={textRef} transform={`translate(${textOffsetX},0)`}>
               <text
-                x={0}
+                x={textAlignX}
                 y={RS.zhY}
                 fontSize={RS.zhFont}
-                textAnchor={textAnchor}
+                textAnchor={textAlignAnchor}
                 fill={foreground}
               >
                 {customChinese ?? (isChinese ? "线" : "号线")}
               </text>
-              {/* 英文跟中文同一个起点/终点（跟着 textAnchor 走）：
-                  右（2）是「数字在左、文字在右」左端起排，英文变长就往右长，
-                  不能右对齐到中文右缘 —— 那样英文比中文长时会向左压到数字上 */}
+              {/* 右（2）：中文、英文右缘对齐到文字块右缘（textW = 中英较宽者）。
+                  锚点取 textW 而不是「中文宽度」，英文比中文长时整块向右长，
+                  不会向左压到数字上 */}
               <text
-                x={0}
+                x={textAlignX}
                 y={RS.enY}
                 fontSize={RS.enFont}
-                textAnchor={textAnchor}
+                textAnchor={textAlignAnchor}
                 fill={foreground}
               >
                 {customEnglish}
