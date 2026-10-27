@@ -20,6 +20,8 @@
  *   无限自触发。
  */
 const MARGIN = 8;
+/** Semi 隐藏浮层时停放的哨兵坐标（left/top = -9999） */
+const HIDDEN_PARK = -5000;
 
 function parseTranslate(style: string): { x: number; y: number } {
   if (!style || style === "none") return { x: 0, y: 0 };
@@ -58,10 +60,23 @@ export function installPortalClamp(): () => void {
       document
         .querySelectorAll<HTMLElement>(".semi-portal-inner")
         .forEach(el => {
-          if (el.getBoundingClientRect().width === 0) return;
+          const rect0 = el.getBoundingClientRect();
+          if (rect0.width === 0) return;
+          // Semi 把「还没显示 / 已隐藏」的浮层停在 (-9999, -9999)。
+          // 那不是「浮层跑到屏幕外」，而是它根本没出来 —— 这时去钳制它，反而会把它
+          // 从哨兵位置拽到画布外几千 px，之后 Semi 再摆到正确位置时我们的 translate
+          // 还留着，于是就「不卡了但弹不出来」（线上点主题下拉就是这个）。
+          // 看到哨兵就只把自己之前写的偏移清掉，然后跳过。
+          if (rect0.left < HIDDEN_PARK || rect0.top < HIDDEN_PARK) {
+            if (el.style.translate) el.style.translate = "";
+            return;
+          }
+          const cs = getComputedStyle(el);
+          if (cs.visibility === "hidden" || cs.display === "none") return;
+
           // 当前 translate 从 rect 里减掉，还原 Semi 定位的原始位置
-          const cur = parseTranslate(getComputedStyle(el).translate);
-          const rect = el.getBoundingClientRect();
+          const cur = parseTranslate(cs.translate);
+          const rect = rect0;
           const rawLeft = rect.left - cur.x;
           const rawRight = rect.right - cur.x;
           const rawTop = rect.top - cur.y;

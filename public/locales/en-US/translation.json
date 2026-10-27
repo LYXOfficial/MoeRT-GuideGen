@@ -231,6 +231,11 @@
             "lineColor": "Line Color",
             "showText": "Show Text Behind",
             "showRect": "Show color block",
+            "rectMode": {
+              "displayName": "Color block",
+              "default": "Default",
+              "narrow": "Narrow"
+            },
             "foreground": "Foreground",
             "background": "Background Color"
           }
@@ -244,6 +249,11 @@
               "displayName": "Alignment",
               "left": "Left",
               "right": "Right"
+            },
+            "rectMode": {
+              "displayName": "Block width",
+              "default": "Default",
+              "narrow": "Narrow"
             },
             "lineColor": "Line Color",
             "foreground": "Foreground",
@@ -473,6 +483,11 @@
             "lineColor": "Line Color",
             "showText": "Show Text Behind",
             "showRect": "Show color block",
+            "rectMode": {
+              "displayName": "Color block",
+              "default": "Default",
+              "narrow": "Narrow"
+            },
             "foreground": "Foreground",
             "background": "Background Color"
           }
@@ -486,6 +501,11 @@
               "displayName": "Alignment",
               "left": "Left",
               "right": "Right"
+            },
+            "rectMode": {
+              "displayName": "Block width",
+              "default": "Default",
+              "narrow": "Narrow"
             },
             "lineColor": "Line Color",
             "foreground": "Foreground",

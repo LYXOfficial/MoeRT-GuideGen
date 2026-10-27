@@ -231,6 +231,11 @@
             "lineColor": "노선 색상",
             "showText": "뒤의 텍스트 표시",
             "showRect": "색 블록 표시",
+            "rectMode": {
+              "displayName": "색상 블록",
+              "default": "기본",
+              "narrow": "좁게"
+            },
             "foreground": "전경색",
             "background": "배경색"
           }
@@ -244,6 +249,11 @@
               "displayName": "정렬",
               "left": "왼쪽",
               "right": "오른쪽"
+            },
+            "rectMode": {
+              "displayName": "색상 블록 너비",
+              "default": "기본",
+              "narrow": "좁게"
             },
             "lineColor": "노선 색상",
             "foreground": "전경색",
@@ -473,6 +483,11 @@
             "lineColor": "노선 색상",
             "showText": "뒤의 텍스트 표시",
             "showRect": "색 블록 표시",
+            "rectMode": {
+              "displayName": "색상 블록",
+              "default": "기본",
+              "narrow": "좁게"
+            },
             "foreground": "전경색",
             "background": "배경색"
           }
@@ -486,6 +501,11 @@
               "displayName": "정렬",
               "left": "왼쪽",
               "right": "오른쪽"
+            },
+            "rectMode": {
+              "displayName": "색상 블록 너비",
+              "default": "기본",
+              "narrow": "좁게"
             },
             "lineColor": "노선 색상",
             "foreground": "전경색",

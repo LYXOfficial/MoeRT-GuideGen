@@ -3,6 +3,7 @@ import colors from "./define/colors";
 import type { EditorConfig } from "../../../interfaces/editor";
 import { Input, Select, Switch } from "@douyinfe/semi-ui";
 import CustomColorPicker from "../../CustomColorPicker";
+import RectModeSelect from "../../RectModeSelect";
 
 export interface LineNumProps {
   num: string;
@@ -11,6 +12,8 @@ export interface LineNumProps {
   customEnglish?: string;
   showText?: boolean;
   showRect?: boolean;
+  /** 色块模式：default = 标准示例（满高宽块）；narrow = 窄色块（旧版式） */
+  rectMode?: "default" | "narrow";
   align?: string;
   foreground?: string;
   background?: string;
@@ -23,6 +26,7 @@ export const lineNumDefaultProps: LineNumProps = {
   customEnglish: "Line",
   showText: true,
   showRect: true,
+  rectMode: "default",
   align: "left",
   foreground: colors.foreground,
   background: colors.background,
@@ -63,6 +67,19 @@ export const lineNumEditorConfig = (
       element: <Switch />,
     },
     {
+      key: "rectMode",
+      label: "themes.chongqing.components.LineNum.props.rectMode.displayName",
+      element: (
+        <RectModeSelect
+
+          labelDefault={t("themes.chongqing.components.LineNum.props..default")}
+
+          labelNarrow={t("themes.chongqing.components.LineNum.props..narrow")}
+
+        />
+      ),
+    },
+    {
       key: "align",
       label: "themes.chongqing.components.LineNum.props.align.displayName",
       element: (
@@ -92,6 +109,25 @@ export const lineNumEditorConfig = (
   ],
 });
 
+// 色块两档（用户要求的两个模式）：
+//   default = 标准示例版式：色块满高（0~64）、宽 25，数字与文字整体上移
+//   narrow  = 原来的窄色块 15×52（y=12），其余位置保持原样
+const RECT_STYLES = {
+  // 默认（宽）：19×52，贴底（y=12）—— 只有宽度比窄档宽
+  default: {
+    // 宽档：色块和数字/文字之间多留一点空气
+    w: 19, h: 52, y: 12, pad: 9,
+    numFontLatn: 56, numFontZh: 42, numYLatn: 52, numYZh: 48,
+    zhFont: 22, zhY: 32, enFont: 14, enY: 48,
+  },
+  // 窄：原来的 15×52，贴底（y=12）
+  narrow: {
+    w: 15, h: 52, y: 12, pad: 5,
+    numFontLatn: 56, numFontZh: 42, numYLatn: 52, numYZh: 48,
+    zhFont: 22, zhY: 32, enFont: 14, enY: 48,
+  },
+} as const;
+
 function LineNum({
   num = lineNumDefaultProps.num,
   lineColor = lineNumDefaultProps.lineColor,
@@ -99,6 +135,9 @@ function LineNum({
   customEnglish = lineNumDefaultProps.customEnglish,
   showText = lineNumDefaultProps.showText,
   showRect = lineNumDefaultProps.showRect,
+  // 注意：不给默认值 —— 老存档里没有这个字段，要按「窄」渲染（迁移）；
+  // 新拖入的组件带着 defaultProps 里的 "default"（宽），不受影响
+  rectMode,
   align = lineNumDefaultProps.align,
   foreground = lineNumDefaultProps.foreground ?? colors.foreground,
   background = lineNumDefaultProps.background ?? colors.background,
@@ -110,7 +149,12 @@ function LineNum({
   const [numX, setNumX] = useState(0);
   const [rectX, setRectX] = useState(0);
   const [textAnchor, setTextAnchor] = useState<"start" | "end">("start");
+  // 中文那行的实际宽度：右（2）对齐时英文要右对齐到它的右缘
+  const zhRef = useRef<SVGTextElement>(null);
+  const [zhWidth, setZhWidth] = useState(0);
 
+  // 当前色块档位的尺寸/字号
+  const RS = RECT_STYLES[rectMode ?? "narrow"];
   const isChinese = /[\u4e00-\u9fa5]/.test(num);
   // 数字为空 且（关闭文字 或 中英文都为空）→ 只保留色块，去掉与文字之间的间距
   const numEmpty = !(num ?? "").trim();
@@ -125,8 +169,11 @@ function LineNum({
       if (numRef.current) {
         const numBBox = numRef.current.getBBox();
         const textBBox = textRef.current?.getBBox() ?? { width: 0 };
-        const rectWidth = 15;
-        const margin = 10;
+        setZhWidth(zhRef.current?.getBBox().width ?? 0);
+        const rectWidth = RS.w;
+        const pad = RS.pad;
+        // 数字和「号线」之间的间距：原来 10 太散、4 又贴太紧，取中间的 7
+        const numTextGap = 7;
         const GAP = 5; // 数字/文字之间以及色块与数字之间的间隙
 
         let totalWidth: number;
@@ -154,24 +201,27 @@ function LineNum({
         } else {
           totalWidth =
             rectWidth +
+            pad +
             numBBox.width +
-            (showText ? margin + textBBox.width : margin / 2);
+            (showText ? numTextGap + textBBox.width : numTextGap / 2);
 
           if (align === "left") {
             setRectX(0);
-            setNumX(rectWidth + 5);
-            setTextOffsetX(rectWidth + numBBox.width + margin);
+            setNumX(rectWidth + pad);
+            setTextOffsetX(rectWidth + pad + numBBox.width + numTextGap);
             setTextAnchor("start");
           } else if (align === "right2") {
             // 右（2）同成都：数字、文字、色块，色块贴右缘
             setRectX(totalWidth - rectWidth);
             setNumX(0);
-            setTextOffsetX(numBBox.width + GAP);
+            setTextOffsetX(numBBox.width + numTextGap);
             setTextAnchor("start");
           } else {
             setRectX(totalWidth - rectWidth);
-            setNumX(totalWidth - rectWidth - numBBox.width - 5);
-            setTextOffsetX(totalWidth - rectWidth - numBBox.width - margin);
+            setNumX(totalWidth - rectWidth - pad - numBBox.width);
+            setTextOffsetX(
+              totalWidth - rectWidth - pad - numBBox.width - numTextGap
+            );
             setTextAnchor("end");
           }
         }
@@ -180,28 +230,46 @@ function LineNum({
       }
     };
 
-    document.fonts.ready.then(() => {
+    // 字体就绪 + 每次加载完 + 定时重试（远程中文字体晚到会导致按回退字体定宽，文字被裁）
+    measure();
+    const fonts = document.fonts;
+    const onLoadingDone = () => {
       if (mounted) measure();
-    });
+    };
+    fonts?.addEventListener?.("loadingdone", onLoadingDone);
+    fonts?.ready
+      .then(() => {
+        if (mounted) measure();
+      })
+      .catch(() => {});
+    const fontRetryTimers = [60, 240, 800].map(ms =>
+      window.setTimeout(() => {
+        if (mounted) measure();
+      }, ms)
+    );
 
     return () => {
       mounted = false;
+      fonts?.removeEventListener?.("loadingdone", onLoadingDone);
+      fontRetryTimers.forEach(t => {
+        window.clearTimeout(t);
+      });
     };
-  }, [num, showText, showRect, customChinese, customEnglish, align, collapsed]);
+  }, [num, showText, showRect, customChinese, customEnglish, align, collapsed, rectMode]);
 
   return (
     <div style={{ backgroundColor: background }}>
       <div className="h-16 mr-1.25 ml-1.25" style={{ width: svgWidth }}>
         <svg width={svgWidth} height={64}>
           {/* 矩形 */}
-          {showRect && <rect width={15} height={52} x={rectX} y={12} fill={lineColor} />}
+          {showRect && <rect width={RS.w} height={RS.h} x={rectX} y={RS.y} fill={lineColor} />}
 
           {/* 数字 */}
           <text
             ref={numRef}
             x={numX}
-            y={isChinese ? 48 : 52}
-            fontSize={isChinese ? 42 : 56}
+            y={isChinese ? RS.numYZh : RS.numYLatn}
+            fontSize={isChinese ? RS.numFontZh : RS.numFontLatn}
             style={{ letterSpacing: "-3px" }}
             fill={foreground}
             fontFamily={isChinese ? undefined : "Frutiger, Helvetica, sans-serif"}
@@ -213,19 +281,22 @@ function LineNum({
           {showText && (
             <g ref={textRef} transform={`translate(${textOffsetX},0)`}>
               <text
+                ref={zhRef}
                 x={0}
-                y={32}
-                fontSize={22}
+                y={RS.zhY}
+                fontSize={RS.zhFont}
                 textAnchor={textAnchor}
                 fill={foreground}
               >
                 {customChinese ?? (isChinese ? "线" : "号线")}
               </text>
+              {/* 右（2）对齐是「文字在数字右侧、左端起排」，英文比中文短时会显得
+                  左边对齐很散 —— 这里让英文右对齐到中文右缘（其余对齐方式不变） */}
               <text
-                x={0}
-                y={48}
-                fontSize={14}
-                textAnchor={textAnchor}
+                x={align === "right2" ? zhWidth : 0}
+                y={RS.enY}
+                fontSize={RS.enFont}
+                textAnchor={align === "right2" ? "end" : textAnchor}
                 fill={foreground}
               >
                 {customEnglish}

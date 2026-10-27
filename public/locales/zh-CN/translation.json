@@ -231,6 +231,11 @@
             "lineColor": "线路颜色",
             "showText": "是否显示后面的文本",
             "showRect": "是否显示色块",
+            "rectMode": {
+              "displayName": "色块",
+              "default": "默认",
+              "narrow": "窄"
+            },
             "foreground": "前景色",
             "background": "背景色"
           }
@@ -244,6 +249,11 @@
               "displayName": "对齐",
               "left": "左",
               "right": "右"
+            },
+            "rectMode": {
+              "displayName": "色块宽度",
+              "default": "默认",
+              "narrow": "窄"
             },
             "lineColor": "线路颜色",
             "foreground": "前景色",
@@ -473,6 +483,11 @@
             "lineColor": "线路颜色",
             "showText": "是否显示后面的文本",
             "showRect": "是否显示色块",
+            "rectMode": {
+              "displayName": "色块",
+              "default": "默认",
+              "narrow": "窄"
+            },
             "foreground": "前景色",
             "background": "背景色"
           }
@@ -486,6 +501,11 @@
               "displayName": "对齐",
               "left": "左",
               "right": "右"
+            },
+            "rectMode": {
+              "displayName": "色块宽度",
+              "default": "默认",
+              "narrow": "窄"
             },
             "lineColor": "线路颜色",
             "foreground": "前景色",

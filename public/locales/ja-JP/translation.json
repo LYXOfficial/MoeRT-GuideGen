@@ -231,6 +231,11 @@
             "lineColor": "路線色",
             "showText": "後ろのテキストを表示",
             "showRect": "色ブロックを表示",
+            "rectMode": {
+              "displayName": "色ブロック",
+              "default": "既定",
+              "narrow": "細め"
+            },
             "foreground": "前景色",
             "background": "背景色"
           }
@@ -244,6 +249,11 @@
               "displayName": "配置",
               "left": "左",
               "right": "右"
+            },
+            "rectMode": {
+              "displayName": "色ブロック幅",
+              "default": "既定",
+              "narrow": "細め"
             },
             "lineColor": "路線色",
             "foreground": "前景色",
@@ -473,6 +483,11 @@
             "lineColor": "路線色",
             "showText": "後ろのテキストを表示",
             "showRect": "色ブロックを表示",
+            "rectMode": {
+              "displayName": "色ブロック",
+              "default": "既定",
+              "narrow": "細め"
+            },
             "foreground": "前景色",
             "background": "背景色"
           }
@@ -486,6 +501,11 @@
               "displayName": "配置",
               "left": "左",
               "right": "右"
+            },
+            "rectMode": {
+              "displayName": "色ブロック幅",
+              "default": "既定",
+              "narrow": "細め"
             },
             "lineColor": "路線色",
             "foreground": "前景色",

@@ -231,6 +231,11 @@
             "lineColor": "線路顏色",
             "showText": "是否顯示後面的文本",
             "showRect": "是否顯示色塊",
+            "rectMode": {
+              "displayName": "色塊",
+              "default": "預設",
+              "narrow": "窄"
+            },
             "foreground": "前景色",
             "background": "背景色"
           }
@@ -244,6 +249,11 @@
               "displayName": "對齊",
               "left": "左",
               "right": "右"
+            },
+            "rectMode": {
+              "displayName": "色塊寬度",
+              "default": "預設",
+              "narrow": "窄"
             },
             "lineColor": "線路顏色",
             "foreground": "前景色",
@@ -473,6 +483,11 @@
             "lineColor": "線路顏色",
             "showText": "是否顯示後面的文本",
             "showRect": "是否顯示色塊",
+            "rectMode": {
+              "displayName": "色塊",
+              "default": "預設",
+              "narrow": "窄"
+            },
             "foreground": "前景色",
             "background": "背景色"
           }
@@ -486,6 +501,11 @@
               "displayName": "對齊",
               "left": "左",
               "right": "右"
+            },
+            "rectMode": {
+              "displayName": "色塊寬度",
+              "default": "預設",
+              "narrow": "窄"
             },
             "lineColor": "線路顏色",
             "foreground": "前景色",
