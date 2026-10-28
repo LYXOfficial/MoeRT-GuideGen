@@ -1,6 +1,6 @@
 # AGENTS.md — 交接文档（北京导视主题）
 
-> 最后更新：2026-10-25。多存档管理与崩溃页导出已完成（tsc / biome / build 三绿，回归测试见 §8-28~34）。
+> 最后更新：2026-10-28。导出图片保真度修复（见 §7「导出图片」/§8-36，tsc / biome / build 三绿）。
 > 下一阶段目标：**M8 北京旧版（2015 / 经典样式）导视组件库**。（已实现）
 
 ---
@@ -228,6 +228,28 @@ python3 text_probe.py                                   # 解析 <use> 得到真
   原来直接拿布局 px 比，双行容器（×0.5）里明明只有 4~9px 宽的间距被当成「够宽」而不补热区。
 - 窄屏（390px）实测：编辑弹窗、颜色面板、Select 下拉都能完整落在视口内。
 
+**导出图片（2026-10-28）**
+- **不能改真实节点的 `transform` 再导出**：modern-screenshot 克隆节点时**不会带上
+  `transform-origin`**（克隆根的 `transform` 在、origin 丢，回退成 `50% 50%`）。于是只要
+  导出宽度 ≠ 画板宽度，内容就会绕克隆根中心缩放并整体平移 —— 实测 1.5× 只剩左上角一小块
+  字、2× 整张全空（只剩背景色）。正确做法：不改真实节点，把
+  `transform: scale(width/画板宽)` + `transformOrigin: "top left"` 放进 `domToPng` 的
+  `style` 选项（只作用于克隆根，且后于 computed style 写入）。
+- 导出宽度 ≠ 画板宽度时**必须**靠上面的 transform：`width` 选项只改克隆根盒子尺寸，
+  子元素宽度是原 DOM 的 computed px，不会跟着重排。`scale` 选项别再叠加（会得到 2× 目标尺寸）。
+- 画板外框只是编辑辅助线，但**不能 `border: none`**：2px 边框盒一删，导出内容相对预览
+  整体偏移 (−2,−2)px（对比时像「字体错位」/右边被裁 2px）。改成 `borderColor: transparent`
+  保留占位，画布底色由 `backgroundColor` 填满边框区。
+- 默认导出宽度按 `画板 CSS 宽 × min(devicePixelRatio, 2)`：预览是浏览器按设备像素比栅格化的，
+  1:1 导出在高分屏上再按原尺寸显示会被放大一档，字看起来比预览细/软。
+- 实测（1×，北京新版 Text 25px/500 + Arial 15px/500）：导出图与画板上对应区域**逐像素一致**，
+  差异只在预览里的虚线框/选中框（导出时按设计去掉）——即字体本身没有再替换。
+  注意浏览器对 `foreignObject` 里的文字用灰度抗锯齿；画板预览因为在 `transform` 容器里
+  也是灰度，两边才能对上。拿画布外的普通 DOM 去和导出图对比会出现 LCD 子像素彩边，
+  那是测量方式的问题，不是导出 bug。
+- modern-screenshot 会把文档里**所有 @font-face 子集**都内嵌（Noto Sans SC 5 个字重 ×202 个子集
+  ≈ 1010 条、SVG 约 69MB、首次导出 10s+），慢但字形正确；如果以后导出超时，优先从这里下手。
+
 **工程**
 - `pnpm lint` 不可用（无 eslint 配置），用 `pnpm exec biome check`。
 - `src/components/themes/chongqing/NumAlphabet.tsx` 是用户手改的（fontFamily Frutiger）——**不许 revert**。
@@ -239,9 +261,9 @@ python3 text_probe.py                                   # 解析 <use> 得到真
   （Semi 自带深色主题，semi.css 已含两套 token，无需额外引 CSS）。状态在
   `src/hooks/useDarkMode.ts`，`index.html` body 开头有一段内联脚本首帧前套用（防闪白）。
 - 深色表面色对齐 Semi token：bg-0 `#16161a` / bg-1 `#232429` / 边框 `#2e2e35`～`#3a3b42`。
-- 覆盖元素级内联颜色时**不能上 `!important`**：导出流程靠内联 `border:none` 去掉画板外框，
-  `!important` 会盖过它把边框漏进导出图 —— 画板边框改用 `var(--guide-board-border-override, 主题色)`
-  方案（global.css 里 `html.dark` 定义 override）。
+- 覆盖元素级内联颜色时**不能上 `!important`**：导出流程靠内联 `borderColor: transparent`
+  去掉画板外框（边框盒必须留着，见 §7「导出图片」），`!important` 会盖过它把边框漏进导出图 ——
+  画板边框改用 `var(--guide-board-border-override, 主题色)` 方案（global.css 里 `html.dark` 定义 override）。
 - Semi Slider 把手写死 `--semi-color-white`，深色下要在 global.css 单独压成暗色。
 - 深色 hover 覆盖写在 `@media (hover: hover)` 里，天然避开触屏粘滞高亮（别挪回全局）。
 - 切换按钮位置（用户拍板）：桌面在右上按钮组**最右**（GitHub 之后）；移动端在「更多」
@@ -342,6 +364,11 @@ python3 text_probe.py                                   # 解析 <use> 得到真
     再比内容、`stableSerialize` 键名排序后比较、撤销/重做前先 `flush()` 未落账的防抖状态、
     还原期间用 `pause/resume` 挡过渡态（不再用 200ms 时间窗，那会把用户这期间的真实修改丢掉）、
     还原后关掉属性弹窗（旧 props 快照会让撤销掉的内容复活）、Ctrl+Shift+Z / Cmd+Z 支持。
+36. 「导出的图片和编辑框里预览的字体有细微差别」→ 实测：1:1 导出与画板**逐像素一致**，
+    字体没有被替换；真正的差异来自导出流程本身，已修（详见 §7「导出图片」）：
+    ① 导出宽度 ≠ 画板宽度时 `transform-origin` 丢失 → 内容偏移/空白（改在 domToPng 的 style 里给）；
+    ② `border:none` 让内容相对预览偏移 (−2,−2)px（改成 `borderColor: transparent` 保留边框盒）；
+    ③ 默认导出宽度改为 `画板宽 × min(devicePixelRatio, 2)`，高分屏下不再比预览糊一档。
 
 ## 9. 北京旧版（2015 / 经典样式）主题 —— 已完成，遗留项如下
 
