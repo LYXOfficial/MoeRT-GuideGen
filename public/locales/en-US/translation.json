@@ -139,7 +139,7 @@
       "exportAll": "Export All Saves (zip)",
       "exportAllEmpty": "No saves to export",
       "exportAllSuccess_other": "Exported {{count}} saves",
-      "exportAllSuccess_one": "Exported 1 save"
+      "exportAllSuccess_one": "Exported {{count}} save"
     }
   },
   "loading": {
