@@ -4,6 +4,7 @@ import themes from "./themes/themereg";
 import { useDraggable, useDroppable, useDndContext } from "@dnd-kit/core";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { GuideItem } from "../interfaces/guide";
+import type { PropForm } from "../interfaces/editor";
 import { getVisibleClientRect } from "../utils/visibleRect";
 import CustomColorPicker from "./CustomColorPicker";
 
@@ -49,6 +50,8 @@ const DraggableComponentItem: React.FC<ComponentItemProps> = ({
     id,
     data: {
       type,
+      // 拖拽数据保持「干净」的默认 props（配色留空）——
+      // 底板配色覆盖由 GuideBoard 渲染层实时解析，见下方的 previewProps
       item: {
         id,
         type,
@@ -57,6 +60,24 @@ const DraggableComponentItem: React.FC<ComponentItemProps> = ({
       } as GuideItem,
     },
   });
+
+  // 侧栏预览用的配色：底板背景色/默认前景色覆盖时，卡片里的组件示例
+  // 也跟着变色（只注入组件支持的属性，按编辑表单判断）。拖拽数据不带。
+  const previewComponentProps = (() => {
+    if (cardBackground == null && cardForeground == null) return props;
+    const forms =
+      (Component as any).getEditorConfig?.(t)?.forms ?? [];
+    const keys = new Set(forms.map((f: PropForm) => f.key));
+    return {
+      ...props,
+      ...(cardBackground != null && keys.has("background")
+        ? { background: cardBackground }
+        : {}),
+      ...(cardForeground != null && keys.has("foreground")
+        ? { foreground: cardForeground }
+        : {}),
+    };
+  })();
 
   // 跟随指针的是 DragOverlay，卡片本身留在原地当占位，
   // 否则卡片会被拖出侧栏，撑出横向滚动条。
@@ -85,9 +106,9 @@ const DraggableComponentItem: React.FC<ComponentItemProps> = ({
           {/* 双行容器要用预览模式，否则侧栏里的这份示例也会注册可拖放区域，
               把拖到侧栏的元件抢过去 */}
           {type.includes("TwoRowContainer") ? (
-            <Component {...props} preview />
+            <Component {...previewComponentProps} preview />
           ) : (
-            <Component {...props} />
+            <Component {...previewComponentProps} />
           )}
         </div>
         <Typography.Text
@@ -241,30 +262,10 @@ export default function ComponentsList({
               </Select.Option>
             ))}
           </Select>
-          {/* 底板背景色 / 默认前景色：改了之后画板预览和新拖入组件的默认配色都跟着变 */}
+          {/* 默认前景色 / 底板背景色：改了之后画板预览和新拖入组件的默认配色都跟着变。
+              显式设置后，连自带特殊默认色的组件（出口黄、固定线路色等）也强制跟随 */}
           <div className="mt-3">
             <div className="flex items-center justify-between">
-              <Typography.Text className="font-sans text-sm">
-                {t("componentsList.boardBackground")}
-              </Typography.Text>
-              {boardBackground && (
-                <button
-                  type="button"
-                  className="font-sans text-xs text-blue-600 hover:text-blue-500 dark:text-blue-400"
-                  onClick={() => onBoardBackgroundChange?.(null)}
-                >
-                  {t("componentsList.boardBackgroundReset")}
-                </button>
-              )}
-            </div>
-            <div className="mt-1.5">
-              <CustomColorPicker
-                currentTheme={currentTheme}
-                value={boardBackground ?? theme.colors.defaultBackground}
-                onChange={hex => onBoardBackgroundChange?.(hex)}
-              />
-            </div>
-            <div className="mt-3 flex items-center justify-between">
               <Typography.Text className="font-sans text-sm">
                 {t("componentsList.boardForeground")}
               </Typography.Text>
@@ -281,8 +282,34 @@ export default function ComponentsList({
             <div className="mt-1.5">
               <CustomColorPicker
                 currentTheme={currentTheme}
-                value={boardForeground ?? theme.colors.defaultForeground}
+                value={boardForeground ?? null}
+                fallbackColor={theme.colors.defaultForeground}
+                placeholder={t("editor.followTheme")}
                 onChange={hex => onBoardForegroundChange?.(hex)}
+              />
+            </div>
+            <div className="mt-3 flex items-center justify-between">
+              <Typography.Text className="font-sans text-sm">
+                {t("componentsList.boardBackground")}
+              </Typography.Text>
+              {boardBackground && (
+                <button
+                  type="button"
+                  className="font-sans text-xs text-blue-600 hover:text-blue-500 dark:text-blue-400"
+                  onClick={() => onBoardBackgroundChange?.(null)}
+                >
+                  {t("componentsList.boardBackgroundReset")}
+                </button>
+              )}
+            </div>
+            <div className="mt-1.5">
+              <CustomColorPicker
+                currentTheme={currentTheme}
+                // 未设置时传 null（留空显示占位），色块显示主题默认色
+                value={boardBackground ?? null}
+                fallbackColor={theme.colors.defaultBackground}
+                placeholder={t("editor.followTheme")}
+                onChange={hex => onBoardBackgroundChange?.(hex)}
               />
             </div>
           </div>
@@ -319,23 +346,10 @@ export default function ComponentsList({
               name={component.displayName}
               Component={component.component}
               type={component.displayName}
-              // 底板背景色/默认前景色覆盖时，新拖出的组件默认配色跟着变
-              //（只覆盖本来就有对应属性的组件，固定配色的不动）
-              props={
-                boardBackground || boardForeground
-                  ? {
-                      ...component.defaultProps,
-                      ...(boardBackground &&
-                      "background" in component.defaultProps
-                        ? { background: boardBackground }
-                        : {}),
-                      ...(boardForeground &&
-                      "foreground" in component.defaultProps
-                        ? { foreground: boardForeground }
-                        : {}),
-                    }
-                  : component.defaultProps
-              }
+              // 注意：拖拽数据保持「干净」的默认 props（配色留空），
+              // 底板配色覆盖由 GuideBoard 渲染层实时解析（见 boardColorOverrides），
+              // 这样设置/重置覆盖时已上板的组件也能实时跟随
+              props={component.defaultProps}
               currentTheme={currentTheme}
               cardBackground={boardBackground}
               cardForeground={boardForeground}

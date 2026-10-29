@@ -19,9 +19,9 @@
       }
     },
     "boardBackground": "Board background",
-    "boardBackgroundReset": "Default",
+    "boardBackgroundReset": "Clear",
     "boardForeground": "Default foreground",
-    "boardForegroundReset": "Default",
+    "boardForegroundReset": "Clear",
     "clearCanvas": {
       "button": "Clear Canvas",
       "title": "Confirm Clear Canvas",
@@ -146,7 +146,8 @@
       "title": "Editor is already open in another tab",
       "body": "To keep saves from overwriting each other, only one tab may edit at a time. Close the other tab, then click the button below to return to the editor.",
       "refresh": "Closed the other tab — reload this page"
-    }
+    },
+    "followTheme": "Follow theme default"
   },
   "theme": {
     "toDark": "Switch to dark mode",
@@ -221,7 +222,8 @@
               "nursing_room": "Nursing Room",
               "stairs": "Stairs",
               "taxi": "Taxi",
-              "tickets": "Tickets"
+              "tickets": "Tickets",
+              "airport": "Airport"
             },
             "rotation": "Rotation Angle",
             "background": "Background Color",
@@ -261,6 +263,11 @@
               "displayName": "Alignment",
               "left": "Left",
               "right": "Right"
+            },
+            "digitMode": {
+              "displayName": "Digit behavior",
+              "prominent": "Prominent",
+              "flat": "Flat"
             },
             "rectMode": {
               "displayName": "Block width",
@@ -317,6 +324,11 @@
               "left": "Left",
               "right": "Right",
               "center": "Center"
+            },
+            "digitMode": {
+              "displayName": "Digit behavior",
+              "prominent": "Prominent",
+              "flat": "Flat"
             },
             "background": "Background Color",
             "foreground": "Foreground Color"
@@ -474,7 +486,8 @@
               "nursing_room": "Nursing Room",
               "stairs": "Stairs",
               "taxi": "Taxi",
-              "tickets": "Tickets"
+              "tickets": "Tickets",
+              "airport": "Airport"
             },
             "background": "Background Color",
             "foreground": "Foreground Color",

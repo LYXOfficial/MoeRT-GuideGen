@@ -9,6 +9,8 @@ export interface TextProps {
   chinese: string;
   english: string;
   align?: "left" | "center" | "right";
+  /** 数字行为：prominent = 数字放大用 Frutiger；flat = 数字与文字同大，用 Helvetica */
+  digitMode?: "prominent" | "flat";
   foreground?: string;
   background?: string;
 }
@@ -16,8 +18,7 @@ export const textDefaultProps: TextProps = {
   align: "left",
   chinese: "乘车",
   english: "Train",
-  foreground: colors.foreground,
-  background: colors.background,
+  digitMode: "flat",
 };
 
 export const textEditorConfig = (t: (key: string) => string): EditorConfig => ({
@@ -50,6 +51,20 @@ export const textEditorConfig = (t: (key: string) => string): EditorConfig => ({
       ),
     },
     {
+      key: "digitMode",
+      label: "themes.chongqing.components.Text.props.digitMode.displayName",
+      element: (
+        <Select>
+          <Select.Option value="prominent">
+            {t("themes.chongqing.components.Text.props.digitMode.prominent")}
+          </Select.Option>
+          <Select.Option value="flat">
+            {t("themes.chongqing.components.Text.props.digitMode.flat")}
+          </Select.Option>
+        </Select>
+      ),
+    },
+    {
       key: "foreground",
       label: "themes.chongqing.components.Text.props.foreground",
       element: <CustomColorPicker currentTheme={0} />,
@@ -66,8 +81,9 @@ export default function Text({
   chinese = textDefaultProps.chinese,
   english = textDefaultProps.english,
   align = textDefaultProps.align,
-  foreground = textDefaultProps.foreground,
-  background = textDefaultProps.background,
+  digitMode = "flat",
+  foreground = textDefaultProps.foreground ?? colors.foreground,
+  background = textDefaultProps.background ?? colors.background,
 }: TextProps) {
   const textGroupRef = useRef<SVGGElement>(null);
   const [svgWidth, setSvgWidth] = useState(0);
@@ -97,8 +113,9 @@ export default function Text({
     };
   }, [chineseText, englishText]);
 
-  // 汉字里的数字分段出来，单独放大 + dy 偏移；dy 会累积，
-  // 因此逐段维护偏移并给每段显式 dy，避免越排越歪。
+  // 汉字里的数字分段出来。digitMode = "prominent"（突出）时数字放大
+  // （fontSize 30、Frutiger）+ dy 偏移；"flat"（持平）时数字与文字同大同基线，
+  // 字体改用 Helvetica 而不是主题的 Frutiger。dy 会累积，因此逐段维护偏移。
   const DIGIT_DY = 1; // 数字基线相对普通文字的偏移（与 LineText 一致）
   const chineseSegs = (() => {
     let offset = 0;
@@ -107,10 +124,11 @@ export default function Text({
       .filter(Boolean)
       .map(seg => {
         const isDigit = /^\d+$/.test(seg);
-        const desired = isDigit ? DIGIT_DY : 0;
+        const prominent = isDigit && digitMode === "prominent";
+        const desired = prominent ? DIGIT_DY : 0;
         const dy = desired - offset;
         offset = desired;
-        return { seg, isDigit, dy };
+        return { seg, isDigit, prominent, dy };
       });
   })();
 
@@ -136,7 +154,7 @@ export default function Text({
           >
             <text x={0} y={32} fontSize={22} fill={foreground} xmlSpace="preserve">
               {chineseSegs.map((seg, idx) =>
-                seg.isDigit ? (
+                seg.prominent ? (
                   <tspan
                     key={idx}
                     dy={seg.dy}
@@ -147,7 +165,12 @@ export default function Text({
                     {seg.seg}
                   </tspan>
                 ) : (
-                  <tspan key={idx} dy={seg.dy} fill={foreground}>
+                  <tspan
+                    key={idx}
+                    dy={seg.dy}
+                    fill={foreground}
+                    fontFamily={seg.isDigit ? "Helvetica, sans-serif" : undefined}
+                  >
                     {seg.seg}
                   </tspan>
                 )

@@ -19,9 +19,9 @@
       }
     },
     "boardBackground": "보드 배경색",
-    "boardBackgroundReset": "기본",
+    "boardBackgroundReset": "지우기",
     "boardForeground": "기본 전경색",
-    "boardForegroundReset": "기본",
+    "boardForegroundReset": "지우기",
     "clearCanvas": {
       "button": "캔버스 지우기",
       "title": "캔버스 지우기 확인",
@@ -144,7 +144,8 @@
       "title": "편집기가 다른 탭에서 열려 있습니다",
       "body": "저장이 서로 덮어쓰이는 것을 막기 위해 한 번에 한 탭에서만 편집할 수 있습니다. 다른 탭을 닫은 후 아래 버튼으로 편집기로 돌아와 주세요.",
       "refresh": "다른 탭을 닫았습니다. 이 페이지를 새로고침하세요"
-    }
+    },
+    "followTheme": "테마 기본값 따름"
   },
   "theme": {
     "toDark": "다크 모드로 전환",
@@ -219,7 +220,8 @@
               "nursing_room": "수유실",
               "stairs": "계단",
               "taxi": "택시",
-              "tickets": "매표/충전"
+              "tickets": "매표/충전",
+              "airport": "공항"
             },
             "rotation": "회전 각도",
             "background": "배경색",
@@ -259,6 +261,11 @@
               "displayName": "정렬",
               "left": "왼쪽",
               "right": "오른쪽"
+            },
+            "digitMode": {
+              "displayName": "숫자 스타일",
+              "prominent": "강조",
+              "flat": "동일"
             },
             "rectMode": {
               "displayName": "색상 블록 너비",
@@ -315,6 +322,11 @@
               "left": "왼쪽",
               "right": "오른쪽",
               "center": "중앙"
+            },
+            "digitMode": {
+              "displayName": "숫자 스타일",
+              "prominent": "강조",
+              "flat": "동일"
             },
             "background": "배경색",
             "foreground": "전경색"
@@ -472,7 +484,8 @@
               "nursing_room": "수유실",
               "stairs": "계단",
               "taxi": "택시",
-              "tickets": "매표/충전"
+              "tickets": "매표/충전",
+              "airport": "공항"
             },
             "background": "배경색",
             "foreground": "전경색",

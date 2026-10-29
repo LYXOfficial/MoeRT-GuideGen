@@ -19,9 +19,9 @@
       }
     },
     "boardBackground": "底板背景色",
-    "boardBackgroundReset": "默认",
+    "boardBackgroundReset": "清空",
     "boardForeground": "默认前景色",
-    "boardForegroundReset": "默认",
+    "boardForegroundReset": "清空",
     "clearCanvas": {
       "button": "清空画板",
       "title": "确认清空画板",
@@ -144,7 +144,8 @@
       "title": "编辑器已在其它标签页打开",
       "body": "为了防止两个标签页互相覆盖存档，同一时间只允许一个标签页编辑。请关闭其它标签页，再点击下方按钮回到编辑器。",
       "refresh": "已关闭其它标签页，刷新本页"
-    }
+    },
+    "followTheme": "跟随主题默认"
   },
   "theme": {
     "toDark": "切换到深色模式",
@@ -219,7 +220,8 @@
               "nursing_room": "哺乳室",
               "stairs": "楼梯",
               "taxi": "出租车",
-              "tickets": "售票/加值"
+              "tickets": "售票/加值",
+              "airport": "机场"
             },
             "rotation": "旋转角度",
             "background": "背景色",
@@ -259,6 +261,11 @@
               "displayName": "对齐",
               "left": "左",
               "right": "右"
+            },
+            "digitMode": {
+              "displayName": "数字行为",
+              "prominent": "突出",
+              "flat": "持平"
             },
             "rectMode": {
               "displayName": "色块宽度",
@@ -315,6 +322,11 @@
               "left": "左",
               "right": "右",
               "center": "中"
+            },
+            "digitMode": {
+              "displayName": "数字行为",
+              "prominent": "突出",
+              "flat": "持平"
             },
             "background": "背景色",
             "foreground": "前景色"
@@ -472,7 +484,8 @@
               "nursing_room": "哺乳室",
               "stairs": "楼梯",
               "taxi": "出租车",
-              "tickets": "售票/加值"
+              "tickets": "售票/加值",
+              "airport": "机场"
             },
             "background": "背景色",
             "foreground": "前景色",

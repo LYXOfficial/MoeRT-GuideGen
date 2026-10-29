@@ -8,7 +8,6 @@ export interface BlankProps {
   width?: number;
 }
 export const blankDefaultProps: BlankProps = {
-  background: colors.background,
   width: 20,
 };
 export const blankEditorConfig = (
@@ -29,7 +28,7 @@ export const blankEditorConfig = (
 });
 
 function Blank({
-  background = blankDefaultProps.background,
+  background = blankDefaultProps.background ?? colors.background,
   width = blankDefaultProps.width,
 }: BlankProps) {
   return (

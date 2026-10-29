@@ -13,8 +13,6 @@ export interface ArrowProps {
 }
 export const arrowDefaultProps: ArrowProps = {
   type: "up",
-  foreground: colors.foreground,
-  background: colors.background,
 };
 
 // 平铺的全部方向（基础八向 + 前方向左/右、左/右行向后）
@@ -65,8 +63,8 @@ export const arrowEditorConfig = (
 
 function Arrow({
   type = arrowDefaultProps.type,
-  foreground = arrowDefaultProps.foreground,
-  background = arrowDefaultProps.background,
+  foreground = arrowDefaultProps.foreground ?? colors.foreground,
+  background = arrowDefaultProps.background ?? colors.background,
 }: ArrowProps) {
   return (
     <div

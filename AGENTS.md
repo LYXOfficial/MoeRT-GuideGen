@@ -54,7 +54,7 @@ pnpm dev                                  # 开发服务器（5173 端口，常�
    `normalizeSvgLine`（SVG 空白预处理，见 §7）、`useFontsReady`（云端字体就绪后再量宽）。
 6. 图标字形统一走 `beijing/icons/glyph-types.ts` 的 `GlyphProps { color, secondary?, ground? }`
    + `GlyphBox`；所有 `*-real.tsx` 是脚本生成的**真实 PDF 矢量**，不要手改坐标。
-7. i18n：`public/locales/{zh-CN,zh-TW,en-US,ja-JP,ko-KR}/translation.json` 五语言必须同步，
+7. i18n：`public/locales/{zh-CN,zh-HK,en-US,ja-JP,ko-KR}/translation.json` 五语言必须同步，
    键布局 `themes.beijing.components.<Comp>.props.*` 与 `themes.beijing.common.*`。
    写入方式：Python `json.load(object_pairs_hook=OrderedDict)` 改完 `indent=2 + 末尾换行`（保持既有格式）。
 8. **组件背景要铺满整行 64px**（高刚好 64，与相邻组件对齐），内容才能按比例缩放居中 ——
@@ -264,6 +264,10 @@ python3 text_probe.py                                   # 解析 <use> 得到真
   所以永远有效；**将来若给画板加 `key`（比如按主题强制重挂）**，旧节点销毁后监听就失联了，
   高度会冻结在旧值——到时必须把 observer 改成能在节点重建后重新 attach 的形式
   （ref callback / key 变化时重新 observe）。
+- **繁体语言是 zh-HK 不是 zh-TW**（2026-10-29 用户拍板，语言菜单旗标 🇭🇰）：目录
+  `public/locales/zh-HK/`，i18n.ts 启动时会把旧 localStorage 的 `zh-TW` 迁移成 `zh-HK`。
+  **港式用词决策，别「纠正」回去**：MTR 线路名用「綫」（港鐵官方写法，如 觀塘綫/荃灣綫）；
+  標籤頁写「分頁」、「裡」写「裏」；「預設/儲存/應用程式/資料/畫布」港台通用，保持原样。
 
 **深色模式（2026-10-25，全应用）**
 - 双通道切换：`html.dark`（Tailwind v4 `@custom-variant dark`，global.css）+ `body[theme-mode=dark]`

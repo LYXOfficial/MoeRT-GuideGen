@@ -20,8 +20,6 @@ export const directionLoopDefaultProps: DirectionLoopProps = {
   tipchinese: "内环",
   tipenglish: "Clockwise Loop",
   align: "left",
-  foreground: colors.foreground,
-  background: colors.background,
 };
 
 export const directionEditorConfig = (
@@ -82,8 +80,8 @@ export default function DirectionLoop({
   tipchinese = directionLoopDefaultProps.tipchinese,
   tipenglish = directionLoopDefaultProps.tipenglish,
   align = directionLoopDefaultProps.align,
-  foreground = directionLoopDefaultProps.foreground,
-  background = directionLoopDefaultProps.background,
+  foreground = directionLoopDefaultProps.foreground ?? colors.foreground,
+  background = directionLoopDefaultProps.background ?? colors.background,
 }: DirectionLoopProps) {
   const directionGroupRef = useRef<SVGGElement>(null);
   const [svgWidth, setSvgWidth] = useState(0);

@@ -19,9 +19,9 @@
       }
     },
     "boardBackground": "ボードの背景色",
-    "boardBackgroundReset": "デフォルト",
+    "boardBackgroundReset": "クリア",
     "boardForeground": "デフォルト前景色",
-    "boardForegroundReset": "デフォルト",
+    "boardForegroundReset": "クリア",
     "clearCanvas": {
       "button": "キャンバスをクリア",
       "title": "キャンバスのクリアを確認",
@@ -144,7 +144,8 @@
       "title": "エディターは別のタブで開いています",
       "body": "セーブの上書きを防ぐため、同時に編集できるタブは 1 つだけです。別のタブを閉じてから、下のボタンでエディターに戻ってください。",
       "refresh": "別のタブを閉じたので、このページを再読み込み"
-    }
+    },
+    "followTheme": "テーマ既定に従う"
   },
   "theme": {
     "toDark": "ダークモードに切り替え",
@@ -219,7 +220,8 @@
               "nursing_room": "授乳室",
               "stairs": "階段",
               "taxi": "タクシー",
-              "tickets": "券売/チャージ"
+              "tickets": "券売/チャージ",
+              "airport": "空港"
             },
             "rotation": "回転角度",
             "background": "背景色",
@@ -259,6 +261,11 @@
               "displayName": "配置",
               "left": "左",
               "right": "右"
+            },
+            "digitMode": {
+              "displayName": "数字スタイル",
+              "prominent": "強調",
+              "flat": "フラット"
             },
             "rectMode": {
               "displayName": "色ブロック幅",
@@ -315,6 +322,11 @@
               "left": "左",
               "right": "右",
               "center": "中央"
+            },
+            "digitMode": {
+              "displayName": "数字スタイル",
+              "prominent": "強調",
+              "flat": "フラット"
             },
             "background": "背景色",
             "foreground": "前景色"
@@ -472,7 +484,8 @@
               "nursing_room": "授乳室",
               "stairs": "階段",
               "taxi": "タクシー",
-              "tickets": "券売/チャージ"
+              "tickets": "券売/チャージ",
+              "airport": "空港"
             },
             "background": "背景色",
             "foreground": "前景色",

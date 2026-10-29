@@ -4,26 +4,21 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 
 /**
- * 应用版本号 v.yy.mm.dd.n：n = 该日期的第 n 个提交（git log 时间正序），
- * 取 HEAD 所在的提交。git 不可用（CI 打包 / 非仓库目录）时退化为 v.dev。
+ * 应用版本号 v.yy.mm.dd.n：日期取 HEAD 提交的日期，
+ * n = 本项目的第 n 个提交（git rev-list 全量计数）。
+ * git 不可用（CI 打包 / 非仓库目录）时退化为 v.dev。
  */
 function appVersion(): string {
   try {
-    const out = execSync(
-      'git log --reverse --date=format:"%y.%m.%d" --format="%ad"',
+    const date = execSync(
+      'git log -1 --date=format:"%y.%m.%d" --format="%ad"',
       { encoding: "utf8" }
     ).trim();
-    if (!out) return "v.dev";
-    const counts = new Map<string, number>();
-    let version = "v.dev";
-    for (const line of out.split("\n")) {
-      const date = line.trim();
-      if (!date) continue;
-      const n = (counts.get(date) ?? 0) + 1;
-      counts.set(date, n);
-      version = `v.${date}.${n}`;
-    }
-    return version;
+    const n = execSync("git rev-list --count HEAD", {
+      encoding: "utf8",
+    }).trim();
+    if (!date || !n) return "v.dev";
+    return `v.${date}.${n}`;
   } catch {
     return "v.dev";
   }

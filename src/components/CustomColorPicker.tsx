@@ -3,9 +3,14 @@ import { ColorPicker as SemiColorPicker, Select } from "@douyinfe/semi-ui";
 import themes from "./themes/themereg";
 import { useTranslation } from "react-i18next";
 interface CustomColorPickerProps {
-  value?: string;
+  /** 当前颜色；null/undefined = 未设置（留空，跟随全局默认） */
+  value?: string | null;
   onChange?: (value: string) => void;
   currentTheme: number;
+  /** value 为空时色块显示的兜底颜色（默认白） */
+  fallbackColor?: string;
+  /** value 为空时常量下拉显示的占位文案 */
+  placeholder?: string;
 }
 
 /**
@@ -18,6 +23,8 @@ const CustomColorPicker: React.FC<CustomColorPickerProps> = ({
   value,
   onChange,
   currentTheme,
+  fallbackColor,
+  placeholder,
 }) => {
   const colors = themes[currentTheme][1].colors.colors;
   const { t } = useTranslation();
@@ -121,7 +128,7 @@ const CustomColorPicker: React.FC<CustomColorPickerProps> = ({
       <SemiColorPicker
         alpha={false}
         value={SemiColorPicker.colorStringToValue(
-          colorPickerValue || "#ffffff"
+          colorPickerValue || fallbackColor || "#ffffff"
         )}
         onChange={handleColorPickerChange}
         usePopover={true}
@@ -134,12 +141,15 @@ const CustomColorPicker: React.FC<CustomColorPickerProps> = ({
       />
       <Select
         value={
-          Object.entries(colors).find(
-            ([_, v]) => v === colorPickerValue
-          )?.[0] || ""
+          // value 为空 = 留空（跟随全局默认）：不匹配任何常量，显示占位文案
+          value == null
+            ? ""
+            : Object.entries(colors).find(
+                ([_, v]) => v === colorPickerValue
+              )?.[0] || ""
         }
         onChange={handleSelectChange}
-        placeholder="选择颜色变量"
+        placeholder={placeholder || "选择颜色变量"}
         className="flex-1"
       >
         {Object.entries(colors).map(([key, colorValue]) => (

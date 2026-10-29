@@ -35,6 +35,7 @@ import NursingRoom from "./icons/nursing-room";
 import Stairs from "./icons/stairs";
 import Taxi from "./icons/taxi";
 import Tickets from "./icons/tickets";
+import Airport from "./icons/airport";
 
 export const regicons = [
   {
@@ -156,6 +157,10 @@ export const regicons = [
   {
     label: "themes.chongqing.components.Icon.props.icon.tickets",
     component: Tickets,
+  },
+  {
+    label: "themes.chongqing.components.Icon.props.icon.airport",
+    component: Airport,
   }
 ];
 
@@ -168,8 +173,6 @@ export interface IconProps {
 
 export const iconDefaultProps: IconProps = {
   icon: "themes.chongqing.components.Icon.props.icon.train",
-  background: colors.background,
-  foreground: colors.foreground,
   rotation: "0"
 };
 
@@ -233,8 +236,8 @@ export const iconEditorConfig = (t: (key: string) => string): EditorConfig => ({
 
 function Icon({
   icon = iconDefaultProps.icon,
-  background = iconDefaultProps.background,
-  foreground = iconDefaultProps.foreground,
+  background = iconDefaultProps.background ?? colors.background,
+  foreground = iconDefaultProps.foreground ?? colors.foreground,
   rotation = iconDefaultProps.rotation
 }: IconProps) {
   const IconComponent = regicons.find(i => i.label === icon)?.component as FC<IconProps>;

@@ -31,6 +31,7 @@ import NursingRoom from "./icons/nursing-room";
 import Stairs from "./icons/stairs";
 import Taxi from "./icons/taxi";
 import Tickets from "./icons/tickets";
+import Airport from "./icons/airport";
 
 export const regicons = [
   {
@@ -136,6 +137,10 @@ export const regicons = [
   {
     label: "themes.chengdu.components.Icon.props.icon.tickets",
     component: Tickets,
+  },
+  {
+    label: "themes.chengdu.components.Icon.props.icon.airport",
+    component: Airport,
   }
 ];
 

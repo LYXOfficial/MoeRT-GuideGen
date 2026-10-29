@@ -26,7 +26,7 @@ const Parking = ({
         <text
           fill={background}
           style={{
-            fontFamily: "sans-serif",
+            fontFamily: "'Helvetica', 'Arial', sans-serif",
             fontSize: "165px",
             fontWeight: 700,
           }}

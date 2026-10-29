@@ -13,6 +13,8 @@ export interface LineTextProps {
   align?: string;
   /** 色块宽度：default = 19 宽（垂直居中）；narrow = 15 宽（旧版式，贴底） */
   rectMode?: "default" | "narrow";
+  /** 数字行为：prominent = 数字放大用 Frutiger（默认）；flat = 数字与文字同大，用 Helvetica */
+  digitMode?: "prominent" | "flat";
   foreground?: string;
   background?: string;
 }
@@ -23,8 +25,7 @@ export const lineTextDefaultProps: LineTextProps = {
   english: "Bitong Line",
   align: "left",
   rectMode: "default",
-  foreground: colors.foreground,
-  background: colors.background,
+  digitMode: "prominent",
 };
 
 export const lineTextEditorConfig = (
@@ -74,6 +75,20 @@ export const lineTextEditorConfig = (
       ),
     },
     {
+      key: "digitMode",
+      label: "themes.chongqing.components.LineText.props.digitMode.displayName",
+      element: (
+        <Select>
+          <Select.Option value="prominent">
+            {t("themes.chongqing.components.LineText.props.digitMode.prominent")}
+          </Select.Option>
+          <Select.Option value="flat">
+            {t("themes.chongqing.components.LineText.props.digitMode.flat")}
+          </Select.Option>
+        </Select>
+      ),
+    },
+    {
       key: "foreground",
       label: "themes.chongqing.components.LineText.props.foreground",
       element: <CustomColorPicker currentTheme={0} />,
@@ -101,6 +116,8 @@ function LineText({
   // 注意：不给默认值 —— 老存档里没有这个字段，要按「窄」渲染（迁移）；
   // 新拖入的组件带着 defaultProps 里的 "default"（宽），不受影响
   rectMode,
+  // 数字行为默认「突出」：老存档里没有这个字段也按突出渲染（和旧版一致）
+  digitMode = "prominent",
   foreground = lineTextDefaultProps.foreground ?? colors.foreground,
   background = lineTextDefaultProps.background ?? colors.background,
 }: LineTextProps) {
@@ -158,9 +175,10 @@ function LineText({
     };
   }, [chineseText, englishText]);
 
-  // 汉字里的数字分段出来，单独放大（fontSize 32、字体 Frutiger）+ dy 偏移；
-  // SVG 的 dy 对后续 tspan 是累积的，所以逐段维护偏移、给每段显式 dy：
-  // 数字段落到 +DIGIT_DY，普通段回 0，避免“越来越歪”。
+  // 汉字里的数字分段出来。digitMode = "prominent"（默认）时数字放大
+  // （fontSize 30、Frutiger）+ dy 偏移；"flat"（持平）时数字与文字同大同基线，
+  // 字体改用 Helvetica 而不是 Frutiger。dy 对后续 tspan 累积，
+  // 所以逐段维护偏移、给每段显式 dy，避免「越来越歪」。
   const DIGIT_DY = 1; // 数字基线相对普通文字的偏移
   const chineseSegs = (() => {
     let offset = 0;
@@ -169,10 +187,11 @@ function LineText({
       .filter(Boolean)
       .map(seg => {
         const isDigit = /^\d+$/.test(seg);
-        const desired = isDigit ? DIGIT_DY : 0; // 该段想要落到的基线偏移
+        const prominent = isDigit && digitMode === "prominent";
+        const desired = prominent ? DIGIT_DY : 0; // 该段想要落到的基线偏移
         const dy = desired - offset; // 相对当前累积偏移的补偿量
         offset = desired;
-        return { seg, isDigit, dy };
+        return { seg, isDigit, prominent, dy };
       });
   })();
 
@@ -205,7 +224,7 @@ function LineText({
           >
             <text x={0} y={32} fontSize={22} fill={foreground} xmlSpace="preserve">
               {chineseSegs.map((seg, idx) =>
-                seg.isDigit ? (
+                seg.prominent ? (
                   <tspan
                     key={idx}
                     dy={seg.dy}
@@ -216,7 +235,12 @@ function LineText({
                     {seg.seg}
                   </tspan>
                 ) : (
-                  <tspan key={idx} dy={seg.dy} fill={foreground}>
+                  <tspan
+                    key={idx}
+                    dy={seg.dy}
+                    fill={foreground}
+                    fontFamily={seg.isDigit ? "Helvetica, sans-serif" : undefined}
+                  >
                     {seg.seg}
                   </tspan>
                 )

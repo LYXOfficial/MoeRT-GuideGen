@@ -11,11 +11,13 @@ import React, {
   forwardRef,
   useRef,
   useEffect,
+  useCallback,
   Children,
 } from "react";
 import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import DraggableItem from "./DraggableItem";
+import CustomColorPicker from "./CustomColorPicker";
 import { EditingPropsContext } from "./EditingPropsContext";
 import themes from "./themes/themereg.ts";
 import type { PropForm } from "../interfaces/editor.ts";
@@ -144,6 +146,38 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
     const [boardBackground, setBoardBackground] = useState<string | null>(null);
     // 默认前景色覆盖：同上，管的是文字/前景配色
     const [boardForeground, setBoardForeground] = useState<string | null>(null);
+    // 底板配色覆盖的渲染解析：按编辑表单判断组件是否支持 background/foreground
+    // （留空的属性实时跟随当前设置；显式设置过自己颜色的组件用自己的）。
+    // 能力判定按 type 缓存，避免每次渲染都重建编辑表单
+    const boardColorCapableRef = useRef<Map<string, { bg: boolean; fg: boolean }>>(
+      new Map()
+    );
+    const boardColorOverrides = useCallback(
+      (item: GuideItem): Record<string, any> => {
+        if (!boardBackground && !boardForeground) return {};
+        const cache = boardColorCapableRef.current;
+        let cap = cache.get(item.type);
+        if (!cap) {
+          const comp = themes[currentTheme][1].components.find(
+            c => c.displayName === item.type
+          );
+          const forms =
+            comp?.component != null
+              ? ((comp.component as any).getEditorConfig?.(t)?.forms ?? [])
+              : [];
+          cap = {
+            bg: forms.some((f: PropForm) => f.key === "background"),
+            fg: forms.some((f: PropForm) => f.key === "foreground"),
+          };
+          cache.set(item.type, cap);
+        }
+        const out: Record<string, any> = {};
+        if (boardBackground && cap.bg) out.background = boardBackground;
+        if (boardForeground && cap.fg) out.foreground = boardForeground;
+        return out;
+      },
+      [boardBackground, boardForeground, currentTheme, t]
+    );
     const [isRestoring, setIsRestoring] = useState(false);
     const [editingItem, setEditingItem] = useState<{
       item: GuideItem;
@@ -1006,6 +1040,8 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
                             {React.isValidElement(item.element)
                               ? React.cloneElement(item.element, {
                                   ...item.props,
+                                  // 底板配色覆盖：留空的前景/背景实时跟随当前设置
+                                  ...boardColorOverrides(item),
                                   // 双行容器内部条目被选中时，让它给对应子条目盖遮罩
                                   ...(item.type?.includes("TwoRowContainer")
                                     ? { selectedId: editingItem?.item.id }
@@ -1179,7 +1215,31 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
                         </Typography.Text>
                         {React.cloneElement(form.element as any, {
                           checked: editingItem.item.props[form.key],
-                          value: editingItem.item.props[form.key],
+                          value: (() => {
+                            const v = editingItem.item.props[form.key];
+                            if (v != null) return v;
+                            // 配色属性留空 = 跟随主题默认：
+                            // 传 null 让取色器显示「留空」占位而不是误显示白色，
+                            // 色块由 fallbackColor 显示实际生效的主题默认色
+                            if (
+                              form.key === "foreground" ||
+                              form.key === "background"
+                            ) {
+                              return null;
+                            }
+                            return v;
+                          })(),
+                          ...(form.element.type === CustomColorPicker
+                            ? {
+                                fallbackColor:
+                                  form.key === "foreground"
+                                    ? themes[currentTheme][1].colors
+                                        .defaultForeground
+                                    : themes[currentTheme][1].colors
+                                        .defaultBackground,
+                                placeholder: t("editor.followTheme"),
+                              }
+                            : {}),
                           onChange: (value: any) => {
                             setEditingItem({
                               ...editingItem,

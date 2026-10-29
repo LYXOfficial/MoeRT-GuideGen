@@ -65,7 +65,7 @@ export default function Header({
   // 语言选项
   const languages = [
     { code: "zh-CN", name: "简体中文", flag: "🇨🇳" },
-    { code: "zh-TW", name: "繁體中文", flag: "🇭🇰" },
+    { code: "zh-HK", name: "繁體中文", flag: "🇭🇰" },
     { code: "en-US", name: "English", flag: "🇺🇸" },
     { code: "ja-JP", name: "日本語", flag: "🇯🇵" },
     { code: "ko-KR", name: "한국어", flag: "🇰🇷" },

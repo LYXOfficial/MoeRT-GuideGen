@@ -14,8 +14,6 @@ export interface StationNameProps {
 export const stationNameDefaultProps: StationNameProps = {
   chinese: "红旗河沟",
   english: "Hongqihegou",
-  foreground: colors.foreground,
-  background: colors.background,
 };
 
 export const stationNameEditorConfig = (
