@@ -1,12 +1,19 @@
 /**
  * 存档版本迁移注册表（预留脚手架）。
  *
- * 未来 SaveData.version 升级（1 → 2 → …）时：
- *   1. 在 MIGRATIONS 里按「旧版本号 → 迁移函数」登记，函数返回带上新 version 的完整数据；
- *   2. 把 LATEST_SAVE_VERSION 提到最新版本号。
+ * 存档版本号**只有这一个取值点**（LATEST_SAVE_VERSION）：写入侧（buildSaveData /
+ * createEmptySaveData）和校验侧（isSaveData 的 version 区间判断）都从它派生，
+ * 改版本号只需要动这里，不会再出现「改了写入忘了改校验 → 老档被拒收」的坑。
  *
- * loadArchiveData 与导入工程文件的路径都会在 isSaveData 校验之前调用
- * migrateSaveData 自动逐级迁移——老存档不会再被当成「校验不过」拒收或清空。
+ * 升级流程：
+ *   1. 纯追加式改动（新增可选字段、老字段语义不变）——**不用改版本号**。
+ *      老存档缺字段读成 undefined，代码里用默认值兜住即可；版本号只在破坏性改动时才动。
+ *   2. 破坏性改动（字段改名 / 删字段 / 语义变了）——改 LATEST_SAVE_VERSION，
+ *      并在 MIGRATIONS 里按「旧版本号 → 迁移函数」补一条，函数返回带上新 version 的完整数据。
+ *
+ * loadArchiveData、旧版单存档（guide-autosave）迁移、导入工程文件的路径都会在
+ * isSaveData 校验之前调用 migrateSaveData 自动逐级迁移——老存档不会再被当成
+ * 「校验不过」拒收或清空。
  */
 
 type VersionedData = { version: number } & Record<string, unknown>;

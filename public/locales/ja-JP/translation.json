@@ -33,6 +33,8 @@
     "showItemFrame": "コンポーネントの点線枠を表示",
     "width": "幅",
     "showDividers": "区切り線を表示",
+    "twoRowEmpty": "空行",
+    "twoRowGrab": "コンテナをドラッグ",
     "removeRow": {
       "title": "この行を削除",
       "confirm": "この行を削除しますか？行内のコンポーネントは消去されます。",
@@ -52,7 +54,8 @@
       "noElement": "標識要素が見つかりません",
       "exportFailed": "エクスポート失敗："
     },
-    "success": "エクスポート成功！"
+    "success": "エクスポート成功！",
+    "scale": "倍率"
   },
   "saves": {
     "clear_local_button": "すべての保存データを消去",
@@ -75,7 +78,17 @@
       "unsupportedVersion": "サポートされていないバージョン",
       "unsupportedTheme": "この保存データのテーマは現在のバージョンに存在しません",
       "created": "インポートしました — 「{{name}}」として保存されました",
-      "bundleCreated_other": "{{count}} 件の保存データをインポートしました"
+      "multiOk": "{{count}} 件の保存データをインポートしました",
+      "multiPartial": "{{success}} 件の保存データをインポートしました（{{failed}} 件失敗）",
+      "dropHint": "ドロップして保存データをインポート",
+      "onlyJson": "インポートできるのは .json の保存データだけです",
+      "badRow": "{{row}} 行目が配列ではありません",
+      "badItemWhere": "{{row}} 行目・{{index}} 番目のコンポーネント：",
+      "badItemObject": "オブジェクトではありません",
+      "badItemId": "有効な id がありません",
+      "badItemType": "有効な type がありません",
+      "badItemProps": "props がオブジェクトではありません",
+      "badItemUnknown": "この型は現在のテーマに存在しません（{{type}}）"
     },
     "export": {
       "success": "アーカイブがエクスポートされました"
@@ -367,6 +380,7 @@
         }
       },
       "colors": {
+        "transparent": "透明",
         "foreground": "前景色",
         "background": "背景色",
         "exitforeground": "出口前景色",
@@ -638,6 +652,7 @@
         }
       },
       "colors": {
+        "transparent": "透明",
         "foreground": "前景色",
         "background": "背景色",
         "exitforeground": "出口前景色",
@@ -859,6 +874,7 @@
         }
       },
       "colors": {
+        "transparent": "透明",
         "background": "背景色",
         "foreground": "前景色",
         "background2": "背景色2",
@@ -902,6 +918,7 @@
     "beijing": {
       "displayName": "北京（新版）",
       "colors": {
+        "transparent": "透明",
         "background": "地色（背景）",
         "foreground": "前景色",
         "textblue": "文字用ブルー",
@@ -1215,6 +1232,7 @@
     "beijingOld": {
       "displayName": "北京地下鉄（旧スタイル）",
       "colors": {
+        "transparent": "透明",
         "background": "地色（背景）",
         "foreground": "前景色",
         "textblue": "文字用ブルー",

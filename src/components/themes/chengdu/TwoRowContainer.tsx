@@ -3,6 +3,7 @@ import { useMemo, useState, memo, useLayoutEffect, useRef } from "react";
 import { useDroppable } from "@dnd-kit/core";
 import { SortableContext, horizontalListSortingStrategy } from "@dnd-kit/sortable";
 import { InputNumber } from "@douyinfe/semi-ui";
+import { useTranslation } from "react-i18next";
 import DraggableItem from "../../DraggableItem";
 import themes from "../themereg";
 import type { GuideItem } from "../../../interfaces/guide";
@@ -51,6 +52,7 @@ function TwoRowContainer({
   selectedId,
   preview = false,
 }: TwoRowContainerProps) {
+  const { t } = useTranslation();
   const [rawId] = useState(() => id || `tworow-${Math.random().toString(36).slice(2)}`);
   const autoId = preview ? `${rawId}-preview` : rawId;
   const themeIndex = typeof currentTheme === "number" ? currentTheme : 0;
@@ -211,7 +213,7 @@ function TwoRowContainer({
             alignItems: "flex-start",
             justifyContent: "center",
           }}
-          title="拖拽容器"
+          title={t("board.twoRowGrab")}
         >
           <div
             style={{
@@ -267,6 +269,7 @@ const TwoRowRow = memo(function TwoRowRow({
   /** 内层（未缩放）布局宽度；null = 还没量出来，先用 fit-content */
   rowWidth?: number | null;
 }) {
+  const { t } = useTranslation();
   const { setNodeRef, isOver } = useDroppable({
     id,
     data: {
@@ -351,8 +354,10 @@ const TwoRowRow = memo(function TwoRowRow({
               )
             )
           ) : (
-            // 空行占位符，确保有可拖拽的区域
+            // 空行占位符，确保有可拖拽的区域；guide-item-hint = 纯编辑器装饰，
+            // 导出图片时会被 ExportDialog 的 filter 剔除（否则「空行」两字会烘进导出图）
             <div
+              className="guide-item-hint"
               style={{
                 minWidth: 40,
                 minHeight: 32,
@@ -365,7 +370,7 @@ const TwoRowRow = memo(function TwoRowRow({
                 pointerEvents: "none",
               }}
             >
-              空行
+              {t("board.twoRowEmpty")}
             </div>
           )}
         </SortableContext>

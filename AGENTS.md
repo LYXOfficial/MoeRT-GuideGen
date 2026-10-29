@@ -33,7 +33,7 @@ pnpm dev                                  # 开发服务器（5173 端口，常�
 - ✅ **全应用深色/浅色模式**（2026-10-25）：初始跟随浏览器 `prefers-color-scheme`，
   手动切换后写 `localStorage['guide-theme-mode']` 覆盖。实现要点见 §7 末尾「深色模式」。
 - ✅ **多存档管理**（2026-10-25）：`src/utils/archiveStore.ts` + `src/components/ArchiveDialog.tsx`。
-  顶栏文件夹入口 + 当前存档名；新建 / 切换 / 重命名 / 创建副本 / 下载 / 删除 / 导入（单存档或整包）/
+  顶栏文件夹入口 + 当前存档名；新建 / 切换 / 重命名 / 创建副本 / 下载 / 删除 / 导入（单个存档 JSON）/
   清除全部；自动保存只写活动存档；旧单存档自动迁移。要点见 §7 末尾「多存档」。
 
 ## 3. 主题架构契约（新主题必须遵守）
@@ -55,9 +55,11 @@ pnpm dev                                  # 开发服务器（5173 端口，常�
    `normalizeSvgLine`（SVG 空白预处理，见 §7）、`useFontsReady`（云端字体就绪后再量宽）。
 6. 图标字形统一走 `beijing/icons/glyph-types.ts` 的 `GlyphProps { color, secondary?, ground? }`
    + `GlyphBox`；所有 `*-real.tsx` 是脚本生成的**真实 PDF 矢量**，不要手改坐标。
-7. i18n：`public/locales/{zh-CN,zh-HK,en-US,ja-JP,ko-KR}/translation.json` 五语言必须同步，
+7. i18n：`public/locales/{zh-CN,zh-HK,yue-HK,en-US,ja-JP,ko-KR,ru-RU,de-DE,fr-FR,es-ES,pt-PT}/
+   translation.json` **11 语言必须同步**（新增键 11 份都要加），
    键布局 `themes.beijing.components.<Comp>.props.*` 与 `themes.beijing.common.*`。
    写入方式：Python `json.load(object_pairs_hook=OrderedDict)` 改完 `indent=2 + 末尾换行`（保持既有格式）。
+   校验脚本思路：比对键集合（复数后缀 `_one/_few/_many/_other` 视为同一族）+ `{{占位符}}` 一致性。
 8. **组件背景要铺满整行 64px**（高刚好 64，与相邻组件对齐），内容才能按比例缩放居中 ——
    ExitNum 曾因背景盒跟着缩到 57.6px，与出口图标相邻时上下露出 3.2px 台阶（§8-15）。
 
@@ -234,6 +236,20 @@ python3 text_probe.py                                   # 解析 <use> 得到真
 - 窄屏（390px）实测：编辑弹窗、颜色面板、Select 下拉都能完整落在视口内。
 
 **导出图片（2026-10-28）**
+- **宽高都可改、互相等比联动**（2026-10-29）：`ExportDialog` 里两个 `Input` 都能编辑，
+  改任一边另一边按「画板原始宽高比」自动跟随（`setWidthKeepingRatio` /
+  `setHeightKeepingRatio`，比例 = `baseHeight / baseWidth`）。打开对话框时**宽高都从 DOM 现量**
+  （`guide.offsetWidth / offsetHeight`），不再用 `guideHeight` 这个 prop —— 它是 App 里
+  `ResizeObserver` 上报的，而那个 observer 只在挂载时认一次画板节点，换主题/重挂后会失联，
+  高度会停在旧值（出现过「三行 64 应该是 192/196，对话框却给 263」这种怪数）。
+- **导出默认 2×、不乘 devicePixelRatio**（2026-10-29 用户拍板）：打开对话框时 `width = 画板宽 × 2`、
+  `height = 行数×64 × 2`（`EXPORT_DEFAULT_SCALE = 2`），不再乘 DPR —— 以前 512 宽的板在 135% 屏上
+  默认给 691，现在一律 1024×128。倍率滑条 `0.5 … 16`、**step 0.5**，刻度只标 `0.5×/2×/4×/8×/16×`
+  （按真实倍率线性定位，1× 只有 3% 宽，标了会重叠）。输入框上限同步到 16×。
+- **导出尺寸按内容盒算**（2026-10-29 用户拍板）：高度基准取 `guide.clientHeight`（行数×64），
+  不是 `offsetHeight`（+4px 边框）；克隆时把画板边框整个去掉（`style.borderWidth: "0px"`）——
+  边框只是编辑辅助线，去掉后内容正好铺满画布（512 宽画板 → 克隆实测 512×64，行高 64 不多不少）。
+  以前保留边框盒会把内容整体压低/右移 2px，并且让「三行 64」变成 196 而不是 192。
 - **不能改真实节点的 `transform` 再导出**：modern-screenshot 克隆节点时**不会带上
   `transform-origin`**（克隆根的 `transform` 在、origin 丢，回退成 `50% 50%`）。于是只要
   导出宽度 ≠ 画板宽度，内容就会绕克隆根中心缩放并整体平移 —— 实测 1.5× 只剩左上角一小块
@@ -269,6 +285,25 @@ python3 text_probe.py                                   # 解析 <use> 得到真
   `public/locales/zh-HK/`，i18n.ts 启动时会把旧 localStorage 的 `zh-TW` 迁移成 `zh-HK`。
   **港式用词决策，别「纠正」回去**：MTR 线路名用「綫」（港鐵官方写法，如 觀塘綫/荃灣綫）；
   標籤頁写「分頁」、「裡」写「裏」；「預設/儲存/應用程式/資料/畫布」港台通用，保持原样。
+  **2026-10-29 用户再次拍板：zh-HK 全文件「線」→「綫」**（分隔綫/虛綫框/綫路編號一律「綫」），
+  yue-HK 同步照此。
+  **zh-TW 自动路由到 zh-HK**（2026-10-29）：`src/utils/i18n.ts` 的 `routeLanguage()` 是唯一入口——
+  项目只有一套繁体资源，所以 zh-TW / zh-Hant / zh-MO 一律路由到 zh-HK（`zh-Hans/zh-CN/zh-SG` 给 zh-CN，
+  `yue/zh-yue` 给 yue-HK）。别名码登记在 `supportedLngs` 里（否则 i18next 会在过滤阶段就把
+  navigator 的 zh-TW 回落成 zh-CN），`backend.loadPath` 是函数、按路由结果取文件（免得先 404 一次闪语言），
+  再用 `languageChanged` 微任务兜住运行时传进来的别名码。**加语言包时不要去建 zh-TW 目录。**
+- **11 语言**（2026-10-29）：在 zh-HK 后加 **yue-HK 繁體中文（粵語）**（旗标 🇲🇴 区分），
+  再追加 ru-RU / de-DE / fr-FR / es-ES / pt-PT。`Header.tsx` 的 `languages` 数组顺序即菜单顺序，
+  `src/utils/i18n.ts` 的 `supportedLngs` 必须同步，否则切过去会被回落成中文。
+  非中文语言在 `saves.import.bundleCreated_*` / `saves.archives.exportAllSuccess_*` 上要补
+  单复数形式（俄语 `_one/_few/_many/_other`，其余 `_one/_other`，中文只有 `_other`）。
+- **Blueaka 是 GBK 字体，有坑**（2026-10-29）：「é/è」和整个西里尔字母在 GBK 里都是**全角**字形，
+  俄语界面整片字距被撑开、法语 Thème 变成「Th è me」。`global.css` 里已按 `html[lang]` 给
+  ru/de/fr/es/pt 五种语言换系统比例字体（`--font-sans`），中日韩照旧 Blueaka。
+  **新增语言如果也是拉丁/西里尔文，必须把 lang 加进那条选择器**，否则又会「全角」。
+- **「组件虚线框」开关在侧栏主题下方**（2026-10-29）：曾放顶栏，法/德/俄的标签 ~270px 把顶栏顶爆，
+  收到 xl 以下只留勾选框又被用户判「字都没了」。现在在 `ComponentsList` 主题选择下面，
+  顶栏不再有这个开关（`Header` props 里已删）。
 
 **深色模式（2026-10-25，全应用）**
 - 双通道切换：`html.dark`（Tailwind v4 `@custom-variant dark`，global.css）+ `body[theme-mode=dark]`
@@ -312,14 +347,51 @@ python3 text_probe.py                                   # 解析 <use> 得到真
   崩溃页也能直接用），包内每个存档一个 `moert-guidegen-save-<存档名>_<时间戳>.json`，
   内容和「单独下载某个存档」完全一致（就是 localStorage 里的原始文本）。
   存档管理底部「清除全部存档」左边也有同一个按钮。
-  旧的整包 JSON `{type:"moert-guidegen-archives", ...}` 仍可**导入**（兼容老备份），只是不再导出。
+  **旧的整包 JSON（`{type:"moert-guidegen-archives", ...}`）导入支持已在 2026-10-29 彻底删除**：
+  `ArchiveBundle` 类型、`createArchiveBundle`、`isArchiveBundle` 全部移除，导入只接受单个存档 JSON
+  （或直接拖 zip 里的单个文件）。`createArchiveBundle` 从加入起就没有任何调用点（导出走 zip），
+  `isArchiveBundle` 也只剩一条导入兼容分支，用户确认「不需要兼容」，一并删掉。
 - 崩溃页导出：ErrorBoundary 的「导出存档」打开纯 HTML 弹窗（**不依赖 Semi / React 主题**），
   列出全部存档、每行可单独导出；「导出全部存档」同样打 zip（复用 `exportAllArchivesZip`）。
   深色只写 `@media (prefers-color-scheme: dark)` 的 CSS，不用 JS 判断（崩溃时 JS 状态不可靠）。
+- **导入支持多选 + 全页拖放**（2026-10-29）：`importSaveData` 的 file input 带 `multiple`，
+  真正干活的 `importFiles(files: File[])` 逐文件解析（`migrateSaveData` → `isSaveData` → 主题校验），
+  单个失败不影响其它文件；全部处理完**切到最后一个成功导入的存档**（列表会自动滚到它）。
+  提示分三种：只有 1 个文件 → 成功用 `saves.import.created`、失败给具体原因；
+  多个全成功 → `saves.import.multiOk`（已导入 {{count}} 个）；有失败 → `saves.import.multiPartial`
+  （已导入 {{success}} 个，{{failed}} 个失败）后面接第一条失败原因。
+  全页拖放走 window 上的 `dragenter/dragover/dragleave/drop`，只认 `dataTransfer.types` 含 `Files`
+  （**不会干扰 dnd-kit**，它走 pointer 事件），`dragover` 必须 preventDefault 否则浏览器会直接打开文件
+  把当前画板顶掉；dragenter/dragleave 用 depth 计数防闪烁；遮罩是 `z-[9999] pointer-events-none`。
+  非 .json 文件 → `saves.import.onlyJson`。
+- **导入时做组件条目级校验**（2026-10-29）：`findBadSaveItem()` 会逐行逐项检查
+  `id`（非空字符串）/ `type`（非空字符串）/ `props`（对象或空，但不能是数字/字符串）/
+  `type` 是否在解析出的主题 `components` 里（`displayName` 全等，形如
+  `themes.<主题>.components.<组件>`）。任何一条不合格就**整份文件拒收**并给出定位：
+  「第 N 行第 M 个组件：缺少有效的 id / 类型在当前主题里不存在（xxx）」。
+  以前这些坏条目会被 `createArchive` 原样存进去，载入时 GuideBoard 只 `console.warn`
+  然后 `return null` —— 表现就是「导入成功了但少了个元件」，用户完全不知道为什么。
 - DEV-only 全局崩溃页验收：打开 `http://127.0.0.1:5173/?__crash_test=1`，App 挂载后 setState
   让 `DevGlobalCrash` 在 render 期 `throw`（与存档 / 画板无关，是真正的 React 全局 ErrorBoundary），
   不改 localStorage；URL 里的 query 会被移除，刷新即恢复。仅用于测崩溃页导出，
   生产构建里这段分支会被 `import.meta.env.DEV` 去掉。
+
+**存档版本号（2026-10-29）**
+- **唯一取值点**：`src/utils/saveMigrations.ts` 的 `LATEST_SAVE_VERSION`。`archiveStore.ts` 的
+  `SAVE_VERSION` 只是它的转出；`buildSaveData` / `createEmptySaveData` 写入用它，
+  `isSaveData` 校验用**区间**（`1 … SAVE_VERSION`，不是 `===`）——所以别再在任何地方写死数字，
+  也别把校验改回等于。
+- **追加式改动不用改版本号**（用户拍板）：新增可选字段、老字段语义不变、组件 props 加可选属性，
+  统统不用动 `version`。`config.boardBackground?` / `boardForeground?` 就是先例——老档缺字段读成
+  `undefined`，代码里用默认值兜住即可。**版本号只在破坏性改动时才动**，别为了「表示改过」而升。
+- **破坏性改动**（字段改名 / 删字段 / 语义变了 / `rows` 结构变了）：`LATEST_SAVE_VERSION` 加一，
+  并在 `MIGRATIONS` 里按「旧版本号 → 迁移函数」补一条（返回带新 version 的完整数据）。
+  迁移会自动在 `loadArchiveData`、导入工程文件、旧 `guide-autosave` 迁移三处、`isSaveData` 之前
+  逐级执行，且有 16 步防环；但**迁移结果不写回 localStorage**，要等下一次自动保存才落成新版本。
+- 索引 `INDEX_VERSION`（`guide-archives`）是另一个格式，各管各的，别跟存档版本号搅在一起。
+  （曾经的整包备份 `ArchiveBundle.version` 已随整套 bundle 代码删除，见上「多存档」。）注意 `readIndex()` 版本不匹配时直接 `return null`，
+  会走「没有存档 → 新建空存档」分支，旧索引里的存档条目就全部没有入口了（数据其实还在
+  `guide-archive:<id>` 里）——真要改索引版本必须自己补迁移。
 
 ## 8. 用户反馈记录（每条都已修复，按时间序）
 

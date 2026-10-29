@@ -11,7 +11,7 @@ import {
   IconMoon,
   IconSun,
 } from "@douyinfe/semi-icons";
-import { Popover, List, Slider, Checkbox } from "@douyinfe/semi-ui";
+import { Popover, List, Slider } from "@douyinfe/semi-ui";
 import { useTranslation } from "react-i18next";
 import { useState, useEffect, type ComponentProps } from "react";
 import { ExportDialog } from "./ExportDialog";
@@ -27,9 +27,7 @@ interface HeaderProps {
   onRedo?: () => void;
   canUndo?: boolean;
   canRedo?: boolean;
-  /** 是否显示组件的灰色边框（不影响布局，也不会被导出） */
-  showItemFrame?: boolean;
-  onShowItemFrameChange?: (show: boolean) => void;
+  // 「组件虚线框」开关已移到侧栏主题下方（顶栏放不下长语言标签），这里不再接收
   /** 移动端：把整张画板适配到可视区域内 */
   onFitToView?: () => void;
   /** 移动端：底部组件抽屉是否打开 */
@@ -49,8 +47,6 @@ export default function Header({
   onRedo,
   canUndo = false,
   canRedo = false,
-  showItemFrame = true,
-  onShowItemFrameChange,
   onFitToView,
   paletteOpen = false,
   onTogglePalette,
@@ -66,8 +62,7 @@ export default function Header({
   const languages = [
     { code: "zh-CN", name: "简体中文", flag: "🇨🇳" },
     { code: "zh-HK", name: "繁體中文", flag: "🇭🇰" },
-    // 粤语紧跟港式繁体；旗标用 🇲🇴（澳门），避免与上面 🇭🇰 完全一样看不出区别
-    { code: "yue-HK", name: "繁體中文（粵語）", flag: "🇲🇴" },
+    { code: "yue-HK", name: "繁體中文（粵語）", flag: "🇭🇰" },
     { code: "en-US", name: "English", flag: "🇺🇸" },
     { code: "ja-JP", name: "日本語", flag: "🇯🇵" },
     { code: "ko-KR", name: "한국어", flag: "🇰🇷" },
@@ -96,8 +91,9 @@ export default function Header({
 
   // 语言选择器内容
   const languageSelector = (
-    // 11 种语言后列表会顶到视口外：限高 + 内部滚动（窄屏 / 矮窗口也能选到最后一个）
-    <div className="max-h-[min(60vh,420px)] overflow-y-auto">
+    // 11 种语言后列表会顶到视口外：限高 + 内部滚动（窄屏 / 矮窗口也能选到最后一个）。
+    // lang-picker = 固定系统比例字体，避免俄语/带音标拉丁走 Blueaka 的 GBK 全角字形
+    <div className="lang-picker max-h-[min(60vh,420px)] overflow-y-auto">
       <List
         dataSource={languages}
         renderItem={language => (
@@ -277,16 +273,6 @@ export default function Header({
 
             <div className="flex-1" />
 
-            <Checkbox
-              className="mr-1 font-sans"
-              checked={showItemFrame}
-              onChange={e => onShowItemFrameChange?.(Boolean(e.target.checked))}
-            >
-              <span className="text-sm text-gray-600 whitespace-nowrap">
-                {t("board.showItemFrame")}
-              </span>
-            </Checkbox>
-
             <button
               type="button"
               className={`${btn} gap-1 rounded-lg border ${
@@ -315,9 +301,9 @@ export default function Header({
 
   return (
     <>
-      <header className="h-12 flex items-center font-sans p-3 border-b border-gray-300 dark:border-[#2e2e35]">
-        <img src="/favicon.ico" className="h-8 mr-2" />
-        <span className="text-xl font-bold whitespace-nowrap">
+      <header className="h-12 flex items-center gap-2 font-sans px-3 border-b border-gray-300 dark:border-[#2e2e35] overflow-hidden">
+        <img src="/favicon.ico" className="h-8 shrink-0" />
+        <span className="text-xl font-bold whitespace-nowrap shrink-0">
           {t("title")}
           <span className="ml-2 text-[11px] font-normal opacity-50 align-middle">
             {__APP_VERSION__}
@@ -325,9 +311,9 @@ export default function Header({
         </span>
 
         {/* 缩放滑块 */}
-        <div className="ml-6 flex items-center gap-2">
+        <div className="ml-4 xl:ml-6 flex items-center gap-2 min-w-0">
           <span className="text-sm text-gray-600 dark:text-gray-300 whitespace-nowrap">{t("zoom.label")}</span>
-          <div className="w-32">
+          <div className="w-24 xl:w-32">
             <Slider
               min={0.5}
               max={4}
@@ -358,19 +344,9 @@ export default function Header({
           >
             <IconFullScreenStroked />
           </button>
-          {/* 组件灰框显隐 */}
-          <Checkbox
-            className="ml-2 text-sm"
-            checked={showItemFrame}
-            onChange={e => onShowItemFrameChange?.(Boolean(e.target.checked))}
-          >
-            <span className="text-sm text-gray-600 dark:text-gray-300 whitespace-nowrap">
-              {t("board.showItemFrame")}
-            </span>
-          </Checkbox>
         </div>
 
-        <div className="flex items-center ml-auto gap-4 min-w-0">
+        <div className="flex items-center ml-auto gap-2 xl:gap-4 min-w-0 shrink-0">
           {/* 撤销/重做按钮 */}
           <button
             type="button"
@@ -415,7 +391,7 @@ export default function Header({
           {/* 多存档管理：PC 端图标旁显示当前存档名；长名字截断，避免顶栏溢出 */}
           <button
             type="button"
-            className="transition duration-300 hover:text-blue-400 flex items-center gap-1.5 min-w-0 shrink max-w-32 xl:max-w-48 text-gray-700 dark:text-gray-200"
+            className="transition duration-300 hover:text-blue-400 flex items-center gap-1.5 min-w-0 shrink max-w-24 lg:max-w-32 xl:max-w-48 text-gray-700 dark:text-gray-200"
             onClick={onOpenArchives}
             title={
               currentArchiveName

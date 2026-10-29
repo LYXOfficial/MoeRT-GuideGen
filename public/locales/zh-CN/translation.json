@@ -33,6 +33,8 @@
     "showItemFrame": "组件虚线框",
     "width": "宽度",
     "showDividers": "显示分隔线",
+    "twoRowEmpty": "空行",
+    "twoRowGrab": "拖拽容器",
     "removeRow": {
       "title": "删除此行",
       "confirm": "真的要删除此行吗？行内的组件将被清空。",
@@ -52,7 +54,8 @@
       "noElement": "找不到指示牌元素",
       "exportFailed": "导出失败："
     },
-    "success": "导出成功！"
+    "success": "导出成功！",
+    "scale": "倍率"
   },
   "saves": {
     "clear_local_button": "清除全部存档",
@@ -75,7 +78,17 @@
       "unsupportedVersion": "不支持的存档版本",
       "unsupportedTheme": "存档使用的主题在当前版本中不存在",
       "created": "导入成功，已保存为存档「{{name}}」",
-      "bundleCreated_other": "已导入 {{count}} 个存档"
+      "multiOk": "已导入 {{count}} 个存档",
+      "multiPartial": "已导入 {{success}} 个存档，{{failed}} 个失败",
+      "dropHint": "松开即可导入存档",
+      "onlyJson": "只能导入 .json 存档文件",
+      "badRow": "第 {{row}} 行不是数组",
+      "badItemWhere": "第 {{row}} 行第 {{index}} 个组件：",
+      "badItemObject": "不是一个对象",
+      "badItemId": "缺少有效的 id",
+      "badItemType": "缺少有效的 type",
+      "badItemProps": "props 不是对象",
+      "badItemUnknown": "类型在当前主题里不存在（{{type}}）"
     },
     "export": {
       "success": "存档已导出"
@@ -367,6 +380,7 @@
         }
       },
       "colors": {
+        "transparent": "透明",
         "foreground": "前景色",
         "background": "背景色",
         "exitforeground": "出口前景色",
@@ -638,6 +652,7 @@
         }
       },
       "colors": {
+        "transparent": "透明",
         "foreground": "前景色",
         "background": "背景色",
         "exitforeground": "出口前景色",
@@ -859,6 +874,7 @@
         }
       },
       "colors": {
+        "transparent": "透明",
         "background": "背景色",
         "foreground": "前景色",
         "background2": "背景色_2",
@@ -902,6 +918,7 @@
     "beijing": {
       "displayName": "北京地铁风格（新）",
       "colors": {
+        "transparent": "透明",
         "background": "版面底色",
         "foreground": "前景色",
         "textblue": "文字蓝",
@@ -1215,6 +1232,7 @@
     "beijingOld": {
       "displayName": "北京地铁风格（旧）",
       "colors": {
+        "transparent": "透明",
         "background": "版面底色",
         "foreground": "前景色",
         "textblue": "文字蓝",

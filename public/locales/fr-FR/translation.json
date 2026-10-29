@@ -33,6 +33,8 @@
     "showItemFrame": "Afficher les contours des composants",
     "width": "Largeur",
     "showDividers": "Afficher les séparateurs",
+    "twoRowEmpty": "Ligne vide",
+    "twoRowGrab": "Faire glisser le conteneur",
     "removeRow": {
       "title": "Supprimer cette ligne",
       "confirm": "Voulez-vous vraiment supprimer cette ligne ? Les composants qu'elle contient seront effacés.",
@@ -52,7 +54,8 @@
       "noElement": "Élément du panneau introuvable",
       "exportFailed": "Échec de l'exportation : "
     },
-    "success": "Exportation réussie !"
+    "success": "Exportation réussie !",
+    "scale": "Échelle"
   },
   "saves": {
     "clear_local_button": "Effacer toutes les sauvegardes",
@@ -75,8 +78,17 @@
       "unsupportedVersion": "Version de sauvegarde non prise en charge",
       "unsupportedTheme": "Le thème utilisé par cette sauvegarde n'existe pas dans cette version",
       "created": "Importation réussie — enregistrée sous « {{name}} »",
-      "bundleCreated_one": "{{count}} sauvegarde importée",
-      "bundleCreated_other": "{{count}} sauvegardes importées"
+      "multiOk": "Sauvegardes importées : {{count}}",
+      "multiPartial": "Importées : {{success}} · échecs : {{failed}}",
+      "dropHint": "Déposez pour importer les sauvegardes",
+      "onlyJson": "Seuls les fichiers de sauvegarde .json peuvent être importés",
+      "badRow": "La ligne {{row}} n'est pas un tableau",
+      "badItemWhere": "Ligne {{row}}, élément {{index}} :",
+      "badItemObject": "n'est pas un objet",
+      "badItemId": "id invalide ou manquant",
+      "badItemType": "type invalide ou manquant",
+      "badItemProps": "props n'est pas un objet",
+      "badItemUnknown": "ce type n'existe pas dans le thème actuel ({{type}})"
     },
     "export": {
       "success": "Sauvegarde exportée"
@@ -369,6 +381,7 @@
         }
       },
       "colors": {
+        "transparent": "Transparent",
         "foreground": "Avant-plan",
         "background": "Arrière-plan",
         "exitforeground": "Avant-plan sortie",
@@ -640,6 +653,7 @@
         }
       },
       "colors": {
+        "transparent": "Transparent",
         "foreground": "Avant-plan",
         "background": "Arrière-plan",
         "exitforeground": "Avant-plan sortie",
@@ -861,6 +875,7 @@
         }
       },
       "colors": {
+        "transparent": "Transparent",
         "background": "Arrière-plan",
         "foreground": "Avant-plan",
         "background2": "Arrière-plan 2",
@@ -904,6 +919,7 @@
     "beijing": {
       "displayName": "Style Beijing Metro (nouveau)",
       "colors": {
+        "transparent": "Transparent",
         "background": "Fond du panneau",
         "foreground": "Avant-plan",
         "textblue": "Bleu du texte",
@@ -1217,6 +1233,7 @@
     "beijingOld": {
       "displayName": "Style Beijing Metro (classique)",
       "colors": {
+        "transparent": "Transparent",
         "background": "Fond du panneau",
         "foreground": "Avant-plan",
         "textblue": "Bleu du texte",

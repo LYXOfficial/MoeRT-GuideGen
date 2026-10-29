@@ -191,9 +191,35 @@ body {
   z-index: 50 !important;
 }
 
+/* Blueaka 是 GBK 字体：é/è 这类带音标字母和整个西里尔字母在 GBK 里都是**全角**字形，
+   于是俄语界面整片字距被撑开、法语 Thème 变成「Th è me」，很难看。
+   非中日韩语言（以及不做中文字形替换的拉丁/西里尔语言）改用系统比例字体，
+   中日韩三种语言照旧用 Blueaka。 */
+html[lang="ru-RU"],
+html[lang="de-DE"],
+html[lang="fr-FR"],
+html[lang="es-ES"],
+html[lang="pt-PT"] {
+  --font-sans: system-ui, -apple-system, "Segoe UI", "Helvetica Neue", Arial,
+    "Noto Sans", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
 .font-sans,
 .editing-popup * {
-  font-family: Blueaka, sans-serif !important;
+  font-family: var(--font-sans) !important;
+}
+
+/* 语言菜单固定用系统比例字体（不吃 --font-sans）：
+   ① 列表里同时排着 简体/繁體/日本語/한국어/Русский/Deutsch…，在中文界面下
+      西里尔和带音标拉丁会走 Blueaka 的 GBK 全角字形，一眼就是「全角」；
+   ② 切换语言会改 <html lang>，--font-sans 在 Blueaka ↔ 系统字体之间来回换，
+      列表宽度跟着跳（俄语最明显，所以干脆锁死一种字体）。
+   两个后代选择器是为了压过上面那条 .font-sans 的 !important。 */
+.lang-picker,
+.lang-picker .font-sans,
+.lang-picker .semi-list-item {
+  font-family: system-ui, -apple-system, "Segoe UI", "Helvetica Neue", Arial,
+    "Noto Sans", "PingFang SC", "Microsoft YaHei", sans-serif !important;
 }
 ::selection {
   background: #a4c4f494;

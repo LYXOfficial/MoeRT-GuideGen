@@ -30,12 +30,14 @@
   },
   "board": {
     "emptyRowHint": "拖啲元件嚟呢行",
-    "showItemFrame": "元件虛線框",
+    "showItemFrame": "元件虛綫框",
     "width": "寬度",
-    "showDividers": "顯示分隔線",
+    "showDividers": "顯示分隔綫",
+    "twoRowEmpty": "空行",
+    "twoRowGrab": "拖曳容器",
     "removeRow": {
-      "title": "刪咗呢行",
-      "confirm": "真係要刪咗呢行？行入面啲元件會一齊冇埋。",
+      "title": "要刪咗呢行？",
+      "confirm": "真係要？呢行入面啲元件會一齊冇埋。",
       "ok": "刪除",
       "cancel": "取消"
     }
@@ -52,7 +54,8 @@
       "noElement": "搵唔到指示牌元素",
       "exportFailed": "匯出失敗："
     },
-    "success": "匯出成功喇！"
+    "success": "匯出成功喇！",
+    "scale": "倍率"
   },
   "saves": {
     "clear_local_button": "清除全部存檔",
@@ -75,7 +78,17 @@
       "unsupportedVersion": "唔支援嘅存檔版本",
       "unsupportedTheme": "存檔用嘅主題喺呢個版本度搵唔到",
       "created": "匯入咗，已經存成存檔「{{name}}」",
-      "bundleCreated_other": "匯入咗 {{count}} 個存檔"
+      "multiOk": "匯入咗 {{count}} 個存檔",
+      "multiPartial": "匯入咗 {{success}} 個存檔，{{failed}} 個失敗咗",
+      "dropHint": "放手就匯入得存檔",
+      "onlyJson": "淨係匯入得 .json 存檔檔案",
+      "badRow": "第 {{row}} 行唔係陣列",
+      "badItemWhere": "第 {{row}} 行第 {{index}} 個元件：",
+      "badItemObject": "唔係一個 object",
+      "badItemId": "冇個有效嘅 id",
+      "badItemType": "冇個有效嘅 type",
+      "badItemProps": "props 唔係 object",
+      "badItemUnknown": "呢個類型喺而家個主題度冇（{{type}}）"
     },
     "export": {
       "success": "存檔已經匯出咗"
@@ -229,9 +242,9 @@
           }
         },
         "LineNum": {
-          "displayName": "數字線路",
+          "displayName": "數字綫路",
           "props": {
-            "num": "線路編號",
+            "num": "綫路編號",
             "customChinese": "自訂中文文字",
             "customEnglish": "自訂英文文字",
             "align": {
@@ -240,7 +253,7 @@
               "right": "右（1）",
               "right2": "右（2）"
             },
-            "lineColor": "線路顏色",
+            "lineColor": "綫路顏色",
             "showText": "要唔要顯示後面嘅字",
             "showRect": "要唔要顯示色塊",
             "rectMode": {
@@ -253,7 +266,7 @@
           }
         },
         "LineText": {
-          "displayName": "文字線路",
+          "displayName": "文字綫路",
           "props": {
             "chinese": "中文名",
             "english": "英文名",
@@ -272,7 +285,7 @@
               "default": "預設",
               "narrow": "窄"
             },
-            "lineColor": "線路顏色",
+            "lineColor": "綫路顏色",
             "foreground": "前景色",
             "background": "背景色"
           }
@@ -297,7 +310,7 @@
           }
         },
         "SpecLine": {
-          "displayName": "分隔線",
+          "displayName": "分隔綫",
           "props": {
             "background": "背景色",
             "foreground": "前景色"
@@ -367,13 +380,14 @@
         }
       },
       "colors": {
+        "transparent": "透明",
         "foreground": "前景色",
         "background": "背景色",
         "exitforeground": "出口前景色",
         "exitbackground": "出口背景色",
         "facilityforeground": "設施前景色",
         "facilitybackground": "設施背景色",
-        "specline": "分隔線",
+        "specline": "分隔綫",
         "border": "邊框色",
         "noentry": "禁止通行",
         "lineloop": "環綫",
@@ -493,9 +507,9 @@
           }
         },
         "LineNum": {
-          "displayName": "數字線路",
+          "displayName": "數字綫路",
           "props": {
-            "num": "線路編號",
+            "num": "綫路編號",
             "customChinese": "自訂中文文字",
             "customEnglish": "自訂英文文字",
             "align": {
@@ -503,7 +517,7 @@
               "left": "左",
               "right": "右"
             },
-            "lineColor": "線路顏色",
+            "lineColor": "綫路顏色",
             "showText": "要唔要顯示後面嘅字",
             "showRect": "要唔要顯示色塊",
             "rectMode": {
@@ -516,7 +530,7 @@
           }
         },
         "LineText": {
-          "displayName": "文字線路",
+          "displayName": "文字綫路",
           "props": {
             "chinese": "中文名",
             "english": "英文名",
@@ -530,7 +544,7 @@
               "default": "預設",
               "narrow": "窄"
             },
-            "lineColor": "線路顏色",
+            "lineColor": "綫路顏色",
             "foreground": "前景色",
             "background": "背景色"
           }
@@ -555,7 +569,7 @@
           }
         },
         "SpecLine": {
-          "displayName": "分隔線",
+          "displayName": "分隔綫",
           "props": {
             "background": "背景色",
             "foreground": "前景色"
@@ -588,10 +602,10 @@
         "StationNumber": {
           "displayName": "車站編號",
           "props": {
-            "color": "線路色",
-            "lineNum": "線路編號",
+            "color": "綫路色",
+            "lineNum": "綫路編號",
             "stationNum": "車站編號",
-            "lines": "線路列表",
+            "lines": "綫路列表",
             "foreground": "前景色",
             "background": "背景色"
           }
@@ -638,11 +652,12 @@
         }
       },
       "colors": {
+        "transparent": "透明",
         "foreground": "前景色",
         "background": "背景色",
         "exitforeground": "出口前景色",
         "exitbackground": "出口背景色",
-        "specline": "分隔線",
+        "specline": "分隔綫",
         "border": "邊框色",
         "noentry": "禁止通行",
         "pass": "可通行",
@@ -779,11 +794,11 @@
           }
         },
         "Line": {
-          "displayName": "路線",
+          "displayName": "路綫",
           "props": {
             "chinese": "中文名",
             "english": "英文名",
-            "lineColor": "線路顏色",
+            "lineColor": "綫路顏色",
             "background": "背景色",
             "align": {
               "displayName": "對齊",
@@ -809,7 +824,7 @@
           }
         },
         "SpecLine": {
-          "displayName": "分隔線",
+          "displayName": "分隔綫",
           "props": {
             "background": "背景色",
             "foreground": "前景色"
@@ -852,13 +867,14 @@
         "Platform": {
           "displayName": "月台",
           "props": {
-            "color": "線路色",
+            "color": "綫路色",
             "num": "編號",
             "background": "背景色"
           }
         }
       },
       "colors": {
+        "transparent": "透明",
         "background": "背景色",
         "foreground": "前景色",
         "background2": "背景色_2",
@@ -866,7 +882,7 @@
         "background3": "背景色_3",
         "foreground3": "前景色_3",
         "border": "邊框色",
-        "specline": "分隔線",
+        "specline": "分隔綫",
         "exitletter": "出口編號",
         "kwuntongline": "觀塘綫",
         "tsuenwanline": "荃灣綫",
@@ -902,13 +918,14 @@
     "beijing": {
       "displayName": "北京地鐵風格（新）",
       "colors": {
+        "transparent": "透明",
         "background": "版面底色",
         "foreground": "前景色",
         "textblue": "文字藍",
         "white": "白色",
         "border": "邊框",
-        "specline": "分隔線（黃）",
-        "divider": "分隔線（白）",
+        "specline": "分隔綫（黃）",
+        "divider": "分隔綫（白）",
         "facility": "設施淺藍",
         "facilityfemale": "女士衛生間粉",
         "exit": "出口綠",
@@ -972,9 +989,9 @@
           }
         },
         "SpecLine": {
-          "displayName": "分隔線",
+          "displayName": "分隔綫",
           "props": {
-            "width": "線寬",
+            "width": "綫寬",
             "foreground": "前景色",
             "background": "背景色（第一行）",
             "background2": "背景色（第二行）"
@@ -996,11 +1013,11 @@
           }
         },
         "LineNum": {
-          "displayName": "線路標",
+          "displayName": "綫路標",
           "props": {
-            "lineId": "線路號",
+            "lineId": "綫路號",
             "colorKey": {
-              "displayName": "線路色"
+              "displayName": "綫路色"
             },
             "textZh": "中文文字",
             "textEn": "英文文字",
@@ -1215,12 +1232,13 @@
     "beijingOld": {
       "displayName": "北京地鐵風格（舊）",
       "colors": {
+        "transparent": "透明",
         "background": "版面底色",
         "foreground": "前景色",
         "textblue": "文字藍",
         "white": "白色",
         "border": "邊框",
-        "divider": "分隔線",
+        "divider": "分隔綫",
         "exit": "出口綠",
         "prohibit": "禁止紅",
         "line1": "1號綫 / 八通綫",
@@ -1294,7 +1312,7 @@
         "none": "冇",
         "toTrainVariant": {
           "solid": "實心",
-          "outline": "線稿"
+          "outline": "綫稿"
         },
         "exitVariant": {
           "single": "單個",
@@ -1328,9 +1346,9 @@
           }
         },
         "SpecLine": {
-          "displayName": "分隔線",
+          "displayName": "分隔綫",
           "props": {
-            "width": "線寬",
+            "width": "綫寬",
             "foreground": "前景色",
             "background": "背景色"
           }
@@ -1359,11 +1377,11 @@
           }
         },
         "Line": {
-          "displayName": "線路標",
+          "displayName": "綫路標",
           "props": {
-            "lineId": "線路號",
+            "lineId": "綫路號",
             "colorKey": {
-              "displayName": "線路色"
+              "displayName": "綫路色"
             },
             "textZh": "中文文字",
             "textEn": "英文文字",

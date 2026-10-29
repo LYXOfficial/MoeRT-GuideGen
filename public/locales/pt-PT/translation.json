@@ -33,6 +33,8 @@
     "showItemFrame": "Contorno dos componentes",
     "width": "Largura",
     "showDividers": "Mostrar separadores",
+    "twoRowEmpty": "Linha vazia",
+    "twoRowGrab": "Arrastar o contentor",
     "removeRow": {
       "title": "Eliminar esta linha",
       "confirm": "Eliminar mesmo esta linha? Os componentes que ela contém serão removidos.",
@@ -52,7 +54,8 @@
       "noElement": "Elemento da placa não encontrado",
       "exportFailed": "Falha ao exportar: "
     },
-    "success": "Exportação concluída!"
+    "success": "Exportação concluída!",
+    "scale": "Escala"
   },
   "saves": {
     "clear_local_button": "Eliminar todas as gravações",
@@ -75,8 +78,17 @@
       "unsupportedVersion": "Versão de gravação não suportada",
       "unsupportedTheme": "O tema usado nesta gravação não existe nesta versão",
       "created": "Importação concluída — guardada como a gravação «{{name}}»",
-      "bundleCreated_one": "{{count}} gravação importada",
-      "bundleCreated_other": "{{count}} gravações importadas"
+      "multiOk": "Gravações importadas: {{count}}",
+      "multiPartial": "Importadas: {{success}} · erros: {{failed}}",
+      "dropHint": "Largue para importar as gravações",
+      "onlyJson": "Só é possível importar ficheiros de gravação .json",
+      "badRow": "A linha {{row}} não é um array",
+      "badItemWhere": "Linha {{row}}, componente {{index}}:",
+      "badItemObject": "não é um objeto",
+      "badItemId": "falta um id válido",
+      "badItemType": "falta um type válido",
+      "badItemProps": "props não é um objeto",
+      "badItemUnknown": "o tipo não existe no tema atual ({{type}})"
     },
     "export": {
       "success": "Gravação exportada"
@@ -369,6 +381,7 @@
         }
       },
       "colors": {
+        "transparent": "Transparente",
         "foreground": "Cor de primeiro plano",
         "background": "Cor de fundo",
         "exitforeground": "Cor de primeiro plano da saída",
@@ -640,6 +653,7 @@
         }
       },
       "colors": {
+        "transparent": "Transparente",
         "foreground": "Cor de primeiro plano",
         "background": "Cor de fundo",
         "exitforeground": "Cor de primeiro plano da saída",
@@ -861,6 +875,7 @@
         }
       },
       "colors": {
+        "transparent": "Transparente",
         "background": "Cor de fundo",
         "foreground": "Cor de primeiro plano",
         "background2": "Cor de fundo 2",
@@ -904,6 +919,7 @@
     "beijing": {
       "displayName": "Estilo do metro de Pequim (novo)",
       "colors": {
+        "transparent": "Transparente",
         "background": "Cor de fundo do painel",
         "foreground": "Cor de primeiro plano",
         "textblue": "Azul do texto",
@@ -1049,7 +1065,7 @@
           }
         },
         "LoopNextStation": {
-          "displayName": "Texto da linha circular",
+          "displayName": "Próxima estação (linha circular)",
           "props": {
             "nextZh": "«Próxima estação» (chinês)",
             "nextEn": "«Próxima estação» (inglês)",
@@ -1085,7 +1101,7 @@
         "ExitNum": {
           "displayName": "Número da saída",
           "props": {
-            "exits": "Número da saída",
+            "exits": "Números das saídas",
             "exitLetter": "Letra",
             "exitNumber": "Dígito adicional",
             "directions": {
@@ -1217,6 +1233,7 @@
     "beijingOld": {
       "displayName": "Estilo do metro de Pequim (clássico)",
       "colors": {
+        "transparent": "Transparente",
         "background": "Cor de fundo do painel",
         "foreground": "Cor de primeiro plano",
         "textblue": "Azul do texto",
@@ -1410,7 +1427,7 @@
         "ExitLetter": {
           "displayName": "Letras das saídas",
           "props": {
-            "exits": "Número da saída",
+            "exits": "Números das saídas",
             "exitLetter": "Letra",
             "variant": {
               "displayName": "Variante"
@@ -1422,8 +1439,8 @@
         "StationSign": {
           "displayName": "Nome da estação",
           "props": {
-            "nameZh": "Linha 1 em chinês",
-            "nameEn": "Linha 1 em inglês",
+            "nameZh": "Nome em chinês",
+            "nameEn": "Nome em inglês",
             "showLogo": "Logótipo do metro",
             "foreground": "Cor de primeiro plano",
             "background": "Cor de fundo"

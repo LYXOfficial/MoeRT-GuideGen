@@ -33,6 +33,8 @@
     "showItemFrame": "Show component outlines",
     "width": "Width",
     "showDividers": "Show dividers",
+    "twoRowEmpty": "Empty row",
+    "twoRowGrab": "Drag container",
     "removeRow": {
       "title": "Delete this row",
       "confirm": "Delete this row? The components in it will be removed.",
@@ -52,7 +54,8 @@
       "noElement": "Sign element not found",
       "exportFailed": "Export failed: "
     },
-    "success": "Export successful!"
+    "success": "Export successful!",
+    "scale": "Scale"
   },
   "saves": {
     "clear_local_button": "Clear All Saves",
@@ -75,8 +78,17 @@
       "unsupportedVersion": "Unsupported save version",
       "unsupportedTheme": "The theme used by this save does not exist in this version",
       "created": "Import successful — saved as \"{{name}}\"",
-      "bundleCreated_other": "Imported {{count}} saves",
-      "bundleCreated_one": "Imported 1 save"
+      "multiOk": "Imported {{count}} saves",
+      "multiPartial": "Imported {{success}} saves ({{failed}} failed)",
+      "dropHint": "Drop to import saves",
+      "onlyJson": "Only .json save files can be imported",
+      "badRow": "Row {{row}} is not an array",
+      "badItemWhere": "Row {{row}}, item {{index}}:",
+      "badItemObject": "is not an object",
+      "badItemId": "missing a valid id",
+      "badItemType": "missing a valid type",
+      "badItemProps": "props is not an object",
+      "badItemUnknown": "type does not exist in the current theme ({{type}})"
     },
     "export": {
       "success": "Archive exported"
@@ -369,6 +381,7 @@
         }
       },
       "colors": {
+        "transparent": "Transparent",
         "foreground": "Foreground",
         "background": "Background",
         "exitforeground": "Exit Foreground",
@@ -640,6 +653,7 @@
         }
       },
       "colors": {
+        "transparent": "Transparent",
         "foreground": "Foreground",
         "background": "Background",
         "exitforeground": "Exit Foreground",
@@ -861,6 +875,7 @@
         }
       },
       "colors": {
+        "transparent": "Transparent",
         "background": "Background Color",
         "foreground": "Foreground Color",
         "background2": "Background Color 2",
@@ -904,6 +919,7 @@
     "beijing": {
       "displayName": "Beijing (New)",
       "colors": {
+        "transparent": "Transparent",
         "background": "Board background",
         "foreground": "Foreground",
         "textblue": "Text blue",
@@ -1217,6 +1233,7 @@
     "beijingOld": {
       "displayName": "Beijing Metro (Classic)",
       "colors": {
+        "transparent": "Transparent",
         "background": "Board background",
         "foreground": "Foreground",
         "textblue": "Text blue",

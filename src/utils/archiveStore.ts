@@ -1,9 +1,12 @@
 import type { SaveData } from "../interfaces/editor";
 import { createZipBlob } from "./zip";
-import { migrateSaveData } from "./saveMigrations";
+import { migrateSaveData, LATEST_SAVE_VERSION } from "./saveMigrations";
 
 // 导入工程文件的路径（Editor）也要先过一遍版本迁移，这里转出供调用
 export { migrateSaveData };
+
+/** 存档版本号的唯一取值点：写入用它、校验也用它，升版本只改 saveMigrations.ts 那一处 */
+export const SAVE_VERSION = LATEST_SAVE_VERSION;
 
 /**
  * 多存档存储层。
@@ -81,8 +84,13 @@ function dataKey(id: string) {
 export function isSaveData(value: unknown): value is SaveData {
   if (!value || typeof value !== "object") return false;
   const data = value as Partial<SaveData>;
+  // 版本只校验区间，不校验「等于当前版本」：
+  // 老存档（1 … SAVE_VERSION-1）放行，读的时候由 migrateSaveData 升级，
+  // 这样升版本只需要动 saveMigrations.ts 一个常量，不会因为漏改这里而拒收老档
   return (
-    data.version === 1 &&
+    typeof data.version === "number" &&
+    data.version >= 1 &&
+    data.version <= SAVE_VERSION &&
     Array.isArray(data.rows) &&
     !!data.config &&
     typeof data.config === "object"
@@ -91,7 +99,7 @@ export function isSaveData(value: unknown): value is SaveData {
 
 export function createEmptySaveData(theme: string): SaveData {
   return {
-    version: 1,
+    version: SAVE_VERSION,
     config: { width: 512, showSpecLine: true, theme },
     rows: [[]],
   };
@@ -156,9 +164,10 @@ export function ensureArchives(options: {
 
   let migrated: SaveData | null = null;
   try {
-    const legacy = safeParse<SaveData>(
+    const legacyRaw = safeParse<unknown>(
       localStorage.getItem(LEGACY_ARCHIVE_KEY)
     );
+    const legacy = migrateSaveData(legacyRaw);
     if (isSaveData(legacy)) migrated = legacy;
   } catch {
     // 读不到就当没有旧存档
@@ -339,49 +348,6 @@ export function deleteArchive(id: string): ArchiveIndexState {
 /** 把某个存档重置成空画板（保留存档条目和名字） */
 export function resetArchiveData(id: string, theme: string): boolean {
   return saveArchiveData(id, createEmptySaveData(theme));
-}
-
-/**
- * 崩溃页用的整包备份：把所有存档（含主题对不上、无法还原的存档）
- * 原样打成一个 JSON，换设备 / 修好之后还能导回来。
- */
-export interface ArchiveBundle {
-  type: "moert-guidegen-archives";
-  version: 1;
-  exportedAt: number;
-  activeId: string;
-  archives: Array<{ name: string; data: SaveData }>;
-}
-
-export function createArchiveBundle(): ArchiveBundle | null {
-  const state = listArchives();
-  if (state.archives.length === 0) return null;
-  const items: ArchiveBundle["archives"] = [];
-  for (const meta of state.archives) {
-    const data = loadArchiveData(meta.id);
-    if (data) items.push({ name: meta.name, data });
-  }
-  if (items.length === 0) return null;
-  return {
-    type: "moert-guidegen-archives",
-    version: 1,
-    exportedAt: Date.now(),
-    activeId: state.activeId,
-    archives: items,
-  };
-}
-
-export function isArchiveBundle(value: unknown): value is ArchiveBundle {
-  if (!value || typeof value !== "object") return false;
-  const bundle = value as Partial<ArchiveBundle>;
-  if (bundle.type !== "moert-guidegen-archives") return false;
-  if (!Array.isArray(bundle.archives)) return false;
-  return bundle.archives.every(
-    item =>
-      !!item &&
-      typeof item.name === "string" &&
-      isSaveData(item.data)
-  );
 }
 
 export function safeFileStem(name: string): string {

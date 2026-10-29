@@ -33,6 +33,8 @@
     "showItemFrame": "Komponentenrahmen anzeigen",
     "width": "Breite",
     "showDividers": "Trennlinien anzeigen",
+    "twoRowEmpty": "Leere Zeile",
+    "twoRowGrab": "Container ziehen",
     "removeRow": {
       "title": "Diese Zeile löschen",
       "confirm": "Diese Zeile wirklich löschen? Die Komponenten darin werden entfernt.",
@@ -52,7 +54,8 @@
       "noElement": "Leitschild-Element nicht gefunden",
       "exportFailed": "Export fehlgeschlagen: "
     },
-    "success": "Export erfolgreich!"
+    "success": "Export erfolgreich!",
+    "scale": "Skalierung"
   },
   "saves": {
     "clear_local_button": "Alle Speicherstände löschen",
@@ -75,8 +78,17 @@
       "unsupportedVersion": "Nicht unterstützte Speicherstand-Version",
       "unsupportedTheme": "Das in diesem Speicherstand verwendete Thema gibt es in dieser Version nicht",
       "created": "Import erfolgreich – gespeichert als Speicherstand „{{name}}“",
-      "bundleCreated_one": "{{count}} Speicherstand importiert",
-      "bundleCreated_other": "{{count}} Speicherstände importiert"
+      "multiOk": "Speicherstände importiert: {{count}}",
+      "multiPartial": "Importiert: {{success}} · fehlgeschlagen: {{failed}}",
+      "dropHint": "Loslassen, um Speicherstände zu importieren",
+      "onlyJson": "Nur .json-Speicherstände können importiert werden",
+      "badRow": "Zeile {{row}} ist kein Array",
+      "badItemWhere": "Zeile {{row}}, Element {{index}}:",
+      "badItemObject": "ist kein Objekt",
+      "badItemId": "keine gültige id",
+      "badItemType": "kein gültiger type",
+      "badItemProps": "props ist kein Objekt",
+      "badItemUnknown": "Typ existiert im aktuellen Thema nicht ({{type}})"
     },
     "export": {
       "success": "Speicherstand exportiert"
@@ -369,6 +381,7 @@
         }
       },
       "colors": {
+        "transparent": "Transparent",
         "foreground": "Vordergrund",
         "background": "Hintergrund",
         "exitforeground": "Ausgang: Vordergrund",
@@ -640,6 +653,7 @@
         }
       },
       "colors": {
+        "transparent": "Transparent",
         "foreground": "Vordergrund",
         "background": "Hintergrund",
         "exitforeground": "Ausgang: Vordergrund",
@@ -861,6 +875,7 @@
         }
       },
       "colors": {
+        "transparent": "Transparent",
         "background": "Hintergrund",
         "foreground": "Vordergrund",
         "background2": "Hintergrund 2",
@@ -904,6 +919,7 @@
     "beijing": {
       "displayName": "Peking (neu)",
       "colors": {
+        "transparent": "Transparent",
         "background": "Leinwandhintergrund",
         "foreground": "Vordergrund",
         "textblue": "Textblau",
@@ -1217,6 +1233,7 @@
     "beijingOld": {
       "displayName": "Peking (klassisch)",
       "colors": {
+        "transparent": "Transparent",
         "background": "Leinwandhintergrund",
         "foreground": "Vordergrund",
         "textblue": "Textblau",

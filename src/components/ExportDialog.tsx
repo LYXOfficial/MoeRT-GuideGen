@@ -1,4 +1,4 @@
-import { Input, Modal } from "@douyinfe/semi-ui";
+import { Input, Modal, Slider } from "@douyinfe/semi-ui";
 import { Form } from "@douyinfe/semi-ui";
 import { Button } from "@douyinfe/semi-ui";
 import { Toast } from "@douyinfe/semi-ui";
@@ -14,6 +14,12 @@ interface ExportDialogProps {
   guideHeight: number;
 }
 
+/** 倍率范围与步进：0.5× 一档，0.5× ~ 16×；默认 2×（1× 在高分屏上偏糊） */
+const EXPORT_DEFAULT_SCALE = 2;
+const EXPORT_MIN_SCALE = 0.5;
+const EXPORT_MAX_SCALE = 16;
+const EXPORT_SCALE_STEP = 0.5;
+
 export const ExportDialog = ({
   visible,
   onCancel,
@@ -23,6 +29,7 @@ export const ExportDialog = ({
   const [width, setWidth] = useState(512);
   const [height, setHeight] = useState(0);
   const [baseWidth, setBaseWidth] = useState(512);
+  const [baseHeight, setBaseHeight] = useState(192);
   const [isExporting, setIsExporting] = useState(false);
 
   // 当对话框显示时，获取当前指示牌宽度作为基准。
@@ -33,20 +40,36 @@ export const ExportDialog = ({
     if (visible) {
       const guide = document.querySelector(".guide-board") as HTMLElement;
       if (guide) {
-        const currentWidth = guide.offsetWidth;
-        // 3x 屏再乘下去文件太大，2x 已经足够接近预览观感
-        const dpr = Math.min(2, Math.max(1, window.devicePixelRatio || 1));
+        // 宽高都从 DOM 现量：guideHeight 是 App 里 ResizeObserver 上报的，
+        // 而那个 observer 只在挂载时认一次画板节点，换主题 / 重挂后可能已经失联，
+        // 高度会停在旧值（出现过「三行 64 应该 192，对话框却给 263」这类怪数）
+        const currentWidth = guide.offsetWidth || baseWidth;
+        // 高度取**内容盒**（clientHeight）：上下各 2px 的画板边框只是编辑辅助线
+        // （导出时会被去掉），算进画布就会多出 4px，三行 64px 会变成 196 而不是 192
+        const currentHeight = guide.clientHeight || guideHeight || 192;
+        // 默认值 = 画板实际尺寸 × 2，**不乘 devicePixelRatio**
+        // （用户要求默认 2× 更清晰，最多 16×，用下面的倍率滑块调）
         setBaseWidth(currentWidth);
-        setWidth(Math.round(currentWidth * dpr));
+        setBaseHeight(currentHeight);
+        setWidth(Math.round(currentWidth * EXPORT_DEFAULT_SCALE));
+        setHeight(Math.round(currentHeight * EXPORT_DEFAULT_SCALE));
       }
     }
   }, [visible]);
 
-  // 当宽度改变时，按比例更新高度
-  useEffect(() => {
-    const ratio = width / baseWidth;
-    setHeight(Math.round(guideHeight * ratio));
-  }, [width, guideHeight, baseWidth]);
+  // 当前倍率（滑条直接按倍率取值，0.5× 一档）
+  const currentMultiplier = baseWidth > 0 ? width / baseWidth : 1;
+
+  // 宽高互算：改任一边，另一边按画板原始宽高比跟随（都是「导出像素」口径）
+  const aspect = baseHeight / baseWidth; // 高 / 宽
+  const setWidthKeepingRatio = (next: number) => {
+    setWidth(next);
+    setHeight(Math.max(1, Math.round(next * aspect)));
+  };
+  const setHeightKeepingRatio = (next: number) => {
+    setHeight(next);
+    setWidth(Math.max(1, Math.round(next / aspect)));
+  };
 
   const handleExport = async () => {
     const guide = document.querySelector(".guide-board") as HTMLElement;
@@ -139,10 +162,14 @@ export const ExportDialog = ({
 
       // 3. 计算缩放比例
       // 状态里可能还留着键入中的小值（输入时不夹下限），导出前夹回合法区间
-      const hi = Math.round(baseWidth * 4);
+      const hi = Math.round(baseWidth * 16);
       const lo = Math.round(baseWidth / 2);
       const exportWidth = Math.round(Math.min(hi, Math.max(lo, width)));
-      const exportHeight = Math.round(guideHeight * (exportWidth / baseWidth));
+      const hHi = Math.round(baseHeight * 16);
+      const hLo = Math.round(baseHeight / 2);
+      const exportHeight = Math.round(
+        Math.min(hHi, Math.max(hLo, height || baseHeight))
+      );
       const scale = exportWidth / baseWidth;
 
       // 4. 缩放不能加在真实节点上：modern-screenshot 克隆时不会带上
@@ -175,6 +202,10 @@ export const ExportDialog = ({
         // 样式处理
         style: {
           fontFamily: computedStyle.fontFamily,
+          // 画板边框整个从克隆里去掉：画布按「内容盒」尺寸出（宽 = 画板宽设置、
+          // 高 = 行数×64），去掉边框后内容正好铺满画布，不会有 2px 边带，
+          // 也不会因为保留边框盒把内容整体压低/右移 2px
+          borderWidth: "0px",
           // 子元素保留原始 CSS 像素宽，只有靠 transform 才能铺满目标画布；
           // origin 必须显式给 top left，否则克隆根使用默认中心点会整体偏移
           transform: `scale(${scale})`,
@@ -273,19 +304,70 @@ export const ExportDialog = ({
             // 合法区间 [baseWidth/2, baseWidth*4] 在导出前统一夹紧
             const n = Number(val);
             if (!Number.isFinite(n) || n <= 0) return;
-            setWidth(Math.round(Math.min(n, Math.round(baseWidth * 4))));
+            setWidthKeepingRatio(
+              Math.round(Math.min(n, Math.round(baseWidth * 16)))
+            );
           }}
           min={baseWidth / 2}
-          max={baseWidth * 4}
+          max={baseWidth * 16}
           style={{ width: "100%" }}
         />
         <Form.Label>{t("exportDialog.height")}</Form.Label>
         <Input
           value={height}
-          disabled
           suffix={t("exportDialog.keepRatio")}
+          onChange={val => {
+            const n = Number(val);
+            if (!Number.isFinite(n) || n <= 0) return;
+            setHeightKeepingRatio(
+              Math.round(Math.min(n, Math.round(baseHeight * 16)))
+            );
+          }}
+          min={baseHeight / 2}
+          max={baseHeight * 16}
           style={{ width: "100%" }}
         />
+        <Form.Label style={{ marginTop: 5 }}>
+          {t("exportDialog.scale")}
+        </Form.Label>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 12,
+            paddingTop: 4,
+          }}
+        >
+          <div style={{ flex: 1 }}>
+            <Slider
+              // 0.5× 一档，最小 0.5×、最大 16×；刻度只标几个关键档位
+              min={EXPORT_MIN_SCALE}
+              max={EXPORT_MAX_SCALE}
+              step={EXPORT_SCALE_STEP}
+              value={Math.min(
+                EXPORT_MAX_SCALE,
+                Math.max(EXPORT_MIN_SCALE, currentMultiplier)
+              )}
+              onChange={v => {
+                if (typeof v !== "number") return;
+                setWidthKeepingRatio(Math.round(baseWidth * v));
+              }}
+              // 刻度按真实倍率定位，左侧太密（1× 只有 3%）所以只标 0.5/2/4/8/16
+              marks={{
+                0.5: "0.5×",
+                2: "2×",
+                4: "4×",
+                8: "8×",
+                16: "16×",
+              }}
+              showBoundary={false}
+              tooltipVisible={false}
+            />
+          </div>
+          <span className="font-sans text-sm tabular-nums w-12 text-right">
+            ×{(width / baseWidth).toFixed(1)}
+          </span>
+        </div>
         <div style={{ marginTop: 20, textAlign: "right" }}>
           <Button
             type="tertiary"
