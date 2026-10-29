@@ -167,6 +167,10 @@ export default function DraggableItem({
     outline: isDragging
       ? "2px solid #66ccff"
       : "2px dashed var(--guide-item-outline, transparent)",
+    // outline 默认画在盒子外侧：上下相邻两行之间，上一行组件的虚线框
+    // 下缘会横在行边界上（outline 在堆叠最后一步绘制，盖住下一行顶部），
+    // 看起来就是「关了分隔线行间还有一条白缝/虚线缝」。收到盒子内部画。
+    outlineOffset: "-2px",
     display: "inline-flex",
     alignItems: "center",
     cursor: "grab",

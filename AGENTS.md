@@ -155,6 +155,10 @@ python3 text_probe.py                                   # 解析 <use> 得到真
 - 行容器 `overflow` 必须两轴都 `hidden`（`overflow-x-hidden` 会把另一轴变 auto 冒出滚动条）；
   溢出内容直接裁掉是用户要求。
 - 行与行背景接缝：MultiRowBackground 用 hard-stop 渐变，别用两个 div。
+- **组件虚线框（DraggableItem 的 outline）必须 `outlineOffset: -2px` 画在盒内**（2026-10-29）：
+  outline 默认画在盒子外侧，上下相邻两行之间，上一行组件的 2px 虚线框下缘正好横在行边界上
+  （outline 在堆叠绘制最后一步，盖住下一行顶部），看起来就是「关了分隔线行间还有白缝/虚线缝」，
+  且与分隔线开关无关。收到盒内后虚线框贴着组件自身边缘画。
 - `body`/外壳高度用 `100dvh`（`global.css` 已覆盖 `.h-screen`），否则移动端地址栏收放整页跳动。
 
 **dnd-kit / 编辑器交互（都是血泪，改前先读懂）**
