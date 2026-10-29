@@ -146,14 +146,20 @@ const CustomColorPicker: React.FC<CustomColorPickerProps> = ({
         }}
       />
       <Select
-        value={
+        value={(() => {
           // value 为空 = 留空（跟随全局默认）：不匹配任何常量，显示占位文案
-          value == null
-            ? ""
-            : Object.entries(colors).find(
-                ([_, v]) => v === colorPickerValue
-              )?.[0] || ""
-        }
+          if (value == null) return "";
+          const matched = Object.entries(colors).find(
+            ([_, v]) => v === colorPickerValue
+          )?.[0];
+          // 命中的键被 excludeKeys 排除时（如底板背景色里的 foreground），
+          // 下拉里没有对应选项，Semi 会把原始键名（"foreground"）当文本显示——
+          // 改成显示十六进制，避免看起来像内部字段名
+          if (matched && (excludeKeys || []).includes(matched)) {
+            return colorPickerValue || "";
+          }
+          return matched || "";
+        })()}
         onChange={handleSelectChange}
         placeholder={placeholder || "选择颜色变量"}
         className="flex-1"

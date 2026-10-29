@@ -169,17 +169,13 @@ export default function DraggableItem({
     transition:
       transition ??
       (isDragging ? undefined : "transform 200ms ease, opacity 200ms ease"),
-    // outline 不参与布局，不会把组件撑宽；颜色由编辑区的 CSS 变量控制。
-    // 分割线（3px 宽）除外：太窄根本渲染不对头，不画虚线框
-    outline: isDragging
-      ? "2px solid #66ccff"
-      : isSpecLine
-        ? undefined
-        : "2px dashed var(--guide-item-outline, transparent)",
-    // outline 默认画在盒子外侧：上下相邻两行之间，上一行组件的虚线框
-    // 下缘会横在行边界上（outline 在堆叠最后一步绘制，盖住下一行顶部），
-    // 看起来就是「关了分隔线行间还有一条白缝/虚线缝」。收到盒子内部画。
-    outlineOffset: "-2px",
+    // 灰虚线框不再用 outline：北京新主题的组件背景是「绝对定位的整块背景」，
+    // 那种定位元素会画在父级 outline 之上，把框整个盖住（用户实测）。
+    // 改成和粉色框同款的覆盖层 span（见下方 guide-item-frame-line），
+    // z-index 高于组件内容，任何主题都盖不住。
+    // 拖拽中的蓝色高亮仍用 outline（一次性视觉，不碰接缝）。
+    outline: isDragging ? "2px solid #66ccff" : undefined,
+    outlineOffset: isDragging ? "-2px" : undefined,
     display: "inline-flex",
     alignItems: "center",
     cursor: "grab",
@@ -279,6 +275,23 @@ export default function DraggableItem({
             bottom: 0,
             left: -hitPad,
             right: -hitPad,
+          }}
+        />
+      )}
+      {/* 「组件虚线框」开关的灰框：画在最上层（覆盖层），避免被组件背景盖住；
+          不画上边，相邻两行不会各画一条（行边界只剩上行那 1px） */}
+      {!isSpecLine && (
+        <span
+          className="guide-item-frame-line"
+          aria-hidden
+          style={{
+            position: "absolute",
+            inset: 0,
+            border: "1px dashed var(--guide-item-outline, transparent)",
+            borderTopColor: "transparent",
+            borderRadius: 2,
+            pointerEvents: "none",
+            zIndex: 21,
           }}
         />
       )}

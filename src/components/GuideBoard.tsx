@@ -570,25 +570,26 @@ const GuideBoardCols = memo(forwardRef<GuideBoardRef, GuideBoardProps>(
             // 全局底板配色优先，未设置则保留组件自带的局部默认值。
             // 上板后即视为局部显式指定，之后改全局不再回头覆盖它。
             // 落板配色：
-            // - 重庆(0) / 北京新(3)：把当前生效的配色固化进 props
-            //   （底板配色优先，否则用组件自带默认值）——这两个主题需要明确指定颜色
-            // - 其余主题（成都/香港/北京旧）：背景直接给透明，不跟底板走，
-            //   需要别的颜色自己手动指定
+            // - 背景色：重庆(0) / 北京新(3) 固化当前生效色（底板配色优先，
+            //   否则组件自带默认值）；其余主题直接给透明，不跟底板走
+            // - 前景色：所有主题都跟随「默认前景色」
             if (Component) {
               const forms =
                 (Component as any).getEditorConfig?.(t)?.forms ?? [];
               const colorKeys = new Set(
                 forms.map((f: { key: string }) => f.key)
               );
-              if (currentTheme === 0 || currentTheme === 3) {
-                if (colorKeys.has("background") && boardBackground) {
-                  finalProps.background = boardBackground;
+              if (colorKeys.has("background")) {
+                if (currentTheme === 0 || currentTheme === 3) {
+                  if (boardBackground) {
+                    finalProps.background = boardBackground;
+                  }
+                } else {
+                  finalProps.background = "transparent";
                 }
-                if (colorKeys.has("foreground") && boardForeground) {
-                  finalProps.foreground = boardForeground;
-                }
-              } else if (colorKeys.has("background")) {
-                finalProps.background = "transparent";
+              }
+              if (colorKeys.has("foreground") && boardForeground) {
+                finalProps.foreground = boardForeground;
               }
             }
 
