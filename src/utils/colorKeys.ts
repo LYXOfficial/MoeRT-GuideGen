@@ -9,10 +9,10 @@ export function excludeColorKeysFor(
   fieldKey: string
 ): string[] {
   const keys = Object.keys(palette);
-  if (fieldKey === "background") {
+  if (fieldKey.startsWith("background")) {
     return keys.filter(k => k.includes("foreground"));
   }
-  if (fieldKey === "foreground") {
+  if (fieldKey.startsWith("foreground")) {
     return keys.filter(k => k.includes("background"));
   }
   return [];

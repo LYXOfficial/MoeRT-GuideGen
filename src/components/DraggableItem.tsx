@@ -263,7 +263,7 @@ export default function DraggableItem({
         if (isDragging || isSorting || hasMovedRef.current) return;
         onClick?.(e);
       }}
-      className={`${onClick ? "guide-item-frame hover:outline-blue-500 hover:outline-2 hover:outline-dashed" : "guide-item-frame"}${hitPad > 0 ? " guide-item-hit-expand" : ""}${isDragging ? " is-dragging" : ""}`}
+      className={`guide-item-frame${hitPad > 0 ? " guide-item-hit-expand" : ""}${isDragging ? " is-dragging" : ""}`}
     >
       {hitPad > 0 && (
         // 透明热区：只吃指针，不画东西（分割线等小到点不中的组件靠它才点得着）
@@ -278,8 +278,7 @@ export default function DraggableItem({
           }}
         />
       )}
-      {/* 「组件虚线框」开关的灰框：画在最上层（覆盖层），避免被组件背景盖住；
-          不画上边，相邻两行不会各画一条（行边界只剩上行那 1px） */}
+      {/* 「组件虚线框」开关的灰框：画在最上层（覆盖层），避免被组件背景盖住 */}
       {!isSpecLine && (
         <span
           className="guide-item-frame-line"
@@ -288,7 +287,6 @@ export default function DraggableItem({
             position: "absolute",
             inset: 0,
             border: "2px dashed var(--guide-item-outline, transparent)",
-            borderTopColor: "transparent",
             borderRadius: 2,
             pointerEvents: "none",
             zIndex: 21,

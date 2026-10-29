@@ -149,15 +149,30 @@ const CustomColorPicker: React.FC<CustomColorPickerProps> = ({
         value={(() => {
           // value 为空 = 留空（跟随全局默认）：不匹配任何常量，显示占位文案
           if (value == null) return "";
+          // 归一化比较：面板/存档里的十六进制可能大小写混用，
+          // 直接全等会误判成「没有对应常量」而显示原始值
+          const normHex = (c: unknown): string => {
+            if (typeof c !== "string") return "";
+            const s = c.trim().toLowerCase();
+            const m = s.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/);
+            if (!m) return s;
+            if (m[1].length === 3) {
+              return `#${m[1].split("").map(ch => ch + ch).join("")}`;
+            }
+            return s;
+          };
+          // 以受控 value 为准（内部 colorPickerValue 状态可能滞后一拍）
+          const current = normHex(value) || normHex(colorPickerValue);
+          if (!current) return "";
           const excluded = excludeKeys || [];
           const sameValueKeys = Object.entries(colors)
-            .filter(([, v]) => v === colorPickerValue)
+            .filter(([, v]) => normHex(v) === current)
             .map(([k]) => k);
           // 优先用「没被排除」的同色键（如底板背景色排除 foreground 后，
           // #ffffff 仍能用「白色」这个键显示）；一个可用的都没有才显示十六进制
           const allowed = sameValueKeys.find(k => !excluded.includes(k));
           if (allowed) return allowed;
-          if (sameValueKeys.length > 0) return colorPickerValue || "";
+          if (sameValueKeys.length > 0) return current;
           return "";
         })()}
         onChange={handleSelectChange}

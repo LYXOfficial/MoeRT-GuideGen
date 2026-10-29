@@ -73,9 +73,9 @@ const DraggableComponentItem = React.memo(function DraggableComponentItem({
   // 侧栏预览用的配色：底板背景色/默认前景色覆盖时，卡片里的组件示例
   // 也跟着变色（只注入组件支持的属性，按编辑表单判断）。拖拽数据不带。
   const previewComponentProps = useMemo(() => {
-    // 背景：只有重庆/北京新跟随底板配色；前景：所有主题跟随
-    const followBg = currentTheme === 0 || currentTheme === 3;
-    if (cardForeground == null && (!followBg || cardBackground == null)) {
+    // 预览要和「拖上板后的样子」一致：底板背景色设置后全主题跟随显示
+    // （落板时其它主题固化透明、重庆/北京新固化底板色，视觉上都是底板色）。
+    if (cardBackground == null && cardForeground == null) {
       return props;
     }
     const forms =
@@ -83,8 +83,11 @@ const DraggableComponentItem = React.memo(function DraggableComponentItem({
     const keys = new Set(forms.map((f: PropForm) => f.key));
     return {
       ...props,
-      ...(followBg && cardBackground != null && keys.has("background")
+      ...(cardBackground != null && keys.has("background")
         ? { background: cardBackground }
+        : {}),
+      ...(cardBackground != null && keys.has("background2")
+        ? { background2: cardBackground }
         : {}),
       ...(cardForeground != null && keys.has("foreground")
         ? { foreground: cardForeground }

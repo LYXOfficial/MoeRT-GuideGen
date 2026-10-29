@@ -158,7 +158,9 @@ body {
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.18s ease;
-  z-index: 20;
+  /* hover/选中的粉色框必须压在灰色组件框（.guide-item-frame-line，z 21）之上，
+     否则 hover 时只能看到灰框，粉色被整个盖住 */
+  z-index: 22;
 }
 .guide-item-dashed-frame.is-visible {
   opacity: 1;

@@ -156,12 +156,21 @@ const BoardItemContent = memo(function BoardItemContent({
   if (!React.isValidElement(item.element)) return item.element;
   // 北京新：背景不透明，且默认值应该跟随底板背景色。
   // 只覆盖「仍是主题默认值」的组件，手动指定过别的颜色的保持不动。
-  const followBg =
-    followBackground &&
-    themeDefaultBackground != null &&
-    item.props?.background === themeDefaultBackground
-      ? { background: followBackground }
-      : {};
+  // 北京用 background/background2 做上下分色，两行都要跟（否则只有第一行变色）。
+  const followBg: Record<string, string> = {};
+  if (followBackground && themeDefaultBackground != null) {
+    if (item.props?.background === themeDefaultBackground) {
+      followBg.background = followBackground;
+    }
+    if (
+      item.props != null &&
+      typeof item.props === "object" &&
+      "background2" in item.props &&
+      item.props.background2 === themeDefaultBackground
+    ) {
+      followBg.background2 = followBackground;
+    }
+  }
   return React.cloneElement(item.element, {
     ...item.props,
     ...followBg,

@@ -1488,9 +1488,13 @@ export default function Editor({
         : [];
     const keys = new Set(forms.map((f: { key: string }) => f.key));
     const inject: Record<string, any> = {};
-    // 背景：只有重庆/北京新跟随底板配色；前景：所有主题跟随
-    if (boardBackground && keys.has("background") && (currentTheme === 0 || currentTheme === 3)) {
+    // 幽灵要和「拖上板后的样子」一致：底板背景色设置后全主题跟随显示
+    // （落板固化透明/底板色的组件，视觉上都是底板色）。
+    if (boardBackground && keys.has("background")) {
       inject.background = boardBackground;
+    }
+    if (boardBackground && keys.has("background2")) {
+      inject.background2 = boardBackground;
     }
     if (boardForeground && keys.has("foreground")) {
       inject.foreground = boardForeground;
