@@ -8,7 +8,7 @@ export interface SpecLineProps {
 }
 export const specLineDefaultProps = {
   foreground: colors.specline,
-  background: colors.background,
+  background: "transparent",
 };
 
 export const specLineEditorConfig = (

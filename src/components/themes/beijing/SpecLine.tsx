@@ -19,7 +19,7 @@ export interface SpecLineProps {
 export const specLineDefaultProps: SpecLineProps = {
   width: 3,
   foreground: colors.specline,
-  background: colors.background,
+  background: "transparent",
   background2: colors.background,
 };
 

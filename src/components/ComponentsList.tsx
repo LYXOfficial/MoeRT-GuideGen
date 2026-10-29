@@ -7,6 +7,7 @@ import type { GuideItem } from "../interfaces/guide";
 import type { PropForm } from "../interfaces/editor";
 import { getVisibleClientRect } from "../utils/visibleRect";
 import CustomColorPicker from "./CustomColorPicker";
+import { excludeColorKeysFor } from "../utils/colorKeys";
 
 interface ComponentsListProps {
   currentTheme: number;
@@ -72,6 +73,8 @@ const DraggableComponentItem = React.memo(function DraggableComponentItem({
   // 侧栏预览用的配色：底板背景色/默认前景色覆盖时，卡片里的组件示例
   // 也跟着变色（只注入组件支持的属性，按编辑表单判断）。拖拽数据不带。
   const previewComponentProps = useMemo(() => {
+    // 只有重庆主题的组件背景跟随底板配色；其余主题的背景不跟底板走
+    if (currentTheme !== 0) return props;
     if (cardBackground == null && cardForeground == null) return props;
     const forms =
       (Component as any).getEditorConfig?.(t)?.forms ?? [];
@@ -375,6 +378,11 @@ export default function ComponentsList({
                 value={boardForeground ?? null}
                 fallbackColor={theme.colors.defaultForeground}
                 placeholder={t("editor.followTheme")}
+                // 默认前景色：不列任何「xx背景色」
+                excludeKeys={excludeColorKeysFor(
+                  theme.colors.colors,
+                  "foreground"
+                )}
                 onChange={hex => onBoardForegroundChange?.(hex)}
               />
             </div>
@@ -399,8 +407,11 @@ export default function ComponentsList({
                 value={boardBackground ?? null}
                 fallbackColor={theme.colors.defaultBackground}
                 placeholder={t("editor.followTheme")}
-                // 底板背景色不允许选「透明」（其余取色器都可以）
-                excludeKeys={["transparent"]}
+                // 底板背景色：不允许「透明」，也不列任何「xx前景色」
+                excludeKeys={[
+                  "transparent",
+                  ...excludeColorKeysFor(theme.colors.colors, "background"),
+                ]}
                 onChange={hex => onBoardBackgroundChange?.(hex)}
               />
             </div>

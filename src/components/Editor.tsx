@@ -1488,11 +1488,14 @@ export default function Editor({
         : [];
     const keys = new Set(forms.map((f: { key: string }) => f.key));
     const inject: Record<string, any> = {};
-    if (boardBackground && keys.has("background")) {
-      inject.background = boardBackground;
-    }
-    if (boardForeground && keys.has("foreground")) {
-      inject.foreground = boardForeground;
+    // 只有重庆主题的组件跟随底板配色（其余主题背景不跟底板走）
+    if (currentTheme === 0) {
+      if (boardBackground && keys.has("background")) {
+        inject.background = boardBackground;
+      }
+      if (boardForeground && keys.has("foreground")) {
+        inject.foreground = boardForeground;
+      }
     }
 
     const isSpacing = item.type?.includes("Spacing");

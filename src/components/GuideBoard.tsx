@@ -18,6 +18,7 @@ import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import DraggableItem from "./DraggableItem";
 import CustomColorPicker from "./CustomColorPicker";
+import { excludeColorKeysFor } from "../utils/colorKeys";
 import { EditingPropsContext } from "./EditingPropsContext";
 import themes from "./themes/themereg.ts";
 import type { PropForm } from "../interfaces/editor.ts";
@@ -568,7 +569,8 @@ const GuideBoardCols = memo(forwardRef<GuideBoardRef, GuideBoardProps>(
             // 落板固化：把「此刻生效的配色」写进 props ——
             // 全局底板配色优先，未设置则保留组件自带的局部默认值。
             // 上板后即视为局部显式指定，之后改全局不再回头覆盖它。
-            if (Component) {
+            // 只有重庆主题的组件背景跟随底板配色；其余主题不跟底板走
+            if (Component && currentTheme === 0) {
               const forms =
                 (Component as any).getEditorConfig?.(t)?.forms ?? [];
               const colorKeys = new Set(
@@ -1222,6 +1224,11 @@ const GuideBoardCols = memo(forwardRef<GuideBoardRef, GuideBoardProps>(
                           })(),
                           ...(form.element.type === CustomColorPicker
                             ? {
+                                // 背景色不列「xx前景色」常量，前景色不列「xx背景色」
+                                excludeKeys: excludeColorKeysFor(
+                                  themes[currentTheme][1].colors.colors,
+                                  form.key
+                                ),
                                 fallbackColor:
                                   form.key === "foreground"
                                     ? themes[currentTheme][1].colors
