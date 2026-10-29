@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { domToPng } from "modern-screenshot";
 import { IconImage } from "@douyinfe/semi-icons";
 import { useTranslation } from "react-i18next";
+import { exportFileName } from "../utils/archiveStore";
 
 interface ExportDialogProps {
   visible: boolean;
@@ -137,7 +138,12 @@ export const ExportDialog = ({
       await document.fonts.ready;
 
       // 3. 计算缩放比例
-      const scale = width / baseWidth;
+      // 状态里可能还留着键入中的小值（输入时不夹下限），导出前夹回合法区间
+      const hi = Math.round(baseWidth * 4);
+      const lo = Math.round(baseWidth / 2);
+      const exportWidth = Math.round(Math.min(hi, Math.max(lo, width)));
+      const exportHeight = Math.round(guideHeight * (exportWidth / baseWidth));
+      const scale = exportWidth / baseWidth;
 
       // 4. 缩放不能加在真实节点上：modern-screenshot 克隆时不会带上
       // transform-origin（克隆根回退成 50% 50%），只要导出宽度 ≠ 画板宽度，
@@ -154,9 +160,12 @@ export const ExportDialog = ({
           : computedStyle.backgroundColor;
 
       // 6. 使用 modern-screenshot 生成图片
+      // borderColor 是 React 管理的内联：导出 await 窗口内若画板重渲染，
+      // React 会把主题色写回去（旧「(−2,−2)px 错位」的复发形态），临克隆前再设一次
+      guide.style.borderColor = "transparent";
       const dataUrl = await domToPng(guide, {
-        width: width,
-        height: height,
+        width: exportWidth,
+        height: exportHeight,
         // 目标像素宽高由 width/height 决定，内部分辨率交给上面的
         // transform 缩放（矢量放大，不损失清晰度），不要再叠一层 scale
         scale: 1,
@@ -174,7 +183,17 @@ export const ExportDialog = ({
         // 过滤不需要的元素
         filter: (node: Node) => {
           if (node instanceof Element) {
+            // 空行的「拖拽组件到此行」占位提示（id="empty-<idx>"）：
+            // 新档默认就有一行空行，不排除的话提示文字会烘进导出图
+            if (node.id?.startsWith("empty-")) return false;
             const classList = Array.from(node.classList || []);
+            // 选中态高亮（粉色蒙层 + 虚线框）：键盘路径触发导出时可能还挂着
+            if (
+              classList.includes("guide-item-selected-mask") ||
+              classList.includes("guide-item-dashed-frame")
+            ) {
+              return false;
+            }
             // 过滤掉操作按钮、拖拽相关元素
             return !classList.some(
               cls =>
@@ -193,7 +212,7 @@ export const ExportDialog = ({
 
       // 7. 创建链接并下载
       const link = document.createElement("a");
-      link.download = `MoeRT_GuideGen_Image_${Date.now()}.png`;
+      link.download = exportFileName("exported-image", "png");
       link.href = dataUrl;
       document.body.appendChild(link);
       link.click();
@@ -240,14 +259,22 @@ export const ExportDialog = ({
       title={t("exportDialog.title")}
       visible={visible}
       onCancel={onCancel}
-      closeOnEsc={true}
+      closeOnEsc={!isExporting}
       footer={null}
     >
       <Form className="mb-5">
         <Form.Label>{t("exportDialog.width")}</Form.Label>
         <Input
           value={width}
-          onChange={val => setWidth(Number(val) || baseWidth)}
+          onChange={val => {
+            // Semi Input 的 min/max 属性对文本输入不生效（死配置）：
+            // 负数/超大值直通会产出空白图或直接抛错，还白跑 10s+ 字体内嵌。
+            // 输入过程只挡非法值和疯狂上限（不夹下限，允许「8」这种键入中间态），
+            // 合法区间 [baseWidth/2, baseWidth*4] 在导出前统一夹紧
+            const n = Number(val);
+            if (!Number.isFinite(n) || n <= 0) return;
+            setWidth(Math.round(Math.min(n, Math.round(baseWidth * 4))));
+          }}
           min={baseWidth / 2}
           max={baseWidth * 4}
           style={{ width: "100%" }}

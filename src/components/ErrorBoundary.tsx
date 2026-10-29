@@ -2,13 +2,13 @@ import React from "react";
 import Salt from "./Salt";
 import { getErrorLogs, type LogEntry } from "../utils/errorLog.ts";
 import {
-  archiveFileName,
   clearAllArchives,
   downloadJson,
   exportAllArchivesZip,
   getArchiveRaw,
   listArchives,
   loadArchiveData,
+  savesFileName,
 } from "../utils/archiveStore.ts";
 
 type CrashArchive = {
@@ -211,7 +211,7 @@ export default class ErrorBoundary extends React.Component<
       window.alert("这个存档没有可导出的内容。");
       return;
     }
-    downloadJson(item.raw, archiveFileName(item.name));
+    downloadJson(item.raw, savesFileName());
   };
 
   private handleExportAll = () => {

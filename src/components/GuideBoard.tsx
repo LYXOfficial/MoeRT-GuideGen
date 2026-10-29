@@ -479,8 +479,11 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
           });
 
           setRows(restoredRows);
-          setBoardWidth(state.config.width);
-          setShowDividers(state.config.showSpecLine);
+          // 导入/旧版本的 config 字段可能缺失或畸形（isSaveData 只查到对象级）：
+          // 给兜底值，别让 undefined 流进布局计算
+          const restoredWidth = Number(state.config.width);
+          setBoardWidth(Number.isFinite(restoredWidth) && restoredWidth > 0 ? restoredWidth : DEFAULT_WIDTH);
+          setShowDividers(state.config.showSpecLine !== false);
 
           // 恢复完成后重新启用配置变化通知
           setTimeout(() => {

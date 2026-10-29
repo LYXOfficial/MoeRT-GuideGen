@@ -55,6 +55,7 @@ function App() {
   };
 
   // 当字体和存档都加载完成时，隐藏加载动画
+  // （i18n 语言包的等待在 main.tsx 的 Suspense 边界，这里不用管）
   useEffect(() => {
     if (fontsLoaded && archiveLoaded) {
       // 延迟一点时间让动画更自然
@@ -66,8 +67,11 @@ function App() {
 
   useEffect(() => {
     const updateHeight = () => {
-      const guideRef = document.querySelector(".guide-board");
-      setGuideHeight(guideRef?.clientHeight || 0);
+      const guideRef = document.querySelector<HTMLElement>(".guide-board");
+      // 用 offsetHeight（含上下 2px 边框盒）而不是 clientHeight：
+      // 导出宽度基准是 offsetWidth（含边框），高度基准必须同口径，
+      // 否则导出图按 clientHeight 烘会系统性比画板矮 4px，末行底边被裁
+      setGuideHeight(guideRef?.offsetHeight || 0);
     };
 
     // 初始更新

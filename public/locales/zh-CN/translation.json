@@ -120,7 +120,8 @@
       "empty": "还没有存档",
       "unknownTheme": "未知主题",
       "exportAll": "导出全部存档（zip）",
-      "exportAllSuccess": "已导出 {{count}} 个存档"
+      "exportAllSuccess": "已导出 {{count}} 个存档",
+      "exportAllEmpty": "没有可导出的存档"
     }
   },
   "loading": {

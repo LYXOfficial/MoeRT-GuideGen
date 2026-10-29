@@ -135,7 +135,12 @@ export function ensureArchives(options: {
   if (existing.archives.length > 0) {
     // 索引在、但当前存档数据丢了（写了一半 / 手动清理）：补一份空画板，
     // 保证「当前存档」永远可读。
-    if (!loadArchiveData(existing.activeId)) {
+    // 注意只补 raw 真的不在的情况：raw 在但校验不过（未来版本 / 损坏）时
+    // 绝不能覆盖，留给上层走「还原失败」流程，原始数据是用户唯一的备份
+    if (
+      !loadArchiveData(existing.activeId) &&
+      !getArchiveRaw(existing.activeId)
+    ) {
       saveArchiveData(
         existing.activeId,
         createEmptySaveData(options.theme),
@@ -183,9 +188,13 @@ export function ensureArchives(options: {
     // 让编辑器可以正常使用，只是不会持久化。
     return { activeId: "", archives: [] };
   }
-  writeIndex(index);
+  const indexWritten = writeIndex(index);
   try {
-    if (migrated) localStorage.removeItem(LEGACY_ARCHIVE_KEY);
+    // 索引没写成功就保留 legacy 键：下次启动还能再迁移一次；
+    // 否则旧单存档会变成没有任何索引引用的孤儿数据（看起来就是「存档没了」）
+    if (migrated && indexWritten) {
+      localStorage.removeItem(LEGACY_ARCHIVE_KEY);
+    }
   } catch {
     // 删除失败无伤大雅，下次索引还在就不会再迁移
   }
@@ -368,22 +377,34 @@ export function isArchiveBundle(value: unknown): value is ArchiveBundle {
   );
 }
 
-/** 文件名用时间戳：YYYY-MM-DD_HH-mm-ss（不含冒号，Windows 也能存） */
-export function makeTimestamp(date = new Date()): string {
-  const pad = (value: number) => String(value).padStart(2, "0");
-  return [
-    `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`,
-    `${pad(date.getHours())}-${pad(date.getMinutes())}-${pad(date.getSeconds())}`,
-  ].join("_");
-}
-
 export function safeFileStem(name: string): string {
   return name.replace(/[\\/:*?"<>|]+/g, "_").trim() || "archive";
 }
 
-/** moert-guidegen-save-存档名_时间戳.json */
+/** 统一导出文件名：MoeRT_GuideGen_<kind>_yymmdd_<unix秒>[_<后缀>].<ext> */
+export type ExportFileKind = "saves" | "saves-collection" | "exported-image";
+
+export function exportFileName(
+  kind: ExportFileKind,
+  ext: string,
+  suffix?: string
+): string {
+  const date = new Date();
+  const pad = (value: number) => String(value).padStart(2, "0");
+  const yymmdd = `${String(date.getFullYear()).slice(2)}${pad(date.getMonth() + 1)}${pad(date.getDate())}`;
+  const unix = Math.floor(date.getTime() / 1000);
+  const extra = suffix ? `_${safeFileStem(suffix)}` : "";
+  return `MoeRT_GuideGen_${kind}_${yymmdd}_${unix}${extra}.${ext}`;
+}
+
+/** 单存档下载名：MoeRT_GuideGen_saves_yymmdd_<unix秒>.json */
+export function savesFileName(): string {
+  return exportFileName("saves", "json");
+}
+
+/** zip 包内条目名：尾部追加存档名，整包解压后多个存档不重名 */
 export function archiveFileName(name: string): string {
-  return `moert-guidegen-save-${safeFileStem(name)}_${makeTimestamp()}.json`;
+  return exportFileName("saves", "json", name);
 }
 
 export function downloadBlob(blob: Blob, filename: string): void {
@@ -416,7 +437,7 @@ export function exportAllArchivesZip(): number {
   if (entries.length === 0) return 0;
   downloadBlob(
     createZipBlob(entries),
-    `moert-guidegen-saves_${makeTimestamp()}.zip`
+    exportFileName("saves-collection", "zip")
   );
   return entries.length;
 }

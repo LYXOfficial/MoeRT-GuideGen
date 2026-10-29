@@ -120,7 +120,8 @@
       "empty": "還沒有存檔",
       "unknownTheme": "未知主題",
       "exportAll": "匯出全部存檔（zip）",
-      "exportAllSuccess": "已匯出 {{count}} 個存檔"
+      "exportAllSuccess": "已匯出 {{count}} 個存檔",
+      "exportAllEmpty": "沒有可匯出的存檔"
     }
   },
   "loading": {
@@ -595,6 +596,23 @@
             "minWidth": "最小寬度",
             "background": "背景色"
           }
+        },
+        "ExitName": {
+          "displayName": "出口名稱",
+          "props": {
+            "line1chinese": "第一行中文",
+            "line1english": "第一行英文",
+            "line2chinese": "第二行中文",
+            "line2english": "第二行英文",
+            "background": "背景色",
+            "foreground": "前景色",
+            "align": {
+              "displayName": "對齊",
+              "left": "左",
+              "right": "右",
+              "center": "中"
+            }
+          }
         }
       },
       "colors": {
@@ -710,6 +728,7 @@
               "exit_2": "出口（2）",
               "exit_3": "出口（3）",
               "female": "女",
+              "kcr": "KCR Logo",
               "lift_1": "升降機（1）",
               "lift_2": "升降機（2）",
               "light_rail_1": "輕鐵（1）",
@@ -743,8 +762,12 @@
             "chinese": "中文名",
             "english": "英文名",
             "lineColor": "路線顏色",
+            "background": "背景色",
             "align": {
-              "displayName": "對齊"
+              "displayName": "對齊",
+              "left": "左",
+              "right": "右",
+              "center": "中"
             },
             "foreground": "前景色"
           }
@@ -774,7 +797,14 @@
           "displayName": "站點名稱",
           "props": {
             "chinese": "中文名",
-            "english": "英文名"
+            "english": "英文名",
+            "align": {
+              "displayName": "對齊",
+              "left": "左",
+              "right": "右"
+            },
+            "background": "背景色",
+            "foreground": "前景色"
           }
         },
         "Text": {
@@ -788,25 +818,13 @@
               "right": "右",
               "center": "中"
             },
+            "fontsize": {
+              "displayName": "字體大小",
+              "small": "小",
+              "large": "大"
+            },
             "background": "背景色",
             "foreground": "前景色"
-          }
-        },
-        "ExitName": {
-          "displayName": "出口名稱",
-          "props": {
-            "line1chinese": "第一行中文",
-            "line1english": "第一行英文",
-            "line2chinese": "第二行中文",
-            "line2english": "第二行英文",
-            "background": "背景色",
-            "foreground": "前景色",
-            "align": {
-              "displayName": "對齊",
-              "left": "左",
-              "right": "右",
-              "center": "中"
-            }
           }
         },
         "Platform": {
@@ -827,6 +845,7 @@
         "foreground3": "前景色_3",
         "border": "邊框色",
         "specline": "分隔線",
+        "exitletter": "出口編號",
         "kwuntongline": "觀塘綫",
         "tsuenwanline": "荃灣綫",
         "islandline": "港島綫",
@@ -968,12 +987,6 @@
             },
             "extendLeft": "左側色塊延長",
             "extendRight": "右側色塊延長",
-            "fontWeightZh": {
-              "displayName": "中文字重"
-            },
-            "fontWeightEn": {
-              "displayName": "英文字重"
-            },
             "foreground": "前景色",
             "background": "背景色",
             "background2": "背景色（第二行）"
@@ -1335,12 +1348,6 @@
             "size": {
               "displayName": "尺寸"
             },
-            "fontWeightZh": {
-              "displayName": "中文字重"
-            },
-            "fontWeightEn": {
-              "displayName": "英文字重"
-            },
             "foreground": "前景色",
             "background": "背景色"
           }
@@ -1382,7 +1389,7 @@
             "exits": "出口編號",
             "exitLetter": "字母",
             "variant": {
-              "displayName": "形态"
+              "displayName": "形態"
             },
             "foreground": "前景色",
             "background": "背景色"

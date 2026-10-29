@@ -120,7 +120,8 @@
       "empty": "저장이 없습니다",
       "unknownTheme": "알 수 없는 테마",
       "exportAll": "모든 저장 내보내기 (zip)",
-      "exportAllSuccess": "{{count}}개의 저장을 내보냈습니다"
+      "exportAllSuccess": "{{count}}개의 저장을 내보냈습니다",
+      "exportAllEmpty": "내보낼 저장이 없습니다"
     }
   },
   "loading": {
@@ -595,6 +596,23 @@
             "minWidth": "최소 너비",
             "background": "배경색"
           }
+        },
+        "ExitName": {
+          "displayName": "출구명",
+          "props": {
+            "line1chinese": "1행 중국어",
+            "line1english": "1행 영어",
+            "line2chinese": "2행 중국어",
+            "line2english": "2행 영어",
+            "background": "배경색",
+            "foreground": "전경색",
+            "align": {
+              "displayName": "정렬",
+              "left": "왼쪽",
+              "right": "오른쪽",
+              "center": "가운데"
+            }
+          }
         }
       },
       "colors": {
@@ -710,6 +728,7 @@
               "exit_2": "출구 (2)",
               "exit_3": "출구 (3)",
               "female": "여성",
+              "kcr": "KCR Logo",
               "lift_1": "엘리베이터 (1)",
               "lift_2": "엘리베이터 (2)",
               "light_rail_1": "경전철 (1)",
@@ -743,8 +762,12 @@
             "chinese": "중국어 이름",
             "english": "영어 이름",
             "lineColor": "노선 색상",
+            "background": "배경색",
             "align": {
-              "displayName": "정렬"
+              "displayName": "정렬",
+              "left": "왼쪽",
+              "right": "오른쪽",
+              "center": "가운데"
             },
             "foreground": "전경색"
           }
@@ -774,7 +797,14 @@
           "displayName": "역명",
           "props": {
             "chinese": "중국어 이름",
-            "english": "영어 이름"
+            "english": "영어 이름",
+            "align": {
+              "displayName": "정렬",
+              "left": "왼쪽",
+              "right": "오른쪽"
+            },
+            "background": "배경색",
+            "foreground": "전경색"
           }
         },
         "Text": {
@@ -788,25 +818,13 @@
               "right": "오른쪽",
               "center": "중앙"
             },
+            "fontsize": {
+              "displayName": "글자 크기",
+              "small": "작게",
+              "large": "크게"
+            },
             "background": "배경색",
             "foreground": "전경색"
-          }
-        },
-        "ExitName": {
-          "displayName": "출구명",
-          "props": {
-            "line1chinese": "1행 중국어",
-            "line1english": "1행 영어",
-            "line2chinese": "2행 중국어",
-            "line2english": "2행 영어",
-            "background": "배경색",
-            "foreground": "전경색",
-            "align": {
-              "displayName": "정렬",
-              "left": "왼쪽",
-              "right": "오른쪽",
-              "center": "중앙"
-            }
           }
         },
         "Platform": {
@@ -823,10 +841,11 @@
         "foreground": "전경색",
         "background2": "배경색 2",
         "foreground2": "전경색 2",
-        "background3": "배경색 3",
-        "foreground3": "전경색 3",
+        "background3": "배경색_3",
+        "foreground3": "전경색_3",
         "border": "테두리색",
         "specline": "구분선",
+        "exitletter": "출구 번호",
         "kwuntongline": "관동선",
         "tsuenwanline": "조완선",
         "islandline": "항도선",
@@ -968,12 +987,6 @@
             },
             "extendLeft": "왼쪽 색상 블록 연장",
             "extendRight": "오른쪽 색상 블록 연장",
-            "fontWeightZh": {
-              "displayName": "중국어 굵기"
-            },
-            "fontWeightEn": {
-              "displayName": "영어 굵기"
-            },
             "foreground": "전경색",
             "background": "배경색",
             "background2": "배경색(두 번째 줄)"
@@ -1335,12 +1348,6 @@
             "size": {
               "displayName": "크기"
             },
-            "fontWeightZh": {
-              "displayName": "중국어 굵기"
-            },
-            "fontWeightEn": {
-              "displayName": "영어 굵기"
-            },
             "foreground": "전경색",
             "background": "배경색"
           }
@@ -1382,7 +1389,7 @@
             "exits": "출입구 번호",
             "exitLetter": "영문 기호",
             "variant": {
-              "displayName": "形态"
+              "displayName": "형태"
             },
             "foreground": "전경색",
             "background": "배경색"

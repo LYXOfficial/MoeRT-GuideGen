@@ -120,7 +120,8 @@
       "empty": "保存データがありません",
       "unknownTheme": "不明なテーマ",
       "exportAll": "すべてのセーブを書き出す（zip）",
-      "exportAllSuccess": "{{count}} 件のセーブを書き出しました"
+      "exportAllSuccess": "{{count}} 件のセーブを書き出しました",
+      "exportAllEmpty": "書き出せるセーブがありません"
     }
   },
   "loading": {
@@ -595,6 +596,23 @@
             "minWidth": "最小幅",
             "background": "背景色"
           }
+        },
+        "ExitName": {
+          "displayName": "出口名",
+          "props": {
+            "line1chinese": "1行目中国語",
+            "line1english": "1行目英語",
+            "line2chinese": "2行目中国語",
+            "line2english": "2行目英語",
+            "background": "背景色",
+            "foreground": "前景色",
+            "align": {
+              "displayName": "配置",
+              "left": "左",
+              "right": "右",
+              "center": "中央"
+            }
+          }
         }
       },
       "colors": {
@@ -710,6 +728,7 @@
               "exit_2": "出口（2）",
               "exit_3": "出口（3）",
               "female": "女性",
+              "kcr": "KCR Logo",
               "lift_1": "エレベーター（1）",
               "lift_2": "エレベーター（2）",
               "light_rail_1": "ライトレール（1）",
@@ -743,8 +762,12 @@
             "chinese": "中国語名",
             "english": "英語名",
             "lineColor": "路線カラー",
+            "background": "背景色",
             "align": {
-              "displayName": "配置"
+              "displayName": "配置",
+              "left": "左",
+              "right": "右",
+              "center": "中央"
             },
             "foreground": "前景色"
           }
@@ -774,7 +797,14 @@
           "displayName": "駅名",
           "props": {
             "chinese": "中国語名",
-            "english": "英語名"
+            "english": "英語名",
+            "align": {
+              "displayName": "配置",
+              "left": "左",
+              "right": "右"
+            },
+            "background": "背景色",
+            "foreground": "前景色"
           }
         },
         "Text": {
@@ -788,25 +818,13 @@
               "right": "右",
               "center": "中央"
             },
+            "fontsize": {
+              "displayName": "文字サイズ",
+              "small": "小",
+              "large": "大"
+            },
             "background": "背景色",
             "foreground": "前景色"
-          }
-        },
-        "ExitName": {
-          "displayName": "出口名",
-          "props": {
-            "line1chinese": "1行目中国語",
-            "line1english": "1行目英語",
-            "line2chinese": "2行目中国語",
-            "line2english": "2行目英語",
-            "background": "背景色",
-            "foreground": "前景色",
-            "align": {
-              "displayName": "配置",
-              "left": "左",
-              "right": "右",
-              "center": "中央"
-            }
           }
         },
         "Platform": {
@@ -823,10 +841,11 @@
         "foreground": "前景色",
         "background2": "背景色2",
         "foreground2": "前景色2",
-        "background3": "背景色3",
-        "foreground3": "前景色3",
+        "background3": "背景色_3",
+        "foreground3": "前景色_3",
         "border": "枠線色",
         "specline": "区切り線",
+        "exitletter": "出口番号",
         "kwuntongline": "観塘線",
         "tsuenwanline": "荃湾線",
         "islandline": "港島線",
@@ -968,12 +987,6 @@
             },
             "extendLeft": "左側の色ブロック延長",
             "extendRight": "右側の色ブロック延長",
-            "fontWeightZh": {
-              "displayName": "中国語のウェイト"
-            },
-            "fontWeightEn": {
-              "displayName": "英語のウェイト"
-            },
             "foreground": "前景色",
             "background": "背景色",
             "background2": "背景色（2行目）"
@@ -1335,12 +1348,6 @@
             "size": {
               "displayName": "サイズ"
             },
-            "fontWeightZh": {
-              "displayName": "中国語のウェイト"
-            },
-            "fontWeightEn": {
-              "displayName": "英語のウェイト"
-            },
             "foreground": "前景色",
             "background": "背景色"
           }
@@ -1382,7 +1389,7 @@
             "exits": "出入口番号",
             "exitLetter": "英字",
             "variant": {
-              "displayName": "形态"
+              "displayName": "スタイル"
             },
             "foreground": "前景色",
             "background": "背景色"

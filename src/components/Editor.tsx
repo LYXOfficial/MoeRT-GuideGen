@@ -282,6 +282,9 @@ export default function Editor({
 
   // 撤销操作
   const handleUndo = useCallback(() => {
+    // 切换/导入存档的还原窗口内禁止撤销：此时画板还是旧存档内容，
+    // 撤销链路会把旧快照灌回画板并在收尾时落盘，整份覆盖刚载入的新存档
+    if (suspendSaveRef.current) return;
     // 先把还没落账的最近一次修改记进历史：
     // 否则防抖没走完就撤销，撤销点会比用户的预期多退一格，之后的自动保存
     // 还会把"撤销前"的内容当成新操作压进去
@@ -293,6 +296,8 @@ export default function Editor({
 
   // 重做操作
   const handleRedo = useCallback(() => {
+    // 同 handleUndo：还原窗口内禁止重做
+    if (suspendSaveRef.current) return;
     saveCurrentState(true);
     const nextState = redo();
     if (!nextState) return;
@@ -509,6 +514,15 @@ export default function Editor({
       }
       const id = activeArchiveIdRef.current;
       if (!id) return false;
+      // 多标签页防护：另一个标签页可能刚删掉这个存档。写前查一次索引，
+      // 避免把整份内容写进无人引用的孤儿键（用户看来就是「编辑全丢了」）
+      if (
+        !archiveStore
+          .listArchives()
+          .archives.some(archive => archive.id === id)
+      ) {
+        return false;
+      }
       const saveData = buildSaveData();
       if (!saveData) return false;
 
@@ -625,13 +639,37 @@ export default function Editor({
           ?.name ?? "";
       let saveData = archiveStore.loadArchiveData(id);
       if (!saveData) {
+        if (archiveStore.getArchiveRaw(id)) {
+          // 原始 JSON 还在、只是校验不过（未来版本升级 / 数据损坏）：
+          // 绝不能用空画板覆盖原始数据。锁住自动保存，走「还原失败」引导，
+          // 让用户进存档管理自己决定切换 / 删除 / 下载
+          skipAutoSaveRef.current = true;
+          setRestoreFailedVisible(true);
+          if (!options.silent) {
+            Toast.error(t("saves.archives.switchFailed"));
+          }
+          return false;
+        }
+        // raw 真的不在（写了一半 / 手动清理）：补一份空画板，保证可读
         saveData = archiveStore.createEmptySaveData(
           themes[currentThemeRef.current][0]
         );
         archiveStore.saveArchiveData(id, saveData);
       }
 
-      const ok = await applySaveData(saveData);
+      let ok: boolean;
+      try {
+        ok = await applySaveData(saveData);
+      } catch {
+        // 畸形数据把 restoreState 搞抛了：按还原失败处理，别让异常往外冒
+        // （调用方拿到 false 后会锁自动保存 / 走失败引导）
+        skipAutoSaveRef.current = true;
+        setRestoreFailedVisible(true);
+        if (!options.silent) {
+          Toast.error(t("saves.archives.switchFailed"));
+        }
+        return false;
+      }
       if (!ok) {
         if (!options.silent) {
           Toast.error(t("saves.archives.switchFailed"));
@@ -773,7 +811,10 @@ export default function Editor({
       const ok = await applySaveData(saveData);
       if (!ok) skipAutoSaveRef.current = true;
     } catch {
-      // 加载失败时保持默认空画板
+      // 启动还原中途抛错（畸形数据等）：保持 fail-closed —— 锁住自动保存，
+      // 不然 2 秒后空画板就会覆盖掉这份存档的原始 JSON
+      skipAutoSaveRef.current = true;
+      setRestoreFailedVisible(true);
     }
   };
 
@@ -903,10 +944,22 @@ export default function Editor({
       }
       refreshArchiveList();
 
-      if (wasActive && state.activeId) {
+      if (wasActive) {
         // 画板还停在被删存档的内容上：不要落盘（persist:false），
         // 否则会把刚删掉的内容写进新活动存档
-        await switchArchive(state.activeId, { persist: false, silent: true });
+        const switched =
+          !!state.activeId &&
+          (await switchArchive(state.activeId, {
+            persist: false,
+            silent: true,
+          }));
+        if (!switched) {
+          // 补建/切换失败（配额满、目标存档还原不出来等）：
+          // activeId 不能悬在已删 id 上干等 —— 锁住自动保存并给「还原失败」
+          // 引导，否则用户一编辑，内容就会写进已删除的 id，重载后全部丢失
+          skipAutoSaveRef.current = true;
+          setRestoreFailedVisible(true);
+        }
       }
       if (before) {
         Toast.success(
@@ -926,13 +979,7 @@ export default function Editor({
     (id: string) => {
       const raw = archiveStore.getArchiveRaw(id);
       if (!raw) return;
-      const meta = archiveStore
-        .listArchives()
-        .archives.find(archive => archive.id === id);
-      downloadJson(
-        raw,
-        archiveStore.archiveFileName(meta?.name ?? "archive")
-      );
+      downloadJson(raw, archiveStore.savesFileName());
       Toast.success(t("saves.archives.downloadSuccess"));
     },
     [t]
@@ -943,7 +990,11 @@ export default function Editor({
     // 先把当前画板落盘，保证导出的就是用户看到的这份
     persistCurrentState();
     const count = archiveStore.exportAllArchivesZip();
-    if (count === 0) return;
+    if (count === 0) {
+      // 和崩溃页的 window.alert 对齐：空的时候要有反馈，不能静默无反应
+      Toast.warning(t("saves.archives.exportAllEmpty"));
+      return;
+    }
     Toast.success(t("saves.archives.exportAllSuccess", { count }));
   }, [persistCurrentState, t]);
 
@@ -1038,6 +1089,23 @@ export default function Editor({
 
     return () => {
       clearInterval(saveInterval);
+    };
+  }, [isInitialized, persistCurrentState]);
+
+  // 关标签页 / 切后台时兜底落盘：定时器 2s + 配置防抖 500ms 的节奏下，
+  // 最坏有 ~4s 的编辑只存在于内存里，不兜底的话关页就丢
+  useEffect(() => {
+    if (!isInitialized) return;
+    // pagehide 里同步写 localStorage 仍可靠；suspend/skip 由 persistCurrentState 自查
+    const flush = () => persistCurrentState(true);
+    const onVisibility = () => {
+      if (document.visibilityState === "hidden") flush();
+    };
+    window.addEventListener("pagehide", flush);
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      window.removeEventListener("pagehide", flush);
+      document.removeEventListener("visibilitychange", onVisibility);
     };
   }, [isInitialized, persistCurrentState]);
 

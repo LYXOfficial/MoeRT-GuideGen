@@ -13,7 +13,7 @@ import {
 } from "@douyinfe/semi-icons";
 import { Popover, List, Slider, Checkbox } from "@douyinfe/semi-ui";
 import { useTranslation } from "react-i18next";
-import { useState, type ComponentProps } from "react";
+import { useState, useEffect, type ComponentProps } from "react";
 import { ExportDialog } from "./ExportDialog";
 import { useIsCompact } from "../hooks/useMediaQuery";
 import { useDarkMode } from "../hooks/useDarkMode";
@@ -78,7 +78,14 @@ export default function Header({
   // 切换语言
   const handleLanguageChange = (languageCode: string) => {
     i18n.changeLanguage(languageCode);
+    // 同步 <html lang>：屏幕阅读器 / 浏览器翻译 / 字体选择都依赖它
+    document.documentElement.lang = languageCode;
   };
+
+  // 初始语言（刷新 / 首次进入）也要同步一次 html lang
+  useEffect(() => {
+    document.documentElement.lang = i18n.language || "zh-CN";
+  }, [i18n.language]);
 
   // 语言选择器内容
   const languageSelector = (
