@@ -17,7 +17,7 @@ export const textDefaultProps: TextProps = {
   chinese: "换乘",
   english: "Transfer",
   foreground: colors.foreground,
-  background: colors.background,
+  background: colors.transparent,
 };
 
 export const textEditorConfig = (t: (key: string) => string): EditorConfig => ({

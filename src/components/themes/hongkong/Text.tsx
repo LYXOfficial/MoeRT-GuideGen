@@ -19,7 +19,7 @@ export const textDefaultProps: TextProps = {
   english: "Queen's Road East",
   fontsize: "large",
   foreground: colors.foreground,
-  background: colors.background,
+  background: colors.transparent,
 };
 
 export const textEditorConfig = (t: (key: string) => string): EditorConfig => ({

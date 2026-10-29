@@ -42,7 +42,7 @@ export const exitLetterDefaultProps: ExitLetterProps = {
   exits: [{ letter: "A" }],
   variant: "single",
   foreground: colors.foreground,
-  background: colors.background,
+  background: colors.transparent,
 };
 
 /**
@@ -138,7 +138,7 @@ function ExitLetter({
   const fg =
     foreground && foreground.length > 0 ? foreground : colors.foreground;
   const bg =
-    background && background.length > 0 ? background : colors.background;
+    background && background.length > 0 ? background : colors.transparent;
 
   const isDouble = variant === "double";
   // 槽位固定：single 1 个、double 2 个 —— 空槽照样占位（不画边框），

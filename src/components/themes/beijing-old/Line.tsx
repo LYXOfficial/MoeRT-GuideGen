@@ -51,7 +51,7 @@ export const lineDefaultProps: LineProps = {
   textZh: "号线",
   textEn: "Line 1",
   foreground: colors.foreground,
-  background: colors.background,
+  background: colors.transparent,
 };
 
 export const LINE_COLOR_KEYS: string[] = Array.from(
@@ -150,7 +150,7 @@ function Line({
   const key = colorKey && colorKey in colors ? colorKey : "line1";
   const plateColor = (colors as Record<string, string>)[key];
   const bgColor =
-    background && background.length > 0 ? background : colors.background;
+    background && background.length > 0 ? background : colors.transparent;
 
   const numText = normalizeSvgLine(lineId);
   const zhText = normalizeSvgLine(textZh);

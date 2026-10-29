@@ -45,7 +45,7 @@ export const textDefaultProps: TextProps = {
   fontSizeEn: 14,
   lineGap: 9,
   foreground: colors.foreground,
-  background: colors.background,
+  background: colors.transparent,
 };
 
 // 默认字号来自 visys.pdf/extra.ai 矢量图层实测（中文 25px、英文 15px = 0.6 倍）；

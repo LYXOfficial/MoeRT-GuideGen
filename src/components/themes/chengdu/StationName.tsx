@@ -15,7 +15,7 @@ export const stationNameDefaultProps: StationNameProps = {
   chinese: "驷马桥",
   english: "Simaqiao",
   foreground: colors.foreground,
-  background: colors.background,
+  background: colors.transparent,
 };
 
 export const stationNameEditorConfig = (
@@ -49,7 +49,7 @@ function StationName({
   chinese = stationNameDefaultProps.chinese,
   english = stationNameDefaultProps.english,
   foreground = stationNameDefaultProps.foreground ?? colors.foreground,
-  background = stationNameDefaultProps.background ?? colors.background,
+  background = stationNameDefaultProps.background ?? colors.transparent,
 }: StationNameProps) {
   const textGroupRef = useRef<SVGGElement>(null);
   const [svgWidth, setSvgWidth] = useState(0);

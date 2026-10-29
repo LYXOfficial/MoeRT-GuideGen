@@ -6,7 +6,7 @@ export interface SpacingProps {
   background?: string;
 }
 export const spacingDefaultProps: SpacingProps = {
-  background: "transparent",
+  background: colors.transparent,
 };
 
 export const spacingEditorConfig = (
@@ -22,7 +22,7 @@ export const spacingEditorConfig = (
 });
 
 function Spacing({
-  background = spacingDefaultProps.background ?? colors.background,
+  background = spacingDefaultProps.background ?? colors.transparent,
 }: SpacingProps) {
   return (
     <div

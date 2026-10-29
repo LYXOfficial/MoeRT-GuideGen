@@ -1,3 +1,4 @@
+import colors from "./define/colors";
 import type { CSSProperties, FC, ReactNode } from "react";
 import { Input, InputNumber, Select } from "@douyinfe/semi-ui";
 import CustomColorPicker from "../../CustomColorPicker";
@@ -14,7 +15,7 @@ export const backgroundRows = (
   const rows = [background, background2].filter(
     (c): c is string => typeof c === "string" && c.length > 0
   );
-  return rows.length > 0 ? rows : ["transparent"];
+  return rows.length > 0 ? rows : [colors.transparent];
 };
 
 export function MultiRowBackground({

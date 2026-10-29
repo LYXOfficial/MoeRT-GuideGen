@@ -11,7 +11,7 @@ export interface PlatformProps {
 export const platformDefaultProps: PlatformProps = {
   num: "1",
   color: colors.eastrailline,
-  background: colors.background,
+  background: colors.transparent,
 };
 export const platformEditorConfig = (
   _t: (key: string) => string

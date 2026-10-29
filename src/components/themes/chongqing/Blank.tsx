@@ -9,7 +9,7 @@ export interface BlankProps {
 }
 export const blankDefaultProps: BlankProps = {
   width: 20,
-  background: "transparent",
+  background: colors.transparent,
 };
 export const blankEditorConfig = (
   _t: (key: string) => string
@@ -29,7 +29,7 @@ export const blankEditorConfig = (
 });
 
 function Blank({
-  background = blankDefaultProps.background ?? colors.background,
+  background = blankDefaultProps.background ?? colors.transparent,
   width = blankDefaultProps.width,
 }: BlankProps) {
   return (

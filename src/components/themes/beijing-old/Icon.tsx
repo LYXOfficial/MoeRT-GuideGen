@@ -96,7 +96,7 @@ export interface IconProps {
 export const iconDefaultProps: IconProps = {
   icon: `${COLOR_SCOPE}.escalator_right`,
   foreground: colors.foreground,
-  background: colors.background,
+  background: colors.transparent,
   rotation: "0",
   flipH: false,
   flipV: false,
@@ -169,7 +169,7 @@ function Icon({
   const fg =
     foreground && foreground.length > 0 ? foreground : colors.foreground;
   const bg =
-    background && background.length > 0 ? background : colors.background;
+    background && background.length > 0 ? background : colors.transparent;
 
   if (!entry) {
     return (

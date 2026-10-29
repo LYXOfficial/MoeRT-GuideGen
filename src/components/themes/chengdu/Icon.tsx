@@ -153,7 +153,7 @@ export interface IconProps {
 
 export const iconDefaultProps: IconProps = {
   icon: "themes.chengdu.components.Icon.props.icon.exit2",
-  background: colors.exitbackground,
+  background: colors.transparent,
   foreground: colors.exitforeground,
   rotation: "0"
 };

@@ -202,7 +202,7 @@ export interface IconProps {
 export const iconDefaultProps: IconProps = {
   rotation: "0",
   icon: "themes.hongkong.components.Icon.props.icon.train",
-  background: colors.background,
+  background: colors.transparent,
 };
 
 // 下拉框里的图标预览：图标是白色 PNG，必须衬底色才看得见，

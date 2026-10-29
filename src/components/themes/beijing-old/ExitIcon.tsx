@@ -21,7 +21,7 @@ export interface ExitIconProps {
 
 export const exitIconDefaultProps: ExitIconProps = {
   padding: "none",
-  background: colors.background,
+  background: colors.transparent,
 };
 
 export const exitIconEditorConfig = (

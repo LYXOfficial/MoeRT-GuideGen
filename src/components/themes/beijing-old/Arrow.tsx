@@ -69,7 +69,7 @@ export interface ArrowProps {
 export const arrowDefaultProps: ArrowProps = {
   direction: "up-right",
   foreground: colors.foreground,
-  background: colors.background,
+  background: colors.transparent,
 };
 
 export const arrowEditorConfig = (t: (key: string) => string): EditorConfig => {
@@ -110,7 +110,7 @@ function Arrow({
   const fg =
     foreground && foreground.length > 0 ? foreground : colors.foreground;
   const bg =
-    background && background.length > 0 ? background : colors.background;
+    background && background.length > 0 ? background : colors.transparent;
 
   const dir = direction ?? "up";
   const ink = ARROW_INK[dir] ?? ARROW_INK.up;

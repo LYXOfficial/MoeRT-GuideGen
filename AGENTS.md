@@ -314,6 +314,11 @@ python3 text_probe.py                                   # 解析 <use> 得到真
 - **「组件虚线框」开关在侧栏主题下方**（2026-10-29）：曾放顶栏，法/德/俄的标签 ~270px 把顶栏顶爆，
   收到 xl 以下只留勾选框又被用户判「字都没了」。现在在 `ComponentsList` 主题选择下面，
   顶栏不再有这个开关（`Header` props 里已删）。
+- **版本号徽标是构建时 baked 进去的**（2026-10-30，`vite.config.ts` 的 `__APP_VERSION__`）：
+  格式 `v26.10.30.126` = `v` + HEAD 日期 + 本项目总提交数（`git rev-list --count HEAD`）。
+  dev server 只在启动/重启时算一次，之后再多提交数字也不会动——数字对不上先重启 5173；
+  生产构建同理，构建那一刻是多少就是多少。CI 若用浅克隆构建会得到偏小的数字
+  （构建时有 console.warn 提醒），生产构建务必用全量历史（fetch-depth: 0）。
 
 **深色模式（2026-10-25，全应用）**
 - 双通道切换：`html.dark`（Tailwind v4 `@custom-variant dark`，global.css）+ `body[theme-mode=dark]`

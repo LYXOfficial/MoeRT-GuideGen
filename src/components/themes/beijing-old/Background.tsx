@@ -24,7 +24,7 @@ export function Background({
   children?: ReactNode;
 }) {
   const bg =
-    background && background.length > 0 ? background : "transparent";
+    background && background.length > 0 ? background : themeColors.transparent;
   return (
     <div className={className} style={{ backgroundColor: bg, ...style }}>
       {children}

@@ -21,7 +21,7 @@ export const exitNameDefaultProps: ExitNameProps = {
   line2chinese: "宏山科学院材料研究所",
   line2english: "Institute of Materials Science, Hongshan Academy",
   foreground: colors.exitforeground,
-  background: colors.exitbackground,
+  background: colors.transparent,
 };
 
 export const exitNameEditorConfig = (

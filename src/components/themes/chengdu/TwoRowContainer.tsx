@@ -36,7 +36,7 @@ const MIN_WIDTH_FLOOR = 30;
 
 export const twoRowContainerDefaultProps: Partial<TwoRowContainerProps> = {
   children: [[], []],
-  background: colors.background,
+  background: colors.transparent,
   minWidth: 80,
 };
 

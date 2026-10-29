@@ -13,7 +13,7 @@ export interface NumAlphabetProps {
 export const numAlphabetDefaultProps: NumAlphabetProps = {
   text: "A",
   foreground: colors.foreground,
-  background: colors.background,
+  background: colors.transparent,
   type: "fit",
 };
 export const numAlphabetEditorConfig = (

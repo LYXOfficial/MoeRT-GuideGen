@@ -21,7 +21,7 @@ export const directionDefaultProps: DirectionProps = {
   viaenglish: "Via Tianfu Square, Niuwangmiao",
   align: "left",
   foreground: colors.foreground,
-  background: colors.background,
+  background: colors.transparent,
 };
 
 export const directionEditorConfig = (

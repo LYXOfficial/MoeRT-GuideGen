@@ -125,7 +125,7 @@ export const stationNumberDefaultProps: StationNumberProps = {
     },
   ],
   foreground: colors.foreground,
-  background: colors.background,
+  background: colors.transparent,
 };
 
 export const stationNumberEditorConfig = (
@@ -153,7 +153,7 @@ export const stationNumberEditorConfig = (
 export default function StationNumber({
   lines = stationNumberDefaultProps.lines,
   foreground = stationNumberDefaultProps.foreground ?? colors.foreground,
-  background = stationNumberDefaultProps.background ?? colors.background,
+  background = stationNumberDefaultProps.background ?? colors.transparent,
 }: StationNumberProps) {
   // 一行能竖着排几个：胶囊 15 高 + 行距 5，上下只留 4px 内边距（64 - 8 = 56 → 3 个刚好 55）
   // 以前上下各 10px 内边距，只剩 44 可用，装满 3 个就会挤成两列（用户反馈「三个站分两列很别扭」）。

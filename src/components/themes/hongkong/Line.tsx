@@ -19,7 +19,7 @@ export const lineDefaultProps: LineProps = {
   chinese: "荃灣綫",
   english: "Tsuen Wan Line",
   foreground: colors.foreground,
-  background: colors.background,
+  background: colors.transparent,
   align: "left", // 默认居中对齐
 };
 
@@ -83,7 +83,7 @@ export default function Line({
   english = lineDefaultProps.english,
   lineColor = lineDefaultProps.lineColor,
   foreground = lineDefaultProps.foreground ?? colors.foreground,
-  background = lineDefaultProps.background ?? colors.background,
+  background = lineDefaultProps.background ?? colors.transparent,
   align = lineDefaultProps.align,
 }: LineProps) {
   // 只把制表/换行换成空格（首尾、中间的空格全部保留），渲染侧配 xmlSpace="preserve"

@@ -466,27 +466,36 @@ const GuideBoardCols = memo(forwardRef<GuideBoardRef, GuideBoardProps>(
     // 之后改底板配色不再回头覆盖。
     // - 背景色（含 background2）：重庆(0)/北京新(3) 固化当前底板色
     //   （未设置则保留组件自带局部默认值）；其余主题直接给透明
-    // - 前景色：所有主题都跟随「默认前景色」
+    // - 前景色：全主题统一，全局「默认前景色」覆盖局部默认（没设就保留）
+    // - 间距/空格/分隔线（Spacing/Blank/SpecLine，全主题含重庆/北京新）：
+    //   背景永远透明，落板也不固化板色——否则以后改板色，旧间距会露色块；
+    //   想给它们上色自己在编辑器里改
+    const isGapLike = (itemType?: string) =>
+      !!itemType && /\.(Spacing|Blank|SpecLine)$/.test(itemType);
     const bakeDropColors = (
       finalProps: Record<string, any>,
-      colorKeys: Set<string>
+      colorKeys: Set<string>,
+      itemType?: string
     ) => {
-      if (colorKeys.has("background")) {
+      // 透明常量取当前主题 colors.ts（各主题定义一致），别写字面量
+      const transparent = themes[currentTheme][1].colors.colors.transparent;
+      const gapLike = isGapLike(itemType);
+      if (colorKeys.has("background") && !gapLike) {
         if (currentTheme === 0 || currentTheme === 3) {
           if (boardBackground) {
             finalProps.background = boardBackground;
           }
         } else {
-          finalProps.background = "transparent";
+          finalProps.background = transparent;
         }
       }
-      if (colorKeys.has("background2")) {
+      if (colorKeys.has("background2") && !gapLike) {
         if (currentTheme === 0 || currentTheme === 3) {
           if (boardBackground) {
             finalProps.background2 = boardBackground;
           }
         } else {
-          finalProps.background2 = "transparent";
+          finalProps.background2 = transparent;
         }
       }
       if (colorKeys.has("foreground") && boardForeground) {
@@ -610,7 +619,7 @@ const GuideBoardCols = memo(forwardRef<GuideBoardRef, GuideBoardProps>(
               const colorKeys = new Set<string>(
                 forms.map((f: { key: string }) => f.key)
               );
-              bakeDropColors(finalProps, colorKeys);
+              bakeDropColors(finalProps, colorKeys, item.type);
             }
 
             // 双行容器：children 在 props.children，且要补 onItemClick，
@@ -743,7 +752,7 @@ const GuideBoardCols = memo(forwardRef<GuideBoardRef, GuideBoardProps>(
                         (f: { key: string }) => f.key
                       )
                     );
-                    bakeDropColors(finalProps, colorKeys);
+                    bakeDropColors(finalProps, colorKeys, item.type);
                   }
                   
                   const rebuiltItem: GuideItem = Component

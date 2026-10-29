@@ -10,7 +10,7 @@ export interface ExitProps {
 }
 export const exitDefaultProps: ExitProps = {
   letter: "A",
-  background: colors.background,
+  background: colors.transparent,
 };
 export const exitEditorConfig = (
   _t: (key: string) => string

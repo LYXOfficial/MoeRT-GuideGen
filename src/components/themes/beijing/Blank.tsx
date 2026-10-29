@@ -1,3 +1,4 @@
+import colors from "./define/colors";
 import type { EditorConfig } from "../../../interfaces/editor";
 import {
   MultiRowBackground,
@@ -13,8 +14,8 @@ export interface BlankProps {
 
 export const blankDefaultProps: BlankProps = {
   width: 20,
-  background: "transparent",
-  background2: "transparent",
+  background: colors.transparent,
+  background2: colors.transparent,
 };
 
 export const blankEditorConfig = (

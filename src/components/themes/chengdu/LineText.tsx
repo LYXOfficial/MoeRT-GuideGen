@@ -24,7 +24,7 @@ export const lineTextDefaultProps: LineTextProps = {
   align: "left",
   rectMode: "default",
   foreground: colors.foreground,
-  background: colors.background,
+  background: colors.transparent,
 };
 
 export const lineTextEditorConfig = (
@@ -102,7 +102,7 @@ function LineText({
   // 新拖入的组件带着 defaultProps 里的 "default"（宽），不受影响
   rectMode,
   foreground = lineTextDefaultProps.foreground ?? colors.foreground,
-  background = lineTextDefaultProps.background ?? colors.background,
+  background = lineTextDefaultProps.background ?? colors.transparent,
 }: LineTextProps) {
   const textGroupRef = useRef<SVGGElement>(null);
   const [svgWidth, setSvgWidth] = useState(0);

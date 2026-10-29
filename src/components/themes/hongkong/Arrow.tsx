@@ -22,7 +22,7 @@ export interface ArrowProps {
 export const arrowDefaultProps: ArrowProps = {
   type: "right",
   foreground: colors.foreground,
-  background: colors.background,
+  background: colors.transparent,
 };
 
 export const arrowEditorConfig = (

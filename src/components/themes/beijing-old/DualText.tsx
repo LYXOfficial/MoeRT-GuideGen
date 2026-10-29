@@ -48,7 +48,7 @@ export const dualTextDefaultProps: DualTextProps = {
   align: "left",
   letterSpacing: 0,
   foreground: colors.foreground,
-  background: colors.background,
+  background: colors.transparent,
 };
 
 /** a（行 = 1.5a，与出口方块同一语境） */

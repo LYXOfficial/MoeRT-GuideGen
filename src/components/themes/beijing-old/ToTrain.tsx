@@ -29,7 +29,7 @@ export const toTrainDefaultProps: ToTrainProps = {
   foreground: colors.foreground,
   plateColor: colors.line1,
   strokeColor: "",
-  background: colors.background,
+  background: colors.transparent,
 };
 
 export const toTrainEditorConfig = (t: (key: string) => string): EditorConfig => {
@@ -62,7 +62,7 @@ function ToTrain({
   const fg =
     foreground && foreground.length > 0 ? foreground : colors.foreground;
   const bg =
-    background && background.length > 0 ? background : colors.background;
+    background && background.length > 0 ? background : colors.transparent;
   const hasPlate = Boolean(plateColor && plateColor.length > 0);
 
   const x = (ROW_H - PLATE) / 2;

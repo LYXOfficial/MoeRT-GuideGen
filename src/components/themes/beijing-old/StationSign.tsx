@@ -39,7 +39,7 @@ export const stationSignDefaultProps: StationSignProps = {
   nameEn: "Ping'anli",
   showLogo: true,
   foreground: colors.foreground,
-  background: colors.background,
+  background: colors.transparent,
 };
 
 export const stationSignEditorConfig = (
@@ -79,7 +79,7 @@ function StationSign({
   const fg =
     foreground && foreground.length > 0 ? foreground : colors.foreground;
   const bg =
-    background && background.length > 0 ? background : colors.background;
+    background && background.length > 0 ? background : colors.transparent;
 
   const zhText = normalizeSvgLine(nameZh);
   const enText = normalizeSvgLine(nameEn);

@@ -1,3 +1,4 @@
+import colors from "./define/colors";
 import type { EditorConfig } from "../../../interfaces/editor";
 import CustomColorPicker from "../../CustomColorPicker";
 
@@ -5,7 +6,7 @@ export interface SpacingProps {
   background?: string;
 }
 export const spacingDefaultProps: SpacingProps = {
-  background: "transparent",
+  background: colors.transparent,
 };
 
 export const spacingEditorConfig = (

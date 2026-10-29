@@ -30,7 +30,7 @@ export const lineNumDefaultProps: LineNumProps = {
   rectMode: "default",
   align: "left",
   foreground: colors.foreground,
-  background: colors.background,
+  background: colors.transparent,
 };
 
 export const lineNumEditorConfig = (
@@ -138,7 +138,7 @@ function LineNum({
   rectMode,
   align = lineNumDefaultProps.align,
   foreground = lineNumDefaultProps.foreground ?? colors.foreground,
-  background = lineNumDefaultProps.background ?? colors.background,
+  background = lineNumDefaultProps.background ?? colors.transparent,
 }: LineNumProps) {
   const numRef = useRef<SVGTextElement>(null);
   const textRef = useRef<SVGGElement>(null);

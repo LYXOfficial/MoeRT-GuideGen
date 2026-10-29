@@ -17,7 +17,7 @@ export const stationNameDefaultProps: StationNameProps = {
   chinese: "中環",
   english: "Central",
   foreground: colors.foreground,
-  background: colors.background,
+  background: colors.transparent,
 };
 
 export const stationNameEditorConfig = (
