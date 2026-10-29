@@ -163,6 +163,16 @@ python3 text_probe.py                                   # 解析 <use> 得到真
   （outline 在堆叠绘制最后一步，盖住下一行顶部），看起来就是「关了分隔线行间还有白缝/虚线缝」，
   且与分隔线开关无关。收到盒内后虚线框贴着组件自身边缘画。
 - `body`/外壳高度用 `100dvh`（`global.css` 已覆盖 `.h-screen`），否则移动端地址栏收放整页跳动。
+- **底板配色铁律（2026-10-30，用户拍板：拖上去就定死）**：
+  新拖入的组件在落板那一刻把当前生效色写进 props（`GuideBoard.tsx` 的 `bakeDropColors`），
+  之后改底板配色**绝不回头覆盖已上板的组件**。渲染层（`BoardItemContent`）只做原样渲染，
+  禁止再加任何按板色回写的逻辑（之前加过一轮渲染层跟随又删掉，回归过一次）。
+  只有**侧栏新拖入**才固化：`addItemToRow` / `addItemToTwoRowContainer` 的 `fresh` 参数；
+  板内搬家（跨行、进出容器）一律不传、原样搬运，否则等于悄悄改色。
+- **background / background2 必须成对处理**：北京主题两行分色，
+  落板、跟随、默认值三处只改一个就是「只有第一行变色」。
+  间距 / 空格 / 分割线**全主题默认透明**（含北京的 `background2`）。
+  自查命令，有输出就是漏了：`grep -rn "background.*: *colors\.background" src/components/themes/*/Spacing.tsx src/components/themes/*/Blank.tsx src/components/themes/*/SpecLine.tsx`
 
 **dnd-kit / 编辑器交互（都是血泪，改前先读懂）**
 - `{...listeners}` 之后再写同名 `onPointerDown` 会**覆盖** dnd-kit 的激活监听 → 彻底拖不动；
