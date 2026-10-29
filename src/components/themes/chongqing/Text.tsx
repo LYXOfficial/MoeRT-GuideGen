@@ -19,6 +19,8 @@ export const textDefaultProps: TextProps = {
   chinese: "乘车",
   english: "Train",
   digitMode: "flat",
+  foreground: colors.foreground,
+  background: colors.background,
 };
 
 export const textEditorConfig = (t: (key: string) => string): EditorConfig => ({

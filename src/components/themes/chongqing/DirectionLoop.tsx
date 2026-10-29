@@ -20,6 +20,8 @@ export const directionLoopDefaultProps: DirectionLoopProps = {
   tipchinese: "内环",
   tipenglish: "Clockwise Loop",
   align: "left",
+  foreground: colors.foreground,
+  background: colors.background,
 };
 
 export const directionEditorConfig = (

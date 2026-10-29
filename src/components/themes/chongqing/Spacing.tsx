@@ -6,6 +6,7 @@ export interface SpacingProps {
   background?: string;
 }
 export const spacingDefaultProps: SpacingProps = {
+  background: colors.background,
 };
 
 export const spacingEditorConfig = (

@@ -26,6 +26,8 @@ export const lineTextDefaultProps: LineTextProps = {
   align: "left",
   rectMode: "default",
   digitMode: "prominent",
+  foreground: colors.foreground,
+  background: colors.background,
 };
 
 export const lineTextEditorConfig = (

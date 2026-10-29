@@ -9,6 +9,7 @@ export interface BlankProps {
 }
 export const blankDefaultProps: BlankProps = {
   width: 20,
+  background: colors.background,
 };
 export const blankEditorConfig = (
   _t: (key: string) => string

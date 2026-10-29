@@ -13,6 +13,8 @@ export interface ArrowProps {
 }
 export const arrowDefaultProps: ArrowProps = {
   type: "up",
+  foreground: colors.foreground,
+  background: colors.background,
 };
 
 // 平铺的全部方向（基础八向 + 前方向左/右、左/右行向后）

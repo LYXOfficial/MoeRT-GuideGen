@@ -173,7 +173,9 @@ export interface IconProps {
 
 export const iconDefaultProps: IconProps = {
   icon: "themes.chongqing.components.Icon.props.icon.train",
-  rotation: "0"
+  rotation: "0",
+  background: colors.background,
+  foreground: colors.foreground,
 };
 
 // 下拉框里的图标预览：颜色取自正在编辑的那个组件（没有则用默认值）

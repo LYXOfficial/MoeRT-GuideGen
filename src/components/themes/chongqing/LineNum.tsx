@@ -29,6 +29,8 @@ export const lineNumDefaultProps: LineNumProps = {
   showRect: true,
   rectMode: "default",
   align: "left",
+  foreground: colors.foreground,
+  background: colors.background,
 };
 
 export const lineNumEditorConfig = (
