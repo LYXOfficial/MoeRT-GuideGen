@@ -23,19 +23,26 @@ export function useTabConflict(): boolean {
     let cancelled = false;
     let timer = 0;
     let releaseHold: (() => void) | null = null;
+    // StrictMode / 热更新会「挂载→立刻卸载→重挂载」：旧实例的锁释放与新实例
+    // 的申请存在竞态，刚启动的一小段时间内拿不到锁是正常现象，
+    // 只有持续拿不到锁（真有别的标签页持有着）才判定冲突并封锁
+    const mountedAt = performance.now();
 
     const attempt = () => {
       if (cancelled) return;
       navigator.locks
         .request(LOCK_NAME, { ifAvailable: true }, async lock => {
           if (!lock) {
-            // 别的标签页持有编辑锁：封锁本页（闩住，不自动解除）
-            if (!conflictRef.current) {
+            // 别的标签页持有编辑锁：持续拿不到才封锁（闩住，不自动解除）
+            if (!conflictRef.current && performance.now() - mountedAt > 2500) {
               conflictRef.current = true;
               setConflict(true);
             }
             return; // 回调结束 = 没持有锁，外层稍后重试
           }
+          // 本实例已被卸载（StrictMode 第一轮 / HMR）：立刻放锁，
+          // 否则僵尸持有会让紧随其后的重挂载误判成「别的标签页在编辑」
+          if (cancelled) return;
           // 拿到锁：一直持有到本页关闭。即使本页曾被封锁过
           // （前一持有者刚关闭）也保持封锁画面，让用户手动刷新重新初始化，
           // 否则本页内存里的旧画板会把对方刚保存的内容覆盖掉
@@ -45,10 +52,20 @@ export function useTabConflict(): boolean {
         })
         .then(
           () => {
-            if (!cancelled) timer = window.setTimeout(attempt, 1500);
+            if (!cancelled) {
+              timer = window.setTimeout(
+                attempt,
+                conflictRef.current ? 1500 : 250
+              );
+            }
           },
           () => {
-            if (!cancelled) timer = window.setTimeout(attempt, 1500);
+            if (!cancelled) {
+              timer = window.setTimeout(
+                attempt,
+                conflictRef.current ? 1500 : 250
+              );
+            }
           }
         );
     };
