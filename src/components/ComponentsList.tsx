@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { Card, Typography, Select, Modal, Checkbox } from "@douyinfe/semi-ui";
 import themes from "./themes/themereg";
 import { useDraggable, useDroppable, useDndContext } from "@dnd-kit/core";
-import { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { GuideItem } from "../interfaces/guide";
 import type { PropForm } from "../interfaces/editor";
 import { getVisibleClientRect } from "../utils/visibleRect";
@@ -37,7 +37,9 @@ interface ComponentItemProps {
   showItemFrame?: boolean;
 }
 
-const DraggableComponentItem: React.FC<ComponentItemProps> = ({
+// React.memo：画布平移时 Editor 全树重渲染，卡片 props 不变就整卡跳过
+// （否则每帧对每张卡片跑 getEditorConfig + 重建组件预览，平移会巨卡）
+const DraggableComponentItem = React.memo(function DraggableComponentItem({
   name,
   Component,
   type,
@@ -46,7 +48,7 @@ const DraggableComponentItem: React.FC<ComponentItemProps> = ({
   cardBackground,
   cardForeground,
   showItemFrame,
-}) => {
+}: ComponentItemProps) {
   const { t } = useTranslation();
   const [id] = useState(
     () => `${type}-${Math.random().toString(36).substring(2)}`
@@ -69,7 +71,7 @@ const DraggableComponentItem: React.FC<ComponentItemProps> = ({
 
   // 侧栏预览用的配色：底板背景色/默认前景色覆盖时，卡片里的组件示例
   // 也跟着变色（只注入组件支持的属性，按编辑表单判断）。拖拽数据不带。
-  const previewComponentProps = (() => {
+  const previewComponentProps = useMemo(() => {
     if (cardBackground == null && cardForeground == null) return props;
     const forms =
       (Component as any).getEditorConfig?.(t)?.forms ?? [];
@@ -83,7 +85,7 @@ const DraggableComponentItem: React.FC<ComponentItemProps> = ({
         ? { foreground: cardForeground }
         : {}),
     };
-  })();
+  }, [props, Component, t, cardBackground, cardForeground]);
   // 间距/空格：侧栏里没有内容宽度，按 80px 宽渲染
   const isSpacingLike = type.includes("Spacing") || type.includes("Blank");
 
@@ -197,7 +199,7 @@ const DraggableComponentItem: React.FC<ComponentItemProps> = ({
       </Card>
     </div>
   );
-};
+});
 
 export default function ComponentsList({
   currentTheme,
