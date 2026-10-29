@@ -1,4 +1,4 @@
-# AGENTS.md — 交接文档（北京导视主题）
+# AGENTS.md — 交接文档
 
 > 最后更新：2026-10-28。导出图片保真度修复（见 §7「导出图片」/§8-36，tsc / biome / build 三绿）。
 > 下一阶段目标：**M8 北京旧版（2015 / 经典样式）导视组件库**。（已实现）
@@ -334,9 +334,15 @@ python3 text_probe.py                                   # 解析 <use> 得到真
   顶栏不再有这个开关（`Header` props 里已删）。
 - **版本号徽标是构建时 baked 进去的**（2026-10-26，`vite.config.ts` 的 `__APP_VERSION__`）：
   格式 `v26.10.30.127` = `v` + 日期 + 本项目总提交数。dev（一律常驻不重启）**固定显示 `v.dev`**，
-  别指望它跟着提交数涨。生产构建按顺序取值：GitHub API（总数+最新日期，一次请求全拿到）
+  别指望它跟着提交数涨。生产构建按顺序取值：**写死的仓库**
+  `LYXOfficial/MoeRT-GuideGen` 的 GitHub API（`commits?per_page=1`，Link 头 last 页码即总数，
+  body 第一项取最新提交日期；换仓库用 `GITHUB_REPOSITORY=owner/repo` 覆盖）
   → 本地 `git rev-list`（浅克隆会先自动 `git fetch --unshallow`，实在拉不到才告警用小数字）
-  → 都拿不到才 `v.dev`。私有仓库构建记得配 `GITHUB_TOKEN` 环境变量，否则 API 404 会直接走本地回退。
+  → 都拿不到才 `v.dev`。
+  **仓库名必须写死、不许再从 `git remote` 解析**：浅克隆 / 没有 `.git` / origin 被改成镜像地址时
+  解析会失败，而失败是静默的，表现成「明明能连 GitHub 却直接走浅克隆计数」。
+  每次生产构建必打一行 `[version] v… ← 来源`，回退时带「为什么没用 API」的原因。
+  私有仓库构建记得配 `GITHUB_TOKEN` 环境变量，否则 API 404 会直接走本地回退。
 
 **深色模式（2026-10-25，全应用）**
 - 双通道切换：`html.dark`（Tailwind v4 `@custom-variant dark`，global.css）+ `body[theme-mode=dark]`
