@@ -18,6 +18,8 @@
         "cancel": "취소"
       }
     },
+    "boardBackground": "보드 배경색",
+    "boardBackgroundReset": "기본",
     "clearCanvas": {
       "button": "캔버스 지우기",
       "title": "캔버스 지우기 확인",

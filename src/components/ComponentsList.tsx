@@ -5,12 +5,16 @@ import { useDraggable, useDroppable, useDndContext } from "@dnd-kit/core";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { GuideItem } from "../interfaces/guide";
 import { getVisibleClientRect } from "../utils/visibleRect";
+import CustomColorPicker from "./CustomColorPicker";
 
 interface ComponentsListProps {
   currentTheme: number;
   onThemeChange: (theme: number) => void;
   /** 移动端底部抽屉：占满整宽、去掉右侧分隔线 */
   fullWidth?: boolean;
+  /** 底板背景色覆盖（null/undefined = 跟随主题默认），值在 GuideBoard 里 */
+  boardBackground?: string | null;
+  onBoardBackgroundChange?: (color: string | null) => void;
 }
 
 interface ComponentItemProps {
@@ -93,6 +97,8 @@ export default function ComponentsList({
   currentTheme,
   onThemeChange,
   fullWidth = false,
+  boardBackground,
+  onBoardBackgroundChange,
 }: ComponentsListProps) {
   const { t, i18n } = useTranslation();
   const theme = themes[currentTheme][1];
@@ -221,6 +227,30 @@ export default function ComponentsList({
               </Select.Option>
             ))}
           </Select>
+          {/* 底板背景色：改了之后画板预览和新拖入组件的默认背景都跟着变 */}
+          <div className="mt-3">
+            <div className="flex items-center justify-between">
+              <Typography.Text className="font-sans text-sm">
+                {t("componentsList.boardBackground")}
+              </Typography.Text>
+              {boardBackground && (
+                <button
+                  type="button"
+                  className="font-sans text-xs text-blue-600 hover:text-blue-500 dark:text-blue-400"
+                  onClick={() => onBoardBackgroundChange?.(null)}
+                >
+                  {t("componentsList.boardBackgroundReset")}
+                </button>
+              )}
+            </div>
+            <div className="mt-1.5">
+              <CustomColorPicker
+                currentTheme={currentTheme}
+                value={boardBackground ?? theme.colors.defaultBackground}
+                onChange={hex => onBoardBackgroundChange?.(hex)}
+              />
+            </div>
+          </div>
         </div>
 
         <Typography.Title heading={4} className="pb-3 font-sans">
@@ -254,7 +284,16 @@ export default function ComponentsList({
               name={component.displayName}
               Component={component.component}
               type={component.displayName}
-              props={component.defaultProps}
+              // 底板背景色覆盖时，新拖出的组件默认背景跟着变
+              //（只覆盖本来就有 background 属性的组件，固定配色的不动）
+              props={
+                boardBackground && "background" in component.defaultProps
+                  ? {
+                      ...component.defaultProps,
+                      background: boardBackground,
+                    }
+                  : component.defaultProps
+              }
               currentTheme={currentTheme}
             />
           ))}

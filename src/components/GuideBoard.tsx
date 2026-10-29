@@ -29,6 +29,8 @@ export interface BoardState {
   config: {
     width: number;
     showSpecLine: boolean;
+    /** 底板背景色覆盖（用户自选）；null/undefined = 跟随主题默认 */
+    boardBackground?: string;
   };
 }
 
@@ -58,6 +60,8 @@ export interface GuideBoardRef {
     itemId: string
   ) => number;
   clearBoard: () => void;
+  /** 覆盖底板背景色（null = 恢复主题默认），供侧栏「底板背景色」控件调用 */
+  setBoardBackground: (color: string | null) => void;
   getState: () => BoardState;
   restoreState: (state: {
     rows: Array<Array<SavedItem>>;
@@ -132,6 +136,8 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
     const [rows, setRows] = useState<GuideItem[][]>([[]]);
     const [boardWidth, setBoardWidth] = useState(DEFAULT_WIDTH);
     const [showDividers, setShowDividers] = useState(true);
+    // 底板背景色覆盖：改了之后画板预览和新拖入组件的默认背景都跟着变
+    const [boardBackground, setBoardBackground] = useState<string | null>(null);
     const [isRestoring, setIsRestoring] = useState(false);
     const [editingItem, setEditingItem] = useState<{
       item: GuideItem;
@@ -293,7 +299,7 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
           onConfigChange();
         }, 10);
       }
-    }, [rows, boardWidth, showDividers, onConfigChange, isRestoring]);
+    }, [rows, boardWidth, showDividers, boardBackground, onConfigChange, isRestoring]);
 
     // ...existing code...
     const boardContentRef = useRef<HTMLDivElement>(null);
@@ -414,11 +420,15 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
         clearBoard: () => {
           setRows([[]]);
         },
+        setBoardBackground: (color: string | null) => {
+          setBoardBackground(color);
+        },
         getState: () => ({
           rows: rows,
           config: {
             width: boardWidth,
             showSpecLine: showDividers,
+            boardBackground: boardBackground ?? undefined,
           },
         }),
         restoreState: state => {
@@ -484,6 +494,13 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
           const restoredWidth = Number(state.config.width);
           setBoardWidth(Number.isFinite(restoredWidth) && restoredWidth > 0 ? restoredWidth : DEFAULT_WIDTH);
           setShowDividers(state.config.showSpecLine !== false);
+          // 底板背景色覆盖：老存档没有这个字段 → null（跟随主题默认）
+          setBoardBackground(
+            typeof state.config.boardBackground === "string" &&
+              state.config.boardBackground
+              ? state.config.boardBackground
+              : null
+          );
 
           // 恢复完成后重新启用配置变化通知
           setTimeout(() => {
@@ -835,7 +852,7 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
           );
         },
       }),
-      [rows, boardWidth, showDividers, currentTheme]
+      [rows, boardWidth, showDividers, boardBackground, currentTheme]
     );
 
     // 添加一行
@@ -897,7 +914,9 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
             borderColor: `var(--guide-board-border-override, ${
               themes[currentTheme][1].colors.defaultBorder
             })`,
-            backgroundColor: themes[currentTheme][1].colors.defaultBackground,
+            backgroundColor:
+              boardBackground ??
+              themes[currentTheme][1].colors.defaultBackground,
             color: themes[currentTheme][1].colors.defaultForeground,
             fontFamily: themes[currentTheme][1].fontFamily,
             transition: "width 0.2s cubic-bezier(0.4,0,0.2,1)",

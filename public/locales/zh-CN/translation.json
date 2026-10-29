@@ -18,6 +18,8 @@
         "cancel": "取消"
       }
     },
+    "boardBackground": "底板背景色",
+    "boardBackgroundReset": "默认",
     "clearCanvas": {
       "button": "清空画板",
       "title": "确认清空画板",

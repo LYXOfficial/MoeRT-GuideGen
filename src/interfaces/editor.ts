@@ -14,6 +14,8 @@ export interface SaveData {
     width: number;
     showSpecLine: boolean;
     theme: string;
+    /** 底板背景色覆盖（可选，老存档没有此字段） */
+    boardBackground?: string;
   };
   rows: Array<
     Array<{

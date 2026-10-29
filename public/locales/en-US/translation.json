@@ -18,6 +18,8 @@
         "cancel": "Cancel"
       }
     },
+    "boardBackground": "Board background",
+    "boardBackgroundReset": "Default",
     "clearCanvas": {
       "button": "Clear Canvas",
       "title": "Confirm Clear Canvas",
