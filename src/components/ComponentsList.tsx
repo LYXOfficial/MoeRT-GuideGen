@@ -112,14 +112,16 @@ const DraggableComponentItem: React.FC<ComponentItemProps> = ({
             fontFamily: themes[currentTheme][1].fontFamily,
           }}
         >
-          {/* 间距/空格在侧栏里按 80px 宽渲染：它们没有固有内容宽度，
-              不给定宽度会塌成不可见的一點。 wrapper 撑满高度，
-              间距/空格的 h-full 才有高度可撑 */}
+          {/* 间距在侧栏里按 80px 宽渲染（撑满箭头）；空格 20px。
+              它们没有固有内容宽度，不给定宽度会塌成不可见的一點。
+              wrapper 撑满高度，间距/空格的 h-full 才有高度可撑 */}
           <div
             style={{
               position: "relative",
               height: "100%",
-              ...(isSpacingLike ? { width: 80 } : {}),
+              ...(isSpacingLike
+                ? { width: type.includes("Spacing") ? 80 : 20 }
+                : {}),
             }}
           >
             {/* 双行容器要用预览模式，否则侧栏里的这份示例也会注册可拖放区域，
