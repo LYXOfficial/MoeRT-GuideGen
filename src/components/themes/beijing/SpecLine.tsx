@@ -20,7 +20,7 @@ export const specLineDefaultProps: SpecLineProps = {
   width: 3,
   foreground: colors.specline,
   background: "transparent",
-  background2: colors.background,
+  background2: "transparent",
 };
 
 export const specLineEditorConfig = (

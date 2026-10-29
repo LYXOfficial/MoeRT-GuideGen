@@ -1849,7 +1849,7 @@ export default function Editor({
           }
         }
         
-        guideBoardRef.current?.addItemToTwoRowContainer(twoRowContainerId, twoRowTargetRowIndex, newItem, insertIndex);
+        guideBoardRef.current?.addItemToTwoRowContainer(twoRowContainerId, twoRowTargetRowIndex, newItem, insertIndex, true);
         lastChangeRef.current = Date.now();
         setTimeout(() => saveCurrentState(), 50);
         return;
@@ -1987,7 +1987,7 @@ export default function Editor({
         id: newId,
       };
 
-      guideBoardRef.current?.addItemToRow(targetRowId, newItem, insertIndex);
+      guideBoardRef.current?.addItemToRow(targetRowId, newItem, insertIndex, true);
       lastChangeRef.current = Date.now();
       // 保存状态到撤销历史
       setTimeout(() => saveCurrentState(), 50);

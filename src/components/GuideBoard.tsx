@@ -40,7 +40,7 @@ export interface BoardState {
 }
 
 export interface GuideBoardRef {
-  addItemToRow: (rowId: string, item: GuideItem, insertIndex?: number) => void;
+  addItemToRow: (rowId: string, item: GuideItem, insertIndex?: number, fresh?: boolean) => void;
   removeItemFromRow: (rowId: string, itemId: string) => GuideItem | null;
   reorderRow: (rowId: string, oldIndex: number, newIndex: number) => void;
   /** 在两行之间原子地移动元素（拖拽过程中实时预览用，保证一次 setState 完成） */
@@ -51,7 +51,7 @@ export interface GuideBoardRef {
     insertIndex?: number
   ) => boolean;
   getItemIndex: (rowId: string, itemId: string) => number;
-  addItemToTwoRowContainer: (containerId: string, rowIndex: number, item: GuideItem, insertIndex?: number) => void;
+  addItemToTwoRowContainer: (containerId: string, rowIndex: number, item: GuideItem, insertIndex?: number, fresh?: boolean) => void;
   removeItemFromTwoRowContainer: (containerId: string, rowIndex: number, itemId: string) => GuideItem | null;
   reorderTwoRowContainerRow: (
     containerId: string,
@@ -139,44 +139,20 @@ interface GuideBoardProps {
 // 单个上板组件的渲染内容：memo 包住，props 全是 zoom 无关的稳定量。
 // 缩放滑块每 tick 只会重渲染外层 DraggableItem（换算拖拽位移/热区用），
 // 这里的主题 SVG 子树整棵跳过——否则每 tick 重建全树，dev 下直接卡死。
-// 注意 getOverrides 是 useCallback（依赖只有配色/currentTheme/t），
-// item 是 rows 里的稳定引用：zoom 变化时三者都不变，memo 必中。
+// 注意：渲染层不做任何配色覆盖，只按 item.props 原样渲染；
+// 配色在落板那一刻已固化进 props（见 addItemToRow / bakeDropColors），
+// 之后改底板不再回头覆盖已上板的组件。
 const BoardItemContent = memo(function BoardItemContent({
   item,
   selectedId,
-  followBackground,
-  themeDefaultBackground,
 }: {
   item: GuideItem;
   selectedId?: string;
-  /** 北京新：底板背景色（组件背景等于主题默认值时跟随它） */
-  followBackground?: string | null;
-  themeDefaultBackground?: string;
 }) {
   if (!React.isValidElement(item.element)) return item.element;
-  // 北京新：背景不透明，且默认值应该跟随底板背景色。
-  // 只覆盖「仍是主题默认值」的组件，手动指定过别的颜色的保持不动。
-  // 北京用 background/background2 做上下分色，两行都要跟（否则只有第一行变色）。
-  const followBg: Record<string, string> = {};
-  if (followBackground && themeDefaultBackground != null) {
-    if (item.props?.background === themeDefaultBackground) {
-      followBg.background = followBackground;
-    }
-    if (
-      item.props != null &&
-      typeof item.props === "object" &&
-      "background2" in item.props &&
-      item.props.background2 === themeDefaultBackground
-    ) {
-      followBg.background2 = followBackground;
-    }
-  }
   return React.cloneElement(item.element, {
     ...item.props,
-    ...followBg,
-    // 底板配色在落板那一刻已固化进 props（见 addItemToRow），
-    // 全局改动不再回头覆盖已上板的组件
-    // 双行容器内部条目被选中时，让它给对应子条目盖遮罩
+    // 双行容器内部条目被选中时让它给对应子条目盖遮罩
     ...(item.type?.includes("TwoRowContainer") ? { selectedId } : {}),
   });
 });
@@ -482,6 +458,42 @@ const GuideBoardCols = memo(forwardRef<GuideBoardRef, GuideBoardProps>(
     }, [editingItem]);
 
     // imperativeHandle 相关方法
+    // 落板固化共用逻辑：顶层行 / 双行容器内部落子走同一套，避免分叉，
+    // 不能只改 background 漏掉 background2（北京主题上下行分色，
+    // 只改一个永远只有第一行变色）。
+    // 只有从侧栏新拖入的组件才固化（fresh=true）；已上板的组件搬家
+    // （跨行 / 进出容器）保持原 props 不动——拖上去那一刻即定死，
+    // 之后改底板配色不再回头覆盖。
+    // - 背景色（含 background2）：重庆(0)/北京新(3) 固化当前底板色
+    //   （未设置则保留组件自带局部默认值）；其余主题直接给透明
+    // - 前景色：所有主题都跟随「默认前景色」
+    const bakeDropColors = (
+      finalProps: Record<string, any>,
+      colorKeys: Set<string>
+    ) => {
+      if (colorKeys.has("background")) {
+        if (currentTheme === 0 || currentTheme === 3) {
+          if (boardBackground) {
+            finalProps.background = boardBackground;
+          }
+        } else {
+          finalProps.background = "transparent";
+        }
+      }
+      if (colorKeys.has("background2")) {
+        if (currentTheme === 0 || currentTheme === 3) {
+          if (boardBackground) {
+            finalProps.background2 = boardBackground;
+          }
+        } else {
+          finalProps.background2 = "transparent";
+        }
+      }
+      if (colorKeys.has("foreground") && boardForeground) {
+        finalProps.foreground = boardForeground;
+      }
+    };
+
     useImperativeHandle(
       ref,
       () => ({
@@ -571,7 +583,8 @@ const GuideBoardCols = memo(forwardRef<GuideBoardRef, GuideBoardProps>(
         addItemToRow: (
           rowId: string,
           item: GuideItem,
-          insertIndex?: number
+          insertIndex?: number,
+          fresh?: boolean
         ) => {
           // 统一用主题里的组件重建 element，确保 id/currentTheme/children 正确
           setRows(prev => {
@@ -589,35 +602,15 @@ const GuideBoardCols = memo(forwardRef<GuideBoardRef, GuideBoardProps>(
               currentTheme,
             };
 
-            // 落板固化：把「此刻生效的配色」写进 props ——
-            // 全局底板配色优先，未设置则保留组件自带的局部默认值。
-            // 上板后即视为局部显式指定，之后改全局不再回头覆盖它。
-            // 落板配色：
-            // - 背景色：重庆(0) / 北京新(3) 固化当前生效色（底板配色优先，
-            //   否则组件自带默认值）；其余主题直接给透明，不跟底板走
-            // - 前景色：所有主题都跟随「默认前景色」
-            if (Component) {
+            // 落板固化：只有从侧栏新拖入的组件才固化（fresh=true），
+            // 板内搬家保持原 props 不动——拖上去那一刻即定死
+            if (Component && fresh) {
               const forms =
                 (Component as any).getEditorConfig?.(t)?.forms ?? [];
-              const colorKeys = new Set(
+              const colorKeys = new Set<string>(
                 forms.map((f: { key: string }) => f.key)
               );
-              if (colorKeys.has("background")) {
-                if (currentTheme === 0) {
-                  // 重庆：落板固化（上板即显式指定）
-                  if (boardBackground) {
-                    finalProps.background = boardBackground;
-                  }
-                } else if (currentTheme !== 3) {
-                  // 成都/香港/北京旧：直接透明
-                  finalProps.background = "transparent";
-                }
-                // 北京新(3)：保持组件自带默认值，由渲染层跟随底板背景色
-                // （背景不透明，必须整板跟随，否则只有新拖的行变色）
-              }
-              if (colorKeys.has("foreground") && boardForeground) {
-                finalProps.foreground = boardForeground;
-              }
+              bakeDropColors(finalProps, colorKeys);
             }
 
             // 双行容器：children 在 props.children，且要补 onItemClick，
@@ -722,7 +715,7 @@ const GuideBoardCols = memo(forwardRef<GuideBoardRef, GuideBoardProps>(
           if (idx < 0 || idx >= rows.length) return -1;
           return rows[idx].findIndex(i => i.id === itemId);
         },
-        addItemToTwoRowContainer: (containerId: string, rowIndex: number, item: GuideItem, insertIndex?: number) => {
+        addItemToTwoRowContainer: (containerId: string, rowIndex: number, item: GuideItem, insertIndex?: number, fresh?: boolean) => {
           setRows(prev => {
             const newRows = prev.map(row => row.map(rowItem => {
               if (rowItem.id === containerId && rowItem.type?.includes('TwoRowContainer')) {
@@ -744,6 +737,14 @@ const GuideBoardCols = memo(forwardRef<GuideBoardRef, GuideBoardProps>(
                     id: item.id,
                     currentTheme,
                   };
+                  if (fresh && Component) {
+                    const colorKeys = new Set<string>(
+                      ((Component as any).getEditorConfig?.(t)?.forms ?? []).map(
+                        (f: { key: string }) => f.key
+                      )
+                    );
+                    bakeDropColors(finalProps, colorKeys);
+                  }
                   
                   const rebuiltItem: GuideItem = Component
                     ? {
@@ -1076,13 +1077,6 @@ const GuideBoardCols = memo(forwardRef<GuideBoardRef, GuideBoardProps>(
                             <BoardItemContent
                               item={item}
                               selectedId={editingItem?.item.id}
-                              followBackground={
-                                currentTheme === 3 ? boardBackground : null
-                              }
-                              themeDefaultBackground={
-                                themes[currentTheme][1].colors
-                                  .defaultBackground
-                              }
                             />
                           </DraggableItem>
                         ))
