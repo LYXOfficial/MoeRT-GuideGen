@@ -2,6 +2,7 @@ import {
   useRef,
   useState,
   useEffect,
+  useLayoutEffect,
   useCallback,
   cloneElement,
   isValidElement,
@@ -135,6 +136,57 @@ const resolveThemeIndex = (saveData: SaveData) => {
   return themes.findIndex(([name]) => name === themeName);
 };
 
+/** 导入时的组件条目校验：坏条目现在会被跳过（GuideBoard 只 console.warn），
+ *  所以在导入阶段就挑出来，让用户看到具体是哪一行、哪个字段、哪个类型有问题。 */
+type BadItem = {
+  row: number; // 1-based
+  index: number; // 1-based
+  code: "row" | "object" | "id" | "type" | "props" | "unknown";
+  type?: string;
+};
+
+const findBadSaveItem = (
+  saveData: SaveData,
+  themeIndex: number
+): BadItem | null => {
+  const comps = themes[themeIndex]?.[1]?.components ?? [];
+  for (let r = 0; r < saveData.rows.length; r++) {
+    const row = saveData.rows[r];
+    if (!Array.isArray(row)) {
+      return { row: r + 1, index: 0, code: "row" };
+    }
+    for (let i = 0; i < row.length; i++) {
+      const item = row[i] as
+        | { id?: unknown; type?: unknown; props?: unknown }
+        | null
+        | undefined;
+      const where = { row: r + 1, index: i + 1 };
+      if (!item || typeof item !== "object") {
+        return { ...where, code: "object" };
+      }
+      if (typeof item.id !== "string" || item.id.trim() === "") {
+        return { ...where, code: "id" };
+      }
+      if (typeof item.type !== "string" || item.type.trim() === "") {
+        return { ...where, code: "type" };
+      }
+      if (item.props != null && typeof item.props !== "object") {
+        return { ...where, code: "props" };
+      }
+      if (!comps.some(c => c.displayName === item.type)) {
+        return { ...where, code: "unknown", type: item.type };
+      }
+    }
+  }
+  return null;
+};
+
+/** 把屏幕坐标吸附到设备像素（DPR 1.25/1.5 也能对齐到真实的物理像素网格） */
+const snapToDevice = (v: number) => {
+  const dpr = typeof window === "undefined" ? 1 : window.devicePixelRatio || 1;
+  return Math.round(v * dpr) / dpr;
+};
+
 const { downloadJson } = archiveStore;
 
 export default function Editor({
@@ -193,17 +245,16 @@ export default function Editor({
     // 会在解锁后把对方标签页刚保存的内容覆盖掉
   }, [tabConflict]);
 
-  // 底板背景色 / 默认前景色：真实状态在 GuideBoard（随存档/撤销/换主题走），
-  // 这里只留镜像给侧栏的两个取色控件显示当前值
-  const [boardBgMirror, setBoardBgMirror] = useState<string | null>(null);
-  const [boardFgMirror, setBoardFgMirror] = useState<string | null>(null);
+  // 底板背景色 / 默认前景色：单一数据源在这里（状态提升）。
+  // GuideBoard 按 props 渲染、拖拽幽灵按同一 state 解析，
+  // 保证「拖拽幽灵 = 落板结果」；存档/撤销/换主题在这里同步。
+  const [boardBackground, setBoardBackground] = useState<string | null>(null);
+  const [boardForeground, setBoardForeground] = useState<string | null>(null);
   const handleBoardBackgroundChange = useCallback((color: string | null) => {
-    guideBoardRef.current?.setBoardBackground(color);
-    setBoardBgMirror(color);
+    setBoardBackground(color);
   }, []);
   const handleBoardForegroundChange = useCallback((color: string | null) => {
-    guideBoardRef.current?.setBoardForeground(color);
-    setBoardFgMirror(color);
+    setBoardForeground(color);
   }, []);
 
   // 撤销/重做状态管理
@@ -291,13 +342,13 @@ export default function Editor({
         restoreTimerRef.current = null;
         guideBoardRef.current?.restoreState(restoreData);
         // 撤销/重做也会还原底板配色：镜像跟着快照走
-        setBoardBgMirror(
+        setBoardBackground(
           typeof restoreData.config.boardBackground === "string" &&
             restoreData.config.boardBackground
             ? restoreData.config.boardBackground
             : null
         );
-        setBoardFgMirror(
+        setBoardForeground(
           typeof restoreData.config.boardForeground === "string" &&
             restoreData.config.boardForeground
             ? restoreData.config.boardForeground
@@ -368,6 +419,40 @@ export default function Editor({
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0, panX: 0, panY: 0 });
   const editorAreaRef = useRef<HTMLDivElement>(null);
+
+  // ===== 画布对齐设备像素（渲染公差）=====
+  // 分数缩放下（137%、210%、DPR 1.25 …）行边界会落在半个设备像素上：上下两行各自对
+  // 自己的边缘做抗锯齿，中间那 1px 跟底板底色混出一条浅缝，看着就是「关了分隔线两行
+  // 之间还有白缝」。和分隔线 / 组件虚线框都无关，就是渲染公差。
+  // 办法：缩放量化到 1/64（行高 64px ⇒ 64×scale 恒为整数），整体位移吸附到设备像素，
+  // 行边界就永远落在整数设备像素上。
+  const [gridOffset, setGridOffset] = useState({ x: 0, y: 0 });
+  const snappedZoom = Math.round(zoom * 64) / 64;
+  useLayoutEffect(() => {
+    const area = editorAreaRef.current;
+    const measure = () => {
+      const board = document.querySelector(
+        ".guide-board"
+      ) as HTMLElement | null;
+      if (!area || !board) return;
+      const dpr = window.devicePixelRatio || 1;
+      const left = (area.clientWidth - board.offsetWidth * snappedZoom) / 2;
+      const top = (area.clientHeight - board.offsetHeight * snappedZoom) / 2;
+      const snap = (v: number) => Math.round(v * dpr) / dpr - v;
+      setGridOffset({ x: snap(left), y: snap(top) });
+    };
+    measure();
+    const ro =
+      typeof ResizeObserver !== "undefined" ? new ResizeObserver(measure) : null;
+    if (area) ro?.observe(area);
+    const board = document.querySelector(".guide-board");
+    if (board) ro?.observe(board);
+    window.addEventListener("resize", measure);
+    return () => {
+      ro?.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, [snappedZoom]);
   const [isEditingOpen, setIsEditingOpen] = useState(false);
 
   // 触屏 / 紧凑布局判定
@@ -535,7 +620,7 @@ export default function Editor({
     if (!guideBoardRef.current) return null;
     const { rows, config } = guideBoardRef.current.getState();
     return {
-      version: 1,
+      version: archiveStore.SAVE_VERSION,
       config: {
         ...config,
         // 必须用 ref 取当前主题：这个回调的依赖是空数组，
@@ -650,13 +735,13 @@ export default function Editor({
         if (!guideBoardRef.current) return false;
         guideBoardRef.current.restoreState(saveData);
         // 底板背景色/默认前景色镜像跟随存档里的配置
-        setBoardBgMirror(
+        setBoardBackground(
           typeof saveData.config.boardBackground === "string" &&
             saveData.config.boardBackground
             ? saveData.config.boardBackground
             : null
         );
-        setBoardFgMirror(
+        setBoardForeground(
           typeof saveData.config.boardForeground === "string" &&
             saveData.config.boardForeground
             ? saveData.config.boardForeground
@@ -754,91 +839,181 @@ export default function Editor({
     [applySaveData, persistCurrentState, refreshArchiveList, t]
   );
 
-  // 导入工程 JSON：不覆盖当前画板，而是生成一个新存档并切过去
+  // 批量导入工程 JSON：不覆盖当前画板，每个文件各生成一个新存档。
+  // 单个文件失败不影响其它文件；全部处理完以后切到**最后一个**成功导入的存档。
+  const importFiles = useCallback(
+    async (files: File[]) => {
+      const list = files.filter(f => /\.json$/i.test(f.name));
+      if (list.length === 0) {
+        Toast.error(t("saves.import.onlyJson"));
+        return;
+      }
+      setIsImporting(true);
+      const created: Array<{ id: string; name: string }> = [];
+      const failures: string[] = [];
+      for (const file of list) {
+        try {
+          const text = await file.text();
+          const parsed: unknown = archiveStore.migrateSaveData(
+            JSON.parse(text)
+          );
+          if (!archiveStore.isSaveData(parsed)) {
+            throw new Error(t("saves.import.unsupportedVersion"));
+          }
+          if (
+            resolveThemeIndex(parsed) === -1 &&
+            countSavedItems(parsed) > 0
+          ) {
+            throw new Error(t("saves.import.unsupportedTheme"));
+          }
+          // 组件条目级校验：id / type / props / 组件是否存在于该主题，
+          // 都要在写进存档之前报出来——否则载入时只会被 console.warn 掉，
+          // 用户看到的就是「少了一个元件」而不知道为什么
+          const bad = findBadSaveItem(parsed, resolveThemeIndex(parsed));
+          if (bad) {
+            const where = t("saves.import.badItemWhere", {
+              row: bad.row,
+              index: bad.index,
+            });
+            if (bad.code === "row") {
+              throw new Error(
+                t("saves.import.badRow", { row: bad.row })
+              );
+            }
+            const detail =
+              bad.code === "object"
+                ? t("saves.import.badItemObject")
+                : bad.code === "id"
+                  ? t("saves.import.badItemId")
+                  : bad.code === "type"
+                    ? t("saves.import.badItemType")
+                    : bad.code === "props"
+                      ? t("saves.import.badItemProps")
+                      : t("saves.import.badItemUnknown", {
+                          type: bad.type ?? "",
+                        });
+            throw new Error(`${where} ${detail}`);
+          }
+          const fileStem = file.name
+            .replace(/\.json$/i, "")
+            .trim()
+            .slice(0, 60);
+          const name = uniqueArchiveName(
+            fileStem || t("saves.archives.untitled")
+          );
+          const meta = archiveStore.createArchive(name, parsed);
+          if (!meta) throw new Error(t("saves.import.error"));
+          created.push({ id: meta.id, name });
+        } catch (err) {
+          failures.push(
+            list.length === 1
+              ? (err as Error).message
+              : `${file.name}: ${(err as Error).message}`
+          );
+        }
+      }
+      setIsImporting(false);
+      refreshArchiveList();
+
+      if (created.length === 0) {
+        // 全军覆没：单文件给完整原因，多文件给汇总 + 第一条原因
+        Toast.error(
+          failures.length === 1
+            ? `${t("saves.import.error")}: ${failures[0]}`
+            : `${t("saves.import.multiPartial", {
+                success: 0,
+                failed: failures.length,
+              })} · ${failures[0]}`
+        );
+        return;
+      }
+
+      // 定位到最后一个成功导入的存档（列表也会把它滚进可视区）
+      const last = created[created.length - 1];
+      const ok = await switchArchive(last.id, { persist: true, silent: true });
+      if (!ok) {
+        archiveStore.deleteArchive(last.id);
+        refreshArchiveList();
+      }
+
+      if (list.length === 1) {
+        Toast.success(t("saves.import.created", { name: last.name }));
+      } else if (failures.length === 0) {
+        Toast.success(t("saves.import.multiOk", { count: created.length }));
+      } else {
+        Toast.warning(
+          `${t("saves.import.multiPartial", {
+            success: created.length,
+            failed: failures.length,
+          })} · ${failures[0]}`
+        );
+      }
+      // 导入后保持存档管理弹窗打开，方便继续切换 / 重命名 / 删除
+    },
+    [
+      refreshArchiveList,
+      switchArchive,
+      t,
+      uniqueArchiveName,
+    ]
+  );
+
+  // 顶栏 / 存档管理里的「导入存档」：支持一次选多个文件
   const importSaveData = () => {
     const input = document.createElement("input");
     input.type = "file";
-    input.accept = ".json";
+    input.accept = ".json,application/json";
+    input.multiple = true;
     input.onchange = async e => {
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (!file) return;
-
-      try {
-        setIsImporting(true);
-        const text = await file.text();
-        const parsed: unknown = archiveStore.migrateSaveData(JSON.parse(text));
-
-        // 崩溃页导出的整包备份：逐个恢复成新存档（不覆盖现有存档）
-        if (archiveStore.isArchiveBundle(parsed)) {
-          const created: ArchiveMeta[] = [];
-          for (const item of parsed.archives) {
-            const baseName =
-              item.name.trim().slice(0, 60) ||
-              t("saves.archives.untitled");
-            const name = uniqueArchiveName(baseName);
-            const meta = archiveStore.createArchive(name, item.data);
-            if (meta) created.push(meta);
-          }
-          if (created.length === 0) throw new Error(t("saves.import.error"));
-
-          refreshArchiveList();
-          // 优先切到一个能正常还原的存档；整包可能包含修复用的坏存档
-          const target = created.find(meta => {
-            const data = archiveStore.loadArchiveData(meta.id);
-            return (
-              !!data &&
-              (countSavedItems(data) === 0 || resolveThemeIndex(data) !== -1)
-            );
-          });
-          if (target) {
-            await switchArchive(target.id, { persist: true, silent: true });
-          }
-          Toast.success(
-            t("saves.import.bundleCreated", { count: created.length })
-          );
-          // 导入后保持存档管理弹窗打开，方便继续管理
-          return;
-        }
-
-        if (!archiveStore.isSaveData(parsed)) {
-          throw new Error(t("saves.import.unsupportedVersion"));
-        }
-        if (
-          resolveThemeIndex(parsed) === -1 &&
-          countSavedItems(parsed) > 0
-        ) {
-          throw new Error(t("saves.import.unsupportedTheme"));
-        }
-
-        const fileStem = file.name
-          .replace(/\.json$/i, "")
-          .trim()
-          .slice(0, 60);
-        const name = uniqueArchiveName(
-          fileStem || t("saves.archives.untitled")
-        );
-        const meta = archiveStore.createArchive(name, parsed);
-        if (!meta) throw new Error(t("saves.import.error"));
-
-        const ok = await switchArchive(meta.id, {
-          persist: true,
-          silent: true,
-        });
-        if (!ok) {
-          archiveStore.deleteArchive(meta.id);
-          refreshArchiveList();
-          throw new Error(t("saves.import.error"));
-        }
-        Toast.success(t("saves.import.created", { name }));
-        // 导入后保持存档管理弹窗打开，方便继续切换 / 重命名 / 删除
-      } catch (err) {
-        Toast.error(`${t("saves.import.error")}: ${(err as Error).message}`);
-      } finally {
-        setIsImporting(false);
-      }
+      const files = Array.from((e.target as HTMLInputElement).files ?? []);
+      if (files.length === 0) return;
+      await importFiles(files);
     };
     input.click();
   };
+
+  // 把 .json 拖到页面任意位置即可导入（只认 File，不干扰 dnd-kit 的组件拖拽）。
+  // dragenter/dragleave 成对计数：页面里子元素很多，单看 leave 会闪。
+  const [fileDragOver, setFileDragOver] = useState(false);
+  useEffect(() => {
+    let depth = 0;
+    const hasFiles = (e: DragEvent) =>
+      Array.from(e.dataTransfer?.types ?? []).includes("Files");
+    const onDragEnter = (e: DragEvent) => {
+      if (!hasFiles(e)) return;
+      depth += 1;
+      setFileDragOver(true);
+    };
+    const onDragOver = (e: DragEvent) => {
+      if (!hasFiles(e)) return;
+      // 不 preventDefault 的话浏览器会直接打开这个文件、把当前画板顶掉
+      e.preventDefault();
+      if (e.dataTransfer) e.dataTransfer.dropEffect = "copy";
+    };
+    const onDragLeave = (e: DragEvent) => {
+      if (!hasFiles(e)) return;
+      depth = Math.max(0, depth - 1);
+      if (depth === 0) setFileDragOver(false);
+    };
+    const onDrop = async (e: DragEvent) => {
+      if (!hasFiles(e)) return;
+      e.preventDefault();
+      depth = 0;
+      setFileDragOver(false);
+      const files = Array.from(e.dataTransfer?.files ?? []);
+      if (files.length > 0) await importFiles(files);
+    };
+    window.addEventListener("dragenter", onDragEnter);
+    window.addEventListener("dragover", onDragOver);
+    window.addEventListener("dragleave", onDragLeave);
+    window.addEventListener("drop", onDrop);
+    return () => {
+      window.removeEventListener("dragenter", onDragEnter);
+      window.removeEventListener("dragover", onDragOver);
+      window.removeEventListener("dragleave", onDragLeave);
+      window.removeEventListener("drop", onDrop);
+    };
+  }, [importFiles]);
 
   // 启动时载入「活动存档」（旧的单存档会自动迁移成第一个存档）
   const loadActiveArchive = async () => {
@@ -1287,8 +1462,112 @@ export default function Editor({
   // 否则副本内部会用同样的 id 抢注册可拖放区域，导致真身拖过一次后失效
   const renderDragPreview = (item: GuideItem) => {
     if (!isValidElement(item.element)) return item.element;
-    if (!item.type?.includes("TwoRowContainer")) return item.element;
-    return cloneElement(item.element as ReactElement<any>, { preview: true });
+
+    // 底板配色跟随：与落板渲染（boardColorOverrides）、侧栏预览同一规则——
+    // 显式设置了底板配色 → 全部强制跟随（含特殊默认色的组件）；
+    // 未设置 → 不注入，组件按自己的默认渲染（出口黄等特殊默认配色不被冲掉）。
+    // 只注入组件编辑表单里存在的属性
+    const comp = themes[currentTheme][1].components.find(
+      c => c.displayName === item.type
+    );
+    const forms =
+      comp?.component != null
+        ? ((comp.component as any).getEditorConfig?.(t)?.forms ?? [])
+        : [];
+    const keys = new Set(forms.map((f: { key: string }) => f.key));
+    const inject: Record<string, any> = {};
+    if (boardBackground && keys.has("background")) {
+      inject.background = boardBackground;
+    }
+    if (boardForeground && keys.has("foreground")) {
+      inject.foreground = boardForeground;
+    }
+
+    const isSpacing = item.type?.includes("Spacing");
+    const isBlank = item.type?.includes("Blank");
+    const ghost = item.type?.includes("TwoRowContainer")
+      ? cloneElement(item.element as ReactElement<any>, { preview: true })
+      : cloneElement(item.element as ReactElement<any>, inject);
+
+    // 间距/空格：拖拽时是带底板背景色的实体（间距 80px 宽 + 撑满的双向箭头），
+    // 否则它们没有固有宽度，拖起来就是看不见的空气
+    if (isSpacing || isBlank) {
+      return (
+        <div
+          style={{
+            position: "relative",
+            width: isSpacing ? 80 : 20,
+            height: 64,
+          }}
+        >
+          {ghost}
+          {/* 间距/空格的虚线框常显（拖拽幽灵与侧栏预览一致） */}
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              border: `2px dashed ${themes[currentTheme][1].colors.defaultBorder}`,
+              pointerEvents: "none",
+            }}
+          />
+          {isSpacing && (
+            <div
+              style={{
+                position: "absolute",
+                left: 3,
+                right: 3,
+                top: "50%",
+                transform: "translateY(-50%)",
+                display: "flex",
+                alignItems: "center",
+                pointerEvents: "none",
+                color: themes[currentTheme][1].colors.defaultBorder,
+              }}
+            >
+              <span
+                style={{
+                  width: 0,
+                  height: 0,
+                  borderTop: "4px solid transparent",
+                  borderBottom: "4px solid transparent",
+                  borderRight: "6px solid currentColor",
+                }}
+              />
+              <span
+                style={{ flex: 1, height: 2, background: "currentColor" }}
+              />
+              <span
+                style={{
+                  width: 0,
+                  height: 0,
+                  borderTop: "4px solid transparent",
+                  borderBottom: "4px solid transparent",
+                  borderLeft: "6px solid currentColor",
+                }}
+              />
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // 「组件虚线框」开启时拖拽幽灵也带同款框（inset 0 画在组件边缘上，
+    // 和画板 hover 虚线框同款，清楚可见）；分割线（3px 宽）除外
+    return (
+      <div style={{ position: "relative" }}>
+        {ghost}
+        {showItemFrame && !item.type?.includes("SpecLine") && (
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              border: `2px dashed ${themes[currentTheme][1].colors.defaultBorder}`,
+              pointerEvents: "none",
+            }}
+          />
+        )}
+      </div>
+    );
   };
 
   const handleDragStart = (event: DragStartEvent) => {
@@ -2073,10 +2352,8 @@ export default function Editor({
     skipAutoSaveRef.current = false;
     archivedItemCountRef.current = 0;
     // 底板背景色/默认前景色覆盖也随画板一起回到主题默认
-    guideBoardRef.current?.setBoardBackground(null);
-    guideBoardRef.current?.setBoardForeground(null);
-    setBoardBgMirror(null);
-    setBoardFgMirror(null);
+    setBoardBackground(null);
+    setBoardForeground(null);
     setCurrentTheme(theme);
     guideBoardRef.current?.clearBoard();
     setTimeout(() => saveCurrentState(), 100);
@@ -2309,8 +2586,6 @@ export default function Editor({
           zoom={zoom}
           onZoomChange={setZoom}
           disableZoom={isEditingOpen}
-          showItemFrame={showItemFrame}
-          onShowItemFrameChange={setShowItemFrame}
           onFitToView={fitToView}
           paletteOpen={paletteOpen}
           onTogglePalette={() => setPaletteOpen(open => !open)}
@@ -2324,11 +2599,12 @@ export default function Editor({
             <ComponentsList
               currentTheme={currentTheme}
               onThemeChange={handleThemeRequest}
-              boardBackground={boardBgMirror}
+              boardBackground={boardBackground}
               onBoardBackgroundChange={handleBoardBackgroundChange}
-              boardForeground={boardFgMirror}
+              boardForeground={boardForeground}
               onBoardForegroundChange={handleBoardForegroundChange}
               showItemFrame={showItemFrame}
+              onShowItemFrameChange={setShowItemFrame}
             />
           )}
           <div
@@ -2352,8 +2628,14 @@ export default function Editor({
               className="absolute inset-0 flex items-center justify-center z-1"
               style={
                 {
-                  // 先缩放，再位移；位移不受缩放影响
-                  transform: `scale(${zoom}) translate(${pan.x}px, ${pan.y}px)`,
+                  // 先位移，再缩放：translate 写在 scale 前面（CSS 变换从右往左
+                  // 作用）才是「屏幕像素 1:1」——写反的话 pan 会被缩放倍数放大，
+                  // 缩放后拖画布的移动距离 = 鼠标距离 × zoom（实测踩过）
+                  // 位移 + 亚像素补偿都吸附到设备像素，缩放量化到 1/64：
+                  // 这样每 64px 的行边界恒落在整数设备像素上，不会再抗锯齿出白缝
+                  transform: `translate(${
+                    snapToDevice(pan.x) + gridOffset.x
+                  }px, ${snapToDevice(pan.y) + gridOffset.y}px) scale(${snappedZoom})`,
                   transformOrigin: "center",
                   transition: isDragging ? "none" : "transform 0.1s ease-out",
                   cursor: isDragging ? "grabbing" : "default",
@@ -2369,8 +2651,10 @@ export default function Editor({
                 <GuideBoardCols
                   ref={guideBoardRef}
                   currentTheme={currentTheme}
-                  zoom={zoom}
+                  zoom={snappedZoom}
                   onConfigChange={handleConfigChange}
+                  boardBackground={boardBackground}
+                  boardForeground={boardForeground}
                 />
                 {/* 从组件列表拖入时的插入位置指示线 */}
                 {dropIndicator.show && (
@@ -2465,16 +2749,25 @@ export default function Editor({
                 fullWidth
                 currentTheme={currentTheme}
                 onThemeChange={handleThemeRequest}
-                boardBackground={boardBgMirror}
+                boardBackground={boardBackground}
                 onBoardBackgroundChange={handleBoardBackgroundChange}
-                boardForeground={boardFgMirror}
+                boardForeground={boardForeground}
                 onBoardForegroundChange={handleBoardForegroundChange}
                 showItemFrame={showItemFrame}
+                onShowItemFrameChange={setShowItemFrame}
               />
             </div>
           </div>
         )}
       </div>
+      {/* 文件拖到页面上时的提示：pointer-events-none，不影响下面的 dnd-kit */}
+      {fileDragOver && (
+        <div className="fixed inset-0 z-[9999] pointer-events-none flex items-center justify-center bg-blue-500/10">
+          <div className="px-6 py-4 rounded-lg border-2 border-dashed border-blue-500 bg-white/95 dark:bg-[#232429]/95 text-blue-600 dark:text-blue-300 font-sans text-base font-semibold shadow-lg">
+            {t("saves.import.dropHint")}
+          </div>
+        </div>
+      )}
       <DragOverlay
         dropAnimation={{
           duration: 200,
