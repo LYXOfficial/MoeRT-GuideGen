@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Card, Typography, Select, Modal } from "@douyinfe/semi-ui";
+import { Card, Typography, Select, Modal, Checkbox } from "@douyinfe/semi-ui";
 import themes from "./themes/themereg";
 import { useDraggable, useDroppable, useDndContext } from "@dnd-kit/core";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -21,6 +21,7 @@ interface ComponentsListProps {
   onBoardForegroundChange?: (color: string | null) => void;
   /** 「组件虚线框」开关：给侧栏预览窗加和画板一致的同款虚线框 */
   showItemFrame?: boolean;
+  onShowItemFrameChange?: (show: boolean) => void;
 }
 
 interface ComponentItemProps {
@@ -131,8 +132,10 @@ const DraggableComponentItem: React.FC<ComponentItemProps> = ({
             ) : (
               <Component {...previewComponentProps} />
             )}
-            {/* 「组件虚线框」：画在盒内的同款虚线框（inset 0，不会被 overflow 裁掉上下边） */}
-            {showItemFrame && (
+            {/* 侧栏预览窗的虚线：间距/空格常显（没有内容宽度的组件需要框
+                指示可拖区域），其余组件受「组件虚线框」开关控制。
+                分割线（3px 宽）除外：太窄根本渲染不对头 */}
+            {(isSpacingLike || showItemFrame) && !type.includes("SpecLine") && (
               <div
                 style={{
                   position: "absolute",
@@ -142,8 +145,9 @@ const DraggableComponentItem: React.FC<ComponentItemProps> = ({
                 }}
               />
             )}
-            {/* 间距：撑满整个宽度的双向箭头（和画板上的间距辅助线同款） */}
-            {isSpacingLike && type.includes("Spacing") && showItemFrame && (
+            {/* 间距：撑满整个宽度的双向箭头——不跟随「组件虚线框」开关，
+                否则关闭时 80px 的透明块什么都看不见，不知道拖的是间距 */}
+            {isSpacingLike && type.includes("Spacing") && (
               <div
                 style={{
                   position: "absolute",
@@ -204,6 +208,7 @@ export default function ComponentsList({
   boardForeground,
   onBoardForegroundChange,
   showItemFrame,
+  onShowItemFrameChange,
 }: ComponentsListProps) {
   const { t, i18n } = useTranslation();
   const theme = themes[currentTheme][1];
@@ -332,6 +337,19 @@ export default function ComponentsList({
               </Select.Option>
             ))}
           </Select>
+          {/* 「组件虚线框」开关：原来在顶栏，长语言（法/德/俄）把标签挤没了，
+              移到主题下面后标签始终完整、也不跟顶栏抢宽度 */}
+          <div className="mt-3">
+            <Checkbox
+              className="font-sans"
+              checked={showItemFrame}
+              onChange={e => onShowItemFrameChange?.(Boolean(e.target.checked))}
+            >
+              <span className="font-sans text-sm text-gray-700 dark:text-gray-200">
+                {t("board.showItemFrame")}
+              </span>
+            </Checkbox>
+          </div>
           {/* 默认前景色 / 底板背景色：改了之后画板预览和新拖入组件的默认配色都跟着变。
               显式设置后，连自带特殊默认色的组件（出口黄、固定线路色等）也强制跟随 */}
           <div className="mt-3">
