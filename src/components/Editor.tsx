@@ -412,6 +412,42 @@ export default function Editor({
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0, panX: 0, panY: 0 });
   const editorAreaRef = useRef<HTMLDivElement>(null);
+  // 平移手势走「只写 DOM + ref」：外层 div 的 transform 直接改，
+  // 手势中途不 setPan（否则 Editor 每 mousemove 全量 render 一次，
+  // 空画板在 dev 下都会掉帧）。渲染统一读 panRef，中间任何渲染都不会闪回旧位置；
+  // 手势结束 commitPan 落账一次（新对象，触发一次渲染同步 state）。
+  const panLayerRef = useRef<HTMLDivElement | null>(null);
+  const panRef = useRef(pan);
+  const writePanLive = (p: { x: number; y: number }) => {
+    panRef.current = p;
+    const el = panLayerRef.current;
+    if (el) el.style.transform = `translate(${p.x}px, ${p.y}px)`;
+  };
+  const commitPan = useCallback((p: { x: number; y: number }) => {
+    panRef.current = p;
+    setPan(p);
+  }, []);
+
+  // 连续缩放（滑块拖动/滚轮/双指）：每 tick 都改 scale，transition 留着只会
+  // 每帧重启补间又重光栅化一遍。手势中关掉（跟手），停 150ms 后恢复
+  // （适配按钮/步进仍保留平滑过渡）。
+  const [isZooming, setIsZooming] = useState(false);
+  const zoomEndTimerRef = useRef<number | null>(null);
+  const clearZoomEndTimer = () => {
+    if (zoomEndTimerRef.current !== null) {
+      window.clearTimeout(zoomEndTimerRef.current);
+      zoomEndTimerRef.current = null;
+    }
+  };
+  const handleZoomLive = useCallback((value: number) => {
+    setZoom(value);
+    setIsZooming(true);
+    clearZoomEndTimer();
+    zoomEndTimerRef.current = window.setTimeout(() => {
+      zoomEndTimerRef.current = null;
+      setIsZooming(false);
+    }, 150);
+  }, []);
 
 
   const [isEditingOpen, setIsEditingOpen] = useState(false);
@@ -522,7 +558,7 @@ export default function Editor({
       if (isDragging) {
         const deltaX = e.clientX - dragStart.x;
         const deltaY = e.clientY - dragStart.y;
-        setPan({
+        writePanLive({
           x: dragStart.panX + deltaX,
           y: dragStart.panY + deltaY,
         });
@@ -531,9 +567,16 @@ export default function Editor({
     [isDragging, dragStart]
   );
 
-  const handleEditorMouseUp = useCallback(() => {
+  // 平移手势结束：落账一次 + 退出拖拽态。编辑区 onMouseUp 和全局 mouseup
+  // 共用（在区外松手时只有全局的会触发，不落账下次起拖就跳变）。
+  const endPanGesture = useCallback(() => {
+    setPan({ ...panRef.current });
     setIsDragging(false);
   }, []);
+
+  const handleEditorMouseUp = useCallback(() => {
+    endPanGesture();
+  }, [endPanGesture]);
 
   const handleEditorWheel = useCallback(
     (e: React.WheelEvent) => {
@@ -541,15 +584,15 @@ export default function Editor({
       if (isEditingOpen) return; // 编辑弹窗打开时禁用滚轮缩放
       const delta = e.deltaY > 0 ? -0.1 : 0.1;
       const newZoom = Math.max(0.5, Math.min(4, zoom + delta));
-      setZoom(newZoom);
+      handleZoomLive(newZoom);
     },
-    [zoom, isEditingOpen]
+    [zoom, isEditingOpen, handleZoomLive]
   );
 
   // 全局鼠标事件处理
   useEffect(() => {
     const handleGlobalMouseUp = () => {
-      setIsDragging(false);
+      endPanGesture();
     };
 
     const handleGlobalMouseMove = (e: MouseEvent) => {
@@ -558,7 +601,7 @@ export default function Editor({
       if (isDragging) {
         const deltaX = e.clientX - dragStart.x;
         const deltaY = e.clientY - dragStart.y;
-        setPan({
+        writePanLive({
           x: dragStart.panX + deltaX,
           y: dragStart.panY + deltaY,
         });
@@ -574,7 +617,7 @@ export default function Editor({
       document.removeEventListener("mouseup", handleGlobalMouseUp);
       document.removeEventListener("mousemove", handleGlobalMouseMove);
     };
-  }, [isDragging, dragStart]);
+  }, [isDragging, dragStart, endPanGesture]);
 
   // ===== 存档数据 =====
   const buildSaveData = useCallback((): SaveData | null => {
@@ -1036,6 +1079,14 @@ export default function Editor({
       saveCurrentState();
     }, 500);
   };
+
+  // GuideBoardCols 被 memo 了：回调身份必须稳定，否则平移时它照样整棵重渲染。
+  // 用 ref 转发，永远调用最新闭包。
+  const handleConfigChangeRef = useRef(handleConfigChange);
+  handleConfigChangeRef.current = handleConfigChange;
+  const stableConfigChange = useCallback(() => {
+    handleConfigChangeRef.current();
+  }, []);
 
   // ===== 多存档操作 =====
   const openArchiveDialog = useCallback(() => {
@@ -2144,8 +2195,11 @@ export default function Editor({
     const fit = computeFit();
     if (!fit) return;
     setZoom(fit.scale);
-    setPan({ x: fit.panX, y: fit.panY });
-  }, [computeFit]);
+    // 程序化定位：直接落账；同时关掉连续缩放态，保证过渡动画正常播放
+    clearZoomEndTimer();
+    setIsZooming(false);
+    commitPan({ x: fit.panX, y: fit.panY });
+  }, [computeFit, commitPan]);
 
   // 适配只在进入移动端布局、或打开组件抽屉（可见区域变小）时执行一次，
   // 之后改宽度/加减行/分割线等都不会重置用户当前的缩放与位置。
@@ -2242,20 +2296,22 @@ export default function Editor({
       if (s.mode === "pan" && t.length === 1) {
         const dx = t[0].clientX - s.startX;
         const dy = t[0].clientY - s.startY;
-        setPan({ x: s.startPanX + dx, y: s.startPanY + dy });
+        writePanLive({ x: s.startPanX + dx, y: s.startPanY + dy });
       } else if (s.mode === "pinch" && t.length >= 2) {
         const d = touchDistance(t[0], t[1]);
         if (s.pinchStartDist > 0) {
           const ratio = d / s.pinchStartDist;
           const next = Math.max(0.2, Math.min(4, s.pinchStartZoom * ratio));
-          setZoom(next);
+          handleZoomLive(next);
         }
       }
     },
-    [isCoarsePointer, isEditingOpen, activeDrag]
+    [isCoarsePointer, isEditingOpen, activeDrag, handleZoomLive]
   );
 
   const handleTouchEnd = useCallback(() => {
+    // 单指平移在触屏上同样走 live 写 DOM，结束时落账一次
+    setPan({ ...panRef.current });
     touchStateRef.current.mode = "none";
   }, []);
 
@@ -2545,7 +2601,7 @@ export default function Editor({
           canRedo={canRedo}
           guideHeight={guideHeight}
           zoom={zoom}
-          onZoomChange={setZoom}
+          onZoomChange={handleZoomLive}
           disableZoom={isEditingOpen}
           onFitToView={fitToView}
           paletteOpen={paletteOpen}
@@ -2572,6 +2628,9 @@ export default function Editor({
             ref={editorAreaRef}
             className="flex-1 relative overflow-hidden bg-gray-50 dark:bg-[#101014]"
             style={{
+              // 建独立层叠上下文：看板娘用负 z-index 挂在画布下面，
+              // 没有这个 isolation 她会连编辑区背景一起钻到下面去（完全看不见）
+              isolation: "isolate",
               cursor: isDragging ? "grabbing" : "default",
               // 触屏画布手势由 JS 处理（单指平移/双指缩放），禁用原生手势
               touchAction: isCoarsePointer ? "none" : undefined,
@@ -2585,20 +2644,34 @@ export default function Editor({
             onTouchEnd={handleTouchEnd}
             onTouchCancel={handleTouchEnd}
           >
+            {/* 看板娘放编辑区内部、z-0：画布层是 z-1，所以她永远在画布下面，
+                不会盖住任何组件；编辑区 overflow-hidden 也保证她不会跑到侧栏上 */}
+            <Salt />
             {/* 外层只负责平移：屏幕像素 1:1（不受缩放影响），
-                鼠标拖多少画板就平移多少 */}
+                鼠标拖多少画板就平移多少。
+                手势中 transform 由 writePanLive 直接写 DOM（不经过 render）；
+                渲染读 panRef，保证中间任何渲染都不闪回旧位置 */}
             <div
               className="absolute inset-0"
-              style={{ transform: `translate(${pan.x}px, ${pan.y}px)` }}
+              ref={panLayerRef}
+              style={{
+                transform: `translate(${panRef.current.x}px, ${panRef.current.y}px)`,
+                // 提升为独立合成层：平移只做合成器偏移，不重绘整块画板
+                // （否则 200% 缩放下每帧要重新光栅化整棵 SVG 子树，掉到 ~30fps）
+                willChange: "transform",
+              }}
             >
-              {/* 内层只负责缩放：变换/补间与改动前完全一致，缩放行为零变化 */}
+              {/* 内层只负责缩放：变换/补间与改动前完全一致，缩放行为零变化。
+                  连续缩放手势中（滑块/滚轮/双指）关掉 transition 跟手，
+                  停稳后恢复，适配按钮的平滑过渡不受影响 */}
               <div
                 className="absolute inset-0 flex items-center justify-center z-1"
                 style={
                   {
                     transform: `scale(${zoom})`,
                     transformOrigin: "center",
-                    transition: isDragging ? "none" : "transform 0.1s ease-out",
+                    transition:
+                      isDragging || isZooming ? "none" : "transform 0.1s ease-out",
                     cursor: isDragging ? "grabbing" : "default",
                     // 组件框的颜色，取当前主题的边框色，
                     // DraggableItem 的 outline 和间距箭头都继承这个变量
@@ -2613,7 +2686,7 @@ export default function Editor({
                   ref={guideBoardRef}
                   currentTheme={currentTheme}
                   zoom={zoom}
-                  onConfigChange={handleConfigChange}
+                  onConfigChange={stableConfigChange}
                   boardBackground={boardBackground}
                   boardForeground={boardForeground}
                 />
@@ -2637,7 +2710,6 @@ export default function Editor({
             </div>
           </div>
         </div>
-        <Salt />
         <ArchiveDialog
           visible={archiveDialogVisible}
           onCancel={() => setArchiveDialogVisible(false)}

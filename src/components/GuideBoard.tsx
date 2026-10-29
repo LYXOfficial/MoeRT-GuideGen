@@ -1,4 +1,5 @@
 import { useDroppable } from "@dnd-kit/core";
+import { memo } from "react";
 import {
   arrayMove,
   SortableContext,
@@ -11,7 +12,6 @@ import React, {
   forwardRef,
   useRef,
   useEffect,
-  useCallback,
   Children,
 } from "react";
 import { createPortal } from "react-dom";
@@ -64,10 +64,6 @@ export interface GuideBoardRef {
     itemId: string
   ) => number;
   clearBoard: () => void;
-  /** 覆盖底板背景色（null = 恢复主题默认），供侧栏「底板背景色」控件调用 */
-  setBoardBackground: (color: string | null) => void;
-  /** 覆盖默认前景色（null = 恢复主题默认），供侧栏「默认前景色」控件调用 */
-  setBoardForeground: (color: string | null) => void;
   getState: () => BoardState;
   restoreState: (state: {
     rows: Array<Array<SavedItem>>;
@@ -133,51 +129,51 @@ interface GuideBoardProps {
   currentTheme: number;
   zoom?: number;
   onConfigChange?: (immediate?: boolean) => void;
+  /** 底板背景色覆盖（状态提升在 Editor，这里只负责按 props 渲染） */
+  boardBackground?: string | null;
+  /** 默认前景色覆盖（同上） */
+  boardForeground?: string | null;
 }
 
-const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
-  ({ currentTheme, zoom = 1, onConfigChange }, ref) => {
+// 单个上板组件的渲染内容：memo 包住，props 全是 zoom 无关的稳定量。
+// 缩放滑块每 tick 只会重渲染外层 DraggableItem（换算拖拽位移/热区用），
+// 这里的主题 SVG 子树整棵跳过——否则每 tick 重建全树，dev 下直接卡死。
+// 注意 getOverrides 是 useCallback（依赖只有配色/currentTheme/t），
+// item 是 rows 里的稳定引用：zoom 变化时三者都不变，memo 必中。
+const BoardItemContent = memo(function BoardItemContent({
+  item,
+  selectedId,
+}: {
+  item: GuideItem;
+  selectedId?: string;
+}) {
+  if (!React.isValidElement(item.element)) return item.element;
+  return React.cloneElement(item.element, {
+    ...item.props,
+    // 底板配色在落板那一刻已固化进 props（见 addItemToRow），
+    // 全局改动不再回头覆盖已上板的组件
+    // 双行容器内部条目被选中时，让它给对应子条目盖遮罩
+    ...(item.type?.includes("TwoRowContainer") ? { selectedId } : {}),
+  });
+});
+// memo：平移时 Editor 重渲染（现在手势中已不 render，落账时 render 一次），
+// 画板 props 不变就整棵子树跳过
+const GuideBoardCols = memo(forwardRef<GuideBoardRef, GuideBoardProps>(
+  (
+    {
+      currentTheme,
+      zoom = 1,
+      onConfigChange,
+      boardBackground,
+      boardForeground,
+    },
+    ref
+  ) => {
     const { t } = useTranslation();
     // 动态行数组，每行是 DraggableItem[]
     const [rows, setRows] = useState<GuideItem[][]>([[]]);
     const [boardWidth, setBoardWidth] = useState(DEFAULT_WIDTH);
     const [showDividers, setShowDividers] = useState(true);
-    // 底板背景色覆盖：改了之后画板预览和新拖入组件的默认背景都跟着变
-    const [boardBackground, setBoardBackground] = useState<string | null>(null);
-    // 默认前景色覆盖：同上，管的是文字/前景配色
-    const [boardForeground, setBoardForeground] = useState<string | null>(null);
-    // 底板配色覆盖的渲染解析：按编辑表单判断组件是否支持 background/foreground
-    // （留空的属性实时跟随当前设置；显式设置过自己颜色的组件用自己的）。
-    // 能力判定按 type 缓存，避免每次渲染都重建编辑表单
-    const boardColorCapableRef = useRef<Map<string, { bg: boolean; fg: boolean }>>(
-      new Map()
-    );
-    const boardColorOverrides = useCallback(
-      (item: GuideItem): Record<string, any> => {
-        if (!boardBackground && !boardForeground) return {};
-        const cache = boardColorCapableRef.current;
-        let cap = cache.get(item.type);
-        if (!cap) {
-          const comp = themes[currentTheme][1].components.find(
-            c => c.displayName === item.type
-          );
-          const forms =
-            comp?.component != null
-              ? ((comp.component as any).getEditorConfig?.(t)?.forms ?? [])
-              : [];
-          cap = {
-            bg: forms.some((f: PropForm) => f.key === "background"),
-            fg: forms.some((f: PropForm) => f.key === "foreground"),
-          };
-          cache.set(item.type, cap);
-        }
-        const out: Record<string, any> = {};
-        if (boardBackground && cap.bg) out.background = boardBackground;
-        if (boardForeground && cap.fg) out.foreground = boardForeground;
-        return out;
-      },
-      [boardBackground, boardForeground, currentTheme, t]
-    );
     const [isRestoring, setIsRestoring] = useState(false);
     const [editingItem, setEditingItem] = useState<{
       item: GuideItem;
@@ -468,12 +464,6 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
         clearBoard: () => {
           setRows([[]]);
         },
-        setBoardBackground: (color: string | null) => {
-          setBoardBackground(color);
-        },
-        setBoardForeground: (color: string | null) => {
-          setBoardForeground(color);
-        },
         getState: () => ({
           rows: rows,
           config: {
@@ -546,19 +536,8 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
           const restoredWidth = Number(state.config.width);
           setBoardWidth(Number.isFinite(restoredWidth) && restoredWidth > 0 ? restoredWidth : DEFAULT_WIDTH);
           setShowDividers(state.config.showSpecLine !== false);
-          // 底板背景色/默认前景色覆盖：老存档没有这些字段 → null（跟随主题默认）
-          setBoardBackground(
-            typeof state.config.boardBackground === "string" &&
-              state.config.boardBackground
-              ? state.config.boardBackground
-              : null
-          );
-          setBoardForeground(
-            typeof state.config.boardForeground === "string" &&
-              state.config.boardForeground
-              ? state.config.boardForeground
-              : null
-          );
+          // 底板背景色/默认前景色覆盖：状态提升在 Editor（applySaveData /
+          // applyHistorySnapshot 会 set），这里不再持有内部副本
 
           // 恢复完成后重新启用配置变化通知
           setTimeout(() => {
@@ -585,6 +564,23 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
               id: item.id,
               currentTheme,
             };
+
+            // 落板固化：把「此刻生效的配色」写进 props ——
+            // 全局底板配色优先，未设置则保留组件自带的局部默认值。
+            // 上板后即视为局部显式指定，之后改全局不再回头覆盖它。
+            if (Component) {
+              const forms =
+                (Component as any).getEditorConfig?.(t)?.forms ?? [];
+              const colorKeys = new Set(
+                forms.map((f: { key: string }) => f.key)
+              );
+              if (colorKeys.has("background") && boardBackground) {
+                finalProps.background = boardBackground;
+              }
+              if (colorKeys.has("foreground") && boardForeground) {
+                finalProps.foreground = boardForeground;
+              }
+            }
 
             // 双行容器：children 在 props.children，且要补 onItemClick，
             // 内部条目才能打开编辑/被删除
@@ -1037,17 +1033,12 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
                               });
                             }}
                           >
-                            {React.isValidElement(item.element)
-                              ? React.cloneElement(item.element, {
-                                  ...item.props,
-                                  // 底板配色覆盖：留空的前景/背景实时跟随当前设置
-                                  ...boardColorOverrides(item),
-                                  // 双行容器内部条目被选中时，让它给对应子条目盖遮罩
-                                  ...(item.type?.includes("TwoRowContainer")
-                                    ? { selectedId: editingItem?.item.id }
-                                    : {}),
-                                })
-                              : item.element}
+                            {/* 主题内容 memo 化：zoom 只影响外层 DraggableItem，
+                                这里 props 不变就不重建（见 BoardItemContent） */}
+                            <BoardItemContent
+                              item={item}
+                              selectedId={editingItem?.item.id}
+                            />
                           </DraggableItem>
                         ))
                       ) : (
@@ -1304,6 +1295,6 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
       </div>
     );
   }
-);
+));
 
 export default GuideBoardCols;
