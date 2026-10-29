@@ -11,6 +11,8 @@ interface CustomColorPickerProps {
   fallbackColor?: string;
   /** value 为空时常量下拉显示的占位文案 */
   placeholder?: string;
+  /** 不允许选择的调色板常量键（如底板背景色不允许「透明」） */
+  excludeKeys?: string[];
 }
 
 /**
@@ -25,6 +27,7 @@ const CustomColorPicker: React.FC<CustomColorPickerProps> = ({
   currentTheme,
   fallbackColor,
   placeholder,
+  excludeKeys,
 }) => {
   const colors = themes[currentTheme][1].colors.colors;
   const { t } = useTranslation();
@@ -128,7 +131,10 @@ const CustomColorPicker: React.FC<CustomColorPickerProps> = ({
       <SemiColorPicker
         alpha={false}
         value={SemiColorPicker.colorStringToValue(
-          colorPickerValue || fallbackColor || "#ffffff"
+          // 透明值交给 Semi 会解析失败，色块按「无颜色」显示
+          colorPickerValue === "transparent"
+            ? "rgba(0,0,0,0)"
+            : colorPickerValue || fallbackColor || "#ffffff"
         )}
         onChange={handleColorPickerChange}
         usePopover={true}
@@ -152,7 +158,9 @@ const CustomColorPicker: React.FC<CustomColorPickerProps> = ({
         placeholder={placeholder || "选择颜色变量"}
         className="flex-1"
       >
-        {Object.entries(colors).map(([key, colorValue]) => (
+        {Object.entries(colors)
+          .filter(([key]) => !(excludeKeys || []).includes(key))
+          .map(([key, colorValue]) => (
           <Select.Option key={key} value={key}>
             <div className="flex min-w-0 items-center gap-2">
               {/* shrink-0：颜色名较长时色块不能被压扁 */}
@@ -165,7 +173,7 @@ const CustomColorPicker: React.FC<CustomColorPickerProps> = ({
               </span>
             </div>
           </Select.Option>
-        ))}
+          ))}
       </Select>
     </div>
   );

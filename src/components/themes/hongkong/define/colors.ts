@@ -1,4 +1,6 @@
 const colors = {
+  // 透明：间距/空格默认用它；底板背景色不允许选它（见 ComponentsList）
+  transparent: "transparent",
   background: "#000000",
   foreground: "#ffffff",
   background2: "#ffffff",

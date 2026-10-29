@@ -1,5 +1,4 @@
 import { InputNumber } from "@douyinfe/semi-ui";
-import colors from "./define/colors";
 import type { EditorConfig } from "../../../interfaces/editor";
 import CustomColorPicker from "../../CustomColorPicker";
 
@@ -8,7 +7,7 @@ export interface BlankProps {
   width?: number;
 }
 export const blankDefaultProps: BlankProps = {
-  background: colors.background,
+  background: "transparent",
   width: 20,
 };
 export const blankEditorConfig = (

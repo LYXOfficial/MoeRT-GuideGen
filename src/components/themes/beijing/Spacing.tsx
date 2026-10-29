@@ -8,7 +8,7 @@ export interface SpacingProps {
 }
 
 export const spacingDefaultProps: SpacingProps = {
-  background: colors.background,
+  background: "transparent",
   background2: colors.background,
 };
 

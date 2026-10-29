@@ -7,6 +7,8 @@
  *    改用标准附录给出的 CMYK 经渲染实测得到的值，已在下方逐条标注
  */
 const colors = {
+  // 透明：间距/空格默认用它；底板背景色不允许选它（见 ComponentsList）
+  transparent: "transparent",
   // ===== 版面基础色（vitool COLOR_MODE_RULES：A 蓝色系深色底）=====
   background: "#142134", // 新版版面衬底（官方样式表/visys/extra 实测一致；旧版经典深蓝是 #092f52）
   foreground: "#ffffff", // --mode-item 前景（文字/图形）

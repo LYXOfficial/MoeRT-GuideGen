@@ -399,6 +399,8 @@ export default function ComponentsList({
                 value={boardBackground ?? null}
                 fallbackColor={theme.colors.defaultBackground}
                 placeholder={t("editor.followTheme")}
+                // 底板背景色不允许选「透明」（其余取色器都可以）
+                excludeKeys={["transparent"]}
                 onChange={hex => onBoardBackgroundChange?.(hex)}
               />
             </div>

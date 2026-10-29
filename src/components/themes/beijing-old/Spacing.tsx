@@ -1,4 +1,3 @@
-import colors from "./define/colors";
 import type { EditorConfig } from "../../../interfaces/editor";
 import { Background, backgroundFormItems } from "./Background";
 
@@ -7,7 +6,7 @@ export interface SpacingProps {
 }
 
 export const spacingDefaultProps: SpacingProps = {
-  background: colors.background,
+  background: "transparent",
 };
 
 export const spacingEditorConfig = (

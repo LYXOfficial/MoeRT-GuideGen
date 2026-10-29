@@ -14,7 +14,7 @@ export interface BlankProps {
 
 export const blankDefaultProps: BlankProps = {
   width: 20,
-  background: colors.background,
+  background: "transparent",
   background2: colors.background,
 };
 

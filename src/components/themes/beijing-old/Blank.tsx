@@ -1,4 +1,3 @@
-import colors from "./define/colors";
 import type { EditorConfig } from "../../../interfaces/editor";
 import {
   Background,
@@ -13,7 +12,7 @@ export interface BlankProps {
 
 export const blankDefaultProps: BlankProps = {
   width: 20,
-  background: colors.background,
+  background: "transparent",
 };
 
 export const blankEditorConfig = (

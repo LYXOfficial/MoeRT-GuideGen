@@ -12,6 +12,8 @@
  *    （约 #0e3463 / 各线路色也偏暗），不做取色依据。
  */
 const colors = {
+  // 透明：间距/空格默认用它；底板背景色不允许选它（见 ComponentsList）
+  transparent: "transparent",
   // ===== 版面基础色（vitool COLOR_MODE_RULES：A 蓝色系深色底）=====
   background: "#0e3463", // 经典样式版面衬底（visys p7 印刷实测，用户校准值）
   foreground: "#ffffff", // --mode-item 前景（文字/图形）
