@@ -163,16 +163,34 @@ python3 text_probe.py                                   # 解析 <use> 得到真
   （outline 在堆叠绘制最后一步，盖住下一行顶部），看起来就是「关了分隔线行间还有白缝/虚线缝」，
   且与分隔线开关无关。收到盒内后虚线框贴着组件自身边缘画。
 - `body`/外壳高度用 `100dvh`（`global.css` 已覆盖 `.h-screen`），否则移动端地址栏收放整页跳动。
-- **底板配色铁律（2026-10-30，用户拍板：拖上去就定死）**：
+- **底板配色铁律（2026-10-30，用户逐条拍板：拖上去就定死）**：
   新拖入的组件在落板那一刻把当前生效色写进 props（`GuideBoard.tsx` 的 `bakeDropColors`），
-  之后改底板配色**绝不回头覆盖已上板的组件**。渲染层（`BoardItemContent`）只做原样渲染，
+  之后改底板配色**绝不回头覆盖已上板的组件**（用户把组件改成什么都随他，
+  哪怕改成别的全局默认色也不动，主题不再介入）。渲染层（`BoardItemContent`）只做原样渲染，
   禁止再加任何按板色回写的逻辑（之前加过一轮渲染层跟随又删掉，回归过一次）。
   只有**侧栏新拖入**才固化：`addItemToRow` / `addItemToTwoRowContainer` 的 `fresh` 参数；
   板内搬家（跨行、进出容器）一律不传、原样搬运，否则等于悄悄改色。
+  固化细则（2026-10-30 定稿，六条）：
+  1. **间距 / 空格 / 分隔线（Spacing/Blank/SpecLine）全主题（含重庆、北京新）背景永远透明**
+     （含 background2），落板也**不固化**板色进去（`bakeDropColors` 的 `isGapLike` 豁免）——
+     否则以后改板色，旧间距会露出色块；想给它们上色自己在编辑器改。
+  2. **成都 / 香港 / 北京旧**：所有组件 defaultProps 的 background 默认 `colors.transparent`
+     （transparent 就是默认值），落板固化 transparent，用户自己改。
+  3. **重庆 / 北京新**：其它组件保留各自的局部默认色（defaultProps 别动，是用户故意设的），
+     全局底板色**有设定才覆盖**局部默认；落板固化解析后的值（全局没设就保留局部默认），
+     不是 transparent。
+  4. **前景色全主题统一**：全局「默认前景色」覆盖局部默认色，落板即定死；
+     没设全局就保留局部默认。**默认色必须永远有值**，不允许留空（undefined/空串）——
+     渲染兜底按各主题规则对齐（其他主题兜底 transparent，重庆/北京新兜底主题色）。
+  5. **background / background2 / foreground 之外的默认值无需介入**，该多少就多少。
+  6. **透明一律用各主题 colors.ts 的 `transparent` 常量**（值一致，5 语言调色板同源），
+     别写字面量 `"transparent"`；GuideBoard 里取
+     `themes[currentTheme][1].colors.colors.transparent`。
 - **background / background2 必须成对处理**：北京主题两行分色，
   落板、跟随、默认值三处只改一个就是「只有第一行变色」。
-  间距 / 空格 / 分割线**全主题默认透明**（含北京的 `background2`）。
-  自查命令，有输出就是漏了：`grep -rn "background.*: *colors\.background" src/components/themes/*/Spacing.tsx src/components/themes/*/Blank.tsx src/components/themes/*/SpecLine.tsx`
+  自查命令（两条都应无输出）：
+  `grep -rn "background.*: *colors\.background" src/components/themes/*/Spacing.tsx src/components/themes/*/Blank.tsx src/components/themes/*/SpecLine.tsx`
+  `grep -rn '"transparent"' src/components/themes/ | grep -v "define/colors.ts"`
 
 **dnd-kit / 编辑器交互（都是血泪，改前先读懂）**
 - `{...listeners}` 之后再写同名 `onPointerDown` 会**覆盖** dnd-kit 的激活监听 → 彻底拖不动；
@@ -314,11 +332,11 @@ python3 text_probe.py                                   # 解析 <use> 得到真
 - **「组件虚线框」开关在侧栏主题下方**（2026-10-29）：曾放顶栏，法/德/俄的标签 ~270px 把顶栏顶爆，
   收到 xl 以下只留勾选框又被用户判「字都没了」。现在在 `ComponentsList` 主题选择下面，
   顶栏不再有这个开关（`Header` props 里已删）。
-- **版本号徽标是构建时 baked 进去的**（2026-10-30，`vite.config.ts` 的 `__APP_VERSION__`）：
-  格式 `v26.10.30.126` = `v` + HEAD 日期 + 本项目总提交数（`git rev-list --count HEAD`）。
-  dev server 只在启动/重启时算一次，之后再多提交数字也不会动——数字对不上先重启 5173；
-  生产构建同理，构建那一刻是多少就是多少。CI 若用浅克隆构建会得到偏小的数字
-  （构建时有 console.warn 提醒），生产构建务必用全量历史（fetch-depth: 0）。
+- **版本号徽标是构建时 baked 进去的**（2026-10-26，`vite.config.ts` 的 `__APP_VERSION__`）：
+  格式 `v26.10.30.127` = `v` + 日期 + 本项目总提交数。dev（一律常驻不重启）**固定显示 `v.dev`**，
+  别指望它跟着提交数涨。生产构建按顺序取值：GitHub API（总数+最新日期，一次请求全拿到）
+  → 本地 `git rev-list`（浅克隆会先自动 `git fetch --unshallow`，实在拉不到才告警用小数字）
+  → 都拿不到才 `v.dev`。私有仓库构建记得配 `GITHUB_TOKEN` 环境变量，否则 API 404 会直接走本地回退。
 
 **深色模式（2026-10-25，全应用）**
 - 双通道切换：`html.dark`（Tailwind v4 `@custom-variant dark`，global.css）+ `body[theme-mode=dark]`
