@@ -2,7 +2,6 @@ import {
   useRef,
   useState,
   useEffect,
-  useLayoutEffect,
   useCallback,
   cloneElement,
   isValidElement,
@@ -179,12 +178,6 @@ const findBadSaveItem = (
     }
   }
   return null;
-};
-
-/** 把屏幕坐标吸附到设备像素（DPR 1.25/1.5 也能对齐到真实的物理像素网格） */
-const snapToDevice = (v: number) => {
-  const dpr = typeof window === "undefined" ? 1 : window.devicePixelRatio || 1;
-  return Math.round(v * dpr) / dpr;
 };
 
 const { downloadJson } = archiveStore;
@@ -420,39 +413,7 @@ export default function Editor({
   const [dragStart, setDragStart] = useState({ x: 0, y: 0, panX: 0, panY: 0 });
   const editorAreaRef = useRef<HTMLDivElement>(null);
 
-  // ===== 画布对齐设备像素（渲染公差）=====
-  // 分数缩放下（137%、210%、DPR 1.25 …）行边界会落在半个设备像素上：上下两行各自对
-  // 自己的边缘做抗锯齿，中间那 1px 跟底板底色混出一条浅缝，看着就是「关了分隔线两行
-  // 之间还有白缝」。和分隔线 / 组件虚线框都无关，就是渲染公差。
-  // 办法：缩放量化到 1/64（行高 64px ⇒ 64×scale 恒为整数），整体位移吸附到设备像素，
-  // 行边界就永远落在整数设备像素上。
-  const [gridOffset, setGridOffset] = useState({ x: 0, y: 0 });
-  const snappedZoom = Math.round(zoom * 64) / 64;
-  useLayoutEffect(() => {
-    const area = editorAreaRef.current;
-    const measure = () => {
-      const board = document.querySelector(
-        ".guide-board"
-      ) as HTMLElement | null;
-      if (!area || !board) return;
-      const dpr = window.devicePixelRatio || 1;
-      const left = (area.clientWidth - board.offsetWidth * snappedZoom) / 2;
-      const top = (area.clientHeight - board.offsetHeight * snappedZoom) / 2;
-      const snap = (v: number) => Math.round(v * dpr) / dpr - v;
-      setGridOffset({ x: snap(left), y: snap(top) });
-    };
-    measure();
-    const ro =
-      typeof ResizeObserver !== "undefined" ? new ResizeObserver(measure) : null;
-    if (area) ro?.observe(area);
-    const board = document.querySelector(".guide-board");
-    if (board) ro?.observe(board);
-    window.addEventListener("resize", measure);
-    return () => {
-      ro?.disconnect();
-      window.removeEventListener("resize", measure);
-    };
-  }, [snappedZoom]);
+
   const [isEditingOpen, setIsEditingOpen] = useState(false);
 
   // 触屏 / 紧凑布局判定
@@ -2624,34 +2585,34 @@ export default function Editor({
             onTouchEnd={handleTouchEnd}
             onTouchCancel={handleTouchEnd}
           >
+            {/* 外层只负责平移：屏幕像素 1:1（不受缩放影响），
+                鼠标拖多少画板就平移多少 */}
             <div
-              className="absolute inset-0 flex items-center justify-center z-1"
-              style={
-                {
-                  // 先位移，再缩放：translate 写在 scale 前面（CSS 变换从右往左
-                  // 作用）才是「屏幕像素 1:1」——写反的话 pan 会被缩放倍数放大，
-                  // 缩放后拖画布的移动距离 = 鼠标距离 × zoom（实测踩过）
-                  // 位移 + 亚像素补偿都吸附到设备像素，缩放量化到 1/64：
-                  // 这样每 64px 的行边界恒落在整数设备像素上，不会再抗锯齿出白缝
-                  transform: `translate(${
-                    snapToDevice(pan.x) + gridOffset.x
-                  }px, ${snapToDevice(pan.y) + gridOffset.y}px) scale(${snappedZoom})`,
-                  transformOrigin: "center",
-                  transition: isDragging ? "none" : "transform 0.1s ease-out",
-                  cursor: isDragging ? "grabbing" : "default",
-                  // 组件框的颜色，取当前主题的边框色，
-                  // DraggableItem 的 outline 和间距箭头都继承这个变量
-                  "--guide-item-outline": showItemFrame
-                    ? themes[currentTheme][1].colors.defaultBorder
-                    : "transparent",
-                } as React.CSSProperties
-              }
+              className="absolute inset-0"
+              style={{ transform: `translate(${pan.x}px, ${pan.y}px)` }}
             >
+              {/* 内层只负责缩放：变换/补间与改动前完全一致，缩放行为零变化 */}
+              <div
+                className="absolute inset-0 flex items-center justify-center z-1"
+                style={
+                  {
+                    transform: `scale(${zoom})`,
+                    transformOrigin: "center",
+                    transition: isDragging ? "none" : "transform 0.1s ease-out",
+                    cursor: isDragging ? "grabbing" : "default",
+                    // 组件框的颜色，取当前主题的边框色，
+                    // DraggableItem 的 outline 和间距箭头都继承这个变量
+                    "--guide-item-outline": showItemFrame
+                      ? themes[currentTheme][1].colors.defaultBorder
+                      : "transparent",
+                  } as React.CSSProperties
+                }
+              >
               <div style={{ position: "relative" }}>
                 <GuideBoardCols
                   ref={guideBoardRef}
                   currentTheme={currentTheme}
-                  zoom={snappedZoom}
+                  zoom={zoom}
                   onConfigChange={handleConfigChange}
                   boardBackground={boardBackground}
                   boardForeground={boardForeground}
@@ -2671,6 +2632,7 @@ export default function Editor({
                     }}
                   />
                 )}
+                </div>
               </div>
             </div>
           </div>
