@@ -144,13 +144,27 @@ interface GuideBoardProps {
 const BoardItemContent = memo(function BoardItemContent({
   item,
   selectedId,
+  followBackground,
+  themeDefaultBackground,
 }: {
   item: GuideItem;
   selectedId?: string;
+  /** 北京新：底板背景色（组件背景等于主题默认值时跟随它） */
+  followBackground?: string | null;
+  themeDefaultBackground?: string;
 }) {
   if (!React.isValidElement(item.element)) return item.element;
+  // 北京新：背景不透明，且默认值应该跟随底板背景色。
+  // 只覆盖「仍是主题默认值」的组件，手动指定过别的颜色的保持不动。
+  const followBg =
+    followBackground &&
+    themeDefaultBackground != null &&
+    item.props?.background === themeDefaultBackground
+      ? { background: followBackground }
+      : {};
   return React.cloneElement(item.element, {
     ...item.props,
+    ...followBg,
     // 底板配色在落板那一刻已固化进 props（见 addItemToRow），
     // 全局改动不再回头覆盖已上板的组件
     // 双行容器内部条目被选中时，让它给对应子条目盖遮罩
@@ -580,13 +594,17 @@ const GuideBoardCols = memo(forwardRef<GuideBoardRef, GuideBoardProps>(
                 forms.map((f: { key: string }) => f.key)
               );
               if (colorKeys.has("background")) {
-                if (currentTheme === 0 || currentTheme === 3) {
+                if (currentTheme === 0) {
+                  // 重庆：落板固化（上板即显式指定）
                   if (boardBackground) {
                     finalProps.background = boardBackground;
                   }
-                } else {
+                } else if (currentTheme !== 3) {
+                  // 成都/香港/北京旧：直接透明
                   finalProps.background = "transparent";
                 }
+                // 北京新(3)：保持组件自带默认值，由渲染层跟随底板背景色
+                // （背景不透明，必须整板跟随，否则只有新拖的行变色）
               }
               if (colorKeys.has("foreground") && boardForeground) {
                 finalProps.foreground = boardForeground;
@@ -1049,6 +1067,13 @@ const GuideBoardCols = memo(forwardRef<GuideBoardRef, GuideBoardProps>(
                             <BoardItemContent
                               item={item}
                               selectedId={editingItem?.item.id}
+                              followBackground={
+                                currentTheme === 3 ? boardBackground : null
+                              }
+                              themeDefaultBackground={
+                                themes[currentTheme][1].colors
+                                  .defaultBackground
+                              }
                             />
                           </DraggableItem>
                         ))

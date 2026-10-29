@@ -287,7 +287,7 @@ export default function DraggableItem({
           style={{
             position: "absolute",
             inset: 0,
-            border: "1px dashed var(--guide-item-outline, transparent)",
+            border: "2px dashed var(--guide-item-outline, transparent)",
             borderTopColor: "transparent",
             borderRadius: 2,
             pointerEvents: "none",
