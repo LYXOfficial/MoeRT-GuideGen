@@ -71,7 +71,7 @@
       "unsupportedVersion": "不支援的存檔版本",
       "unsupportedTheme": "存檔使用的主題在目前版本中不存在",
       "created": "匯入成功，已保存為存檔「{{name}}」",
-      "bundleCreated": "已匯入 {{count}} 個存檔"
+      "bundleCreated_other": "已匯入 {{count}} 個存檔"
     },
     "export": {
       "success": "存檔已匯出"
@@ -120,8 +120,8 @@
       "empty": "還沒有存檔",
       "unknownTheme": "未知主題",
       "exportAll": "匯出全部存檔（zip）",
-      "exportAllSuccess": "已匯出 {{count}} 個存檔",
-      "exportAllEmpty": "沒有可匯出的存檔"
+      "exportAllEmpty": "沒有可匯出的存檔",
+      "exportAllSuccess_other": "已匯出 {{count}} 個存檔"
     }
   },
   "loading": {
@@ -135,6 +135,11 @@
     "board": {
       "title": "編輯導向牌",
       "backgroundColor": "背景顏色"
+    },
+    "tabConflict": {
+      "title": "編輯器已在其它標籤頁開啟",
+      "body": "為了防止兩個標籤頁互相覆蓋存檔，同一時間只允許一個標籤頁編輯。請關閉其它標籤頁，再點擊下方按鈕回到編輯器。",
+      "refresh": "已關閉其它標籤頁，重新整理本頁"
     }
   },
   "theme": {

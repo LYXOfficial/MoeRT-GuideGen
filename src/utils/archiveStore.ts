@@ -1,5 +1,9 @@
 import type { SaveData } from "../interfaces/editor";
 import { createZipBlob } from "./zip";
+import { migrateSaveData } from "./saveMigrations";
+
+// 导入工程文件的路径（Editor）也要先过一遍版本迁移，这里转出供调用
+export { migrateSaveData };
 
 /**
  * 多存档存储层。
@@ -213,7 +217,10 @@ export function getArchiveRaw(id: string): string | null {
 export function loadArchiveData(id: string): SaveData | null {
   const raw = getArchiveRaw(id);
   const parsed = safeParse<SaveData>(raw);
-  return isSaveData(parsed) ? parsed : null;
+  // 版本迁移：老版本存档先逐级升级再校验（迁移表见 saveMigrations.ts），
+  // 否则未来 version 升级时老存档会被当成「校验不过」拒收
+  const migrated = migrateSaveData(parsed);
+  return isSaveData(migrated) ? migrated : null;
 }
 
 export function saveArchiveData(

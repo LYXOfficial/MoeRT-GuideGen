@@ -71,7 +71,8 @@
       "unsupportedVersion": "Unsupported save version",
       "unsupportedTheme": "The theme used by this save does not exist in this version",
       "created": "Import successful — saved as \"{{name}}\"",
-      "bundleCreated": "Imported {{count}} saves"
+      "bundleCreated_other": "Imported {{count}} saves",
+      "bundleCreated_one": "Imported 1 save"
     },
     "export": {
       "success": "Archive exported"
@@ -120,8 +121,9 @@
       "empty": "No saves yet",
       "unknownTheme": "Unknown theme",
       "exportAll": "Export All Saves (zip)",
-      "exportAllSuccess": "Exported {{count}} saves",
-      "exportAllEmpty": "No saves to export"
+      "exportAllEmpty": "No saves to export",
+      "exportAllSuccess_other": "Exported {{count}} saves",
+      "exportAllSuccess_one": "Exported 1 save"
     }
   },
   "loading": {
@@ -135,6 +137,11 @@
     "board": {
       "title": "Edit Guide Board",
       "backgroundColor": "Background Color"
+    },
+    "tabConflict": {
+      "title": "Editor is already open in another tab",
+      "body": "To keep saves from overwriting each other, only one tab may edit at a time. Close the other tab, then click the button below to return to the editor.",
+      "refresh": "Closed the other tab — reload this page"
     }
   },
   "theme": {

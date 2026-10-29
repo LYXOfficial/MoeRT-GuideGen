@@ -2,6 +2,11 @@ import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import Backend from "i18next-http-backend";
+import zhCNRaw from "../../public/locales/zh-CN/translation.json?raw";
+
+// zh-CN 打包进产物做兜底资源：locales 请求 404 / 断网时简中界面照常可用，
+// 其它语言加载失败时缺键也回落到中文而不是裸 key
+const bundledZhCN = JSON.parse(zhCNRaw);
 
 i18n
   .use(Backend) // 加载翻译资源文件
@@ -12,6 +17,10 @@ i18n
     supportedLngs: ["zh-CN", "zh-TW", "en-US", "ja-JP", "ko-KR"],
     lowerCaseLng: false,
     debug: false,
+    // 内联 zh-CN 资源：init 时就存在于 store，zh 用户不再发起 locale 请求
+    resources: {
+      "zh-CN": { translation: bundledZhCN },
+    },
     interpolation: {
       escapeValue: false, // React 已经自动转义
     },

@@ -255,6 +255,11 @@ python3 text_probe.py                                   # 解析 <use> 得到真
 - `src/components/themes/chongqing/NumAlphabet.tsx` 是用户手改的（fontFamily Frutiger）——**不许 revert**。
 - 5173 上常年挂着 dev server；`docs/` 整体 gitignore，原始素材不会入库。
 - locales 手改时保持既有 JSON 风格（2 空格缩进 + 末尾换行），别整文件重排。
+- **App.tsx 的 ResizeObserver 只在挂载时认一次节点**（2026-10-29 留意项）：它盯着
+  `.guide-board` 上报画板高度（顶栏 fit / 导出高度基准都用它）。当前画板节点从不销毁重建，
+  所以永远有效；**将来若给画板加 `key`（比如按主题强制重挂）**，旧节点销毁后监听就失联了，
+  高度会冻结在旧值——到时必须把 observer 改成能在节点重建后重新 attach 的形式
+  （ref callback / key 变化时重新 observe）。
 
 **深色模式（2026-10-25，全应用）**
 - 双通道切换：`html.dark`（Tailwind v4 `@custom-variant dark`，global.css）+ `body[theme-mode=dark]`

@@ -71,7 +71,7 @@
       "unsupportedVersion": "不支持的存档版本",
       "unsupportedTheme": "存档使用的主题在当前版本中不存在",
       "created": "导入成功，已保存为存档「{{name}}」",
-      "bundleCreated": "已导入 {{count}} 个存档"
+      "bundleCreated_other": "已导入 {{count}} 个存档"
     },
     "export": {
       "success": "存档已导出"
@@ -120,8 +120,8 @@
       "empty": "还没有存档",
       "unknownTheme": "未知主题",
       "exportAll": "导出全部存档（zip）",
-      "exportAllSuccess": "已导出 {{count}} 个存档",
-      "exportAllEmpty": "没有可导出的存档"
+      "exportAllEmpty": "没有可导出的存档",
+      "exportAllSuccess_other": "已导出 {{count}} 个存档"
     }
   },
   "loading": {
@@ -135,6 +135,11 @@
     "board": {
       "title": "编辑导向牌",
       "backgroundColor": "背景颜色"
+    },
+    "tabConflict": {
+      "title": "编辑器已在其它标签页打开",
+      "body": "为了防止两个标签页互相覆盖存档，同一时间只允许一个标签页编辑。请关闭其它标签页，再点击下方按钮回到编辑器。",
+      "refresh": "已关闭其它标签页，刷新本页"
     }
   },
   "theme": {

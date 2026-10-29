@@ -34,9 +34,11 @@ import {
 } from "@dnd-kit/core";
 import themes from "./themes/themereg";
 import Header from "./Header";
+import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import { useUndoRedo } from "../hooks/useUndoRedo";
 import { useMediaQuery, useIsCompact } from "../hooks/useMediaQuery";
+import { useTabConflict } from "../hooks/useTabConflict";
 import { getVisibleClientRect } from "../utils/visibleRect";
 import * as archiveStore from "../utils/archiveStore";
 import type { ArchiveMeta } from "../utils/archiveStore";
@@ -172,6 +174,20 @@ export default function Editor({
   // 当前存档主题对不上、无法还原时弹出的引导（只能去存档管理处理）
   const [restoreFailedVisible, setRestoreFailedVisible] = useState(false);
   const quotaToastAtRef = useRef(0);
+
+  // 多标签互斥：另一个标签页持有编辑锁时，弹全屏提醒并冻结本页一切写路径
+  // （自动保存/撤销/配置落盘都被 suspendSaveRef 拦下），防止互覆存档
+  const tabConflict = useTabConflict();
+  const tabConflictAppliedRef = useRef(false);
+  useEffect(() => {
+    if (tabConflict && !tabConflictAppliedRef.current) {
+      tabConflictAppliedRef.current = true;
+      suspendSaveRef.current = true;
+      skipAutoSaveRef.current = true;
+    }
+    // 刻意不做解除：封锁只随「刷新本页」结束，否则本页内存里的旧画板
+    // 会在解锁后把对方标签页刚保存的内容覆盖掉
+  }, [tabConflict]);
 
   // 撤销/重做状态管理
   const initialState: EditorState = {
@@ -707,7 +723,7 @@ export default function Editor({
       try {
         setIsImporting(true);
         const text = await file.text();
-        const parsed: unknown = JSON.parse(text);
+        const parsed: unknown = archiveStore.migrateSaveData(JSON.parse(text));
 
         // 崩溃页导出的整包备份：逐个恢复成新存档（不覆盖现有存档）
         if (archiveStore.isArchiveBundle(parsed)) {
@@ -1039,7 +1055,7 @@ export default function Editor({
           guideBoardRef.current
             ?.getState()
             .rows.reduce((sum, row) => sum + row.length, 0) ?? 0;
-        if (archivedItemCountRef.current > 0 && restoredCount === 0) {
+        if (archivedItemCountRef.current > 0 && restoredCount < archivedItemCountRef.current) {
           skipAutoSaveRef.current = true;
         }
         if (skipAutoSaveRef.current) {
@@ -2213,6 +2229,28 @@ export default function Editor({
         return pool;
       }}
     >
+      {/* 多标签互斥：另一标签页正在编辑时，全屏提醒并挡住本页一切交互 */}
+      {tabConflict &&
+        createPortal(
+          <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/60 p-6">
+            <div className="font-sans w-full max-w-md rounded-lg shadow-xl p-6 bg-white dark:bg-[#232429]">
+              <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-gray-100">
+                {t("editor.tabConflict.title")}
+              </h3>
+              <p className="text-sm leading-relaxed mb-4 text-gray-600 dark:text-gray-300">
+                {t("editor.tabConflict.body")}
+              </p>
+              <button
+                type="button"
+                className="w-full py-2 rounded-md bg-blue-600 text-white text-sm hover:bg-blue-700 transition-colors"
+                onClick={() => window.location.reload()}
+              >
+                {t("editor.tabConflict.refresh")}
+              </button>
+            </div>
+          </div>,
+          document.body
+        )}
       <div className="flex flex-col h-screen">
         <Header
           onUndo={handleUndo}

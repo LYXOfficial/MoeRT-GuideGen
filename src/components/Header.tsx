@@ -65,7 +65,7 @@ export default function Header({
   // 语言选项
   const languages = [
     { code: "zh-CN", name: "简体中文", flag: "🇨🇳" },
-    { code: "zh-TW", name: "繁體中文", flag: "🇨🇳" },
+    { code: "zh-TW", name: "繁體中文", flag: "🇭🇰" },
     { code: "en-US", name: "English", flag: "🇺🇸" },
     { code: "ja-JP", name: "日本語", flag: "🇯🇵" },
     { code: "ko-KR", name: "한국어", flag: "🇰🇷" },
@@ -153,6 +153,9 @@ export default function Header({
             <img src="/favicon.ico" className="h-7 w-7 rounded-sm" />
             <span className="text-base font-bold truncate flex-1">
               {t("title")}
+              <span className="ml-1.5 text-[11px] font-normal opacity-50 align-middle whitespace-nowrap">
+                {__APP_VERSION__}
+              </span>
             </span>
             <a
               href="https://github.com/lyxofficial/moert-guidegen"
@@ -306,7 +309,12 @@ export default function Header({
     <>
       <header className="h-12 flex items-center font-sans p-3 border-b border-gray-300 dark:border-[#2e2e35]">
         <img src="/favicon.ico" className="h-8 mr-2" />
-        <span className="text-xl font-bold whitespace-nowrap">{t("title")}</span>
+        <span className="text-xl font-bold whitespace-nowrap">
+          {t("title")}
+          <span className="ml-2 text-[11px] font-normal opacity-50 align-middle">
+            {__APP_VERSION__}
+          </span>
+        </span>
 
         {/* 缩放滑块 */}
         <div className="ml-6 flex items-center gap-2">

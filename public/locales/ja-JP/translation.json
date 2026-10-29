@@ -71,7 +71,7 @@
       "unsupportedVersion": "サポートされていないバージョン",
       "unsupportedTheme": "この保存データのテーマは現在のバージョンに存在しません",
       "created": "インポートしました — 「{{name}}」として保存されました",
-      "bundleCreated": "{{count}} 件の保存データをインポートしました"
+      "bundleCreated_other": "{{count}} 件の保存データをインポートしました"
     },
     "export": {
       "success": "アーカイブがエクスポートされました"
@@ -120,8 +120,8 @@
       "empty": "保存データがありません",
       "unknownTheme": "不明なテーマ",
       "exportAll": "すべてのセーブを書き出す（zip）",
-      "exportAllSuccess": "{{count}} 件のセーブを書き出しました",
-      "exportAllEmpty": "書き出せるセーブがありません"
+      "exportAllEmpty": "書き出せるセーブがありません",
+      "exportAllSuccess_other": "{{count}} 件のセーブを書き出しました"
     }
   },
   "loading": {
@@ -135,6 +135,11 @@
     "board": {
       "title": "案内板を編集",
       "backgroundColor": "背景色"
+    },
+    "tabConflict": {
+      "title": "エディターは別のタブで開いています",
+      "body": "セーブの上書きを防ぐため、同時に編集できるタブは 1 つだけです。別のタブを閉じてから、下のボタンでエディターに戻ってください。",
+      "refresh": "別のタブを閉じたので、このページを再読み込み"
     }
   },
   "theme": {
