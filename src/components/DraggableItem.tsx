@@ -112,13 +112,19 @@ export default function DraggableItem({
       }
     : null;
   const childType = isValidElement(children) ? (children as ReactElement).type : null;
+  // 优先按条目 type 字符串判断（"themes.<主题>.components.Spacing"）：
+  // 画板的子元素可能被包一层（如 BoardItemContent），childType 就不再是
+  // Spacing 组件本身，只靠 childType 判断会让间距丢掉 flex:1、完全不撑开
+  const boardItemType: string | undefined = (data as any)?.boardItem?.type;
   const isSpacing =
+    (typeof boardItemType === "string" && boardItemType.includes("Spacing")) ||
     childType === ChengduSpacing ||
     childType === ChongqingSpacing ||
     childType === HongkongSpacing ||
     childType === BeijingSpacing ||
     childType === BeijingOldSpacing;
   const isSpecLine =
+    (typeof boardItemType === "string" && boardItemType.includes("SpecLine")) ||
     childType === ChengduSpecLine ||
     childType === ChongqingSpecLine ||
     childType === HongkongSpecLine ||
@@ -163,10 +169,13 @@ export default function DraggableItem({
     transition:
       transition ??
       (isDragging ? undefined : "transform 200ms ease, opacity 200ms ease"),
-    // outline 不参与布局，不会把组件撑宽；颜色由编辑区的 CSS 变量控制
+    // outline 不参与布局，不会把组件撑宽；颜色由编辑区的 CSS 变量控制。
+    // 分割线（3px 宽）除外：太窄根本渲染不对头，不画虚线框
     outline: isDragging
       ? "2px solid #66ccff"
-      : "2px dashed var(--guide-item-outline, transparent)",
+      : isSpecLine
+        ? undefined
+        : "2px dashed var(--guide-item-outline, transparent)",
     // outline 默认画在盒子外侧：上下相邻两行之间，上一行组件的虚线框
     // 下缘会横在行边界上（outline 在堆叠最后一步绘制，盖住下一行顶部），
     // 看起来就是「关了分隔线行间还有一条白缝/虚线缝」。收到盒子内部画。
