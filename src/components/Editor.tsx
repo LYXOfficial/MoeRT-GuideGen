@@ -2328,6 +2328,7 @@ export default function Editor({
               onBoardBackgroundChange={handleBoardBackgroundChange}
               boardForeground={boardFgMirror}
               onBoardForegroundChange={handleBoardForegroundChange}
+              showItemFrame={showItemFrame}
             />
           )}
           <div
@@ -2468,6 +2469,7 @@ export default function Editor({
                 onBoardBackgroundChange={handleBoardBackgroundChange}
                 boardForeground={boardFgMirror}
                 onBoardForegroundChange={handleBoardForegroundChange}
+                showItemFrame={showItemFrame}
               />
             </div>
           </div>

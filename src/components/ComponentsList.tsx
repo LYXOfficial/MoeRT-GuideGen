@@ -19,6 +19,8 @@ interface ComponentsListProps {
   /** 默认前景色覆盖（null/undefined = 跟随主题默认），值在 GuideBoard 里 */
   boardForeground?: string | null;
   onBoardForegroundChange?: (color: string | null) => void;
+  /** 「组件虚线框」开关：给侧栏预览窗加和画板一致的同款虚线框 */
+  showItemFrame?: boolean;
 }
 
 interface ComponentItemProps {
@@ -30,6 +32,8 @@ interface ComponentItemProps {
   /** 卡片底色 / 文字色跟随底板背景色 / 默认前景色覆盖 */
   cardBackground?: string | null;
   cardForeground?: string | null;
+  /** 「组件虚线框」开关：给预览窗加和画板一致的同款虚线框 */
+  showItemFrame?: boolean;
 }
 
 const DraggableComponentItem: React.FC<ComponentItemProps> = ({
@@ -40,6 +44,7 @@ const DraggableComponentItem: React.FC<ComponentItemProps> = ({
   currentTheme,
   cardBackground,
   cardForeground,
+  showItemFrame,
 }) => {
   const { t } = useTranslation();
   const [id] = useState(
@@ -101,7 +106,13 @@ const DraggableComponentItem: React.FC<ComponentItemProps> = ({
       >
         <div
           className="h-16 flex items-center justify-center w-full overflow-hidden"
-          style={{ fontFamily: themes[currentTheme][1].fontFamily }}
+          style={{
+            fontFamily: themes[currentTheme][1].fontFamily,
+            // 「组件虚线框」开启时，预览窗加和画板组件一致的同款虚线框
+            outline: showItemFrame
+              ? `2px dashed ${themes[currentTheme][1].colors.defaultBorder}`
+              : undefined,
+          }}
         >
           {/* 双行容器要用预览模式，否则侧栏里的这份示例也会注册可拖放区域，
               把拖到侧栏的元件抢过去 */}
@@ -134,6 +145,7 @@ export default function ComponentsList({
   onBoardBackgroundChange,
   boardForeground,
   onBoardForegroundChange,
+  showItemFrame,
 }: ComponentsListProps) {
   const { t, i18n } = useTranslation();
   const theme = themes[currentTheme][1];
@@ -353,6 +365,7 @@ export default function ComponentsList({
               currentTheme={currentTheme}
               cardBackground={boardBackground}
               cardForeground={boardForeground}
+              showItemFrame={showItemFrame}
             />
           ))}
         </div>
