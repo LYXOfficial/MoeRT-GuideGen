@@ -16,6 +16,8 @@ export interface SaveData {
     theme: string;
     /** 底板背景色覆盖（可选，老存档没有此字段） */
     boardBackground?: string;
+    /** 默认前景色覆盖（可选，老存档没有此字段） */
+    boardForeground?: string;
   };
   rows: Array<
     Array<{

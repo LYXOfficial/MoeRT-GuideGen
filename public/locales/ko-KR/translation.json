@@ -20,6 +20,8 @@
     },
     "boardBackground": "보드 배경색",
     "boardBackgroundReset": "기본",
+    "boardForeground": "기본 전경색",
+    "boardForegroundReset": "기본",
     "clearCanvas": {
       "button": "캔버스 지우기",
       "title": "캔버스 지우기 확인",

@@ -62,6 +62,7 @@ interface EditorState {
     width: number;
     showSpecLine: boolean;
     boardBackground?: string;
+    boardForeground?: string;
   };
   currentTheme: number;
 }
@@ -110,6 +111,7 @@ const normalizeHistoryState = (state: EditorState): EditorState => ({
     width: state.config.width,
     showSpecLine: state.config.showSpecLine,
     boardBackground: state.config.boardBackground,
+    boardForeground: state.config.boardForeground,
   },
   currentTheme: state.currentTheme,
 });
@@ -191,12 +193,17 @@ export default function Editor({
     // 会在解锁后把对方标签页刚保存的内容覆盖掉
   }, [tabConflict]);
 
-  // 底板背景色：真实状态在 GuideBoard（随存档/撤销/换主题走），
-  // 这里只留一份镜像给侧栏的「底板背景色」控件显示当前值
+  // 底板背景色 / 默认前景色：真实状态在 GuideBoard（随存档/撤销/换主题走），
+  // 这里只留镜像给侧栏的两个取色控件显示当前值
   const [boardBgMirror, setBoardBgMirror] = useState<string | null>(null);
+  const [boardFgMirror, setBoardFgMirror] = useState<string | null>(null);
   const handleBoardBackgroundChange = useCallback((color: string | null) => {
     guideBoardRef.current?.setBoardBackground(color);
     setBoardBgMirror(color);
+  }, []);
+  const handleBoardForegroundChange = useCallback((color: string | null) => {
+    guideBoardRef.current?.setBoardForeground(color);
+    setBoardFgMirror(color);
   }, []);
 
   // 撤销/重做状态管理
@@ -283,11 +290,17 @@ export default function Editor({
       const apply = () => {
         restoreTimerRef.current = null;
         guideBoardRef.current?.restoreState(restoreData);
-        // 撤销/重做也会还原底板背景色：镜像跟着快照走
+        // 撤销/重做也会还原底板配色：镜像跟着快照走
         setBoardBgMirror(
           typeof restoreData.config.boardBackground === "string" &&
             restoreData.config.boardBackground
             ? restoreData.config.boardBackground
+            : null
+        );
+        setBoardFgMirror(
+          typeof restoreData.config.boardForeground === "string" &&
+            restoreData.config.boardForeground
+            ? restoreData.config.boardForeground
             : null
         );
         // 等 GuideBoard 内部 isRestoring 的收尾 + 配置变更链路走完再放开历史
@@ -636,11 +649,17 @@ export default function Editor({
         }
         if (!guideBoardRef.current) return false;
         guideBoardRef.current.restoreState(saveData);
-        // 底板背景色镜像跟随存档里的配置
+        // 底板背景色/默认前景色镜像跟随存档里的配置
         setBoardBgMirror(
           typeof saveData.config.boardBackground === "string" &&
             saveData.config.boardBackground
             ? saveData.config.boardBackground
+            : null
+        );
+        setBoardFgMirror(
+          typeof saveData.config.boardForeground === "string" &&
+            saveData.config.boardForeground
+            ? saveData.config.boardForeground
             : null
         );
         // 更新上一次主题引用，防止自动保存触发主题重置
@@ -2053,9 +2072,11 @@ export default function Editor({
     // 换主题是用户主动清空画板，解除存档保护
     skipAutoSaveRef.current = false;
     archivedItemCountRef.current = 0;
-    // 底板背景色覆盖也随画板一起回到主题默认
+    // 底板背景色/默认前景色覆盖也随画板一起回到主题默认
     guideBoardRef.current?.setBoardBackground(null);
+    guideBoardRef.current?.setBoardForeground(null);
     setBoardBgMirror(null);
+    setBoardFgMirror(null);
     setCurrentTheme(theme);
     guideBoardRef.current?.clearBoard();
     setTimeout(() => saveCurrentState(), 100);
@@ -2305,6 +2326,8 @@ export default function Editor({
               onThemeChange={handleThemeRequest}
               boardBackground={boardBgMirror}
               onBoardBackgroundChange={handleBoardBackgroundChange}
+              boardForeground={boardFgMirror}
+              onBoardForegroundChange={handleBoardForegroundChange}
             />
           )}
           <div
@@ -2443,6 +2466,8 @@ export default function Editor({
                 onThemeChange={handleThemeRequest}
                 boardBackground={boardBgMirror}
                 onBoardBackgroundChange={handleBoardBackgroundChange}
+                boardForeground={boardFgMirror}
+                onBoardForegroundChange={handleBoardForegroundChange}
               />
             </div>
           </div>

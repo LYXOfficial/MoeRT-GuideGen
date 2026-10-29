@@ -20,6 +20,8 @@
     },
     "boardBackground": "Board background",
     "boardBackgroundReset": "Default",
+    "boardForeground": "Default foreground",
+    "boardForegroundReset": "Default",
     "clearCanvas": {
       "button": "Clear Canvas",
       "title": "Confirm Clear Canvas",

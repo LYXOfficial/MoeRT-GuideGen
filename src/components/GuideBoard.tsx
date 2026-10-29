@@ -31,6 +31,8 @@ export interface BoardState {
     showSpecLine: boolean;
     /** 底板背景色覆盖（用户自选）；null/undefined = 跟随主题默认 */
     boardBackground?: string;
+    /** 默认前景色覆盖（用户自选）；null/undefined = 跟随主题默认 */
+    boardForeground?: string;
   };
 }
 
@@ -62,6 +64,8 @@ export interface GuideBoardRef {
   clearBoard: () => void;
   /** 覆盖底板背景色（null = 恢复主题默认），供侧栏「底板背景色」控件调用 */
   setBoardBackground: (color: string | null) => void;
+  /** 覆盖默认前景色（null = 恢复主题默认），供侧栏「默认前景色」控件调用 */
+  setBoardForeground: (color: string | null) => void;
   getState: () => BoardState;
   restoreState: (state: {
     rows: Array<Array<SavedItem>>;
@@ -138,6 +142,8 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
     const [showDividers, setShowDividers] = useState(true);
     // 底板背景色覆盖：改了之后画板预览和新拖入组件的默认背景都跟着变
     const [boardBackground, setBoardBackground] = useState<string | null>(null);
+    // 默认前景色覆盖：同上，管的是文字/前景配色
+    const [boardForeground, setBoardForeground] = useState<string | null>(null);
     const [isRestoring, setIsRestoring] = useState(false);
     const [editingItem, setEditingItem] = useState<{
       item: GuideItem;
@@ -299,7 +305,15 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
           onConfigChange();
         }, 10);
       }
-    }, [rows, boardWidth, showDividers, boardBackground, onConfigChange, isRestoring]);
+    }, [
+      rows,
+      boardWidth,
+      showDividers,
+      boardBackground,
+      boardForeground,
+      onConfigChange,
+      isRestoring,
+    ]);
 
     // ...existing code...
     const boardContentRef = useRef<HTMLDivElement>(null);
@@ -423,12 +437,16 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
         setBoardBackground: (color: string | null) => {
           setBoardBackground(color);
         },
+        setBoardForeground: (color: string | null) => {
+          setBoardForeground(color);
+        },
         getState: () => ({
           rows: rows,
           config: {
             width: boardWidth,
             showSpecLine: showDividers,
             boardBackground: boardBackground ?? undefined,
+            boardForeground: boardForeground ?? undefined,
           },
         }),
         restoreState: state => {
@@ -494,11 +512,17 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
           const restoredWidth = Number(state.config.width);
           setBoardWidth(Number.isFinite(restoredWidth) && restoredWidth > 0 ? restoredWidth : DEFAULT_WIDTH);
           setShowDividers(state.config.showSpecLine !== false);
-          // 底板背景色覆盖：老存档没有这个字段 → null（跟随主题默认）
+          // 底板背景色/默认前景色覆盖：老存档没有这些字段 → null（跟随主题默认）
           setBoardBackground(
             typeof state.config.boardBackground === "string" &&
               state.config.boardBackground
               ? state.config.boardBackground
+              : null
+          );
+          setBoardForeground(
+            typeof state.config.boardForeground === "string" &&
+              state.config.boardForeground
+              ? state.config.boardForeground
               : null
           );
 
@@ -852,7 +876,14 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
           );
         },
       }),
-      [rows, boardWidth, showDividers, boardBackground, currentTheme]
+      [
+        rows,
+        boardWidth,
+        showDividers,
+        boardBackground,
+        boardForeground,
+        currentTheme,
+      ]
     );
 
     // 添加一行
@@ -917,7 +948,9 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
             backgroundColor:
               boardBackground ??
               themes[currentTheme][1].colors.defaultBackground,
-            color: themes[currentTheme][1].colors.defaultForeground,
+            color:
+              boardForeground ??
+              themes[currentTheme][1].colors.defaultForeground,
             fontFamily: themes[currentTheme][1].fontFamily,
             transition: "width 0.2s cubic-bezier(0.4,0,0.2,1)",
           }}
@@ -991,7 +1024,9 @@ const GuideBoardCols = forwardRef<GuideBoardRef, GuideBoardProps>(
                             minHeight: 40,
                             opacity: 0.6,
                             color:
-                              themes[currentTheme][1].colors.defaultForeground,
+                              boardForeground ??
+                              themes[currentTheme][1].colors
+                                .defaultForeground,
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",

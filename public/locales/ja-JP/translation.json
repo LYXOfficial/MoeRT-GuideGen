@@ -20,6 +20,8 @@
     },
     "boardBackground": "ボードの背景色",
     "boardBackgroundReset": "デフォルト",
+    "boardForeground": "デフォルト前景色",
+    "boardForegroundReset": "デフォルト",
     "clearCanvas": {
       "button": "キャンバスをクリア",
       "title": "キャンバスのクリアを確認",

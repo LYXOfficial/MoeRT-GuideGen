@@ -20,6 +20,8 @@
     },
     "boardBackground": "底板背景色",
     "boardBackgroundReset": "預設",
+    "boardForeground": "預設前景色",
+    "boardForegroundReset": "預設",
     "clearCanvas": {
       "button": "清空畫布",
       "title": "確認清空畫布",

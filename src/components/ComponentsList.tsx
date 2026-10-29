@@ -15,6 +15,9 @@ interface ComponentsListProps {
   /** 底板背景色覆盖（null/undefined = 跟随主题默认），值在 GuideBoard 里 */
   boardBackground?: string | null;
   onBoardBackgroundChange?: (color: string | null) => void;
+  /** 默认前景色覆盖（null/undefined = 跟随主题默认），值在 GuideBoard 里 */
+  boardForeground?: string | null;
+  onBoardForegroundChange?: (color: string | null) => void;
 }
 
 interface ComponentItemProps {
@@ -23,6 +26,9 @@ interface ComponentItemProps {
   type: string;
   props?: Record<string, any>;
   currentTheme: number;
+  /** 卡片底色 / 文字色跟随底板背景色 / 默认前景色覆盖 */
+  cardBackground?: string | null;
+  cardForeground?: string | null;
 }
 
 const DraggableComponentItem: React.FC<ComponentItemProps> = ({
@@ -31,6 +37,8 @@ const DraggableComponentItem: React.FC<ComponentItemProps> = ({
   type,
   props = {},
   currentTheme,
+  cardBackground,
+  cardForeground,
 }) => {
   const { t } = useTranslation();
   const [id] = useState(
@@ -65,7 +73,9 @@ const DraggableComponentItem: React.FC<ComponentItemProps> = ({
       <Card
         className="mb-2 min-w-0"
         style={{
-          backgroundColor: themes[currentTheme][1].colors.defaultBackground,
+          backgroundColor:
+            cardBackground ??
+            themes[currentTheme][1].colors.defaultBackground,
         }}
       >
         <div
@@ -83,7 +93,9 @@ const DraggableComponentItem: React.FC<ComponentItemProps> = ({
         <Typography.Text
           className="text-center block mt-2 font-sans"
           style={{
-            color: themes[currentTheme][1].colors.defaultForeground,
+            color:
+              cardForeground ??
+              themes[currentTheme][1].colors.defaultForeground,
           }}
         >
           {t(`${name}.displayName`)}
@@ -99,6 +111,8 @@ export default function ComponentsList({
   fullWidth = false,
   boardBackground,
   onBoardBackgroundChange,
+  boardForeground,
+  onBoardForegroundChange,
 }: ComponentsListProps) {
   const { t, i18n } = useTranslation();
   const theme = themes[currentTheme][1];
@@ -227,7 +241,7 @@ export default function ComponentsList({
               </Select.Option>
             ))}
           </Select>
-          {/* 底板背景色：改了之后画板预览和新拖入组件的默认背景都跟着变 */}
+          {/* 底板背景色 / 默认前景色：改了之后画板预览和新拖入组件的默认配色都跟着变 */}
           <div className="mt-3">
             <div className="flex items-center justify-between">
               <Typography.Text className="font-sans text-sm">
@@ -248,6 +262,27 @@ export default function ComponentsList({
                 currentTheme={currentTheme}
                 value={boardBackground ?? theme.colors.defaultBackground}
                 onChange={hex => onBoardBackgroundChange?.(hex)}
+              />
+            </div>
+            <div className="mt-3 flex items-center justify-between">
+              <Typography.Text className="font-sans text-sm">
+                {t("componentsList.boardForeground")}
+              </Typography.Text>
+              {boardForeground && (
+                <button
+                  type="button"
+                  className="font-sans text-xs text-blue-600 hover:text-blue-500 dark:text-blue-400"
+                  onClick={() => onBoardForegroundChange?.(null)}
+                >
+                  {t("componentsList.boardForegroundReset")}
+                </button>
+              )}
+            </div>
+            <div className="mt-1.5">
+              <CustomColorPicker
+                currentTheme={currentTheme}
+                value={boardForeground ?? theme.colors.defaultForeground}
+                onChange={hex => onBoardForegroundChange?.(hex)}
               />
             </div>
           </div>
@@ -284,17 +319,26 @@ export default function ComponentsList({
               name={component.displayName}
               Component={component.component}
               type={component.displayName}
-              // 底板背景色覆盖时，新拖出的组件默认背景跟着变
-              //（只覆盖本来就有 background 属性的组件，固定配色的不动）
+              // 底板背景色/默认前景色覆盖时，新拖出的组件默认配色跟着变
+              //（只覆盖本来就有对应属性的组件，固定配色的不动）
               props={
-                boardBackground && "background" in component.defaultProps
+                boardBackground || boardForeground
                   ? {
                       ...component.defaultProps,
-                      background: boardBackground,
+                      ...(boardBackground &&
+                      "background" in component.defaultProps
+                        ? { background: boardBackground }
+                        : {}),
+                      ...(boardForeground &&
+                      "foreground" in component.defaultProps
+                        ? { foreground: boardForeground }
+                        : {}),
                     }
                   : component.defaultProps
               }
               currentTheme={currentTheme}
+              cardBackground={boardBackground}
+              cardForeground={boardForeground}
             />
           ))}
         </div>
