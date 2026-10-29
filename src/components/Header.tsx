@@ -66,9 +66,16 @@ export default function Header({
   const languages = [
     { code: "zh-CN", name: "简体中文", flag: "🇨🇳" },
     { code: "zh-HK", name: "繁體中文", flag: "🇭🇰" },
+    // 粤语紧跟港式繁体；旗标用 🇲🇴（澳门），避免与上面 🇭🇰 完全一样看不出区别
+    { code: "yue-HK", name: "繁體中文（粵語）", flag: "🇲🇴" },
     { code: "en-US", name: "English", flag: "🇺🇸" },
     { code: "ja-JP", name: "日本語", flag: "🇯🇵" },
     { code: "ko-KR", name: "한국어", flag: "🇰🇷" },
+    { code: "ru-RU", name: "Русский", flag: "🇷🇺" },
+    { code: "de-DE", name: "Deutsch", flag: "🇩🇪" },
+    { code: "fr-FR", name: "Français", flag: "🇫🇷" },
+    { code: "es-ES", name: "Español", flag: "🇪🇸" },
+    { code: "pt-PT", name: "Português", flag: "🇵🇹" },
   ];
 
   // 获取当前语言信息
@@ -89,7 +96,8 @@ export default function Header({
 
   // 语言选择器内容
   const languageSelector = (
-    <div>
+    // 11 种语言后列表会顶到视口外：限高 + 内部滚动（窄屏 / 矮窗口也能选到最后一个）
+    <div className="max-h-[min(60vh,420px)] overflow-y-auto">
       <List
         dataSource={languages}
         renderItem={language => (

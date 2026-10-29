@@ -83,6 +83,8 @@ const DraggableComponentItem: React.FC<ComponentItemProps> = ({
         : {}),
     };
   })();
+  // 间距/空格：侧栏里没有内容宽度，按 80px 宽渲染
+  const isSpacingLike = type.includes("Spacing") || type.includes("Blank");
 
   // 跟随指针的是 DragOverlay，卡片本身留在原地当占位，
   // 否则卡片会被拖出侧栏，撑出横向滚动条。
@@ -108,19 +110,73 @@ const DraggableComponentItem: React.FC<ComponentItemProps> = ({
           className="h-16 flex items-center justify-center w-full overflow-hidden"
           style={{
             fontFamily: themes[currentTheme][1].fontFamily,
-            // 「组件虚线框」开启时，预览窗加和画板组件一致的同款虚线框
-            outline: showItemFrame
-              ? `2px dashed ${themes[currentTheme][1].colors.defaultBorder}`
-              : undefined,
           }}
         >
-          {/* 双行容器要用预览模式，否则侧栏里的这份示例也会注册可拖放区域，
-              把拖到侧栏的元件抢过去 */}
-          {type.includes("TwoRowContainer") ? (
-            <Component {...previewComponentProps} preview />
-          ) : (
-            <Component {...previewComponentProps} />
-          )}
+          {/* 间距/空格在侧栏里按 80px 宽渲染：它们没有固有内容宽度，
+              不给定宽度会塌成不可见的一點。 wrapper 撑满高度，
+              间距/空格的 h-full 才有高度可撑 */}
+          <div
+            style={{
+              position: "relative",
+              height: "100%",
+              ...(isSpacingLike ? { width: 80 } : {}),
+            }}
+          >
+            {/* 双行容器要用预览模式，否则侧栏里的这份示例也会注册可拖放区域，
+                把拖到侧栏的元件抢过去 */}
+            {type.includes("TwoRowContainer") ? (
+              <Component {...previewComponentProps} preview />
+            ) : (
+              <Component {...previewComponentProps} />
+            )}
+            {/* 「组件虚线框」：画在盒内的同款虚线框（inset 0，不会被 overflow 裁掉上下边） */}
+            {showItemFrame && (
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  border: `2px dashed ${themes[currentTheme][1].colors.defaultBorder}`,
+                  pointerEvents: "none",
+                }}
+              />
+            )}
+            {/* 间距：撑满整个宽度的双向箭头（和画板上的间距辅助线同款） */}
+            {isSpacingLike && type.includes("Spacing") && showItemFrame && (
+              <div
+                style={{
+                  position: "absolute",
+                  left: 3,
+                  right: 3,
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  display: "flex",
+                  alignItems: "center",
+                  pointerEvents: "none",
+                  color: themes[currentTheme][1].colors.defaultBorder,
+                }}
+              >
+                <span
+                  style={{
+                    width: 0,
+                    height: 0,
+                    borderTop: "4px solid transparent",
+                    borderBottom: "4px solid transparent",
+                    borderRight: "6px solid currentColor",
+                  }}
+                />
+                <span style={{ flex: 1, height: 2, background: "currentColor" }} />
+                <span
+                  style={{
+                    width: 0,
+                    height: 0,
+                    borderTop: "4px solid transparent",
+                    borderBottom: "4px solid transparent",
+                    borderLeft: "6px solid currentColor",
+                  }}
+                />
+              </div>
+            )}
+          </div>
         </div>
         <Typography.Text
           className="text-center block mt-2 font-sans"

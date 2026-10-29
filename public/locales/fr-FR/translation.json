@@ -1,0 +1,1479 @@
+{
+  "zoom": {
+    "label": "Zoom :",
+    "fit": "Ajuster à la vue",
+    "reset": "Réinitialiser à 100 %"
+  },
+  "title": "MoeRT-GuideGen",
+  "componentsList": {
+    "title": "Liste des composants",
+    "drag": "Glissez vers la droite pour ajouter un composant",
+    "dropToDelete": "Déposez ici pour supprimer le composant",
+    "theme": "Thème",
+    "themeChange": {
+      "title": "Confirmer le changement de thème",
+      "confirm": "Changer de thème effacera le canevas actuel. Voulez-vous continuer ?",
+      "dialog": {
+        "confirm": "Confirmer",
+        "cancel": "Annuler"
+      }
+    },
+    "boardBackground": "Arrière-plan du panneau",
+    "boardBackgroundReset": "Effacer",
+    "boardForeground": "Avant-plan par défaut",
+    "boardForegroundReset": "Effacer",
+    "clearCanvas": {
+      "button": "Effacer le panneau",
+      "title": "Confirmer l'effacement du panneau",
+      "confirm": "Cette action effacera tout le contenu du panneau actuel et ne pourra pas être annulée. Voulez-vous continuer ?"
+    }
+  },
+  "board": {
+    "emptyRowHint": "Glissez un composant sur cette ligne",
+    "showItemFrame": "Afficher les contours des composants",
+    "width": "Largeur",
+    "showDividers": "Afficher les séparateurs",
+    "removeRow": {
+      "title": "Supprimer cette ligne",
+      "confirm": "Voulez-vous vraiment supprimer cette ligne ? Les composants qu'elle contient seront effacés.",
+      "ok": "Supprimer",
+      "cancel": "Annuler"
+    }
+  },
+  "exportDialog": {
+    "title": "Exporter le panneau",
+    "width": "Largeur (pixels)",
+    "height": "Hauteur (pixels)",
+    "keepRatio": "Conserver les proportions",
+    "export": "Exporter",
+    "exporting": "Exportation...",
+    "cancel": "Annuler",
+    "error": {
+      "noElement": "Élément du panneau introuvable",
+      "exportFailed": "Échec de l'exportation : "
+    },
+    "success": "Exportation réussie !"
+  },
+  "saves": {
+    "clear_local_button": "Effacer toutes les sauvegardes",
+    "restore_failed": "Les composants de la sauvegarde actuelle ne correspondent pas au thème en cours ; l'enregistrement automatique est suspendu pour la protéger. Ouvrez la gestion des sauvegardes pour basculer vers une autre sauvegarde, ou supprimer / télécharger celle-ci. Les autres sauvegardes ne sont pas affectées.",
+    "open_archives": "Ouvrir la gestion des sauvegardes",
+    "clear_local_title": "Effacer toutes les sauvegardes",
+    "clear_local_confirm": "Voulez-vous vraiment effacer toutes les sauvegardes locales et recharger la page ? Toutes les sauvegardes seront supprimées et cette action est irréversible.",
+    "export_image": "Exporter en image",
+    "save_project": "Enregistrer le projet en local",
+    "load_project": "Importer un projet",
+    "undo": "Annuler",
+    "redo": "Rétablir",
+    "autosave": {
+      "success": "Enregistrement automatique réussi",
+      "error": "Échec de l'enregistrement automatique"
+    },
+    "import": {
+      "success": "Importation réussie",
+      "error": "Échec de l'importation",
+      "unsupportedVersion": "Version de sauvegarde non prise en charge",
+      "unsupportedTheme": "Le thème utilisé par cette sauvegarde n'existe pas dans cette version",
+      "created": "Importation réussie — enregistrée sous « {{name}} »",
+      "bundleCreated_one": "{{count}} sauvegarde importée",
+      "bundleCreated_other": "{{count}} sauvegardes importées"
+    },
+    "export": {
+      "success": "Sauvegarde exportée"
+    },
+    "restore_failed_title": "Échec du chargement de la sauvegarde",
+    "reset_archive": "Réinitialiser la sauvegarde",
+    "download_archive": "Télécharger une sauvegarde de secours",
+    "reset_confirm_title": "Réinitialiser la sauvegarde ?",
+    "reset_confirm_content": "La réinitialisation effacera le contenu du panneau de la sauvegarde actuelle et rechargera la page. Cette action est irréversible (téléchargez d'abord une sauvegarde de secours). Les autres sauvegardes ne sont pas affectées.",
+    "archives": {
+      "title": "Gestion des sauvegardes",
+      "menuHint": "Sauvegarde actuelle : {{name}}",
+      "hint": "Cliquez sur une sauvegarde pour y basculer ; toutes les modifications sont enregistrées automatiquement dans la sauvegarde actuelle.",
+      "new": "Nouvelle sauvegarde",
+      "importSave": "Importer une sauvegarde",
+      "defaultName": "Sauvegarde {{index}}",
+      "legacyName": "Ma sauvegarde",
+      "untitled": "Sauvegarde sans titre",
+      "copySuffix": "Copie",
+      "rename": "Renommer",
+      "renamePlaceholder": "Nom de la sauvegarde",
+      "duplicate": "Dupliquer",
+      "download": "Télécharger cette sauvegarde",
+      "delete": "Supprimer la sauvegarde",
+      "load": "Basculer sur cette sauvegarde",
+      "current": "Actuelle",
+      "meta": "{{rows}} lignes · {{items}} composants",
+      "updatedAt": "Mis à jour {{time}}",
+      "switchSuccess": "Sauvegarde « {{name}} » activée",
+      "switchFailed": "Échec du chargement de la sauvegarde (la sauvegarde d'origine est intacte)",
+      "createSuccess": "« {{name}} » créée",
+      "renameSuccess": "Sauvegarde renommée",
+      "duplicateSuccess": "Copie « {{name}} » créée",
+      "deleteSuccess": "« {{name}} » supprimée",
+      "deleteConfirmTitle": "Supprimer cette sauvegarde ?",
+      "deleteConfirmContent": "« {{name}} » sera définitivement supprimée. Cette action est irréversible.",
+      "deleteActiveConfirmContent": "« {{name}} » est la sauvegarde en cours d'édition. Sa suppression basculera automatiquement vers une autre sauvegarde. Cette action est irréversible.",
+      "deleteLastContent": "« {{name}} » est la seule sauvegarde. Sa suppression créera automatiquement une nouvelle sauvegarde vide.",
+      "downloadSuccess": "Sauvegarde téléchargée",
+      "storageHint": "Les sauvegardes sont stockées dans ce navigateur. Effacer les données du navigateur ou changer d'appareil les rendra irrécupérables : pensez à télécharger régulièrement une sauvegarde de secours.",
+      "saveFailedQuota": "L'espace de stockage local du navigateur est plein, l'enregistrement a échoué. Téléchargez une sauvegarde de secours ou supprimez une ancienne sauvegarde.",
+      "clearAll": "Effacer toutes les sauvegardes",
+      "clearAllConfirmTitle": "Effacer toutes les sauvegardes ?",
+      "clearAllConfirmContent": "Toutes les sauvegardes locales seront définitivement supprimées et la page sera rechargée. Cette action est irréversible.",
+      "cancel": "Annuler",
+      "empty": "Aucune sauvegarde",
+      "unknownTheme": "Thème inconnu",
+      "exportAll": "Exporter toutes les sauvegardes (zip)",
+      "exportAllEmpty": "Aucune sauvegarde à exporter",
+      "exportAllSuccess_one": "{{count}} sauvegarde exportée",
+      "exportAllSuccess_other": "{{count}} sauvegardes exportées"
+    }
+  },
+  "loading": {
+    "message": "Chargement de l'application...",
+    "fonts": "Chargement des polices...",
+    "archive": "Chargement de la sauvegarde..."
+  },
+  "editor": {
+    "title": "Modifier le composant",
+    "delete": "Supprimer le composant",
+    "board": {
+      "title": "Modifier le panneau",
+      "backgroundColor": "Couleur d'arrière-plan"
+    },
+    "tabConflict": {
+      "title": "L'éditeur est déjà ouvert dans un autre onglet",
+      "body": "Pour éviter que deux onglets écrasent mutuellement les sauvegardes, un seul onglet peut être en édition à la fois. Fermez les autres onglets, puis cliquez sur le bouton ci-dessous pour revenir à l'éditeur.",
+      "refresh": "Autres onglets fermés — rechargez cette page"
+    },
+    "followTheme": "Suivre le thème par défaut"
+  },
+  "theme": {
+    "toDark": "Passer au mode sombre",
+    "toLight": "Passer au mode clair"
+  },
+  "themes": {
+    "chongqing": {
+      "displayName": "Style Chongqing Rail Transit",
+      "components": {
+        "Arrow": {
+          "displayName": "Flèche",
+          "props": {
+            "type": {
+              "displayName": "Direction",
+              "up": "Haut",
+              "down": "Bas",
+              "left": "Gauche",
+              "right": "Droite",
+              "up-left": "Haut gauche",
+              "up-right": "Haut droite",
+              "down-left": "Bas gauche",
+              "down-right": "Bas droite",
+              "ahead-left": "Avant gauche",
+              "ahead-right": "Avant droite",
+              "back-left": "Recul gauche",
+              "back-right": "Recul droite"
+            },
+            "background": "Couleur d'arrière-plan",
+            "foreground": "Couleur d'avant-plan"
+          }
+        },
+        "Blank": {
+          "displayName": "Espace vide",
+          "props": {
+            "width": "Largeur",
+            "background": "Couleur d'arrière-plan",
+            "foreground": "Couleur d'avant-plan"
+          }
+        },
+        "Icon": {
+          "displayName": "Icône",
+          "props": {
+            "icon": {
+              "displayName": "Icône",
+              "train": "Train",
+              "metro": "Métro",
+              "monorail": "Monorail",
+              "ct": "Chongqing Railway Group",
+              "crt": "Chongqing Rail Transit",
+              "cr": "China Railway",
+              "elevator": "Ascenseur accessible",
+              "waitingroom": "Salle d'attente",
+              "toilet": "Toilettes",
+              "men": "Toilettes hommes",
+              "women": "Toilettes femmes",
+              "thirdtoilet": "Toilettes mixtes",
+              "men_color": "Toilettes hommes (couleur)",
+              "women_color": "Toilettes femmes (couleur)",
+              "toilet_color": "Toilettes (couleur)",
+              "thirdtoilet_color": "Toilettes mixtes (couleur)",
+              "ticket_machine": "Distributeur de titres / recharge",
+              "check_in": "Validation automatique des titres",
+              "exit1": "Sortie (1)",
+              "exit2": "Sortie (2)",
+              "coach": "Autocar longue distance",
+              "bus": "Bus",
+              "parking": "Parking",
+              "emergency_exit": "Sortie de secours",
+              "escalator": "Escalator",
+              "maimai": "Maimai",
+              "no_entry": "Sens interdit",
+              "nursing_room": "Espace allaitement",
+              "stairs": "Escalier",
+              "taxi": "Taxi",
+              "tickets": "Titres / recharge",
+              "airport": "Aéroport"
+            },
+            "rotation": "Angle de rotation",
+            "background": "Couleur d'arrière-plan",
+            "foreground": "Couleur d'avant-plan"
+          }
+        },
+        "LineNum": {
+          "displayName": "Ligne numérotée",
+          "props": {
+            "num": "Numéro de ligne",
+            "customChinese": "Texte chinois personnalisé",
+            "customEnglish": "Texte anglais personnalisé",
+            "align": {
+              "displayName": "Alignement",
+              "left": "Gauche",
+              "right": "Droite (1)",
+              "right2": "Droite (2)"
+            },
+            "lineColor": "Couleur de la ligne",
+            "showText": "Afficher le texte à la suite",
+            "showRect": "Afficher le bloc de couleur",
+            "rectMode": {
+              "displayName": "Bloc de couleur",
+              "default": "Par défaut",
+              "narrow": "Étroit"
+            },
+            "foreground": "Couleur d'avant-plan",
+            "background": "Couleur d'arrière-plan"
+          }
+        },
+        "LineText": {
+          "displayName": "Ligne textuelle",
+          "props": {
+            "chinese": "Nom chinois",
+            "english": "Nom anglais",
+            "align": {
+              "displayName": "Alignement",
+              "left": "Gauche",
+              "right": "Droite"
+            },
+            "digitMode": {
+              "displayName": "Comportement des chiffres",
+              "prominent": "Accentué",
+              "flat": "Uniforme"
+            },
+            "rectMode": {
+              "displayName": "Largeur du bloc",
+              "default": "Par défaut",
+              "narrow": "Étroit"
+            },
+            "lineColor": "Couleur de la ligne",
+            "foreground": "Couleur d'avant-plan",
+            "background": "Couleur d'arrière-plan"
+          }
+        },
+        "NumAlphabet": {
+          "displayName": "Chiffre / lettre",
+          "props": {
+            "text": "Texte",
+            "background": "Couleur d'arrière-plan",
+            "foreground": "Couleur d'avant-plan",
+            "type": {
+              "displayName": "Type de largeur",
+              "fit": "Ajusté",
+              "block": "Bloc"
+            }
+          }
+        },
+        "Spacing": {
+          "displayName": "Espacement",
+          "props": {
+            "background": "Couleur d'arrière-plan"
+          }
+        },
+        "SpecLine": {
+          "displayName": "Séparateur",
+          "props": {
+            "background": "Couleur d'arrière-plan",
+            "foreground": "Couleur d'avant-plan"
+          }
+        },
+        "StationName": {
+          "displayName": "Nom de la station",
+          "props": {
+            "chinese": "Nom chinois",
+            "english": "Nom anglais",
+            "foreground": "Couleur d'avant-plan",
+            "background": "Couleur d'arrière-plan"
+          }
+        },
+        "Text": {
+          "displayName": "Texte",
+          "props": {
+            "chinese": "Texte chinois",
+            "english": "Texte anglais",
+            "align": {
+              "displayName": "Alignement",
+              "left": "Gauche",
+              "right": "Droite",
+              "center": "Centre"
+            },
+            "digitMode": {
+              "displayName": "Comportement des chiffres",
+              "prominent": "Accentué",
+              "flat": "Uniforme"
+            },
+            "background": "Couleur d'arrière-plan",
+            "foreground": "Couleur d'avant-plan"
+          }
+        },
+        "DirectionLoop": {
+          "displayName": "Direction (ligne circulaire)",
+          "props": {
+            "background": "Couleur d'arrière-plan",
+            "foreground": "Couleur d'avant-plan",
+            "tochinese": "Vers (chinois)",
+            "toenglish": "Vers (anglais)",
+            "tipchinese": "Indication supérieure (chinois)",
+            "tipenglish": "Indication supérieure (anglais)",
+            "align": {
+              "displayName": "Alignement",
+              "left": "Gauche",
+              "right": "Droite"
+            }
+          }
+        },
+        "ExitName": {
+          "displayName": "Nom de la sortie",
+          "props": {
+            "line1chinese": "Ligne 1 (chinois)",
+            "line1english": "Ligne 1 (anglais)",
+            "line2chinese": "Ligne 2 (chinois)",
+            "line2english": "Ligne 2 (anglais)",
+            "background": "Couleur d'arrière-plan",
+            "foreground": "Couleur d'avant-plan",
+            "align": {
+              "displayName": "Alignement",
+              "left": "Gauche",
+              "right": "Droite",
+              "center": "Centre"
+            }
+          }
+        }
+      },
+      "colors": {
+        "foreground": "Avant-plan",
+        "background": "Arrière-plan",
+        "exitforeground": "Avant-plan sortie",
+        "exitbackground": "Arrière-plan sortie",
+        "facilityforeground": "Avant-plan équipements",
+        "facilitybackground": "Arrière-plan équipements",
+        "specline": "Séparateur",
+        "border": "Bordure",
+        "noentry": "Sens interdit",
+        "lineloop": "Ligne circulaire",
+        "line1": "Ligne 1",
+        "line2": "Ligne 2",
+        "line3": "Ligne 3",
+        "line4": "Ligne 4",
+        "line5": "Ligne 5",
+        "line6": "Ligne 6",
+        "line7": "Ligne 7",
+        "line8": "Ligne 8",
+        "line9": "Ligne 9",
+        "line10": "Ligne 10",
+        "line11": "Ligne 11",
+        "line12": "Ligne 12",
+        "line13": "Ligne 13",
+        "line14": "Ligne 14",
+        "line15": "Ligne 15",
+        "line16": "Ligne 16",
+        "line17": "Ligne 17",
+        "line18": "Ligne 18",
+        "line19": "Ligne 19",
+        "line20": "Ligne 20",
+        "line21": "Ligne 21",
+        "line22": "Ligne 22",
+        "line23": "Ligne 23",
+        "line24": "Ligne 24",
+        "line25": "Ligne 25",
+        "line26": "Ligne 26",
+        "line27": "Ligne 27",
+        "line28": "Ligne 28",
+        "line29": "Ligne 29",
+        "lineinternationalexpo": "Ligne International Expo",
+        "linekonggang": "Ligne aéroport",
+        "linejiangtiao": "Ligne Jiangjin-Tiaoshi",
+        "linebitong": "Ligne Bishan-Tongliang",
+        "lineyongchuan": "Ligne Yongchuan",
+        "lineqiwan": "Ligne Qijiang-Wansheng",
+        "linedazhu": "Ligne Dazu",
+        "linenanchuan": "Ligne Nanchuan",
+        "linechangfu": "Ligne Changshou-Fuling",
+        "trainrapid": "Train rapide",
+        "trainexpress": "Train express"
+      }
+    },
+    "chengdu": {
+      "displayName": "Style Chengdu Metro",
+      "components": {
+        "Arrow": {
+          "displayName": "Flèche",
+          "props": {
+            "type": {
+              "displayName": "Direction",
+              "up": "Haut",
+              "down": "Bas",
+              "left": "Gauche",
+              "right": "Droite",
+              "up-left": "Haut gauche",
+              "up-right": "Haut droite",
+              "down-left": "Bas gauche",
+              "down-right": "Bas droite",
+              "ahead-left": "Avant gauche",
+              "ahead-right": "Avant droite",
+              "back-left": "Recul gauche",
+              "back-right": "Recul droite"
+            },
+            "background": "Couleur d'arrière-plan",
+            "foreground": "Couleur d'avant-plan"
+          }
+        },
+        "Blank": {
+          "displayName": "Espace vide",
+          "props": {
+            "width": "Largeur",
+            "background": "Couleur d'arrière-plan",
+            "foreground": "Couleur d'avant-plan"
+          }
+        },
+        "Icon": {
+          "displayName": "Icône",
+          "props": {
+            "icon": {
+              "displayName": "Icône",
+              "train": "Train",
+              "cdrt": "Chengdu Metro",
+              "exit1": "Sortie (1)",
+              "exit2": "Sortie (2)",
+              "elevator": "Ascenseur accessible",
+              "waitingroom": "Salle d'attente",
+              "toilet": "Toilettes",
+              "ticket_machine": "Distributeur de titres / recharge",
+              "check_in": "Validation automatique des titres",
+              "coach": "Autocar",
+              "bus": "Bus",
+              "parking": "Parking",
+              "cr": "China Railway",
+              "men": "Toilettes hommes",
+              "women": "Toilettes femmes",
+              "thirdtoilet": "Toilettes mixtes",
+              "men_color": "Toilettes hommes (couleur)",
+              "women_color": "Toilettes femmes (couleur)",
+              "toilet_color": "Toilettes (couleur)",
+              "thirdtoilet_color": "Toilettes mixtes (couleur)",
+              "emergency_exit": "Sortie de secours",
+              "escalator": "Escalator",
+              "maimai": "Maimai",
+              "no_entry": "Sens interdit",
+              "nursing_room": "Espace allaitement",
+              "stairs": "Escalier",
+              "taxi": "Taxi",
+              "tickets": "Titres / recharge",
+              "airport": "Aéroport"
+            },
+            "background": "Couleur d'arrière-plan",
+            "foreground": "Couleur d'avant-plan",
+            "rotation": "Angle de rotation"
+          }
+        },
+        "LineNum": {
+          "displayName": "Ligne numérotée",
+          "props": {
+            "num": "Numéro de ligne",
+            "customChinese": "Texte chinois personnalisé",
+            "customEnglish": "Texte anglais personnalisé",
+            "align": {
+              "displayName": "Alignement",
+              "left": "Gauche",
+              "right": "Droite"
+            },
+            "lineColor": "Couleur de la ligne",
+            "showText": "Afficher le texte à la suite",
+            "showRect": "Afficher le bloc de couleur",
+            "rectMode": {
+              "displayName": "Bloc de couleur",
+              "default": "Par défaut",
+              "narrow": "Étroit"
+            },
+            "foreground": "Couleur d'avant-plan",
+            "background": "Couleur d'arrière-plan"
+          }
+        },
+        "LineText": {
+          "displayName": "Ligne textuelle",
+          "props": {
+            "chinese": "Nom chinois",
+            "english": "Nom anglais",
+            "align": {
+              "displayName": "Alignement",
+              "left": "Gauche",
+              "right": "Droite"
+            },
+            "rectMode": {
+              "displayName": "Largeur du bloc",
+              "default": "Par défaut",
+              "narrow": "Étroit"
+            },
+            "lineColor": "Couleur de la ligne",
+            "foreground": "Couleur d'avant-plan",
+            "background": "Couleur d'arrière-plan"
+          }
+        },
+        "NumAlphabet": {
+          "displayName": "Chiffre / lettre",
+          "props": {
+            "text": "Texte",
+            "background": "Couleur d'arrière-plan",
+            "foreground": "Couleur d'avant-plan",
+            "type": {
+              "displayName": "Type de largeur",
+              "fit": "Ajusté",
+              "block": "Bloc"
+            }
+          }
+        },
+        "Spacing": {
+          "displayName": "Espacement",
+          "props": {
+            "background": "Couleur d'arrière-plan"
+          }
+        },
+        "SpecLine": {
+          "displayName": "Séparateur",
+          "props": {
+            "background": "Couleur d'arrière-plan",
+            "foreground": "Couleur d'avant-plan"
+          }
+        },
+        "StationName": {
+          "displayName": "Nom de la station",
+          "props": {
+            "chinese": "Nom chinois",
+            "english": "Nom anglais",
+            "foreground": "Couleur d'avant-plan",
+            "background": "Couleur d'arrière-plan"
+          }
+        },
+        "Text": {
+          "displayName": "Texte",
+          "props": {
+            "chinese": "Texte chinois",
+            "english": "Texte anglais",
+            "align": {
+              "displayName": "Alignement",
+              "left": "Gauche",
+              "right": "Droite",
+              "center": "Centre"
+            },
+            "background": "Couleur d'arrière-plan",
+            "foreground": "Couleur d'avant-plan"
+          }
+        },
+        "StationNumber": {
+          "displayName": "Numéro de station",
+          "props": {
+            "color": "Couleur de la ligne",
+            "lineNum": "Numéro de ligne",
+            "stationNum": "Numéro de station",
+            "lines": "Liste des lignes",
+            "foreground": "Couleur d'avant-plan",
+            "background": "Couleur d'arrière-plan"
+          }
+        },
+        "Direction": {
+          "displayName": "Direction",
+          "props": {
+            "background": "Couleur d'arrière-plan",
+            "foreground": "Couleur d'avant-plan",
+            "tochinese": "Vers (chinois)",
+            "toenglish": "Vers (anglais)",
+            "viachinese": "Via (chinois)",
+            "viaenglish": "Via (anglais)",
+            "align": {
+              "displayName": "Alignement",
+              "left": "Gauche",
+              "right": "Droite"
+            }
+          }
+        },
+        "TwoRowContainer": {
+          "displayName": "Conteneur à deux lignes",
+          "props": {
+            "minWidth": "Largeur minimale",
+            "background": "Couleur d'arrière-plan"
+          }
+        },
+        "ExitName": {
+          "displayName": "Nom de la sortie",
+          "props": {
+            "line1chinese": "Ligne 1 (chinois)",
+            "line1english": "Ligne 1 (anglais)",
+            "line2chinese": "Ligne 2 (chinois)",
+            "line2english": "Ligne 2 (anglais)",
+            "background": "Couleur d'arrière-plan",
+            "foreground": "Couleur d'avant-plan",
+            "align": {
+              "displayName": "Alignement",
+              "left": "Gauche",
+              "right": "Droite",
+              "center": "Centre"
+            }
+          }
+        }
+      },
+      "colors": {
+        "foreground": "Avant-plan",
+        "background": "Arrière-plan",
+        "exitforeground": "Avant-plan sortie",
+        "exitbackground": "Arrière-plan sortie",
+        "specline": "Séparateur",
+        "border": "Bordure",
+        "noentry": "Sens interdit",
+        "pass": "Passage autorisé",
+        "line1": "Ligne 1",
+        "line2": "Ligne 2",
+        "line3": "Ligne 3",
+        "line4": "Ligne 4",
+        "line5": "Ligne 5",
+        "line6": "Ligne 6",
+        "line7": "Ligne 7",
+        "line8": "Ligne 8",
+        "line9": "Ligne 9",
+        "line10": "Ligne 10",
+        "line11": "Ligne 11",
+        "line12": "Ligne 12",
+        "line13": "Ligne 13",
+        "line14": "Ligne 14",
+        "line15": "Ligne 15",
+        "line16": "Ligne 16",
+        "line17": "Ligne 17",
+        "line18": "Ligne 18",
+        "line19": "Ligne 19",
+        "line20": "Ligne 20",
+        "line21": "Ligne 21",
+        "line22": "Ligne 22",
+        "line23": "Ligne 23",
+        "line24": "Ligne 24",
+        "line25": "Ligne 25",
+        "line26": "Ligne 26",
+        "line27": "Ligne 27",
+        "line28": "Ligne 28",
+        "line29": "Ligne 29",
+        "line30": "Ligne 30",
+        "line32": "Ligne 32",
+        "line33": "Ligne 33",
+        "linet2": "Tramway ligne Rong 2",
+        "lines1": "S1 / ligne Xindu-Jintang",
+        "lines2": "S2 / ligne aéroport de Jintang",
+        "lines3": "S3 / ligne Ziyang Est",
+        "lines4": "S4 / ligne Longquanyi-Huaizhou",
+        "lines5": "S5 / ligne Meishan-Renshou",
+        "lines6": "S6 / ligne Xinjin-Pujiang",
+        "lines7": "S7 / ligne Xinjin Sud",
+        "lines8": "S8 / ligne Xinjin-Anren",
+        "lines9": "S9 / ligne Wenjiang-Dujiangyan",
+        "lines10": "S10 / ligne Xindu-Guanghan",
+        "lines11": "S11 / ligne Deyang-Luojiang",
+        "lines12": "S12 / ligne Chenghua-Jingyang",
+        "lines13": "S13 / ligne Longquan-aéroport de Tianfu",
+        "lines14": "S14 / ligne Tianfu-Jianyang",
+        "lines15": "S15 / ligne circulaire sud-est",
+        "lines16": "S16 / ligne Meishan-Qingshen",
+        "lines17": "S17 / ligne Ziyang Ouest",
+        "lines18": "S18 / ligne Xinjin Nord"
+      }
+    },
+    "hongkong": {
+      "displayName": "Style MTR (Hong Kong)",
+      "components": {
+        "Arrow": {
+          "displayName": "Flèche",
+          "props": {
+            "type": {
+              "displayName": "Direction",
+              "up": "Haut",
+              "down": "Bas",
+              "left": "Gauche",
+              "right": "Droite",
+              "up-left": "Haut gauche",
+              "up-right": "Haut droite",
+              "down-left": "Bas gauche",
+              "down-right": "Bas droite",
+              "turn-back": "Demi-tour"
+            },
+            "background": "Couleur d'arrière-plan",
+            "foreground": "Couleur d'avant-plan"
+          }
+        },
+        "Blank": {
+          "displayName": "Espace vide",
+          "props": {
+            "width": "Largeur",
+            "background": "Couleur d'arrière-plan",
+            "foreground": "Couleur d'avant-plan"
+          }
+        },
+        "Icon": {
+          "displayName": "Icône",
+          "props": {
+            "icon": {
+              "displayName": "Icône",
+              "noentry": "Sens interdit",
+              "airplane": "Avion",
+              "airport_transfer": "Correspondance aéroport",
+              "airport_express": "Airport Express",
+              "baggage_claim": "Retrait des bagages",
+              "boat": "Ferry",
+              "cable_car": "Téléphérique",
+              "check_in": "Contrôle",
+              "cross": "Sens interdit",
+              "customer_service_centre": "Centre de service clientèle",
+              "emergency_exit": "Sortie de secours",
+              "escalator": "Escalator",
+              "exit_1": "Sortie (1)",
+              "exit_2": "Sortie (2)",
+              "exit_3": "Sortie (3)",
+              "female": "Femme",
+              "kcr": "Logo KCR",
+              "lift_1": "Ascenseur (1)",
+              "lift_2": "Ascenseur (2)",
+              "light_rail_1": "Light Rail (1)",
+              "light_rail_2": "Light Rail (2)",
+              "light_rail_3": "Light Rail (3)",
+              "light_rail_4": "Light Rail (4)",
+              "male": "Homme",
+              "mtr": "Logo MTR",
+              "sp1900": "SP1900",
+              "stairs_down": "Escalier (descendant)",
+              "stairs_up": "Escalier (montant)",
+              "tickets": "Billetterie",
+              "toilets": "Toilettes",
+              "train": "Train",
+              "train_old": "Train (ancien)",
+              "wheelchair": "Fauteuil roulant",
+              "wifi": "Wi-Fi",
+              "xrl_1": "Grande vitesse (1)",
+              "xrl_2": "Grande vitesse (2)",
+              "yellow_head_1": "Tête de train (jaune 1)",
+              "yellow_head_2": "Tête de train (jaune 2)"
+            },
+            "rotation": "Angle de rotation",
+            "background": "Couleur d'arrière-plan",
+            "foreground": "Couleur d'avant-plan"
+          }
+        },
+        "Line": {
+          "displayName": "Ligne",
+          "props": {
+            "chinese": "Nom chinois",
+            "english": "Nom anglais",
+            "lineColor": "Couleur de la ligne",
+            "background": "Couleur d'arrière-plan",
+            "align": {
+              "displayName": "Alignement",
+              "left": "Gauche",
+              "right": "Droite",
+              "center": "Centre"
+            },
+            "foreground": "Couleur d'avant-plan"
+          }
+        },
+        "Exit": {
+          "displayName": "Numéro de sortie",
+          "props": {
+            "letter": "Lettre",
+            "num": "Numéro complémentaire",
+            "background": "Couleur d'arrière-plan"
+          }
+        },
+        "Spacing": {
+          "displayName": "Espacement",
+          "props": {
+            "background": "Couleur d'arrière-plan"
+          }
+        },
+        "SpecLine": {
+          "displayName": "Séparateur",
+          "props": {
+            "background": "Couleur d'arrière-plan",
+            "foreground": "Couleur d'avant-plan"
+          }
+        },
+        "Text": {
+          "displayName": "Texte",
+          "props": {
+            "chinese": "Texte chinois",
+            "english": "Texte anglais",
+            "align": {
+              "displayName": "Alignement",
+              "left": "Gauche",
+              "right": "Droite",
+              "center": "Centre"
+            },
+            "fontsize": {
+              "displayName": "Taille de police",
+              "small": "Petite",
+              "large": "Grande"
+            },
+            "background": "Couleur d'arrière-plan",
+            "foreground": "Couleur d'avant-plan"
+          }
+        },
+        "StationName": {
+          "displayName": "Nom de la station",
+          "props": {
+            "chinese": "Nom chinois",
+            "english": "Nom anglais",
+            "align": {
+              "displayName": "Alignement",
+              "left": "Gauche",
+              "right": "Droite"
+            },
+            "background": "Couleur d'arrière-plan",
+            "foreground": "Couleur d'avant-plan"
+          }
+        },
+        "Platform": {
+          "displayName": "Quai",
+          "props": {
+            "color": "Couleur de la ligne",
+            "num": "Numéro",
+            "background": "Couleur d'arrière-plan"
+          }
+        }
+      },
+      "colors": {
+        "background": "Arrière-plan",
+        "foreground": "Avant-plan",
+        "background2": "Arrière-plan 2",
+        "foreground2": "Avant-plan 2",
+        "background3": "Arrière-plan 3",
+        "foreground3": "Avant-plan 3",
+        "border": "Bordure",
+        "specline": "Séparateur",
+        "exitletter": "Numéro de sortie",
+        "kwuntongline": "Ligne Kwun Tong",
+        "tsuenwanline": "Ligne Tsuen Wan",
+        "islandline": "Ligne de l'île",
+        "tungchungline": "Ligne Tung Chung",
+        "tseungkwanoline": "Ligne Tseung Kwan O",
+        "eastrailline": "Ligne East Rail",
+        "tuenmaline": "Ligne Tuen Ma",
+        "disneyline": "Ligne Disneyland",
+        "southislandline": "Ligne South Island",
+        "airportexpress": "Airport Express",
+        "highspeedrail": "Grande vitesse",
+        "shenzhenmetro": "Shenzhen Metro",
+        "lightrail": "Light Rail",
+        "lr505": "Light Rail 505",
+        "lr507": "Light Rail 507",
+        "lr610": "Light Rail 610",
+        "lr614": "Light Rail 614",
+        "lr614p": "Light Rail 614P",
+        "lr615": "Light Rail 615",
+        "lr615p": "Light Rail 615P",
+        "lr705": "Light Rail 705",
+        "lr706": "Light Rail 706",
+        "lr751": "Light Rail 751",
+        "lr761p": "Light Rail 761P",
+        "np360": "Ngong Ping 360",
+        "tramways": "Tramways de Hong Kong",
+        "northernlink": "Ligne Northern",
+        "eastkowloon": "Ligne East Kowloon",
+        "southislandwest": "Ligne South Island (ouest)"
+      }
+    },
+    "beijing": {
+      "displayName": "Style Beijing Metro (nouveau)",
+      "colors": {
+        "background": "Fond du panneau",
+        "foreground": "Avant-plan",
+        "textblue": "Bleu du texte",
+        "white": "Blanc",
+        "border": "Bordure",
+        "specline": "Séparateur (jaune)",
+        "divider": "Séparateur (blanc)",
+        "facility": "Bleu clair équipements",
+        "facilityfemale": "Rose toilettes femmes",
+        "exit": "Vert sortie",
+        "prohibit": "Rouge interdiction",
+        "aedsubstrate": "Orange support AED",
+        "line1": "Ligne 1 / ligne Batong",
+        "line2": "Ligne 2",
+        "line3": "Ligne 3",
+        "line4": "Ligne 4 / ligne Daxing",
+        "line5": "Ligne 5",
+        "line6": "Ligne 6",
+        "line7": "Ligne 7",
+        "line8": "Ligne 8",
+        "line9": "Ligne 9",
+        "line10": "Ligne 10",
+        "line11": "Ligne 11",
+        "line12": "Ligne 12",
+        "line13": "Ligne 13",
+        "line14": "Ligne 14",
+        "line15": "Ligne 15",
+        "line16": "Ligne 16",
+        "line17": "Ligne 17",
+        "line18": "Ligne 18",
+        "line19": "Ligne 19",
+        "line22": "Ligne 22",
+        "lineyizhuang": "Ligne Yizhuang",
+        "linefangshan": "Ligne Fangshan / ligne Yanfang",
+        "lines1": "Ligne S1",
+        "linechangping": "Ligne Changping",
+        "line28": "Ligne 28",
+        "linexijiao": "Ligne Xijiao / ligne Yizhuang T1",
+        "linecapitalairport": "Navette de l'aéroport de Capital",
+        "linedaxingairport": "Navette de l'aéroport de Daxing",
+        "linetram": "Tramway"
+      },
+      "components": {
+        "Text": {
+          "displayName": "Texte",
+          "props": {
+            "chinese": "Chinois",
+            "english": "Anglais",
+            "weight": {
+              "normal": "Normal",
+              "medium": "Moyen",
+              "bold": "Gras",
+              "displayName": "Graisse"
+            },
+            "letterSpacing": "Interlettrage",
+            "fontSizeZh": "Taille de police chinoise",
+            "fontSizeEn": "Taille de police anglaise",
+            "lineGap": "Espacement chinois-anglais",
+            "align": {
+              "left": "Gauche",
+              "center": "Centre",
+              "right": "Droite",
+              "displayName": "Alignement"
+            },
+            "foreground": "Couleur d'avant-plan",
+            "background": "Couleur d'arrière-plan (1re ligne)",
+            "background2": "Couleur d'arrière-plan (2e ligne)"
+          }
+        },
+        "SpecLine": {
+          "displayName": "Séparateur",
+          "props": {
+            "width": "Épaisseur",
+            "foreground": "Couleur d'avant-plan",
+            "background": "Couleur d'arrière-plan (1re ligne)",
+            "background2": "Couleur d'arrière-plan (2e ligne)"
+          }
+        },
+        "Spacing": {
+          "displayName": "Espacement",
+          "props": {
+            "background": "Couleur d'arrière-plan (1re ligne)",
+            "background2": "Couleur d'arrière-plan (2e ligne)"
+          }
+        },
+        "Blank": {
+          "displayName": "Espace vide",
+          "props": {
+            "width": "Largeur",
+            "background": "Couleur d'arrière-plan (1re ligne)",
+            "background2": "Couleur d'arrière-plan (2e ligne)"
+          }
+        },
+        "LineNum": {
+          "displayName": "Plaque de ligne",
+          "props": {
+            "lineId": "Numéro de ligne",
+            "colorKey": {
+              "displayName": "Couleur de ligne"
+            },
+            "textZh": "Texte chinois",
+            "textEn": "Texte anglais",
+            "size": {
+              "displayName": "Taille"
+            },
+            "extendLeft": "Extension du bloc à gauche",
+            "extendRight": "Extension du bloc à droite",
+            "foreground": "Couleur d'avant-plan",
+            "background": "Couleur d'arrière-plan (1re ligne)",
+            "background2": "Couleur d'arrière-plan (2e ligne)"
+          }
+        },
+        "Arrow": {
+          "displayName": "Flèche",
+          "props": {
+            "direction": {
+              "displayName": "Direction"
+            },
+            "showText": "Afficher le texte",
+            "textZh": "Texte chinois",
+            "textEn": "Texte anglais",
+            "align": {
+              "displayName": "Alignement"
+            },
+            "foreground": "Couleur d'avant-plan",
+            "background": "Couleur d'arrière-plan (1re ligne)",
+            "background2": "Couleur d'arrière-plan (2e ligne)"
+          }
+        },
+        "TrainDirection": {
+          "displayName": "Direction du train",
+          "props": {
+            "prefixZh": "Préfixe chinois",
+            "prefixEn": "Préfixe anglais",
+            "destinationZh": "Destination (chinois)",
+            "destinationEn": "Destination (anglais)",
+            "align": {
+              "displayName": "Alignement"
+            },
+            "foreground": "Couleur d'avant-plan",
+            "background": "Couleur d'arrière-plan (1re ligne)",
+            "background2": "Couleur d'arrière-plan (2e ligne)"
+          }
+        },
+        "LoopNextStation": {
+          "displayName": "Texte de direction (ligne circulaire)",
+          "props": {
+            "nextZh": "« Prochaine station » (chinois)",
+            "nextEn": "« Prochaine station » (anglais)",
+            "stationZh": "Nom de la station (chinois)",
+            "stationEn": "Nom de la station (anglais)",
+            "align": {
+              "displayName": "Alignement"
+            },
+            "foreground": "Couleur d'avant-plan",
+            "background": "Couleur d'arrière-plan (1re ligne)",
+            "background2": "Couleur d'arrière-plan (2e ligne)"
+          }
+        },
+        "DualText": {
+          "displayName": "Texte sur deux lignes",
+          "props": {
+            "line1chinese": "Ligne 1 (chinois)",
+            "line1english": "Ligne 1 (anglais)",
+            "line2chinese": "Ligne 2 (chinois)",
+            "line2english": "Ligne 2 (anglais)",
+            "align": {
+              "displayName": "Alignement"
+            },
+            "weight": {
+              "displayName": "Graisse"
+            },
+            "letterSpacing": "Interlettrage",
+            "foreground": "Couleur d'avant-plan",
+            "background": "Couleur d'arrière-plan (1re ligne)",
+            "background2": "Couleur d'arrière-plan (2e ligne)"
+          }
+        },
+        "ExitNum": {
+          "displayName": "Numéro de sortie",
+          "props": {
+            "exits": "Numéros de sortie",
+            "exitLetter": "Lettre",
+            "exitNumber": "Chiffre complémentaire",
+            "directions": {
+              "displayName": "Orientation"
+            },
+            "textZh": "Texte chinois",
+            "textEn": "Texte anglais",
+            "foreground": "Couleur d'avant-plan",
+            "background": "Couleur d'arrière-plan (1re ligne)",
+            "background2": "Couleur d'arrière-plan (2e ligne)"
+          }
+        },
+        "Icon": {
+          "displayName": "Icône",
+          "props": {
+            "icon": {
+              "displayName": "Icône",
+              "escalator_left": "Escalator (gauche)",
+              "stairs_left": "Escalier (gauche)",
+              "restroom": "Toilettes",
+              "restroom_accessible": "Toilettes accessibles",
+              "elevator": "Ascenseur",
+              "elevator_accessible": "Ascenseur accessible",
+              "accessibility": "Accessibilité",
+              "nursing_room": "Espace allaitement",
+              "aed": "AED",
+              "restroom_third": "Toilettes mixtes",
+              "restroom_men": "Toilettes hommes",
+              "restroom_women": "Toilettes femmes",
+              "guide_dog": "Chiens guides acceptés",
+              "no_entry_dark": "Sens interdit",
+              "no_entry_light": "Sens interdit (fond clair)",
+              "escalator_right": "Escalator (droite)",
+              "stairs_right": "Escalier (droite)",
+              "ticket_vending": "Distributeur de titres",
+              "ticket_service": "Titres / régularisation",
+              "inquiry": "Renseignements",
+              "customer_service": "Service clientèle",
+              "police": "Poste de police",
+              "help_button": "Bouton d'appel",
+              "security_check": "Contrôle de sûreté des voyageurs",
+              "luggage_check": "Contrôle de sûreté des bagages",
+              "ramp": "Rampe accessible",
+              "lifting_platform": "Plateforme élévatrice",
+              "accessibility_white": "Accessibilité (blanc)",
+              "elderly": "Personnes âgées",
+              "stroller": "Avec poussette",
+              "pregnant": "Femme enceinte",
+              "luggage": "Avec bagages",
+              "brush_beijing": "Beijing au pinceau",
+              "city_gate": "Silhouette de porte de ville",
+              "metro_a": "Beijing Metro A",
+              "metro_b": "Beijing Metro B",
+              "prohibited": "Interdit"
+            },
+            "rotation": {
+              "displayName": "Rotation"
+            },
+            "flipH": "Retourner horizontalement",
+            "flipV": "Retourner verticalement",
+            "foreground": "Couleur d'avant-plan (groupes blanc et autres)",
+            "background": "Couleur d'arrière-plan",
+            "background2": "Couleur d'arrière-plan (2e ligne)"
+          }
+        },
+        "ExitIcon": {
+          "displayName": "Icône de sortie",
+          "props": {
+            "variant": {
+              "displayName": "Forme"
+            },
+            "padding": {
+              "displayName": "Marges"
+            },
+            "background": "Couleur d'arrière-plan",
+            "background2": "Couleur d'arrière-plan (2e ligne)"
+          }
+        }
+      },
+      "common": {
+        "weight": {
+          "normal": "Normal",
+          "medium": "Moyen",
+          "bold": "Gras"
+        },
+        "size": {
+          "default": "Par défaut",
+          "small": "Petite"
+        },
+        "direction": {
+          "left": "Gauche",
+          "right": "Droite",
+          "up": "Haut",
+          "down": "Bas",
+          "up-left": "Haut gauche",
+          "up-right": "Haut droite",
+          "down-left": "Bas gauche",
+          "down-right": "Bas droite",
+          "uturn-left": "Demi-tour à gauche",
+          "uturn-right": "Demi-tour à droite",
+          "back-left": "Arrière gauche",
+          "back-right": "Arrière droite"
+        },
+        "align": {
+          "left": "Gauche",
+          "center": "Centre",
+          "right": "Droite"
+        },
+        "direction4": {
+          "east": "Est",
+          "west": "Ouest",
+          "south": "Sud",
+          "north": "Nord"
+        },
+        "padding": {
+          "none": "Sans marges",
+          "inset": "Avec marges"
+        },
+        "exitVariant": {
+          "exitA": "Sortie A",
+          "exitB": "Sortie B",
+          "exitC": "Sortie C",
+          "exitLongA": "Sortie longue A",
+          "exitLongB": "Sortie longue B",
+          "emergency": "Sortie de secours"
+        }
+      }
+    },
+    "beijingOld": {
+      "displayName": "Style Beijing Metro (classique)",
+      "colors": {
+        "background": "Fond du panneau",
+        "foreground": "Avant-plan",
+        "textblue": "Bleu du texte",
+        "white": "Blanc",
+        "border": "Bordure",
+        "divider": "Séparateur",
+        "exit": "Vert sortie",
+        "prohibit": "Rouge interdiction",
+        "line1": "Ligne 1 / ligne Batong",
+        "line2": "Ligne 2",
+        "line3": "Ligne 3",
+        "line4": "Ligne 4 / ligne Daxing",
+        "line5": "Ligne 5",
+        "line6": "Ligne 6",
+        "line7": "Ligne 7",
+        "line8": "Ligne 8",
+        "line9": "Ligne 9",
+        "line10": "Ligne 10",
+        "line11": "Ligne 11",
+        "line12": "Ligne 12",
+        "line13": "Ligne 13",
+        "line14": "Ligne 14",
+        "line15": "Ligne 15",
+        "line16": "Ligne 16",
+        "line17": "Ligne 17",
+        "line18": "Ligne 18",
+        "line19": "Ligne 19",
+        "line22": "Ligne 22",
+        "line28": "Ligne 28",
+        "lineyizhuang": "Ligne Yizhuang",
+        "linefangshan": "Ligne Fangshan / ligne Yanfang",
+        "lines1": "Ligne S1",
+        "linechangping": "Ligne Changping",
+        "linexijiao": "Ligne Xijiao / ligne Yizhuang T1",
+        "linecapitalairport": "Navette de l'aéroport de Capital",
+        "linedaxingairport": "Navette de l'aéroport de Daxing"
+      },
+      "common": {
+        "weight": {
+          "normal": "Normal",
+          "medium": "Moyen",
+          "bold": "Gras"
+        },
+        "direction": {
+          "left": "Gauche",
+          "right": "Droite",
+          "up": "Haut",
+          "down": "Bas",
+          "up-left": "Haut gauche",
+          "up-right": "Haut droite",
+          "down-left": "Bas gauche",
+          "down-right": "Bas droite",
+          "uturn-left": "Demi-tour à gauche",
+          "uturn-right": "Demi-tour à droite",
+          "back-left": "Arrière gauche",
+          "back-right": "Arrière droite"
+        },
+        "direction4": {
+          "east": "Est",
+          "west": "Ouest",
+          "south": "Sud",
+          "north": "Nord"
+        },
+        "align": {
+          "left": "Gauche",
+          "center": "Centre",
+          "right": "Droite"
+        },
+        "size": {
+          "default": "Par défaut",
+          "small": "Petite"
+        },
+        "padding": {
+          "none": "Sans marges",
+          "inset": "Avec marges"
+        },
+        "none": "Aucun",
+        "toTrainVariant": {
+          "solid": "Plein",
+          "outline": "Contour"
+        },
+        "exitVariant": {
+          "single": "Simple",
+          "double": "Deux lignes"
+        }
+      },
+      "components": {
+        "Text": {
+          "displayName": "Texte",
+          "props": {
+            "chinese": "Chinois",
+            "english": "Anglais",
+            "weight": {
+              "normal": "Normal",
+              "medium": "Moyen",
+              "bold": "Gras",
+              "displayName": "Graisse"
+            },
+            "letterSpacing": "Interlettrage",
+            "fontSizeZh": "Taille de police chinoise",
+            "fontSizeEn": "Taille de police anglaise",
+            "lineGap": "Espacement chinois-anglais",
+            "align": {
+              "left": "Gauche",
+              "center": "Centre",
+              "right": "Droite",
+              "displayName": "Alignement"
+            },
+            "foreground": "Couleur d'avant-plan",
+            "background": "Couleur d'arrière-plan"
+          }
+        },
+        "SpecLine": {
+          "displayName": "Séparateur",
+          "props": {
+            "width": "Épaisseur",
+            "foreground": "Couleur d'avant-plan",
+            "background": "Couleur d'arrière-plan"
+          }
+        },
+        "Spacing": {
+          "displayName": "Espacement",
+          "props": {
+            "background": "Couleur d'arrière-plan"
+          }
+        },
+        "Blank": {
+          "displayName": "Espace vide",
+          "props": {
+            "width": "Largeur",
+            "background": "Couleur d'arrière-plan"
+          }
+        },
+        "Arrow": {
+          "displayName": "Flèche",
+          "props": {
+            "direction": {
+              "displayName": "Direction"
+            },
+            "foreground": "Couleur d'avant-plan",
+            "background": "Couleur d'arrière-plan"
+          }
+        },
+        "Line": {
+          "displayName": "Plaque de ligne",
+          "props": {
+            "lineId": "Numéro de ligne",
+            "colorKey": {
+              "displayName": "Couleur de ligne"
+            },
+            "textZh": "Texte chinois",
+            "textEn": "Texte anglais",
+            "size": {
+              "displayName": "Taille"
+            },
+            "foreground": "Couleur d'avant-plan",
+            "background": "Couleur d'arrière-plan"
+          }
+        },
+        "ToTrain": {
+          "displayName": "Icône de train",
+          "props": {
+            "variant": {
+              "displayName": "Forme"
+            },
+            "foreground": "Couleur d'avant-plan",
+            "plateColor": "Couleur du bloc",
+            "strokeColor": "Couleur du contour",
+            "background": "Couleur d'arrière-plan"
+          }
+        },
+        "DualText": {
+          "displayName": "Texte sur deux lignes",
+          "props": {
+            "line1chinese": "Ligne 1 (chinois)",
+            "line1english": "Ligne 1 (anglais)",
+            "line2chinese": "Ligne 2 (chinois)",
+            "line2english": "Ligne 2 (anglais)",
+            "showEn": "Afficher l'anglais en ligne",
+            "align": {
+              "displayName": "Alignement"
+            },
+            "weight": {
+              "displayName": "Graisse"
+            },
+            "letterSpacing": "Interlettrage",
+            "foreground": "Couleur d'avant-plan",
+            "background": "Couleur d'arrière-plan"
+          }
+        },
+        "ExitLetter": {
+          "displayName": "Lettre de sortie",
+          "props": {
+            "exits": "Numéros de sortie",
+            "exitLetter": "Lettre",
+            "variant": {
+              "displayName": "Forme"
+            },
+            "foreground": "Couleur d'avant-plan",
+            "background": "Couleur d'arrière-plan"
+          }
+        },
+        "StationSign": {
+          "displayName": "Nom de la station",
+          "props": {
+            "nameZh": "Ligne 1 (chinois)",
+            "nameEn": "Ligne 1 (anglais)",
+            "showLogo": "Logo Beijing Metro",
+            "foreground": "Couleur d'avant-plan",
+            "background": "Couleur d'arrière-plan"
+          }
+        },
+        "Icon": {
+          "displayName": "Icône",
+          "props": {
+            "icon": {
+              "displayName": "Icône",
+              "escalator_right": "Escalator (droite)",
+              "stairs_right": "Escalier (droite)",
+              "ticket_vending": "Distributeur de titres",
+              "ticket_service": "Titres / régularisation",
+              "inquiry": "Renseignements",
+              "customer_service": "Service clientèle",
+              "police": "Poste de police",
+              "help_button": "Bouton d'appel",
+              "security_check": "Contrôle de sûreté des voyageurs",
+              "luggage_check": "Contrôle de sûreté des bagages",
+              "ramp": "Rampe accessible",
+              "lifting_platform": "Plateforme élévatrice",
+              "accessibility_white": "Accessibilité (blanc)",
+              "elderly": "Personnes âgées",
+              "stroller": "Avec poussette",
+              "pregnant": "Femme enceinte",
+              "luggage": "Avec bagages",
+              "gate_arrow_down": "Passage portillon (flèche bas)",
+              "no_entry_cross": "Sens interdit (croix)",
+              "no_entry_cross_framed": "Sens interdit (cadre)"
+            },
+            "rotation": {
+              "displayName": "Rotation"
+            },
+            "flipH": "Retourner horizontalement",
+            "flipV": "Retourner verticalement",
+            "foreground": "Couleur d'avant-plan",
+            "background": "Couleur d'arrière-plan"
+          }
+        },
+        "ExitIcon": {
+          "displayName": "Icône de sortie",
+          "props": {
+            "padding": {
+              "displayName": "Marges"
+            },
+            "background": "Couleur d'arrière-plan"
+          }
+        }
+      }
+    }
+  }
+}

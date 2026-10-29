@@ -1,0 +1,1479 @@
+{
+  "zoom": {
+    "label": "Zoom:",
+    "fit": "An Ansicht anpassen",
+    "reset": "Zurücksetzen auf 100 %"
+  },
+  "title": "MoeRT-GuideGen",
+  "componentsList": {
+    "title": "Komponentenliste",
+    "drag": "Nach rechts ziehen, um Komponenten hinzuzufügen",
+    "dropToDelete": "Zum Löschen hierher ziehen",
+    "theme": "Thema",
+    "themeChange": {
+      "title": "Thema wechseln bestätigen",
+      "confirm": "Beim Wechsel des Themas wird die aktuelle Leinwand geleert. Möchtest du fortfahren?",
+      "dialog": {
+        "confirm": "Bestätigen",
+        "cancel": "Abbrechen"
+      }
+    },
+    "boardBackground": "Hintergrundfarbe der Leinwand",
+    "boardBackgroundReset": "Leeren",
+    "boardForeground": "Standard-Vordergrundfarbe",
+    "boardForegroundReset": "Leeren",
+    "clearCanvas": {
+      "button": "Leinwand leeren",
+      "title": "Leinwand leeren bestätigen",
+      "confirm": "Dieser Vorgang leert die gesamte aktuelle Leinwand und lässt sich nicht rückgängig machen. Möchtest du fortfahren?"
+    }
+  },
+  "board": {
+    "emptyRowHint": "Komponenten in diese Zeile ziehen",
+    "showItemFrame": "Komponentenrahmen anzeigen",
+    "width": "Breite",
+    "showDividers": "Trennlinien anzeigen",
+    "removeRow": {
+      "title": "Diese Zeile löschen",
+      "confirm": "Diese Zeile wirklich löschen? Die Komponenten darin werden entfernt.",
+      "ok": "Löschen",
+      "cancel": "Abbrechen"
+    }
+  },
+  "exportDialog": {
+    "title": "Leitschild exportieren",
+    "width": "Breite (Pixel)",
+    "height": "Höhe (Pixel)",
+    "keepRatio": "Seitenverhältnis beibehalten",
+    "export": "Exportieren",
+    "exporting": "Wird exportiert …",
+    "cancel": "Abbrechen",
+    "error": {
+      "noElement": "Leitschild-Element nicht gefunden",
+      "exportFailed": "Export fehlgeschlagen: "
+    },
+    "success": "Export erfolgreich!"
+  },
+  "saves": {
+    "clear_local_button": "Alle Speicherstände löschen",
+    "restore_failed": "Die Komponenten im aktuellen Speicherstand passen nicht zum aktuellen Thema, daher wurde das automatische Speichern zu seinem Schutz pausiert. Du kannst unter „Speicherstände verwalten“ zu einem anderen Speicherstand wechseln oder diesen hier löschen bzw. herunterladen; andere Speicherstände sind nicht betroffen.",
+    "open_archives": "Speicherstände verwalten",
+    "clear_local_title": "Alle Speicherstände löschen",
+    "clear_local_confirm": "Sollen wirklich alle lokalen Speicherstände gelöscht und die Seite neu geladen werden? Alle Speicherstände werden entfernt, das lässt sich nicht rückgängig machen.",
+    "export_image": "Als Bild exportieren",
+    "save_project": "Projekt lokal speichern",
+    "load_project": "Projekt importieren",
+    "undo": "Rückgängig",
+    "redo": "Wiederholen",
+    "autosave": {
+      "success": "Automatisch gespeichert",
+      "error": "Automatisches Speichern fehlgeschlagen"
+    },
+    "import": {
+      "success": "Import erfolgreich",
+      "error": "Import fehlgeschlagen",
+      "unsupportedVersion": "Nicht unterstützte Speicherstand-Version",
+      "unsupportedTheme": "Das in diesem Speicherstand verwendete Thema gibt es in dieser Version nicht",
+      "created": "Import erfolgreich – gespeichert als Speicherstand „{{name}}“",
+      "bundleCreated_one": "{{count}} Speicherstand importiert",
+      "bundleCreated_other": "{{count}} Speicherstände importiert"
+    },
+    "export": {
+      "success": "Speicherstand exportiert"
+    },
+    "restore_failed_title": "Speicherstand konnte nicht geladen werden",
+    "reset_archive": "Speicherstand zurücksetzen",
+    "download_archive": "Sicherung herunterladen",
+    "reset_confirm_title": "Speicherstand zurücksetzen?",
+    "reset_confirm_content": "Beim Zurücksetzen wird der Inhalt der Leinwand im aktuellen Speicherstand geleert und die Seite neu geladen. Das lässt sich nicht rückgängig machen (lade vorher am besten eine Sicherung herunter). Andere Speicherstände sind nicht betroffen.",
+    "archives": {
+      "title": "Speicherstände verwalten",
+      "menuHint": "Aktueller Speicherstand: {{name}}",
+      "hint": "Klicke auf einen Speicherstand, um zu wechseln. Alle Änderungen werden automatisch im aktuellen Speicherstand gespeichert.",
+      "new": "Neuer Speicherstand",
+      "importSave": "Speicherstand importieren",
+      "defaultName": "Speicherstand {{index}}",
+      "legacyName": "Mein Speicherstand",
+      "untitled": "Unbenannter Speicherstand",
+      "copySuffix": "Kopie",
+      "rename": "Umbenennen",
+      "renamePlaceholder": "Name des Speicherstands eingeben",
+      "duplicate": "Kopie erstellen",
+      "download": "Diesen Speicherstand herunterladen",
+      "delete": "Speicherstand löschen",
+      "load": "Zu diesem Speicherstand wechseln",
+      "current": "Aktuell",
+      "meta": "{{rows}} Zeilen · {{items}} Komponenten",
+      "updatedAt": "Aktualisiert {{time}}",
+      "switchSuccess": "Zu „{{name}}“ gewechselt",
+      "switchFailed": "Speicherstand konnte nicht geladen werden (der ursprüngliche Speicherstand ist unversehrt)",
+      "createSuccess": "„{{name}}“ erstellt",
+      "renameSuccess": "Speicherstand umbenannt",
+      "duplicateSuccess": "Kopie „{{name}}“ erstellt",
+      "deleteSuccess": "„{{name}}“ gelöscht",
+      "deleteConfirmTitle": "Diesen Speicherstand löschen?",
+      "deleteConfirmContent": "„{{name}}“ wird endgültig gelöscht. Das lässt sich nicht rückgängig machen.",
+      "deleteActiveConfirmContent": "„{{name}}“ ist der Speicherstand, den du gerade bearbeitest. Nach dem Löschen wird automatisch zu einem anderen Speicherstand gewechselt. Das lässt sich nicht rückgängig machen.",
+      "deleteLastContent": "„{{name}}“ ist der letzte Speicherstand. Nach dem Löschen wird automatisch ein leerer Speicherstand angelegt.",
+      "downloadSuccess": "Speicherstand heruntergeladen",
+      "storageHint": "Speicherstände liegen im lokalen Speicher dieses Browsers. Wenn du Browserdaten löschst oder das Gerät wechselst, sind sie verloren – lade daher regelmäßig eine Sicherung herunter.",
+      "saveFailedQuota": "Der lokale Speicher des Browsers ist voll, der Speicherstand konnte nicht gespeichert werden. Lade zuerst eine Sicherung herunter oder lösche einen alten Speicherstand.",
+      "clearAll": "Alle Speicherstände löschen",
+      "clearAllConfirmTitle": "Alle Speicherstände löschen?",
+      "clearAllConfirmContent": "Alle lokalen Speicherstände werden endgültig gelöscht und die Seite wird neu geladen. Das lässt sich nicht rückgängig machen.",
+      "cancel": "Abbrechen",
+      "empty": "Noch keine Speicherstände",
+      "unknownTheme": "Unbekanntes Thema",
+      "exportAll": "Alle Speicherstände exportieren (zip)",
+      "exportAllEmpty": "Keine Speicherstände zum Exportieren",
+      "exportAllSuccess_one": "{{count}} Speicherstand exportiert",
+      "exportAllSuccess_other": "{{count}} Speicherstände exportiert"
+    }
+  },
+  "loading": {
+    "message": "Anwendung wird geladen …",
+    "fonts": "Schriftarten werden geladen …",
+    "archive": "Speicherstand wird geladen …"
+  },
+  "editor": {
+    "title": "Komponente bearbeiten",
+    "delete": "Komponente löschen",
+    "board": {
+      "title": "Leitschild bearbeiten",
+      "backgroundColor": "Hintergrundfarbe"
+    },
+    "tabConflict": {
+      "title": "Der Editor ist bereits in einem anderen Tab geöffnet",
+      "body": "Damit sich zwei Tabs nicht gegenseitig die Speicherstände überschreiben, darf immer nur ein Tab bearbeiten. Schließe den anderen Tab und klicke dann auf die Schaltfläche unten, um zum Editor zurückzukehren.",
+      "refresh": "Anderen Tab geschlossen – diese Seite neu laden"
+    },
+    "followTheme": "Themastandard folgen"
+  },
+  "theme": {
+    "toDark": "Zum dunklen Modus wechseln",
+    "toLight": "Zum hellen Modus wechseln"
+  },
+  "themes": {
+    "chongqing": {
+      "displayName": "Chongqing-Bahn-Stil",
+      "components": {
+        "Arrow": {
+          "displayName": "Pfeil",
+          "props": {
+            "type": {
+              "displayName": "Richtung",
+              "up": "Oben",
+              "down": "Unten",
+              "left": "Links",
+              "right": "Rechts",
+              "up-left": "Oben links",
+              "up-right": "Oben rechts",
+              "down-left": "Unten links",
+              "down-right": "Unten rechts",
+              "ahead-left": "Vorwärts links",
+              "ahead-right": "Vorwärts rechts",
+              "back-left": "Links rückwärts",
+              "back-right": "Rechts rückwärts"
+            },
+            "background": "Hintergrundfarbe",
+            "foreground": "Vordergrundfarbe"
+          }
+        },
+        "Blank": {
+          "displayName": "Leerraum",
+          "props": {
+            "width": "Breite",
+            "background": "Hintergrundfarbe",
+            "foreground": "Vordergrundfarbe"
+          }
+        },
+        "Icon": {
+          "displayName": "Symbol",
+          "props": {
+            "icon": {
+              "displayName": "Symbol",
+              "train": "Zug",
+              "metro": "U-Bahn",
+              "monorail": "Einschienenbahn",
+              "ct": "Chongqing Railway Group",
+              "crt": "Chongqing Rail Transit",
+              "cr": "China Railway",
+              "elevator": "Barrierefreier Aufzug",
+              "waitingroom": "Warteraum",
+              "toilet": "Toilette",
+              "men": "Herrentoilette",
+              "women": "Damentoilette",
+              "thirdtoilet": "Toilette für alle",
+              "men_color": "Herrentoilette (farbig)",
+              "women_color": "Damentoilette (farbig)",
+              "toilet_color": "Toilette (farbig)",
+              "thirdtoilet_color": "Toilette für alle (farbig)",
+              "ticket_machine": "Fahrkartenautomat",
+              "check_in": "Automatische Fahrkartenkontrolle",
+              "exit1": "Ausgang (1)",
+              "exit2": "Ausgang (2)",
+              "coach": "Fernbus",
+              "bus": "Bus",
+              "parking": "Parkplatz",
+              "emergency_exit": "Notausgang",
+              "escalator": "Rolltreppe",
+              "maimai": "Maimai",
+              "no_entry": "Kein Zutritt",
+              "nursing_room": "Stillraum",
+              "stairs": "Treppe",
+              "taxi": "Taxi",
+              "tickets": "Fahrkarten",
+              "airport": "Flughafen"
+            },
+            "rotation": "Drehwinkel",
+            "background": "Hintergrundfarbe",
+            "foreground": "Vordergrundfarbe"
+          }
+        },
+        "LineNum": {
+          "displayName": "Liniennummer",
+          "props": {
+            "num": "Liniennummer",
+            "customChinese": "Eigener chinesischer Text",
+            "customEnglish": "Eigener englischer Text",
+            "align": {
+              "displayName": "Ausrichtung",
+              "left": "Links",
+              "right": "Rechts (1)",
+              "right2": "Rechts (2)"
+            },
+            "lineColor": "Linienfarbe",
+            "showText": "Text dahinter anzeigen",
+            "showRect": "Farbblock anzeigen",
+            "rectMode": {
+              "displayName": "Farbblock",
+              "default": "Standard",
+              "narrow": "Schmal"
+            },
+            "foreground": "Vordergrundfarbe",
+            "background": "Hintergrundfarbe"
+          }
+        },
+        "LineText": {
+          "displayName": "Linientext",
+          "props": {
+            "chinese": "Chinesischer Name",
+            "english": "Englischer Name",
+            "align": {
+              "displayName": "Ausrichtung",
+              "left": "Links",
+              "right": "Rechts"
+            },
+            "digitMode": {
+              "displayName": "Ziffernverhalten",
+              "prominent": "Hervorgehoben",
+              "flat": "Flach"
+            },
+            "rectMode": {
+              "displayName": "Blockbreite",
+              "default": "Standard",
+              "narrow": "Schmal"
+            },
+            "lineColor": "Linienfarbe",
+            "foreground": "Vordergrundfarbe",
+            "background": "Hintergrundfarbe"
+          }
+        },
+        "NumAlphabet": {
+          "displayName": "Zahl/Buchstabe",
+          "props": {
+            "text": "Text",
+            "background": "Hintergrundfarbe",
+            "foreground": "Vordergrundfarbe",
+            "type": {
+              "displayName": "Breitentyp",
+              "fit": "Passend",
+              "block": "Block"
+            }
+          }
+        },
+        "Spacing": {
+          "displayName": "Abstand",
+          "props": {
+            "background": "Hintergrundfarbe"
+          }
+        },
+        "SpecLine": {
+          "displayName": "Trennlinie",
+          "props": {
+            "background": "Hintergrundfarbe",
+            "foreground": "Vordergrundfarbe"
+          }
+        },
+        "StationName": {
+          "displayName": "Stationsname",
+          "props": {
+            "chinese": "Chinesischer Name",
+            "english": "Englischer Name",
+            "foreground": "Vordergrundfarbe",
+            "background": "Hintergrundfarbe"
+          }
+        },
+        "Text": {
+          "displayName": "Text",
+          "props": {
+            "chinese": "Chinesischer Text",
+            "english": "Englischer Text",
+            "align": {
+              "displayName": "Ausrichtung",
+              "left": "Links",
+              "right": "Rechts",
+              "center": "Mitte"
+            },
+            "digitMode": {
+              "displayName": "Ziffernverhalten",
+              "prominent": "Hervorgehoben",
+              "flat": "Flach"
+            },
+            "background": "Hintergrundfarbe",
+            "foreground": "Vordergrundfarbe"
+          }
+        },
+        "DirectionLoop": {
+          "displayName": "Richtung (Ringlinie)",
+          "props": {
+            "background": "Hintergrundfarbe",
+            "foreground": "Vordergrundfarbe",
+            "tochinese": "Nach (Chinesisch)",
+            "toenglish": "Nach (Englisch)",
+            "tipchinese": "Hinweis oben (Chinesisch)",
+            "tipenglish": "Hinweis oben (Englisch)",
+            "align": {
+              "displayName": "Ausrichtung",
+              "left": "Links",
+              "right": "Rechts"
+            }
+          }
+        },
+        "ExitName": {
+          "displayName": "Ausgangsname",
+          "props": {
+            "line1chinese": "Zeile 1 Chinesisch",
+            "line1english": "Zeile 1 Englisch",
+            "line2chinese": "Zeile 2 Chinesisch",
+            "line2english": "Zeile 2 Englisch",
+            "background": "Hintergrundfarbe",
+            "foreground": "Vordergrundfarbe",
+            "align": {
+              "displayName": "Ausrichtung",
+              "left": "Links",
+              "right": "Rechts",
+              "center": "Mitte"
+            }
+          }
+        }
+      },
+      "colors": {
+        "foreground": "Vordergrund",
+        "background": "Hintergrund",
+        "exitforeground": "Ausgang: Vordergrund",
+        "exitbackground": "Ausgang: Hintergrund",
+        "facilityforeground": "Einrichtung: Vordergrund",
+        "facilitybackground": "Einrichtung: Hintergrund",
+        "specline": "Trennlinie",
+        "border": "Rahmenfarbe",
+        "noentry": "Kein Zutritt",
+        "lineloop": "Ringlinie",
+        "line1": "Linie 1",
+        "line2": "Linie 2",
+        "line3": "Linie 3",
+        "line4": "Linie 4",
+        "line5": "Linie 5",
+        "line6": "Linie 6",
+        "line7": "Linie 7",
+        "line8": "Linie 8",
+        "line9": "Linie 9",
+        "line10": "Linie 10",
+        "line11": "Linie 11",
+        "line12": "Linie 12",
+        "line13": "Linie 13",
+        "line14": "Linie 14",
+        "line15": "Linie 15",
+        "line16": "Linie 16",
+        "line17": "Linie 17",
+        "line18": "Linie 18",
+        "line19": "Linie 19",
+        "line20": "Linie 20",
+        "line21": "Linie 21",
+        "line22": "Linie 22",
+        "line23": "Linie 23",
+        "line24": "Linie 24",
+        "line25": "Linie 25",
+        "line26": "Linie 26",
+        "line27": "Linie 27",
+        "line28": "Linie 28",
+        "line29": "Linie 29",
+        "lineinternationalexpo": "Expo-Linie",
+        "linekonggang": "Flughafenlinie",
+        "linejiangtiao": "Jiangjin-Tiaoshi-Linie",
+        "linebitong": "Bishan-Tongliang-Linie",
+        "lineyongchuan": "Yongchuan-Linie",
+        "lineqiwan": "Qijiang-Wansheng-Linie",
+        "linedazhu": "Dazu-Linie",
+        "linenanchuan": "Nanchuan-Linie",
+        "linechangfu": "Changshou-Fuling-Linie",
+        "trainrapid": "Schnellzug",
+        "trainexpress": "Expresszug"
+      }
+    },
+    "chengdu": {
+      "displayName": "Chengdu-Metro-Stil",
+      "components": {
+        "Arrow": {
+          "displayName": "Pfeil",
+          "props": {
+            "type": {
+              "displayName": "Richtung",
+              "up": "Oben",
+              "down": "Unten",
+              "left": "Links",
+              "right": "Rechts",
+              "up-left": "Oben links",
+              "up-right": "Oben rechts",
+              "down-left": "Unten links",
+              "down-right": "Unten rechts",
+              "ahead-left": "Vorwärts links",
+              "ahead-right": "Vorwärts rechts",
+              "back-left": "Links rückwärts",
+              "back-right": "Rechts rückwärts"
+            },
+            "background": "Hintergrundfarbe",
+            "foreground": "Vordergrundfarbe"
+          }
+        },
+        "Blank": {
+          "displayName": "Leerraum",
+          "props": {
+            "width": "Breite",
+            "background": "Hintergrundfarbe",
+            "foreground": "Vordergrundfarbe"
+          }
+        },
+        "Icon": {
+          "displayName": "Symbol",
+          "props": {
+            "icon": {
+              "displayName": "Symbol",
+              "train": "Zug",
+              "cdrt": "Chengdu Metro",
+              "exit1": "Ausgang (1)",
+              "exit2": "Ausgang (2)",
+              "elevator": "Barrierefreier Aufzug",
+              "waitingroom": "Warteraum",
+              "toilet": "Toilette",
+              "ticket_machine": "Fahrkartenautomat",
+              "check_in": "Automatische Fahrkartenkontrolle",
+              "coach": "Fernbus",
+              "bus": "Bus",
+              "parking": "Parkplatz",
+              "cr": "China Railway",
+              "men": "Herrentoilette",
+              "women": "Damentoilette",
+              "thirdtoilet": "Toilette für alle",
+              "men_color": "Herrentoilette (farbig)",
+              "women_color": "Damentoilette (farbig)",
+              "toilet_color": "Toilette (farbig)",
+              "thirdtoilet_color": "Toilette für alle (farbig)",
+              "emergency_exit": "Notausgang",
+              "escalator": "Rolltreppe",
+              "maimai": "Maimai",
+              "no_entry": "Kein Zutritt",
+              "nursing_room": "Stillraum",
+              "stairs": "Treppe",
+              "taxi": "Taxi",
+              "tickets": "Fahrkarten",
+              "airport": "Flughafen"
+            },
+            "background": "Hintergrundfarbe",
+            "foreground": "Vordergrundfarbe",
+            "rotation": "Drehwinkel"
+          }
+        },
+        "LineNum": {
+          "displayName": "Liniennummer",
+          "props": {
+            "num": "Liniennummer",
+            "customChinese": "Eigener chinesischer Text",
+            "customEnglish": "Eigener englischer Text",
+            "align": {
+              "displayName": "Ausrichtung",
+              "left": "Links",
+              "right": "Rechts"
+            },
+            "lineColor": "Linienfarbe",
+            "showText": "Text dahinter anzeigen",
+            "showRect": "Farbblock anzeigen",
+            "rectMode": {
+              "displayName": "Farbblock",
+              "default": "Standard",
+              "narrow": "Schmal"
+            },
+            "foreground": "Vordergrundfarbe",
+            "background": "Hintergrundfarbe"
+          }
+        },
+        "LineText": {
+          "displayName": "Linientext",
+          "props": {
+            "chinese": "Chinesischer Name",
+            "english": "Englischer Name",
+            "align": {
+              "displayName": "Ausrichtung",
+              "left": "Links",
+              "right": "Rechts"
+            },
+            "rectMode": {
+              "displayName": "Blockbreite",
+              "default": "Standard",
+              "narrow": "Schmal"
+            },
+            "lineColor": "Linienfarbe",
+            "foreground": "Vordergrundfarbe",
+            "background": "Hintergrundfarbe"
+          }
+        },
+        "NumAlphabet": {
+          "displayName": "Zahl/Buchstabe",
+          "props": {
+            "text": "Text",
+            "background": "Hintergrundfarbe",
+            "foreground": "Vordergrundfarbe",
+            "type": {
+              "displayName": "Breitentyp",
+              "fit": "Passend",
+              "block": "Block"
+            }
+          }
+        },
+        "Spacing": {
+          "displayName": "Abstand",
+          "props": {
+            "background": "Hintergrundfarbe"
+          }
+        },
+        "SpecLine": {
+          "displayName": "Trennlinie",
+          "props": {
+            "background": "Hintergrundfarbe",
+            "foreground": "Vordergrundfarbe"
+          }
+        },
+        "StationName": {
+          "displayName": "Stationsname",
+          "props": {
+            "chinese": "Chinesischer Name",
+            "english": "Englischer Name",
+            "foreground": "Vordergrundfarbe",
+            "background": "Hintergrundfarbe"
+          }
+        },
+        "Text": {
+          "displayName": "Text",
+          "props": {
+            "chinese": "Chinesischer Text",
+            "english": "Englischer Text",
+            "align": {
+              "displayName": "Ausrichtung",
+              "left": "Links",
+              "right": "Rechts",
+              "center": "Mitte"
+            },
+            "background": "Hintergrundfarbe",
+            "foreground": "Vordergrundfarbe"
+          }
+        },
+        "StationNumber": {
+          "displayName": "Stationsnummer",
+          "props": {
+            "color": "Linienfarbe",
+            "lineNum": "Liniennummer",
+            "stationNum": "Stationsnummer",
+            "lines": "Linienliste",
+            "foreground": "Vordergrundfarbe",
+            "background": "Hintergrundfarbe"
+          }
+        },
+        "Direction": {
+          "displayName": "Richtung",
+          "props": {
+            "background": "Hintergrundfarbe",
+            "foreground": "Vordergrundfarbe",
+            "tochinese": "Nach (Chinesisch)",
+            "toenglish": "Nach (Englisch)",
+            "viachinese": "Über (Chinesisch)",
+            "viaenglish": "Über (Englisch)",
+            "align": {
+              "displayName": "Ausrichtung",
+              "left": "Links",
+              "right": "Rechts"
+            }
+          }
+        },
+        "TwoRowContainer": {
+          "displayName": "Zweizeilen-Container",
+          "props": {
+            "minWidth": "Mindestbreite",
+            "background": "Hintergrundfarbe"
+          }
+        },
+        "ExitName": {
+          "displayName": "Ausgangsname",
+          "props": {
+            "line1chinese": "Zeile 1 Chinesisch",
+            "line1english": "Zeile 1 Englisch",
+            "line2chinese": "Zeile 2 Chinesisch",
+            "line2english": "Zeile 2 Englisch",
+            "background": "Hintergrundfarbe",
+            "foreground": "Vordergrundfarbe",
+            "align": {
+              "displayName": "Ausrichtung",
+              "left": "Links",
+              "right": "Rechts",
+              "center": "Mitte"
+            }
+          }
+        }
+      },
+      "colors": {
+        "foreground": "Vordergrund",
+        "background": "Hintergrund",
+        "exitforeground": "Ausgang: Vordergrund",
+        "exitbackground": "Ausgang: Hintergrund",
+        "specline": "Trennlinie",
+        "border": "Rahmenfarbe",
+        "noentry": "Kein Zutritt",
+        "pass": "Durchgang",
+        "line1": "Linie 1",
+        "line2": "Linie 2",
+        "line3": "Linie 3",
+        "line4": "Linie 4",
+        "line5": "Linie 5",
+        "line6": "Linie 6",
+        "line7": "Linie 7",
+        "line8": "Linie 8",
+        "line9": "Linie 9",
+        "line10": "Linie 10",
+        "line11": "Linie 11",
+        "line12": "Linie 12",
+        "line13": "Linie 13",
+        "line14": "Linie 14",
+        "line15": "Linie 15",
+        "line16": "Linie 16",
+        "line17": "Linie 17",
+        "line18": "Linie 18",
+        "line19": "Linie 19",
+        "line20": "Linie 20",
+        "line21": "Linie 21",
+        "line22": "Linie 22",
+        "line23": "Linie 23",
+        "line24": "Linie 24",
+        "line25": "Linie 25",
+        "line26": "Linie 26",
+        "line27": "Linie 27",
+        "line28": "Linie 28",
+        "line29": "Linie 29",
+        "line30": "Linie 30",
+        "line32": "Linie 32",
+        "line33": "Linie 33",
+        "linet2": "Straßenbahn Rong 2",
+        "lines1": "S1/Xindu-Jintang-Linie",
+        "lines2": "S2/Jintang-Airport-Linie",
+        "lines3": "S3/Ziyang-Ost-Linie",
+        "lines4": "S4/Longquanyi-Huaizhou-Linie",
+        "lines5": "S5/Meishan-Renshou-Linie",
+        "lines6": "S6/Xinjin-Pujiang-Linie",
+        "lines7": "S7/Xinjin-Süd-Linie",
+        "lines8": "S8/Xinjin-Anren-Linie",
+        "lines9": "S9/Wenjiang-Dujiangyan-Linie",
+        "lines10": "S10/Xindu-Guanghan-Linie",
+        "lines11": "S11/Deyang-Luojiang-Linie",
+        "lines12": "S12/Chenghua-Jingyang-Linie",
+        "lines13": "S13/Longquan-Tianfu-Airport-Linie",
+        "lines14": "S14/Tianfu-Jianyang-Linie",
+        "lines15": "S15/Südost-Ringlinie",
+        "lines16": "S16/Meishan-Qingshen-Linie",
+        "lines17": "S17/Ziyang-West-Linie",
+        "lines18": "S18/Xinjin-Nord-Linie"
+      }
+    },
+    "hongkong": {
+      "displayName": "MTR-Stil (Hongkong)",
+      "components": {
+        "Arrow": {
+          "displayName": "Pfeil",
+          "props": {
+            "type": {
+              "displayName": "Richtung",
+              "up": "Oben",
+              "down": "Unten",
+              "left": "Links",
+              "right": "Rechts",
+              "up-left": "Oben links",
+              "up-right": "Oben rechts",
+              "down-left": "Unten links",
+              "down-right": "Unten rechts",
+              "turn-back": "Kehrtwende"
+            },
+            "background": "Hintergrundfarbe",
+            "foreground": "Vordergrundfarbe"
+          }
+        },
+        "Blank": {
+          "displayName": "Leerraum",
+          "props": {
+            "width": "Breite",
+            "background": "Hintergrundfarbe",
+            "foreground": "Vordergrundfarbe"
+          }
+        },
+        "Icon": {
+          "displayName": "Symbol",
+          "props": {
+            "icon": {
+              "displayName": "Symbol",
+              "noentry": "Kein Zutritt",
+              "airplane": "Flugzeug",
+              "airport_transfer": "Flughafen-Transfer",
+              "airport_express": "Airport Express",
+              "baggage_claim": "Gepäckausgabe",
+              "boat": "Fähre",
+              "cable_car": "Seilbahn",
+              "check_in": "Check-in",
+              "cross": "Kein Zutritt",
+              "customer_service_centre": "Kundenzentrum",
+              "emergency_exit": "Notausgang",
+              "escalator": "Rolltreppe",
+              "exit_1": "Ausgang (1)",
+              "exit_2": "Ausgang (2)",
+              "exit_3": "Ausgang (3)",
+              "female": "Weiblich",
+              "kcr": "KCR-Logo",
+              "lift_1": "Aufzug (1)",
+              "lift_2": "Aufzug (2)",
+              "light_rail_1": "Leichtbahn (1)",
+              "light_rail_2": "Leichtbahn (2)",
+              "light_rail_3": "Leichtbahn (3)",
+              "light_rail_4": "Leichtbahn (4)",
+              "male": "Männlich",
+              "mtr": "MTR-Logo",
+              "sp1900": "SP1900",
+              "stairs_down": "Treppe (abwärts)",
+              "stairs_up": "Treppe (aufwärts)",
+              "tickets": "Fahrkarten",
+              "toilets": "Toiletten",
+              "train": "Zug",
+              "train_old": "Zug (alt)",
+              "wheelchair": "Rollstuhl",
+              "wifi": "Wi-Fi",
+              "xrl_1": "Hochgeschwindigkeitszug (1)",
+              "xrl_2": "Hochgeschwindigkeitszug (2)",
+              "yellow_head_1": "Zugkopf (gelb 1)",
+              "yellow_head_2": "Zugkopf (gelb 2)"
+            },
+            "rotation": "Drehwinkel",
+            "background": "Hintergrundfarbe",
+            "foreground": "Vordergrundfarbe"
+          }
+        },
+        "Line": {
+          "displayName": "Linie",
+          "props": {
+            "chinese": "Chinesischer Name",
+            "english": "Englischer Name",
+            "lineColor": "Linienfarbe",
+            "background": "Hintergrundfarbe",
+            "align": {
+              "displayName": "Ausrichtung",
+              "left": "Links",
+              "right": "Rechts",
+              "center": "Mitte"
+            },
+            "foreground": "Vordergrundfarbe"
+          }
+        },
+        "Exit": {
+          "displayName": "Ausgangsnummer",
+          "props": {
+            "letter": "Buchstabe",
+            "num": "Zusatznummer",
+            "background": "Hintergrundfarbe"
+          }
+        },
+        "Spacing": {
+          "displayName": "Abstand",
+          "props": {
+            "background": "Hintergrundfarbe"
+          }
+        },
+        "SpecLine": {
+          "displayName": "Trennlinie",
+          "props": {
+            "background": "Hintergrundfarbe",
+            "foreground": "Vordergrundfarbe"
+          }
+        },
+        "Text": {
+          "displayName": "Text",
+          "props": {
+            "chinese": "Chinesischer Text",
+            "english": "Englischer Text",
+            "align": {
+              "displayName": "Ausrichtung",
+              "left": "Links",
+              "right": "Rechts",
+              "center": "Mitte"
+            },
+            "fontsize": {
+              "displayName": "Schriftgröße",
+              "small": "Klein",
+              "large": "Groß"
+            },
+            "background": "Hintergrundfarbe",
+            "foreground": "Vordergrundfarbe"
+          }
+        },
+        "StationName": {
+          "displayName": "Stationsname",
+          "props": {
+            "chinese": "Chinesischer Name",
+            "english": "Englischer Name",
+            "align": {
+              "displayName": "Ausrichtung",
+              "left": "Links",
+              "right": "Rechts"
+            },
+            "background": "Hintergrundfarbe",
+            "foreground": "Vordergrundfarbe"
+          }
+        },
+        "Platform": {
+          "displayName": "Bahnsteig",
+          "props": {
+            "color": "Linienfarbe",
+            "num": "Nummer",
+            "background": "Hintergrundfarbe"
+          }
+        }
+      },
+      "colors": {
+        "background": "Hintergrund",
+        "foreground": "Vordergrund",
+        "background2": "Hintergrund 2",
+        "foreground2": "Vordergrund 2",
+        "background3": "Hintergrund 3",
+        "foreground3": "Vordergrund 3",
+        "border": "Rahmenfarbe",
+        "specline": "Trennlinie",
+        "exitletter": "Ausgangsnummer",
+        "kwuntongline": "Kwun-Tong-Linie",
+        "tsuenwanline": "Tsuen-Wan-Linie",
+        "islandline": "Island-Linie",
+        "tungchungline": "Tung-Chung-Linie",
+        "tseungkwanoline": "Tseung-Kwan-O-Linie",
+        "eastrailline": "East-Rail-Linie",
+        "tuenmaline": "Tuen-Ma-Linie",
+        "disneyline": "Disneyland-Linie",
+        "southislandline": "South-Island-Linie",
+        "airportexpress": "Airport Express",
+        "highspeedrail": "Hochgeschwindigkeitsbahn",
+        "shenzhenmetro": "Shenzhen Metro",
+        "lightrail": "Leichtbahn",
+        "lr505": "Leichtbahn 505",
+        "lr507": "Leichtbahn 507",
+        "lr610": "Leichtbahn 610",
+        "lr614": "Leichtbahn 614",
+        "lr614p": "Leichtbahn 614P",
+        "lr615": "Leichtbahn 615",
+        "lr615p": "Leichtbahn 615P",
+        "lr705": "Leichtbahn 705",
+        "lr706": "Leichtbahn 706",
+        "lr751": "Leichtbahn 751",
+        "lr761p": "Leichtbahn 761P",
+        "np360": "Ngong Ping 360",
+        "tramways": "Hong Kong Tramways",
+        "northernlink": "Northern Link",
+        "eastkowloon": "East-Kowloon-Linie",
+        "southislandwest": "South-Island-Linie (West)"
+      }
+    },
+    "beijing": {
+      "displayName": "Peking (neu)",
+      "colors": {
+        "background": "Leinwandhintergrund",
+        "foreground": "Vordergrund",
+        "textblue": "Textblau",
+        "white": "Weiß",
+        "border": "Rahmen",
+        "specline": "Trennlinie (gelb)",
+        "divider": "Trennlinie (weiß)",
+        "facility": "Einrichtungen (hellblau)",
+        "facilityfemale": "Damentoilette (rosa)",
+        "exit": "Ausgangsgrün",
+        "prohibit": "Verbotsrot",
+        "aedsubstrate": "AED-Untergrund (orange)",
+        "line1": "Linie 1 / Batong-Linie",
+        "line2": "Linie 2",
+        "line3": "Linie 3",
+        "line4": "Linie 4 / Daxing-Linie",
+        "line5": "Linie 5",
+        "line6": "Linie 6",
+        "line7": "Linie 7",
+        "line8": "Linie 8",
+        "line9": "Linie 9",
+        "line10": "Linie 10",
+        "line11": "Linie 11",
+        "line12": "Linie 12",
+        "line13": "Linie 13",
+        "line14": "Linie 14",
+        "line15": "Linie 15",
+        "line16": "Linie 16",
+        "line17": "Linie 17",
+        "line18": "Linie 18",
+        "line19": "Linie 19",
+        "line22": "Linie 22",
+        "lineyizhuang": "Yizhuang-Linie",
+        "linefangshan": "Fangshan-Linie / Yanfang-Linie",
+        "lines1": "S1-Linie",
+        "linechangping": "Changping-Linie",
+        "line28": "Linie 28",
+        "linexijiao": "Xijiao-Linie / Yizhuang-T1-Linie",
+        "linecapitalairport": "Capital-Airport-Express",
+        "linedaxingairport": "Daxing-Airport-Express",
+        "linetram": "Straßenbahn"
+      },
+      "components": {
+        "Text": {
+          "displayName": "Text",
+          "props": {
+            "chinese": "Chinesisch",
+            "english": "Englisch",
+            "weight": {
+              "normal": "Normal",
+              "medium": "Mittel",
+              "bold": "Fett",
+              "displayName": "Schriftstärke"
+            },
+            "letterSpacing": "Zeichenabstand",
+            "fontSizeZh": "Chinesische Schriftgröße",
+            "fontSizeEn": "Englische Schriftgröße",
+            "lineGap": "Abstand Chinesisch/Englisch",
+            "align": {
+              "left": "Links",
+              "center": "Mitte",
+              "right": "Rechts",
+              "displayName": "Ausrichtung"
+            },
+            "foreground": "Vordergrundfarbe",
+            "background": "Hintergrundfarbe (1. Zeile)",
+            "background2": "Hintergrundfarbe (2. Zeile)"
+          }
+        },
+        "SpecLine": {
+          "displayName": "Trennlinie",
+          "props": {
+            "width": "Linienbreite",
+            "foreground": "Vordergrundfarbe",
+            "background": "Hintergrundfarbe (1. Zeile)",
+            "background2": "Hintergrundfarbe (2. Zeile)"
+          }
+        },
+        "Spacing": {
+          "displayName": "Abstand",
+          "props": {
+            "background": "Hintergrundfarbe (1. Zeile)",
+            "background2": "Hintergrundfarbe (2. Zeile)"
+          }
+        },
+        "Blank": {
+          "displayName": "Leerraum",
+          "props": {
+            "width": "Breite",
+            "background": "Hintergrundfarbe (1. Zeile)",
+            "background2": "Hintergrundfarbe (2. Zeile)"
+          }
+        },
+        "LineNum": {
+          "displayName": "Linienplatte",
+          "props": {
+            "lineId": "Liniennummer",
+            "colorKey": {
+              "displayName": "Linienfarbe"
+            },
+            "textZh": "Chinesischer Text",
+            "textEn": "Englischer Text",
+            "size": {
+              "displayName": "Größe"
+            },
+            "extendLeft": "Linke Blockverlängerung",
+            "extendRight": "Rechte Blockverlängerung",
+            "foreground": "Vordergrundfarbe",
+            "background": "Hintergrundfarbe (1. Zeile)",
+            "background2": "Hintergrundfarbe (2. Zeile)"
+          }
+        },
+        "Arrow": {
+          "displayName": "Pfeil",
+          "props": {
+            "direction": {
+              "displayName": "Richtung"
+            },
+            "showText": "Text anzeigen",
+            "textZh": "Chinesischer Text",
+            "textEn": "Englischer Text",
+            "align": {
+              "displayName": "Ausrichtung"
+            },
+            "foreground": "Vordergrundfarbe",
+            "background": "Hintergrundfarbe (1. Zeile)",
+            "background2": "Hintergrundfarbe (2. Zeile)"
+          }
+        },
+        "TrainDirection": {
+          "displayName": "Fahrtrichtung",
+          "props": {
+            "prefixZh": "Chinesisches Präfix",
+            "prefixEn": "Englisches Präfix",
+            "destinationZh": "Ziel (Chinesisch)",
+            "destinationEn": "Ziel (Englisch)",
+            "align": {
+              "displayName": "Ausrichtung"
+            },
+            "foreground": "Vordergrundfarbe",
+            "background": "Hintergrundfarbe (1. Zeile)",
+            "background2": "Hintergrundfarbe (2. Zeile)"
+          }
+        },
+        "LoopNextStation": {
+          "displayName": "Ringlinie: nächste Station",
+          "props": {
+            "nextZh": "„Nächste Station“ Chinesisch",
+            "nextEn": "„Nächste Station“ Englisch",
+            "stationZh": "Stationsname (Chinesisch)",
+            "stationEn": "Stationsname (Englisch)",
+            "align": {
+              "displayName": "Ausrichtung"
+            },
+            "foreground": "Vordergrundfarbe",
+            "background": "Hintergrundfarbe (1. Zeile)",
+            "background2": "Hintergrundfarbe (2. Zeile)"
+          }
+        },
+        "DualText": {
+          "displayName": "Zweizeiliger Text",
+          "props": {
+            "line1chinese": "Zeile 1 Chinesisch",
+            "line1english": "Zeile 1 Englisch",
+            "line2chinese": "Zeile 2 Chinesisch",
+            "line2english": "Zeile 2 Englisch",
+            "align": {
+              "displayName": "Ausrichtung"
+            },
+            "weight": {
+              "displayName": "Schriftstärke"
+            },
+            "letterSpacing": "Zeichenabstand",
+            "foreground": "Vordergrundfarbe",
+            "background": "Hintergrundfarbe (1. Zeile)",
+            "background2": "Hintergrundfarbe (2. Zeile)"
+          }
+        },
+        "ExitNum": {
+          "displayName": "Ausgangsnummer",
+          "props": {
+            "exits": "Ausgangsnummern",
+            "exitLetter": "Buchstabe",
+            "exitNumber": "Zusatzziffer",
+            "directions": {
+              "displayName": "Himmelsrichtung"
+            },
+            "textZh": "Chinesischer Text",
+            "textEn": "Englischer Text",
+            "foreground": "Vordergrundfarbe",
+            "background": "Hintergrundfarbe (1. Zeile)",
+            "background2": "Hintergrundfarbe (2. Zeile)"
+          }
+        },
+        "Icon": {
+          "displayName": "Symbol",
+          "props": {
+            "icon": {
+              "displayName": "Symbol",
+              "escalator_left": "Rolltreppe (links)",
+              "stairs_left": "Treppe (links)",
+              "restroom": "Toilette",
+              "restroom_accessible": "Barrierefreie Toilette",
+              "elevator": "Aufzug",
+              "elevator_accessible": "Barrierefreier Aufzug",
+              "accessibility": "Barrierefreiheit",
+              "nursing_room": "Mutter-Kind-Raum",
+              "aed": "AED",
+              "restroom_third": "Toilette für alle",
+              "restroom_men": "Herrentoilette",
+              "restroom_women": "Damentoilette",
+              "guide_dog": "Blindenhunde willkommen",
+              "no_entry_dark": "Kein Zutritt",
+              "no_entry_light": "Kein Zutritt (heller Grund)",
+              "escalator_right": "Rolltreppe (rechts)",
+              "stairs_right": "Treppe (rechts)",
+              "ticket_vending": "Fahrkartenautomat",
+              "ticket_service": "Fahrkarten/Nachzahlung",
+              "inquiry": "Auskunft",
+              "customer_service": "Kundenzentrum",
+              "police": "Polizeiwache",
+              "help_button": "Hilfetaste",
+              "security_check": "Sicherheitskontrolle (Personen)",
+              "luggage_check": "Sicherheitskontrolle (Gepäck)",
+              "ramp": "Barrierefreie Rampe",
+              "lifting_platform": "Hubplattform",
+              "accessibility_white": "Barrierefreiheit (weiß)",
+              "elderly": "Senioren",
+              "stroller": "Mit Kinderwagen",
+              "pregnant": "Schwangere",
+              "luggage": "Mit Gepäck",
+              "brush_beijing": "Pinsel-Peking",
+              "city_gate": "Stadttor-Silhouette",
+              "metro_a": "Peking Metro A",
+              "metro_b": "Peking Metro B",
+              "prohibited": "Verboten"
+            },
+            "rotation": {
+              "displayName": "Drehung"
+            },
+            "flipH": "Horizontal spiegeln",
+            "flipV": "Vertikal spiegeln",
+            "foreground": "Vordergrundfarbe (Gruppe Weiß/Sonstige)",
+            "background": "Hintergrundfarbe",
+            "background2": "Hintergrundfarbe (2. Zeile)"
+          }
+        },
+        "ExitIcon": {
+          "displayName": "Ausgangssymbol",
+          "props": {
+            "variant": {
+              "displayName": "Form"
+            },
+            "padding": {
+              "displayName": "Innenabstand"
+            },
+            "background": "Hintergrundfarbe",
+            "background2": "Hintergrundfarbe (2. Zeile)"
+          }
+        }
+      },
+      "common": {
+        "weight": {
+          "normal": "Normal",
+          "medium": "Mittel",
+          "bold": "Fett"
+        },
+        "size": {
+          "default": "Standard",
+          "small": "Klein (weiter Abstand)"
+        },
+        "direction": {
+          "left": "Links",
+          "right": "Rechts",
+          "up": "Oben",
+          "down": "Unten",
+          "up-left": "Oben links",
+          "up-right": "Oben rechts",
+          "down-left": "Unten links",
+          "down-right": "Unten rechts",
+          "uturn-left": "Kehrtwende links",
+          "uturn-right": "Kehrtwende rechts",
+          "back-left": "Hinten links",
+          "back-right": "Hinten rechts"
+        },
+        "align": {
+          "left": "Links",
+          "center": "Mitte",
+          "right": "Rechts"
+        },
+        "direction4": {
+          "east": "Osten",
+          "west": "Westen",
+          "south": "Süden",
+          "north": "Norden"
+        },
+        "padding": {
+          "none": "Ohne Innenabstand",
+          "inset": "Mit Innenabstand"
+        },
+        "exitVariant": {
+          "exitA": "Ausgang A",
+          "exitB": "Ausgang B",
+          "exitC": "Ausgang C",
+          "exitLongA": "Ausgang lang A",
+          "exitLongB": "Ausgang lang B",
+          "emergency": "Notausgang"
+        }
+      }
+    },
+    "beijingOld": {
+      "displayName": "Peking (klassisch)",
+      "colors": {
+        "background": "Leinwandhintergrund",
+        "foreground": "Vordergrund",
+        "textblue": "Textblau",
+        "white": "Weiß",
+        "border": "Rahmen",
+        "divider": "Trennlinie",
+        "exit": "Ausgangsgrün",
+        "prohibit": "Verbotsrot",
+        "line1": "Linie 1 / Batong-Linie",
+        "line2": "Linie 2",
+        "line3": "Linie 3",
+        "line4": "Linie 4 / Daxing-Linie",
+        "line5": "Linie 5",
+        "line6": "Linie 6",
+        "line7": "Linie 7",
+        "line8": "Linie 8",
+        "line9": "Linie 9",
+        "line10": "Linie 10",
+        "line11": "Linie 11",
+        "line12": "Linie 12",
+        "line13": "Linie 13",
+        "line14": "Linie 14",
+        "line15": "Linie 15",
+        "line16": "Linie 16",
+        "line17": "Linie 17",
+        "line18": "Linie 18",
+        "line19": "Linie 19",
+        "line22": "Linie 22",
+        "line28": "Linie 28",
+        "lineyizhuang": "Yizhuang-Linie",
+        "linefangshan": "Fangshan-Linie / Yanfang-Linie",
+        "lines1": "S1-Linie",
+        "linechangping": "Changping-Linie",
+        "linexijiao": "Xijiao-Linie / Yizhuang-T1-Linie",
+        "linecapitalairport": "Capital-Airport-Express",
+        "linedaxingairport": "Daxing-Airport-Express"
+      },
+      "common": {
+        "weight": {
+          "normal": "Normal",
+          "medium": "Mittel",
+          "bold": "Fett"
+        },
+        "direction": {
+          "left": "Links",
+          "right": "Rechts",
+          "up": "Oben",
+          "down": "Unten",
+          "up-left": "Oben links",
+          "up-right": "Oben rechts",
+          "down-left": "Unten links",
+          "down-right": "Unten rechts",
+          "uturn-left": "Kehrtwende links",
+          "uturn-right": "Kehrtwende rechts",
+          "back-left": "Hinten links",
+          "back-right": "Hinten rechts"
+        },
+        "direction4": {
+          "east": "Osten",
+          "west": "Westen",
+          "south": "Süden",
+          "north": "Norden"
+        },
+        "align": {
+          "left": "Links",
+          "center": "Mitte",
+          "right": "Rechts"
+        },
+        "size": {
+          "default": "Standard",
+          "small": "Klein (weiter Abstand)"
+        },
+        "padding": {
+          "none": "Ohne Innenabstand",
+          "inset": "Mit Innenabstand"
+        },
+        "none": "Keine",
+        "toTrainVariant": {
+          "solid": "Ausgefüllt",
+          "outline": "Umriss"
+        },
+        "exitVariant": {
+          "single": "Einzeln",
+          "double": "Zwei Zeilen"
+        }
+      },
+      "components": {
+        "Text": {
+          "displayName": "Text",
+          "props": {
+            "chinese": "Chinesisch",
+            "english": "Englisch",
+            "weight": {
+              "normal": "Normal",
+              "medium": "Mittel",
+              "bold": "Fett",
+              "displayName": "Schriftstärke"
+            },
+            "letterSpacing": "Zeichenabstand",
+            "fontSizeZh": "Chinesische Schriftgröße",
+            "fontSizeEn": "Englische Schriftgröße",
+            "lineGap": "Abstand Chinesisch/Englisch",
+            "align": {
+              "left": "Links",
+              "center": "Mitte",
+              "right": "Rechts",
+              "displayName": "Ausrichtung"
+            },
+            "foreground": "Vordergrundfarbe",
+            "background": "Hintergrundfarbe"
+          }
+        },
+        "SpecLine": {
+          "displayName": "Trennlinie",
+          "props": {
+            "width": "Linienbreite",
+            "foreground": "Vordergrundfarbe",
+            "background": "Hintergrundfarbe"
+          }
+        },
+        "Spacing": {
+          "displayName": "Abstand",
+          "props": {
+            "background": "Hintergrundfarbe"
+          }
+        },
+        "Blank": {
+          "displayName": "Leerraum",
+          "props": {
+            "width": "Breite",
+            "background": "Hintergrundfarbe"
+          }
+        },
+        "Arrow": {
+          "displayName": "Pfeil",
+          "props": {
+            "direction": {
+              "displayName": "Richtung"
+            },
+            "foreground": "Vordergrundfarbe",
+            "background": "Hintergrundfarbe"
+          }
+        },
+        "Line": {
+          "displayName": "Linienplatte",
+          "props": {
+            "lineId": "Liniennummer",
+            "colorKey": {
+              "displayName": "Linienfarbe"
+            },
+            "textZh": "Chinesischer Text",
+            "textEn": "Englischer Text",
+            "size": {
+              "displayName": "Größe"
+            },
+            "foreground": "Vordergrundfarbe",
+            "background": "Hintergrundfarbe"
+          }
+        },
+        "ToTrain": {
+          "displayName": "Zug-Symbol",
+          "props": {
+            "variant": {
+              "displayName": "Form"
+            },
+            "foreground": "Vordergrundfarbe",
+            "plateColor": "Blockfarbe",
+            "strokeColor": "Konturfarbe",
+            "background": "Hintergrundfarbe"
+          }
+        },
+        "DualText": {
+          "displayName": "Zweizeiliger Text",
+          "props": {
+            "line1chinese": "Zeile 1 Chinesisch",
+            "line1english": "Zeile 1 Englisch",
+            "line2chinese": "Zeile 2 Chinesisch",
+            "line2english": "Zeile 2 Englisch",
+            "showEn": "Englisch in der Zeile anzeigen",
+            "align": {
+              "displayName": "Ausrichtung"
+            },
+            "weight": {
+              "displayName": "Schriftstärke"
+            },
+            "letterSpacing": "Zeichenabstand",
+            "foreground": "Vordergrundfarbe",
+            "background": "Hintergrundfarbe"
+          }
+        },
+        "ExitLetter": {
+          "displayName": "Ausgangsbuchstaben",
+          "props": {
+            "exits": "Ausgangsnummern",
+            "exitLetter": "Buchstabe",
+            "variant": {
+              "displayName": "Form"
+            },
+            "foreground": "Vordergrundfarbe",
+            "background": "Hintergrundfarbe"
+          }
+        },
+        "StationSign": {
+          "displayName": "Stationsname",
+          "props": {
+            "nameZh": "Zeile 1 Chinesisch",
+            "nameEn": "Zeile 1 Englisch",
+            "showLogo": "Metro-Logo",
+            "foreground": "Vordergrundfarbe",
+            "background": "Hintergrundfarbe"
+          }
+        },
+        "Icon": {
+          "displayName": "Symbol",
+          "props": {
+            "icon": {
+              "displayName": "Symbol",
+              "escalator_right": "Rolltreppe (rechts)",
+              "stairs_right": "Treppe (rechts)",
+              "ticket_vending": "Fahrkartenautomat",
+              "ticket_service": "Fahrkarten/Nachzahlung",
+              "inquiry": "Auskunft",
+              "customer_service": "Kundenzentrum",
+              "police": "Polizeiwache",
+              "help_button": "Hilfetaste",
+              "security_check": "Sicherheitskontrolle (Personen)",
+              "luggage_check": "Sicherheitskontrolle (Gepäck)",
+              "ramp": "Barrierefreie Rampe",
+              "lifting_platform": "Hubplattform",
+              "accessibility_white": "Barrierefreiheit (weiß)",
+              "elderly": "Senioren",
+              "stroller": "Mit Kinderwagen",
+              "pregnant": "Schwangere",
+              "luggage": "Mit Gepäck",
+              "gate_arrow_down": "Schrankendurchgang (Pfeil nach unten)",
+              "no_entry_cross": "Kein Zutritt (Kreuz)",
+              "no_entry_cross_framed": "Kein Zutritt (gerahmt)"
+            },
+            "rotation": {
+              "displayName": "Drehung"
+            },
+            "flipH": "Horizontal spiegeln",
+            "flipV": "Vertikal spiegeln",
+            "foreground": "Vordergrundfarbe",
+            "background": "Hintergrundfarbe"
+          }
+        },
+        "ExitIcon": {
+          "displayName": "Ausgangssymbol",
+          "props": {
+            "padding": {
+              "displayName": "Innenabstand"
+            },
+            "background": "Hintergrundfarbe"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,1477 @@
+{
+  "zoom": {
+    "label": "縮放：",
+    "fit": "啱晒畫板",
+    "reset": "重設做 100%"
+  },
+  "title": "MoeRT-GuideGen",
+  "componentsList": {
+    "title": "元件列表",
+    "drag": "拖去右邊就加到元件",
+    "dropToDelete": "拖到呢度就刪咗佢",
+    "theme": "主題",
+    "themeChange": {
+      "title": "確認轉主題",
+      "confirm": "轉主題會清空晒而家個畫布，確定要繼續？",
+      "dialog": {
+        "confirm": "確定",
+        "cancel": "取消"
+      }
+    },
+    "boardBackground": "底板背景色",
+    "boardBackgroundReset": "清空",
+    "boardForeground": "預設前景色",
+    "boardForegroundReset": "清空",
+    "clearCanvas": {
+      "button": "清空畫布",
+      "title": "確認清空畫布",
+      "confirm": "呢個操作會清空晒而家個畫布上面所有嘢，而且還原唔返，確定要繼續？"
+    }
+  },
+  "board": {
+    "emptyRowHint": "拖啲元件嚟呢行",
+    "showItemFrame": "元件虛線框",
+    "width": "寬度",
+    "showDividers": "顯示分隔線",
+    "removeRow": {
+      "title": "刪咗呢行",
+      "confirm": "真係要刪咗呢行？行入面啲元件會一齊冇埋。",
+      "ok": "刪除",
+      "cancel": "取消"
+    }
+  },
+  "exportDialog": {
+    "title": "匯出指示牌",
+    "width": "寬度 (像素)",
+    "height": "高度 (像素)",
+    "keepRatio": "保持等比例",
+    "export": "匯出",
+    "exporting": "匯出緊...",
+    "cancel": "取消",
+    "error": {
+      "noElement": "搵唔到指示牌元素",
+      "exportFailed": "匯出失敗："
+    },
+    "success": "匯出成功喇！"
+  },
+  "saves": {
+    "clear_local_button": "清除全部存檔",
+    "restore_failed": "而家個存檔裏面嘅元件同而家嘅主題對唔上，所以暫停咗自動儲存嚟保住佢。你可以入去存檔管理轉去第個存檔，或者刪除／下載呢個存檔；其他存檔唔受影響。",
+    "open_archives": "入去存檔管理",
+    "clear_local_title": "清除全部存檔",
+    "clear_local_confirm": "確定要清除全部本機存檔再重新載入頁面？所有存檔都會冇晒，冇得復原。",
+    "export_image": "匯出做圖片",
+    "save_project": "儲存專案到本機",
+    "load_project": "匯入專案",
+    "undo": "復原",
+    "redo": "重做",
+    "autosave": {
+      "success": "已經自動儲存咗",
+      "error": "自動儲存唔到"
+    },
+    "import": {
+      "success": "已經匯入咗",
+      "error": "匯入唔到",
+      "unsupportedVersion": "唔支援嘅存檔版本",
+      "unsupportedTheme": "存檔用嘅主題喺呢個版本度搵唔到",
+      "created": "匯入咗，已經存成存檔「{{name}}」",
+      "bundleCreated_other": "匯入咗 {{count}} 個存檔"
+    },
+    "export": {
+      "success": "存檔已經匯出咗"
+    },
+    "restore_failed_title": "存檔載入唔到",
+    "reset_archive": "重設存檔",
+    "download_archive": "下載存檔備份",
+    "reset_confirm_title": "確定要重設存檔？",
+    "reset_confirm_content": "重設會清空而家個存檔嘅畫板內容，再重新載入頁面；呢個操作還原唔返（建議先下載備份），其他存檔唔受影響。",
+    "archives": {
+      "title": "存檔管理",
+      "menuHint": "而家嘅存檔：{{name}}",
+      "hint": "撳一下個存檔就切換到，所有改動都會自動儲存喺而家個存檔度。",
+      "new": "新增存檔",
+      "importSave": "匯入存檔",
+      "defaultName": "存檔 {{index}}",
+      "legacyName": "我嘅存檔",
+      "untitled": "未命名存檔",
+      "copySuffix": "副本",
+      "rename": "重新命名",
+      "renamePlaceholder": "輸入存檔名稱",
+      "duplicate": "建立副本",
+      "download": "下載呢個存檔",
+      "delete": "刪除存檔",
+      "load": "切換到呢個存檔",
+      "current": "用緊",
+      "meta": "{{rows}} 行 · {{items}} 個元件",
+      "updatedAt": "{{time}} 更新",
+      "switchSuccess": "轉咗去「{{name}}」",
+      "switchFailed": "存檔載入唔到（原本個存檔冇事）",
+      "createSuccess": "開咗個新存檔「{{name}}」",
+      "renameSuccess": "存檔改咗名",
+      "duplicateSuccess": "整咗個副本「{{name}}」",
+      "deleteSuccess": "刪咗「{{name}}」",
+      "deleteConfirmTitle": "確定刪除呢個存檔？",
+      "deleteConfirmContent": "「{{name}}」會永久刪除，冇得復原。",
+      "deleteActiveConfirmContent": "「{{name}}」係你而家編輯緊嘅存檔，刪咗佢之後會自動轉去另一個存檔，冇得復原。",
+      "deleteLastContent": "「{{name}}」係最後一個存檔，刪咗佢之後會自動開一個新嘅空存檔。",
+      "downloadSuccess": "存檔已經下載咗",
+      "storageHint": "存檔只係放喺而家呢個瀏覽器嘅本機儲存度，清咗瀏覽器資料或者換咗裝置就救唔返，記得定時下載備份。",
+      "saveFailedQuota": "瀏覽器本機儲存空間唔夠，存檔儲存唔到。請先下載備份或者刪咗啲舊存檔。",
+      "clearAll": "清除全部存檔",
+      "clearAllConfirmTitle": "清除全部存檔？",
+      "clearAllConfirmContent": "所有本機存檔都會永久刪除，頁面亦會重新載入，冇得復原。",
+      "cancel": "取消",
+      "empty": "仲未有存檔",
+      "unknownTheme": "未知主題",
+      "exportAll": "匯出全部存檔（zip）",
+      "exportAllEmpty": "冇存檔可以匯出",
+      "exportAllSuccess_other": "匯出咗 {{count}} 個存檔"
+    }
+  },
+  "loading": {
+    "message": "應用程式載入緊...",
+    "fonts": "字型載入緊...",
+    "archive": "存檔載入緊..."
+  },
+  "editor": {
+    "title": "編輯元件",
+    "delete": "刪除元件",
+    "board": {
+      "title": "編輯導向牌",
+      "backgroundColor": "背景顏色"
+    },
+    "tabConflict": {
+      "title": "編輯器已經喺另一個分頁開咗",
+      "body": "為咗唔會兩個分頁互相蓋過存檔，同一時間只准一個分頁做編輯。請先閂咗另一個分頁，再撳下面嘅掣返去編輯器。",
+      "refresh": "已經閂咗另一個分頁，重新載入呢頁"
+    },
+    "followTheme": "跟隨主題預設"
+  },
+  "theme": {
+    "toDark": "轉去深色模式",
+    "toLight": "轉去淺色模式"
+  },
+  "themes": {
+    "chongqing": {
+      "displayName": "重慶軌道交通風格",
+      "components": {
+        "Arrow": {
+          "displayName": "箭頭",
+          "props": {
+            "type": {
+              "displayName": "方向",
+              "up": "上",
+              "down": "下",
+              "left": "左",
+              "right": "右",
+              "up-left": "左上",
+              "up-right": "右上",
+              "down-left": "左下",
+              "down-right": "右下",
+              "ahead-left": "前方往左",
+              "ahead-right": "前方往右",
+              "back-left": "左行向後",
+              "back-right": "右行向後"
+            },
+            "background": "背景色",
+            "foreground": "前景色"
+          }
+        },
+        "Blank": {
+          "displayName": "空格",
+          "props": {
+            "width": "寬度",
+            "background": "背景色",
+            "foreground": "前景色"
+          }
+        },
+        "Icon": {
+          "displayName": "圖標",
+          "props": {
+            "icon": {
+              "displayName": "圖標",
+              "train": "乘車",
+              "metro": "地鐵",
+              "monorail": "單軌",
+              "ct": "重慶鐵路集團",
+              "crt": "重慶軌道交通",
+              "cr": "國鐵",
+              "elevator": "無障礙升降機",
+              "waitingroom": "等候室",
+              "toilet": "衛生間",
+              "men": "男衛生間",
+              "women": "女衛生間",
+              "thirdtoilet": "第三衛生間",
+              "men_color": "男衛生間（彩色）",
+              "women_color": "女衛生間（彩色）",
+              "toilet_color": "衛生間（彩色）",
+              "thirdtoilet_color": "第三衛生間（彩色）",
+              "ticket_machine": "自助售票/加值",
+              "check_in": "自助檢票",
+              "exit1": "出口（1）",
+              "exit2": "出口（2）",
+              "coach": "長途客車",
+              "bus": "巴士",
+              "parking": "停車場",
+              "emergency_exit": "緊急出口",
+              "escalator": "扶手電梯",
+              "maimai": "舞萌",
+              "no_entry": "禁止通行",
+              "nursing_room": "哺乳室",
+              "stairs": "樓梯",
+              "taxi": "的士",
+              "tickets": "售票/加值",
+              "airport": "機場"
+            },
+            "rotation": "旋轉角度",
+            "background": "背景色",
+            "foreground": "前景色"
+          }
+        },
+        "LineNum": {
+          "displayName": "數字線路",
+          "props": {
+            "num": "線路編號",
+            "customChinese": "自訂中文文字",
+            "customEnglish": "自訂英文文字",
+            "align": {
+              "displayName": "對齊",
+              "left": "左",
+              "right": "右（1）",
+              "right2": "右（2）"
+            },
+            "lineColor": "線路顏色",
+            "showText": "要唔要顯示後面嘅字",
+            "showRect": "要唔要顯示色塊",
+            "rectMode": {
+              "displayName": "色塊",
+              "default": "預設",
+              "narrow": "窄"
+            },
+            "foreground": "前景色",
+            "background": "背景色"
+          }
+        },
+        "LineText": {
+          "displayName": "文字線路",
+          "props": {
+            "chinese": "中文名",
+            "english": "英文名",
+            "align": {
+              "displayName": "對齊",
+              "left": "左",
+              "right": "右"
+            },
+            "digitMode": {
+              "displayName": "數字行為",
+              "prominent": "突出",
+              "flat": "持平"
+            },
+            "rectMode": {
+              "displayName": "色塊寬度",
+              "default": "預設",
+              "narrow": "窄"
+            },
+            "lineColor": "線路顏色",
+            "foreground": "前景色",
+            "background": "背景色"
+          }
+        },
+        "NumAlphabet": {
+          "displayName": "數字/字母",
+          "props": {
+            "text": "文字",
+            "background": "背景色",
+            "foreground": "前景色",
+            "type": {
+              "displayName": "寬度類型",
+              "fit": "最窄",
+              "block": "塊"
+            }
+          }
+        },
+        "Spacing": {
+          "displayName": "間距",
+          "props": {
+            "background": "背景色"
+          }
+        },
+        "SpecLine": {
+          "displayName": "分隔線",
+          "props": {
+            "background": "背景色",
+            "foreground": "前景色"
+          }
+        },
+        "StationName": {
+          "displayName": "站名",
+          "props": {
+            "chinese": "中文名",
+            "english": "英文名",
+            "foreground": "前景色",
+            "background": "背景色"
+          }
+        },
+        "Text": {
+          "displayName": "文字",
+          "props": {
+            "chinese": "中文文字",
+            "english": "英文文字",
+            "align": {
+              "displayName": "對齊",
+              "left": "左",
+              "right": "右",
+              "center": "中"
+            },
+            "digitMode": {
+              "displayName": "數字行為",
+              "prominent": "突出",
+              "flat": "持平"
+            },
+            "background": "背景色",
+            "foreground": "前景色"
+          }
+        },
+        "DirectionLoop": {
+          "displayName": "方向（環綫）",
+          "props": {
+            "background": "背景色",
+            "foreground": "前景色",
+            "tochinese": "開往（中文）",
+            "toenglish": "開往（英文）",
+            "tipchinese": "上方提示（中文）",
+            "tipenglish": "上方提示（英文）",
+            "align": {
+              "displayName": "對齊",
+              "left": "左",
+              "right": "右"
+            }
+          }
+        },
+        "ExitName": {
+          "displayName": "出口名稱",
+          "props": {
+            "line1chinese": "第一行中文",
+            "line1english": "第一行英文",
+            "line2chinese": "第二行中文",
+            "line2english": "第二行英文",
+            "background": "背景色",
+            "foreground": "前景色",
+            "align": {
+              "displayName": "對齊",
+              "left": "左",
+              "right": "右",
+              "center": "中"
+            }
+          }
+        }
+      },
+      "colors": {
+        "foreground": "前景色",
+        "background": "背景色",
+        "exitforeground": "出口前景色",
+        "exitbackground": "出口背景色",
+        "facilityforeground": "設施前景色",
+        "facilitybackground": "設施背景色",
+        "specline": "分隔線",
+        "border": "邊框色",
+        "noentry": "禁止通行",
+        "lineloop": "環綫",
+        "line1": "1號綫",
+        "line2": "2號綫",
+        "line3": "3號綫",
+        "line4": "4號綫",
+        "line5": "5號綫",
+        "line6": "6號綫",
+        "line7": "7號綫",
+        "line8": "8號綫",
+        "line9": "9號綫",
+        "line10": "10號綫",
+        "line11": "11號綫",
+        "line12": "12號綫",
+        "line13": "13號綫",
+        "line14": "14號綫",
+        "line15": "15號綫",
+        "line16": "16號綫",
+        "line17": "17號綫",
+        "line18": "18號綫",
+        "line19": "19號綫",
+        "line20": "20號綫",
+        "line21": "21號綫",
+        "line22": "22號綫",
+        "line23": "23號綫",
+        "line24": "24號綫",
+        "line25": "25號綫",
+        "line26": "26號綫",
+        "line27": "27號綫",
+        "line28": "28號綫",
+        "line29": "29號綫",
+        "lineinternationalexpo": "國博綫",
+        "linekonggang": "空港綫",
+        "linejiangtiao": "江跳綫",
+        "linebitong": "璧銅綫",
+        "lineyongchuan": "永川綫",
+        "lineqiwan": "綦萬綫",
+        "linedazhu": "大足綫",
+        "linenanchuan": "南川綫",
+        "linechangfu": "長涪綫",
+        "trainrapid": "快速車",
+        "trainexpress": "直快車"
+      }
+    },
+    "chengdu": {
+      "displayName": "成都地鐵風格",
+      "components": {
+        "Arrow": {
+          "displayName": "箭頭",
+          "props": {
+            "type": {
+              "displayName": "方向",
+              "up": "上",
+              "down": "下",
+              "left": "左",
+              "right": "右",
+              "up-left": "左上",
+              "up-right": "右上",
+              "down-left": "左下",
+              "down-right": "右下",
+              "ahead-left": "前方往左",
+              "ahead-right": "前方往右",
+              "back-left": "左行向後",
+              "back-right": "右行向後"
+            },
+            "background": "背景色",
+            "foreground": "前景色"
+          }
+        },
+        "Blank": {
+          "displayName": "空格",
+          "props": {
+            "width": "寬度",
+            "background": "背景色",
+            "foreground": "前景色"
+          }
+        },
+        "Icon": {
+          "displayName": "圖標",
+          "props": {
+            "icon": {
+              "displayName": "圖標",
+              "train": "乘車",
+              "cdrt": "成都地鐵",
+              "exit1": "出口（1）",
+              "exit2": "出口（2）",
+              "elevator": "無障礙升降機",
+              "waitingroom": "等候室",
+              "toilet": "衛生間",
+              "ticket_machine": "自助售票/加值",
+              "check_in": "自助檢票",
+              "coach": "長途客車",
+              "bus": "巴士",
+              "parking": "停車場",
+              "cr": "國鐵",
+              "men": "男衛生間",
+              "women": "女衛生間",
+              "thirdtoilet": "第三衛生間",
+              "men_color": "男衛生間（彩色）",
+              "women_color": "女衛生間（彩色）",
+              "toilet_color": "衛生間（彩色）",
+              "thirdtoilet_color": "第三衛生間（彩色）",
+              "emergency_exit": "緊急出口",
+              "escalator": "扶手電梯",
+              "maimai": "舞萌",
+              "no_entry": "禁止通行",
+              "nursing_room": "哺乳室",
+              "stairs": "樓梯",
+              "taxi": "的士",
+              "tickets": "售票/加值",
+              "airport": "機場"
+            },
+            "background": "背景色",
+            "foreground": "前景色",
+            "rotation": "旋轉角度"
+          }
+        },
+        "LineNum": {
+          "displayName": "數字線路",
+          "props": {
+            "num": "線路編號",
+            "customChinese": "自訂中文文字",
+            "customEnglish": "自訂英文文字",
+            "align": {
+              "displayName": "對齊",
+              "left": "左",
+              "right": "右"
+            },
+            "lineColor": "線路顏色",
+            "showText": "要唔要顯示後面嘅字",
+            "showRect": "要唔要顯示色塊",
+            "rectMode": {
+              "displayName": "色塊",
+              "default": "預設",
+              "narrow": "窄"
+            },
+            "foreground": "前景色",
+            "background": "背景色"
+          }
+        },
+        "LineText": {
+          "displayName": "文字線路",
+          "props": {
+            "chinese": "中文名",
+            "english": "英文名",
+            "align": {
+              "displayName": "對齊",
+              "left": "左",
+              "right": "右"
+            },
+            "rectMode": {
+              "displayName": "色塊寬度",
+              "default": "預設",
+              "narrow": "窄"
+            },
+            "lineColor": "線路顏色",
+            "foreground": "前景色",
+            "background": "背景色"
+          }
+        },
+        "NumAlphabet": {
+          "displayName": "數字/字母",
+          "props": {
+            "text": "文字",
+            "background": "背景色",
+            "foreground": "前景色",
+            "type": {
+              "displayName": "寬度類型",
+              "fit": "最窄",
+              "block": "塊"
+            }
+          }
+        },
+        "Spacing": {
+          "displayName": "間距",
+          "props": {
+            "background": "背景色"
+          }
+        },
+        "SpecLine": {
+          "displayName": "分隔線",
+          "props": {
+            "background": "背景色",
+            "foreground": "前景色"
+          }
+        },
+        "StationName": {
+          "displayName": "站名",
+          "props": {
+            "chinese": "中文名",
+            "english": "英文名",
+            "foreground": "前景色",
+            "background": "背景色"
+          }
+        },
+        "Text": {
+          "displayName": "文字",
+          "props": {
+            "chinese": "中文文字",
+            "english": "英文文字",
+            "align": {
+              "displayName": "對齊",
+              "left": "左",
+              "right": "右",
+              "center": "中"
+            },
+            "background": "背景色",
+            "foreground": "前景色"
+          }
+        },
+        "StationNumber": {
+          "displayName": "車站編號",
+          "props": {
+            "color": "線路色",
+            "lineNum": "線路編號",
+            "stationNum": "車站編號",
+            "lines": "線路列表",
+            "foreground": "前景色",
+            "background": "背景色"
+          }
+        },
+        "Direction": {
+          "displayName": "方向",
+          "props": {
+            "background": "背景色",
+            "foreground": "前景色",
+            "tochinese": "開往（中文）",
+            "toenglish": "開往（英文）",
+            "viachinese": "經（中文）",
+            "viaenglish": "經（英文）",
+            "align": {
+              "displayName": "對齊",
+              "left": "左",
+              "right": "右"
+            }
+          }
+        },
+        "TwoRowContainer": {
+          "displayName": "雙行容器",
+          "props": {
+            "minWidth": "最小寬度",
+            "background": "背景色"
+          }
+        },
+        "ExitName": {
+          "displayName": "出口名稱",
+          "props": {
+            "line1chinese": "第一行中文",
+            "line1english": "第一行英文",
+            "line2chinese": "第二行中文",
+            "line2english": "第二行英文",
+            "background": "背景色",
+            "foreground": "前景色",
+            "align": {
+              "displayName": "對齊",
+              "left": "左",
+              "right": "右",
+              "center": "中"
+            }
+          }
+        }
+      },
+      "colors": {
+        "foreground": "前景色",
+        "background": "背景色",
+        "exitforeground": "出口前景色",
+        "exitbackground": "出口背景色",
+        "specline": "分隔線",
+        "border": "邊框色",
+        "noentry": "禁止通行",
+        "pass": "可通行",
+        "line1": "1號綫",
+        "line2": "2號綫",
+        "line3": "3號綫",
+        "line4": "4號綫",
+        "line5": "5號綫",
+        "line6": "6號綫",
+        "line7": "7號綫",
+        "line8": "8號綫",
+        "line9": "9號綫",
+        "line10": "10號綫",
+        "line11": "11號綫",
+        "line12": "12號綫",
+        "line13": "13號綫",
+        "line14": "14號綫",
+        "line15": "15號綫",
+        "line16": "16號綫",
+        "line17": "17號綫",
+        "line18": "18號綫",
+        "line19": "19號綫",
+        "line20": "20號綫",
+        "line21": "21號綫",
+        "line22": "22號綫",
+        "line23": "23號綫",
+        "line24": "24號綫",
+        "line25": "25號綫",
+        "line26": "26號綫",
+        "line27": "27號綫",
+        "line28": "28號綫",
+        "line29": "29號綫",
+        "line30": "30號綫",
+        "line32": "32號綫",
+        "line33": "33號綫",
+        "linet2": "有軌電車蓉2號綫",
+        "lines1": "S1/新都金堂綫",
+        "lines2": "S2/金堂空港綫",
+        "lines3": "S3/資陽東綫",
+        "lines4": "S4/龍泉驛淮州綫",
+        "lines5": "S5/眉山任壽綫",
+        "lines6": "S6/新津蒲江綫",
+        "lines7": "S7/新津南綫",
+        "lines8": "S8/新津安仁綫",
+        "lines9": "S9/溫江都江堰綫",
+        "lines10": "S10/新都廣漢綫",
+        "lines11": "S11/德陽羅江綫",
+        "lines12": "S12/成華旌陽綫",
+        "lines13": "S13/龍泉天府機場綫",
+        "lines14": "S14/天府簡陽綫",
+        "lines15": "S15/東南環綫",
+        "lines16": "S16/眉山青神綫",
+        "lines17": "S17/資陽西綫",
+        "lines18": "S18/新津北綫"
+      }
+    },
+    "hongkong": {
+      "displayName": "港鐵（MTR）風格",
+      "components": {
+        "Arrow": {
+          "displayName": "箭頭",
+          "props": {
+            "type": {
+              "displayName": "方向",
+              "up": "上",
+              "down": "下",
+              "left": "左",
+              "right": "右",
+              "up-left": "左上",
+              "up-right": "右上",
+              "down-left": "左下",
+              "down-right": "右下",
+              "turn-back": "掉頭"
+            },
+            "background": "背景色",
+            "foreground": "前景色"
+          }
+        },
+        "Blank": {
+          "displayName": "空格",
+          "props": {
+            "width": "寬度",
+            "background": "背景色",
+            "foreground": "前景色"
+          }
+        },
+        "Icon": {
+          "displayName": "圖標",
+          "props": {
+            "icon": {
+              "displayName": "圖標",
+              "noentry": "禁止通行",
+              "airplane": "飛機",
+              "airport_transfer": "機場轉乘",
+              "airport_express": "機場快綫",
+              "baggage_claim": "行李領取",
+              "boat": "渡輪",
+              "cable_car": "纜車",
+              "check_in": "檢查",
+              "cross": "禁止通行",
+              "customer_service_centre": "客服中心",
+              "emergency_exit": "緊急出口",
+              "escalator": "扶手電梯",
+              "exit_1": "出口（1）",
+              "exit_2": "出口（2）",
+              "exit_3": "出口（3）",
+              "female": "女",
+              "kcr": "KCR Logo",
+              "lift_1": "升降機（1）",
+              "lift_2": "升降機（2）",
+              "light_rail_1": "輕鐵（1）",
+              "light_rail_2": "輕鐵（2）",
+              "light_rail_3": "輕鐵（3）",
+              "light_rail_4": "輕鐵（4）",
+              "male": "男",
+              "mtr": "MTR Logo",
+              "sp1900": "千九",
+              "stairs_down": "樓梯（下）",
+              "stairs_up": "樓梯（上）",
+              "tickets": "售票",
+              "toilets": "洗手間",
+              "train": "乘車",
+              "train_old": "乘車（舊）",
+              "wheelchair": "輪椅",
+              "wifi": "Wi-Fi",
+              "xrl_1": "高鐵（1）",
+              "xrl_2": "高鐵（2）",
+              "yellow_head_1": "車頭（黃1）",
+              "yellow_head_2": "車頭（黃2）"
+            },
+            "rotation": "旋轉角度",
+            "background": "背景色",
+            "foreground": "前景色"
+          }
+        },
+        "Line": {
+          "displayName": "路線",
+          "props": {
+            "chinese": "中文名",
+            "english": "英文名",
+            "lineColor": "線路顏色",
+            "background": "背景色",
+            "align": {
+              "displayName": "對齊",
+              "left": "左",
+              "right": "右",
+              "center": "中"
+            },
+            "foreground": "前景色"
+          }
+        },
+        "Exit": {
+          "displayName": "出口編號",
+          "props": {
+            "letter": "字母",
+            "num": "附加編號",
+            "background": "背景色"
+          }
+        },
+        "Spacing": {
+          "displayName": "間距",
+          "props": {
+            "background": "背景色"
+          }
+        },
+        "SpecLine": {
+          "displayName": "分隔線",
+          "props": {
+            "background": "背景色",
+            "foreground": "前景色"
+          }
+        },
+        "Text": {
+          "displayName": "文字",
+          "props": {
+            "chinese": "中文文字",
+            "english": "英文文字",
+            "align": {
+              "displayName": "對齊",
+              "left": "左",
+              "right": "右",
+              "center": "中"
+            },
+            "fontsize": {
+              "displayName": "字體大小",
+              "small": "小",
+              "large": "大"
+            },
+            "background": "背景色",
+            "foreground": "前景色"
+          }
+        },
+        "StationName": {
+          "displayName": "站名",
+          "props": {
+            "chinese": "中文名",
+            "english": "英文名",
+            "align": {
+              "displayName": "對齊",
+              "left": "左",
+              "right": "右"
+            },
+            "background": "背景色",
+            "foreground": "前景色"
+          }
+        },
+        "Platform": {
+          "displayName": "月台",
+          "props": {
+            "color": "線路色",
+            "num": "編號",
+            "background": "背景色"
+          }
+        }
+      },
+      "colors": {
+        "background": "背景色",
+        "foreground": "前景色",
+        "background2": "背景色_2",
+        "foreground2": "前景色_2",
+        "background3": "背景色_3",
+        "foreground3": "前景色_3",
+        "border": "邊框色",
+        "specline": "分隔線",
+        "exitletter": "出口編號",
+        "kwuntongline": "觀塘綫",
+        "tsuenwanline": "荃灣綫",
+        "islandline": "港島綫",
+        "tungchungline": "東涌綫",
+        "tseungkwanoline": "將軍澳綫",
+        "eastrailline": "東鐵綫",
+        "tuenmaline": "屯馬綫",
+        "disneyline": "迪士尼綫",
+        "southislandline": "南港島綫",
+        "airportexpress": "機場快綫",
+        "highspeedrail": "高鐵",
+        "shenzhenmetro": "深圳地鐵",
+        "lightrail": "輕鐵",
+        "lr505": "輕鐵505綫",
+        "lr507": "輕鐵507綫",
+        "lr610": "輕鐵610綫",
+        "lr614": "輕鐵614綫",
+        "lr614p": "輕鐵614P綫",
+        "lr615": "輕鐵615綫",
+        "lr615p": "輕鐵615P綫",
+        "lr705": "輕鐵705綫",
+        "lr706": "輕鐵706綫",
+        "lr751": "輕鐵751綫",
+        "lr761p": "輕鐵761P綫",
+        "np360": "昂坪360",
+        "tramways": "香港電車",
+        "northernlink": "北環綫",
+        "eastkowloon": "東九龍綫",
+        "southislandwest": "南港島綫（西段）"
+      }
+    },
+    "beijing": {
+      "displayName": "北京地鐵風格（新）",
+      "colors": {
+        "background": "版面底色",
+        "foreground": "前景色",
+        "textblue": "文字藍",
+        "white": "白色",
+        "border": "邊框",
+        "specline": "分隔線（黃）",
+        "divider": "分隔線（白）",
+        "facility": "設施淺藍",
+        "facilityfemale": "女士衛生間粉",
+        "exit": "出口綠",
+        "prohibit": "禁止紅",
+        "aedsubstrate": "AED 襯底橙",
+        "line1": "1號綫 / 八通綫",
+        "line2": "2號綫",
+        "line3": "3號綫",
+        "line4": "4號綫 / 大興綫",
+        "line5": "5號綫",
+        "line6": "6號綫",
+        "line7": "7號綫",
+        "line8": "8號綫",
+        "line9": "9號綫",
+        "line10": "10號綫",
+        "line11": "11號綫",
+        "line12": "12號綫",
+        "line13": "13號綫",
+        "line14": "14號綫",
+        "line15": "15號綫",
+        "line16": "16號綫",
+        "line17": "17號綫",
+        "line18": "18號綫",
+        "line19": "19號綫",
+        "line22": "22號綫",
+        "lineyizhuang": "亦莊綫",
+        "linefangshan": "房山綫 / 燕房綫",
+        "lines1": "S1綫",
+        "linechangping": "昌平綫",
+        "line28": "28號綫",
+        "linexijiao": "西郊綫 / 亦莊T1綫",
+        "linecapitalairport": "首都機場綫",
+        "linedaxingairport": "大興機場綫",
+        "linetram": "有軌電車"
+      },
+      "components": {
+        "Text": {
+          "displayName": "文字",
+          "props": {
+            "chinese": "中文",
+            "english": "英文",
+            "weight": {
+              "normal": "標準",
+              "medium": "稍粗",
+              "bold": "粗",
+              "displayName": "字重"
+            },
+            "letterSpacing": "字距",
+            "fontSizeZh": "中文字號",
+            "fontSizeEn": "英文字號",
+            "lineGap": "中英間距",
+            "align": {
+              "left": "靠左",
+              "center": "置中",
+              "right": "靠右",
+              "displayName": "對齊"
+            },
+            "foreground": "前景色",
+            "background": "背景色（第一行）",
+            "background2": "背景色（第二行）"
+          }
+        },
+        "SpecLine": {
+          "displayName": "分隔線",
+          "props": {
+            "width": "線寬",
+            "foreground": "前景色",
+            "background": "背景色（第一行）",
+            "background2": "背景色（第二行）"
+          }
+        },
+        "Spacing": {
+          "displayName": "間距",
+          "props": {
+            "background": "背景色（第一行）",
+            "background2": "背景色（第二行）"
+          }
+        },
+        "Blank": {
+          "displayName": "空格",
+          "props": {
+            "width": "寬度",
+            "background": "背景色（第一行）",
+            "background2": "背景色（第二行）"
+          }
+        },
+        "LineNum": {
+          "displayName": "線路標",
+          "props": {
+            "lineId": "線路號",
+            "colorKey": {
+              "displayName": "線路色"
+            },
+            "textZh": "中文文字",
+            "textEn": "英文文字",
+            "size": {
+              "displayName": "尺寸"
+            },
+            "extendLeft": "左側色塊延長",
+            "extendRight": "右側色塊延長",
+            "foreground": "前景色",
+            "background": "背景色（第一行）",
+            "background2": "背景色（第二行）"
+          }
+        },
+        "Arrow": {
+          "displayName": "箭頭",
+          "props": {
+            "direction": {
+              "displayName": "方向"
+            },
+            "showText": "顯示文字",
+            "textZh": "中文文字",
+            "textEn": "英文文字",
+            "align": {
+              "displayName": "對齊"
+            },
+            "foreground": "前景色",
+            "background": "背景色（第一行）",
+            "background2": "背景色（第二行）"
+          }
+        },
+        "TrainDirection": {
+          "displayName": "乘車方向",
+          "props": {
+            "prefixZh": "中文前綴",
+            "prefixEn": "英文前綴",
+            "destinationZh": "中文終點站",
+            "destinationEn": "英文終點站",
+            "align": {
+              "displayName": "對齊"
+            },
+            "foreground": "前景色",
+            "background": "背景色（第一行）",
+            "background2": "背景色（第二行）"
+          }
+        },
+        "LoopNextStation": {
+          "displayName": "環綫方向文字",
+          "props": {
+            "nextZh": "「下一站」中文",
+            "nextEn": "「下一站」英文",
+            "stationZh": "站名（中文）",
+            "stationEn": "站名（英文）",
+            "align": {
+              "displayName": "對齊"
+            },
+            "foreground": "前景色",
+            "background": "背景色（第一行）",
+            "background2": "背景色（第二行）"
+          }
+        },
+        "DualText": {
+          "displayName": "雙行文字",
+          "props": {
+            "line1chinese": "第一行中文",
+            "line1english": "第一行英文",
+            "line2chinese": "第二行中文",
+            "line2english": "第二行英文",
+            "align": {
+              "displayName": "對齊"
+            },
+            "weight": {
+              "displayName": "字重"
+            },
+            "letterSpacing": "字距",
+            "foreground": "前景色",
+            "background": "背景色（第一行）",
+            "background2": "背景色（第二行）"
+          }
+        },
+        "ExitNum": {
+          "displayName": "出入口編號",
+          "props": {
+            "exits": "出口編號",
+            "exitLetter": "字母",
+            "exitNumber": "附加數字",
+            "directions": {
+              "displayName": "方位"
+            },
+            "textZh": "中文文字",
+            "textEn": "英文文字",
+            "foreground": "前景色",
+            "background": "背景色（第一行）",
+            "background2": "背景色（第二行）"
+          }
+        },
+        "Icon": {
+          "displayName": "圖標",
+          "props": {
+            "icon": {
+              "displayName": "圖標",
+              "escalator_left": "左向扶手電梯",
+              "stairs_left": "左向樓梯",
+              "restroom": "衛生間",
+              "restroom_accessible": "無障礙衛生間",
+              "elevator": "升降機",
+              "elevator_accessible": "無障礙升降機",
+              "accessibility": "無障礙",
+              "nursing_room": "母嬰室",
+              "aed": "AED",
+              "restroom_third": "第三衛生間",
+              "restroom_men": "男衛生間",
+              "restroom_women": "女衛生間",
+              "guide_dog": "歡迎導盲犬",
+              "no_entry_dark": "禁止通行",
+              "no_entry_light": "禁止通行（亮底）",
+              "escalator_right": "右向扶手電梯",
+              "stairs_right": "右向樓梯",
+              "ticket_vending": "自助售票",
+              "ticket_service": "售票/補票",
+              "inquiry": "問訊",
+              "customer_service": "客服中心",
+              "police": "警務室",
+              "help_button": "招援按鈕",
+              "security_check": "乘客安檢",
+              "luggage_check": "物品安檢",
+              "ramp": "無障礙坡道",
+              "lifting_platform": "無障礙平台",
+              "accessibility_white": "無障礙（白）",
+              "elderly": "老年人",
+              "stroller": "攜帶嬰兒車",
+              "pregnant": "孕婦",
+              "luggage": "攜帶行李",
+              "brush_beijing": "毛筆北京",
+              "city_gate": "城門剪影",
+              "metro_a": "北京地鐵 A",
+              "metro_b": "北京地鐵 B",
+              "prohibited": "禁止"
+            },
+            "rotation": {
+              "displayName": "旋轉"
+            },
+            "flipH": "水平翻轉",
+            "flipV": "垂直翻轉",
+            "foreground": "前景色（白色組/其他組生效）",
+            "background": "背景色",
+            "background2": "背景色（第二行）"
+          }
+        },
+        "ExitIcon": {
+          "displayName": "出口圖標",
+          "props": {
+            "variant": {
+              "displayName": "形態"
+            },
+            "padding": {
+              "displayName": "邊距"
+            },
+            "background": "背景色",
+            "background2": "背景色（第二行）"
+          }
+        }
+      },
+      "common": {
+        "weight": {
+          "normal": "標準",
+          "medium": "稍粗",
+          "bold": "粗"
+        },
+        "size": {
+          "default": "預設",
+          "small": "小"
+        },
+        "direction": {
+          "left": "左",
+          "right": "右",
+          "up": "上",
+          "down": "下",
+          "up-left": "左上",
+          "up-right": "右上",
+          "down-left": "左下",
+          "down-right": "右下",
+          "uturn-left": "左掉頭",
+          "uturn-right": "右掉頭",
+          "back-left": "左後方",
+          "back-right": "右後方"
+        },
+        "align": {
+          "left": "靠左",
+          "center": "置中",
+          "right": "靠右"
+        },
+        "direction4": {
+          "east": "東",
+          "west": "西",
+          "south": "南",
+          "north": "北"
+        },
+        "padding": {
+          "none": "無邊距",
+          "inset": "有邊距"
+        },
+        "exitVariant": {
+          "exitA": "出口A",
+          "exitB": "出口B",
+          "exitC": "出口C",
+          "exitLongA": "出口長A",
+          "exitLongB": "出口長B",
+          "emergency": "緊急出口"
+        }
+      }
+    },
+    "beijingOld": {
+      "displayName": "北京地鐵風格（舊）",
+      "colors": {
+        "background": "版面底色",
+        "foreground": "前景色",
+        "textblue": "文字藍",
+        "white": "白色",
+        "border": "邊框",
+        "divider": "分隔線",
+        "exit": "出口綠",
+        "prohibit": "禁止紅",
+        "line1": "1號綫 / 八通綫",
+        "line2": "2號綫",
+        "line3": "3號綫",
+        "line4": "4號綫 / 大興綫",
+        "line5": "5號綫",
+        "line6": "6號綫",
+        "line7": "7號綫",
+        "line8": "8號綫",
+        "line9": "9號綫",
+        "line10": "10號綫",
+        "line11": "11號綫",
+        "line12": "12號綫",
+        "line13": "13號綫",
+        "line14": "14號綫",
+        "line15": "15號綫",
+        "line16": "16號綫",
+        "line17": "17號綫",
+        "line18": "18號綫",
+        "line19": "19號綫",
+        "line22": "22號綫",
+        "line28": "28號綫",
+        "lineyizhuang": "亦莊綫",
+        "linefangshan": "房山綫 / 燕房綫",
+        "lines1": "S1綫",
+        "linechangping": "昌平綫",
+        "linexijiao": "西郊綫 / 亦莊T1綫",
+        "linecapitalairport": "首都機場綫",
+        "linedaxingairport": "大興機場綫"
+      },
+      "common": {
+        "weight": {
+          "normal": "標準",
+          "medium": "稍粗",
+          "bold": "粗"
+        },
+        "direction": {
+          "left": "左",
+          "right": "右",
+          "up": "上",
+          "down": "下",
+          "up-left": "左上",
+          "up-right": "右上",
+          "down-left": "左下",
+          "down-right": "右下",
+          "uturn-left": "左掉頭",
+          "uturn-right": "右掉頭",
+          "back-left": "左後方",
+          "back-right": "右後方"
+        },
+        "direction4": {
+          "east": "東",
+          "west": "西",
+          "south": "南",
+          "north": "北"
+        },
+        "align": {
+          "left": "靠左",
+          "center": "置中",
+          "right": "靠右"
+        },
+        "size": {
+          "default": "預設",
+          "small": "小"
+        },
+        "padding": {
+          "none": "無邊距",
+          "inset": "有邊距"
+        },
+        "none": "冇",
+        "toTrainVariant": {
+          "solid": "實心",
+          "outline": "線稿"
+        },
+        "exitVariant": {
+          "single": "單個",
+          "double": "兩行"
+        }
+      },
+      "components": {
+        "Text": {
+          "displayName": "文字",
+          "props": {
+            "chinese": "中文",
+            "english": "英文",
+            "weight": {
+              "normal": "標準",
+              "medium": "稍粗",
+              "bold": "粗",
+              "displayName": "字重"
+            },
+            "letterSpacing": "字距",
+            "fontSizeZh": "中文字號",
+            "fontSizeEn": "英文字號",
+            "lineGap": "中英間距",
+            "align": {
+              "left": "靠左",
+              "center": "置中",
+              "right": "靠右",
+              "displayName": "對齊"
+            },
+            "foreground": "前景色",
+            "background": "背景色"
+          }
+        },
+        "SpecLine": {
+          "displayName": "分隔線",
+          "props": {
+            "width": "線寬",
+            "foreground": "前景色",
+            "background": "背景色"
+          }
+        },
+        "Spacing": {
+          "displayName": "間距",
+          "props": {
+            "background": "背景色"
+          }
+        },
+        "Blank": {
+          "displayName": "空格",
+          "props": {
+            "width": "寬度",
+            "background": "背景色"
+          }
+        },
+        "Arrow": {
+          "displayName": "箭頭",
+          "props": {
+            "direction": {
+              "displayName": "方向"
+            },
+            "foreground": "前景色",
+            "background": "背景色"
+          }
+        },
+        "Line": {
+          "displayName": "線路標",
+          "props": {
+            "lineId": "線路號",
+            "colorKey": {
+              "displayName": "線路色"
+            },
+            "textZh": "中文文字",
+            "textEn": "英文文字",
+            "size": {
+              "displayName": "尺寸"
+            },
+            "foreground": "前景色",
+            "background": "背景色"
+          }
+        },
+        "ToTrain": {
+          "displayName": "乘車圖標",
+          "props": {
+            "variant": {
+              "displayName": "形態"
+            },
+            "foreground": "前景色",
+            "plateColor": "方塊顏色",
+            "strokeColor": "描邊顏色",
+            "background": "背景色"
+          }
+        },
+        "DualText": {
+          "displayName": "雙行文字",
+          "props": {
+            "line1chinese": "第一行中文",
+            "line1english": "第一行英文",
+            "line2chinese": "第二行中文",
+            "line2english": "第二行英文",
+            "showEn": "顯示行內英文",
+            "align": {
+              "displayName": "對齊"
+            },
+            "weight": {
+              "displayName": "字重"
+            },
+            "letterSpacing": "字距",
+            "foreground": "前景色",
+            "background": "背景色"
+          }
+        },
+        "ExitLetter": {
+          "displayName": "出口字母",
+          "props": {
+            "exits": "出口編號",
+            "exitLetter": "字母",
+            "variant": {
+              "displayName": "形態"
+            },
+            "foreground": "前景色",
+            "background": "背景色"
+          }
+        },
+        "StationSign": {
+          "displayName": "站名",
+          "props": {
+            "nameZh": "第一行中文",
+            "nameEn": "第一行英文",
+            "showLogo": "北京地鐵圖標",
+            "foreground": "前景色",
+            "background": "背景色"
+          }
+        },
+        "Icon": {
+          "displayName": "圖標",
+          "props": {
+            "icon": {
+              "displayName": "圖標",
+              "escalator_right": "右向扶手電梯",
+              "stairs_right": "右向樓梯",
+              "ticket_vending": "自助售票",
+              "ticket_service": "售票/補票",
+              "inquiry": "問訊",
+              "customer_service": "客服中心",
+              "police": "警務室",
+              "help_button": "招援按鈕",
+              "security_check": "乘客安檢",
+              "luggage_check": "物品安檢",
+              "ramp": "無障礙坡道",
+              "lifting_platform": "無障礙平台",
+              "accessibility_white": "無障礙（白）",
+              "elderly": "老年人",
+              "stroller": "攜帶嬰兒車",
+              "pregnant": "孕婦",
+              "luggage": "攜帶行李",
+              "gate_arrow_down": "自助設施通行",
+              "no_entry_cross": "禁止通行（叉）",
+              "no_entry_cross_framed": "禁止通行（框）"
+            },
+            "rotation": {
+              "displayName": "旋轉"
+            },
+            "flipH": "水平翻轉",
+            "flipV": "垂直翻轉",
+            "foreground": "前景色",
+            "background": "背景色"
+          }
+        },
+        "ExitIcon": {
+          "displayName": "出口圖標",
+          "props": {
+            "padding": {
+              "displayName": "邊距"
+            },
+            "background": "背景色"
+          }
+        }
+      }
+    }
+  }
+}

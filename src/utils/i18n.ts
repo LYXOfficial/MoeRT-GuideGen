@@ -24,7 +24,19 @@ i18n
   .use(initReactI18next) // 绑定 React
   .init({
     fallbackLng: "zh-CN", // 默认语言
-    supportedLngs: ["zh-CN", "zh-HK", "en-US", "ja-JP", "ko-KR"],
+    supportedLngs: [
+      "zh-CN",
+      "zh-HK",
+      "yue-HK",
+      "en-US",
+      "ja-JP",
+      "ko-KR",
+      "ru-RU",
+      "de-DE",
+      "fr-FR",
+      "es-ES",
+      "pt-PT",
+    ],
     lowerCaseLng: false,
     debug: false,
     // 内联 zh-CN 资源：init 时就存在于 store，zh 用户不再发起 locale 请求

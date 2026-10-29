@@ -1,0 +1,1477 @@
+{
+  "zoom": {
+    "label": "__TODO__",
+    "fit": "__TODO__",
+    "reset": "__TODO__"
+  },
+  "title": "__TODO__",
+  "componentsList": {
+    "title": "__TODO__",
+    "drag": "__TODO__",
+    "dropToDelete": "__TODO__",
+    "theme": "__TODO__",
+    "themeChange": {
+      "title": "__TODO__",
+      "confirm": "__TODO__",
+      "dialog": {
+        "confirm": "__TODO__",
+        "cancel": "__TODO__"
+      }
+    },
+    "boardBackground": "__TODO__",
+    "boardBackgroundReset": "__TODO__",
+    "boardForeground": "__TODO__",
+    "boardForegroundReset": "__TODO__",
+    "clearCanvas": {
+      "button": "__TODO__",
+      "title": "__TODO__",
+      "confirm": "__TODO__"
+    }
+  },
+  "board": {
+    "emptyRowHint": "__TODO__",
+    "showItemFrame": "__TODO__",
+    "width": "__TODO__",
+    "showDividers": "__TODO__",
+    "removeRow": {
+      "title": "__TODO__",
+      "confirm": "__TODO__",
+      "ok": "__TODO__",
+      "cancel": "__TODO__"
+    }
+  },
+  "exportDialog": {
+    "title": "__TODO__",
+    "width": "__TODO__",
+    "height": "__TODO__",
+    "keepRatio": "__TODO__",
+    "export": "__TODO__",
+    "exporting": "__TODO__",
+    "cancel": "__TODO__",
+    "error": {
+      "noElement": "__TODO__",
+      "exportFailed": "__TODO__"
+    },
+    "success": "__TODO__"
+  },
+  "saves": {
+    "clear_local_button": "__TODO__",
+    "restore_failed": "__TODO__",
+    "open_archives": "__TODO__",
+    "clear_local_title": "__TODO__",
+    "clear_local_confirm": "__TODO__",
+    "export_image": "__TODO__",
+    "save_project": "__TODO__",
+    "load_project": "__TODO__",
+    "undo": "__TODO__",
+    "redo": "__TODO__",
+    "autosave": {
+      "success": "__TODO__",
+      "error": "__TODO__"
+    },
+    "import": {
+      "success": "__TODO__",
+      "error": "__TODO__",
+      "unsupportedVersion": "__TODO__",
+      "unsupportedTheme": "__TODO__",
+      "created": "__TODO__",
+      "bundleCreated_other": "__TODO__"
+    },
+    "export": {
+      "success": "__TODO__"
+    },
+    "restore_failed_title": "__TODO__",
+    "reset_archive": "__TODO__",
+    "download_archive": "__TODO__",
+    "reset_confirm_title": "__TODO__",
+    "reset_confirm_content": "__TODO__",
+    "archives": {
+      "title": "__TODO__",
+      "menuHint": "__TODO__",
+      "hint": "__TODO__",
+      "new": "__TODO__",
+      "importSave": "__TODO__",
+      "defaultName": "__TODO__",
+      "legacyName": "__TODO__",
+      "untitled": "__TODO__",
+      "copySuffix": "__TODO__",
+      "rename": "__TODO__",
+      "renamePlaceholder": "__TODO__",
+      "duplicate": "__TODO__",
+      "download": "__TODO__",
+      "delete": "__TODO__",
+      "load": "__TODO__",
+      "current": "__TODO__",
+      "meta": "__TODO__",
+      "updatedAt": "__TODO__",
+      "switchSuccess": "__TODO__",
+      "switchFailed": "__TODO__",
+      "createSuccess": "__TODO__",
+      "renameSuccess": "__TODO__",
+      "duplicateSuccess": "__TODO__",
+      "deleteSuccess": "__TODO__",
+      "deleteConfirmTitle": "__TODO__",
+      "deleteConfirmContent": "__TODO__",
+      "deleteActiveConfirmContent": "__TODO__",
+      "deleteLastContent": "__TODO__",
+      "downloadSuccess": "__TODO__",
+      "storageHint": "__TODO__",
+      "saveFailedQuota": "__TODO__",
+      "clearAll": "__TODO__",
+      "clearAllConfirmTitle": "__TODO__",
+      "clearAllConfirmContent": "__TODO__",
+      "cancel": "__TODO__",
+      "empty": "__TODO__",
+      "unknownTheme": "__TODO__",
+      "exportAll": "__TODO__",
+      "exportAllEmpty": "__TODO__",
+      "exportAllSuccess_other": "__TODO__"
+    }
+  },
+  "loading": {
+    "message": "__TODO__",
+    "fonts": "__TODO__",
+    "archive": "__TODO__"
+  },
+  "editor": {
+    "title": "__TODO__",
+    "delete": "__TODO__",
+    "board": {
+      "title": "__TODO__",
+      "backgroundColor": "__TODO__"
+    },
+    "tabConflict": {
+      "title": "__TODO__",
+      "body": "__TODO__",
+      "refresh": "__TODO__"
+    },
+    "followTheme": "__TODO__"
+  },
+  "theme": {
+    "toDark": "__TODO__",
+    "toLight": "__TODO__"
+  },
+  "themes": {
+    "chongqing": {
+      "displayName": "__TODO__",
+      "components": {
+        "Arrow": {
+          "displayName": "__TODO__",
+          "props": {
+            "type": {
+              "displayName": "__TODO__",
+              "up": "__TODO__",
+              "down": "__TODO__",
+              "left": "__TODO__",
+              "right": "__TODO__",
+              "up-left": "__TODO__",
+              "up-right": "__TODO__",
+              "down-left": "__TODO__",
+              "down-right": "__TODO__",
+              "ahead-left": "__TODO__",
+              "ahead-right": "__TODO__",
+              "back-left": "__TODO__",
+              "back-right": "__TODO__"
+            },
+            "background": "__TODO__",
+            "foreground": "__TODO__"
+          }
+        },
+        "Blank": {
+          "displayName": "__TODO__",
+          "props": {
+            "width": "__TODO__",
+            "background": "__TODO__",
+            "foreground": "__TODO__"
+          }
+        },
+        "Icon": {
+          "displayName": "__TODO__",
+          "props": {
+            "icon": {
+              "displayName": "__TODO__",
+              "train": "__TODO__",
+              "metro": "__TODO__",
+              "monorail": "__TODO__",
+              "ct": "__TODO__",
+              "crt": "__TODO__",
+              "cr": "__TODO__",
+              "elevator": "__TODO__",
+              "waitingroom": "__TODO__",
+              "toilet": "__TODO__",
+              "men": "__TODO__",
+              "women": "__TODO__",
+              "thirdtoilet": "__TODO__",
+              "men_color": "__TODO__",
+              "women_color": "__TODO__",
+              "toilet_color": "__TODO__",
+              "thirdtoilet_color": "__TODO__",
+              "ticket_machine": "__TODO__",
+              "check_in": "__TODO__",
+              "exit1": "__TODO__",
+              "exit2": "__TODO__",
+              "coach": "__TODO__",
+              "bus": "__TODO__",
+              "parking": "__TODO__",
+              "emergency_exit": "__TODO__",
+              "escalator": "__TODO__",
+              "maimai": "__TODO__",
+              "no_entry": "__TODO__",
+              "nursing_room": "__TODO__",
+              "stairs": "__TODO__",
+              "taxi": "__TODO__",
+              "tickets": "__TODO__",
+              "airport": "__TODO__"
+            },
+            "rotation": "__TODO__",
+            "background": "__TODO__",
+            "foreground": "__TODO__"
+          }
+        },
+        "LineNum": {
+          "displayName": "__TODO__",
+          "props": {
+            "num": "__TODO__",
+            "customChinese": "__TODO__",
+            "customEnglish": "__TODO__",
+            "align": {
+              "displayName": "__TODO__",
+              "left": "__TODO__",
+              "right": "__TODO__",
+              "right2": "__TODO__"
+            },
+            "lineColor": "__TODO__",
+            "showText": "__TODO__",
+            "showRect": "__TODO__",
+            "rectMode": {
+              "displayName": "__TODO__",
+              "default": "__TODO__",
+              "narrow": "__TODO__"
+            },
+            "foreground": "__TODO__",
+            "background": "__TODO__"
+          }
+        },
+        "LineText": {
+          "displayName": "__TODO__",
+          "props": {
+            "chinese": "__TODO__",
+            "english": "__TODO__",
+            "align": {
+              "displayName": "__TODO__",
+              "left": "__TODO__",
+              "right": "__TODO__"
+            },
+            "digitMode": {
+              "displayName": "__TODO__",
+              "prominent": "__TODO__",
+              "flat": "__TODO__"
+            },
+            "rectMode": {
+              "displayName": "__TODO__",
+              "default": "__TODO__",
+              "narrow": "__TODO__"
+            },
+            "lineColor": "__TODO__",
+            "foreground": "__TODO__",
+            "background": "__TODO__"
+          }
+        },
+        "NumAlphabet": {
+          "displayName": "__TODO__",
+          "props": {
+            "text": "__TODO__",
+            "background": "__TODO__",
+            "foreground": "__TODO__",
+            "type": {
+              "displayName": "__TODO__",
+              "fit": "__TODO__",
+              "block": "__TODO__"
+            }
+          }
+        },
+        "Spacing": {
+          "displayName": "__TODO__",
+          "props": {
+            "background": "__TODO__"
+          }
+        },
+        "SpecLine": {
+          "displayName": "__TODO__",
+          "props": {
+            "background": "__TODO__",
+            "foreground": "__TODO__"
+          }
+        },
+        "StationName": {
+          "displayName": "__TODO__",
+          "props": {
+            "chinese": "__TODO__",
+            "english": "__TODO__",
+            "foreground": "__TODO__",
+            "background": "__TODO__"
+          }
+        },
+        "Text": {
+          "displayName": "__TODO__",
+          "props": {
+            "chinese": "__TODO__",
+            "english": "__TODO__",
+            "align": {
+              "displayName": "__TODO__",
+              "left": "__TODO__",
+              "right": "__TODO__",
+              "center": "__TODO__"
+            },
+            "digitMode": {
+              "displayName": "__TODO__",
+              "prominent": "__TODO__",
+              "flat": "__TODO__"
+            },
+            "background": "__TODO__",
+            "foreground": "__TODO__"
+          }
+        },
+        "DirectionLoop": {
+          "displayName": "__TODO__",
+          "props": {
+            "background": "__TODO__",
+            "foreground": "__TODO__",
+            "tochinese": "__TODO__",
+            "toenglish": "__TODO__",
+            "tipchinese": "__TODO__",
+            "tipenglish": "__TODO__",
+            "align": {
+              "displayName": "__TODO__",
+              "left": "__TODO__",
+              "right": "__TODO__"
+            }
+          }
+        },
+        "ExitName": {
+          "displayName": "__TODO__",
+          "props": {
+            "line1chinese": "__TODO__",
+            "line1english": "__TODO__",
+            "line2chinese": "__TODO__",
+            "line2english": "__TODO__",
+            "background": "__TODO__",
+            "foreground": "__TODO__",
+            "align": {
+              "displayName": "__TODO__",
+              "left": "__TODO__",
+              "right": "__TODO__",
+              "center": "__TODO__"
+            }
+          }
+        }
+      },
+      "colors": {
+        "foreground": "__TODO__",
+        "background": "__TODO__",
+        "exitforeground": "__TODO__",
+        "exitbackground": "__TODO__",
+        "facilityforeground": "__TODO__",
+        "facilitybackground": "__TODO__",
+        "specline": "__TODO__",
+        "border": "__TODO__",
+        "noentry": "__TODO__",
+        "lineloop": "__TODO__",
+        "line1": "__TODO__",
+        "line2": "__TODO__",
+        "line3": "__TODO__",
+        "line4": "__TODO__",
+        "line5": "__TODO__",
+        "line6": "__TODO__",
+        "line7": "__TODO__",
+        "line8": "__TODO__",
+        "line9": "__TODO__",
+        "line10": "__TODO__",
+        "line11": "__TODO__",
+        "line12": "__TODO__",
+        "line13": "__TODO__",
+        "line14": "__TODO__",
+        "line15": "__TODO__",
+        "line16": "__TODO__",
+        "line17": "__TODO__",
+        "line18": "__TODO__",
+        "line19": "__TODO__",
+        "line20": "__TODO__",
+        "line21": "__TODO__",
+        "line22": "__TODO__",
+        "line23": "__TODO__",
+        "line24": "__TODO__",
+        "line25": "__TODO__",
+        "line26": "__TODO__",
+        "line27": "__TODO__",
+        "line28": "__TODO__",
+        "line29": "__TODO__",
+        "lineinternationalexpo": "__TODO__",
+        "linekonggang": "__TODO__",
+        "linejiangtiao": "__TODO__",
+        "linebitong": "__TODO__",
+        "lineyongchuan": "__TODO__",
+        "lineqiwan": "__TODO__",
+        "linedazhu": "__TODO__",
+        "linenanchuan": "__TODO__",
+        "linechangfu": "__TODO__",
+        "trainrapid": "__TODO__",
+        "trainexpress": "__TODO__"
+      }
+    },
+    "chengdu": {
+      "displayName": "__TODO__",
+      "components": {
+        "Arrow": {
+          "displayName": "__TODO__",
+          "props": {
+            "type": {
+              "displayName": "__TODO__",
+              "up": "__TODO__",
+              "down": "__TODO__",
+              "left": "__TODO__",
+              "right": "__TODO__",
+              "up-left": "__TODO__",
+              "up-right": "__TODO__",
+              "down-left": "__TODO__",
+              "down-right": "__TODO__",
+              "ahead-left": "__TODO__",
+              "ahead-right": "__TODO__",
+              "back-left": "__TODO__",
+              "back-right": "__TODO__"
+            },
+            "background": "__TODO__",
+            "foreground": "__TODO__"
+          }
+        },
+        "Blank": {
+          "displayName": "__TODO__",
+          "props": {
+            "width": "__TODO__",
+            "background": "__TODO__",
+            "foreground": "__TODO__"
+          }
+        },
+        "Icon": {
+          "displayName": "__TODO__",
+          "props": {
+            "icon": {
+              "displayName": "__TODO__",
+              "train": "__TODO__",
+              "cdrt": "__TODO__",
+              "exit1": "__TODO__",
+              "exit2": "__TODO__",
+              "elevator": "__TODO__",
+              "waitingroom": "__TODO__",
+              "toilet": "__TODO__",
+              "ticket_machine": "__TODO__",
+              "check_in": "__TODO__",
+              "coach": "__TODO__",
+              "bus": "__TODO__",
+              "parking": "__TODO__",
+              "cr": "__TODO__",
+              "men": "__TODO__",
+              "women": "__TODO__",
+              "thirdtoilet": "__TODO__",
+              "men_color": "__TODO__",
+              "women_color": "__TODO__",
+              "toilet_color": "__TODO__",
+              "thirdtoilet_color": "__TODO__",
+              "emergency_exit": "__TODO__",
+              "escalator": "__TODO__",
+              "maimai": "__TODO__",
+              "no_entry": "__TODO__",
+              "nursing_room": "__TODO__",
+              "stairs": "__TODO__",
+              "taxi": "__TODO__",
+              "tickets": "__TODO__",
+              "airport": "__TODO__"
+            },
+            "background": "__TODO__",
+            "foreground": "__TODO__",
+            "rotation": "__TODO__"
+          }
+        },
+        "LineNum": {
+          "displayName": "__TODO__",
+          "props": {
+            "num": "__TODO__",
+            "customChinese": "__TODO__",
+            "customEnglish": "__TODO__",
+            "align": {
+              "displayName": "__TODO__",
+              "left": "__TODO__",
+              "right": "__TODO__"
+            },
+            "lineColor": "__TODO__",
+            "showText": "__TODO__",
+            "showRect": "__TODO__",
+            "rectMode": {
+              "displayName": "__TODO__",
+              "default": "__TODO__",
+              "narrow": "__TODO__"
+            },
+            "foreground": "__TODO__",
+            "background": "__TODO__"
+          }
+        },
+        "LineText": {
+          "displayName": "__TODO__",
+          "props": {
+            "chinese": "__TODO__",
+            "english": "__TODO__",
+            "align": {
+              "displayName": "__TODO__",
+              "left": "__TODO__",
+              "right": "__TODO__"
+            },
+            "rectMode": {
+              "displayName": "__TODO__",
+              "default": "__TODO__",
+              "narrow": "__TODO__"
+            },
+            "lineColor": "__TODO__",
+            "foreground": "__TODO__",
+            "background": "__TODO__"
+          }
+        },
+        "NumAlphabet": {
+          "displayName": "__TODO__",
+          "props": {
+            "text": "__TODO__",
+            "background": "__TODO__",
+            "foreground": "__TODO__",
+            "type": {
+              "displayName": "__TODO__",
+              "fit": "__TODO__",
+              "block": "__TODO__"
+            }
+          }
+        },
+        "Spacing": {
+          "displayName": "__TODO__",
+          "props": {
+            "background": "__TODO__"
+          }
+        },
+        "SpecLine": {
+          "displayName": "__TODO__",
+          "props": {
+            "background": "__TODO__",
+            "foreground": "__TODO__"
+          }
+        },
+        "StationName": {
+          "displayName": "__TODO__",
+          "props": {
+            "chinese": "__TODO__",
+            "english": "__TODO__",
+            "foreground": "__TODO__",
+            "background": "__TODO__"
+          }
+        },
+        "Text": {
+          "displayName": "__TODO__",
+          "props": {
+            "chinese": "__TODO__",
+            "english": "__TODO__",
+            "align": {
+              "displayName": "__TODO__",
+              "left": "__TODO__",
+              "right": "__TODO__",
+              "center": "__TODO__"
+            },
+            "background": "__TODO__",
+            "foreground": "__TODO__"
+          }
+        },
+        "StationNumber": {
+          "displayName": "__TODO__",
+          "props": {
+            "color": "__TODO__",
+            "lineNum": "__TODO__",
+            "stationNum": "__TODO__",
+            "lines": "__TODO__",
+            "foreground": "__TODO__",
+            "background": "__TODO__"
+          }
+        },
+        "Direction": {
+          "displayName": "__TODO__",
+          "props": {
+            "background": "__TODO__",
+            "foreground": "__TODO__",
+            "tochinese": "__TODO__",
+            "toenglish": "__TODO__",
+            "viachinese": "__TODO__",
+            "viaenglish": "__TODO__",
+            "align": {
+              "displayName": "__TODO__",
+              "left": "__TODO__",
+              "right": "__TODO__"
+            }
+          }
+        },
+        "TwoRowContainer": {
+          "displayName": "__TODO__",
+          "props": {
+            "minWidth": "__TODO__",
+            "background": "__TODO__"
+          }
+        },
+        "ExitName": {
+          "displayName": "__TODO__",
+          "props": {
+            "line1chinese": "__TODO__",
+            "line1english": "__TODO__",
+            "line2chinese": "__TODO__",
+            "line2english": "__TODO__",
+            "background": "__TODO__",
+            "foreground": "__TODO__",
+            "align": {
+              "displayName": "__TODO__",
+              "left": "__TODO__",
+              "right": "__TODO__",
+              "center": "__TODO__"
+            }
+          }
+        }
+      },
+      "colors": {
+        "foreground": "__TODO__",
+        "background": "__TODO__",
+        "exitforeground": "__TODO__",
+        "exitbackground": "__TODO__",
+        "specline": "__TODO__",
+        "border": "__TODO__",
+        "noentry": "__TODO__",
+        "pass": "__TODO__",
+        "line1": "__TODO__",
+        "line2": "__TODO__",
+        "line3": "__TODO__",
+        "line4": "__TODO__",
+        "line5": "__TODO__",
+        "line6": "__TODO__",
+        "line7": "__TODO__",
+        "line8": "__TODO__",
+        "line9": "__TODO__",
+        "line10": "__TODO__",
+        "line11": "__TODO__",
+        "line12": "__TODO__",
+        "line13": "__TODO__",
+        "line14": "__TODO__",
+        "line15": "__TODO__",
+        "line16": "__TODO__",
+        "line17": "__TODO__",
+        "line18": "__TODO__",
+        "line19": "__TODO__",
+        "line20": "__TODO__",
+        "line21": "__TODO__",
+        "line22": "__TODO__",
+        "line23": "__TODO__",
+        "line24": "__TODO__",
+        "line25": "__TODO__",
+        "line26": "__TODO__",
+        "line27": "__TODO__",
+        "line28": "__TODO__",
+        "line29": "__TODO__",
+        "line30": "__TODO__",
+        "line32": "__TODO__",
+        "line33": "__TODO__",
+        "linet2": "__TODO__",
+        "lines1": "__TODO__",
+        "lines2": "__TODO__",
+        "lines3": "__TODO__",
+        "lines4": "__TODO__",
+        "lines5": "__TODO__",
+        "lines6": "__TODO__",
+        "lines7": "__TODO__",
+        "lines8": "__TODO__",
+        "lines9": "__TODO__",
+        "lines10": "__TODO__",
+        "lines11": "__TODO__",
+        "lines12": "__TODO__",
+        "lines13": "__TODO__",
+        "lines14": "__TODO__",
+        "lines15": "__TODO__",
+        "lines16": "__TODO__",
+        "lines17": "__TODO__",
+        "lines18": "__TODO__"
+      }
+    },
+    "hongkong": {
+      "displayName": "__TODO__",
+      "components": {
+        "Arrow": {
+          "displayName": "__TODO__",
+          "props": {
+            "type": {
+              "displayName": "__TODO__",
+              "up": "__TODO__",
+              "down": "__TODO__",
+              "left": "__TODO__",
+              "right": "__TODO__",
+              "up-left": "__TODO__",
+              "up-right": "__TODO__",
+              "down-left": "__TODO__",
+              "down-right": "__TODO__",
+              "turn-back": "__TODO__"
+            },
+            "background": "__TODO__",
+            "foreground": "__TODO__"
+          }
+        },
+        "Blank": {
+          "displayName": "__TODO__",
+          "props": {
+            "width": "__TODO__",
+            "background": "__TODO__",
+            "foreground": "__TODO__"
+          }
+        },
+        "Icon": {
+          "displayName": "__TODO__",
+          "props": {
+            "icon": {
+              "displayName": "__TODO__",
+              "noentry": "__TODO__",
+              "airplane": "__TODO__",
+              "airport_transfer": "__TODO__",
+              "airport_express": "__TODO__",
+              "baggage_claim": "__TODO__",
+              "boat": "__TODO__",
+              "cable_car": "__TODO__",
+              "check_in": "__TODO__",
+              "cross": "__TODO__",
+              "customer_service_centre": "__TODO__",
+              "emergency_exit": "__TODO__",
+              "escalator": "__TODO__",
+              "exit_1": "__TODO__",
+              "exit_2": "__TODO__",
+              "exit_3": "__TODO__",
+              "female": "__TODO__",
+              "kcr": "__TODO__",
+              "lift_1": "__TODO__",
+              "lift_2": "__TODO__",
+              "light_rail_1": "__TODO__",
+              "light_rail_2": "__TODO__",
+              "light_rail_3": "__TODO__",
+              "light_rail_4": "__TODO__",
+              "male": "__TODO__",
+              "mtr": "__TODO__",
+              "sp1900": "__TODO__",
+              "stairs_down": "__TODO__",
+              "stairs_up": "__TODO__",
+              "tickets": "__TODO__",
+              "toilets": "__TODO__",
+              "train": "__TODO__",
+              "train_old": "__TODO__",
+              "wheelchair": "__TODO__",
+              "wifi": "__TODO__",
+              "xrl_1": "__TODO__",
+              "xrl_2": "__TODO__",
+              "yellow_head_1": "__TODO__",
+              "yellow_head_2": "__TODO__"
+            },
+            "rotation": "__TODO__",
+            "background": "__TODO__",
+            "foreground": "__TODO__"
+          }
+        },
+        "Line": {
+          "displayName": "__TODO__",
+          "props": {
+            "chinese": "__TODO__",
+            "english": "__TODO__",
+            "lineColor": "__TODO__",
+            "background": "__TODO__",
+            "align": {
+              "displayName": "__TODO__",
+              "left": "__TODO__",
+              "right": "__TODO__",
+              "center": "__TODO__"
+            },
+            "foreground": "__TODO__"
+          }
+        },
+        "Exit": {
+          "displayName": "__TODO__",
+          "props": {
+            "letter": "__TODO__",
+            "num": "__TODO__",
+            "background": "__TODO__"
+          }
+        },
+        "Spacing": {
+          "displayName": "__TODO__",
+          "props": {
+            "background": "__TODO__"
+          }
+        },
+        "SpecLine": {
+          "displayName": "__TODO__",
+          "props": {
+            "background": "__TODO__",
+            "foreground": "__TODO__"
+          }
+        },
+        "Text": {
+          "displayName": "__TODO__",
+          "props": {
+            "chinese": "__TODO__",
+            "english": "__TODO__",
+            "align": {
+              "displayName": "__TODO__",
+              "left": "__TODO__",
+              "right": "__TODO__",
+              "center": "__TODO__"
+            },
+            "fontsize": {
+              "displayName": "__TODO__",
+              "small": "__TODO__",
+              "large": "__TODO__"
+            },
+            "background": "__TODO__",
+            "foreground": "__TODO__"
+          }
+        },
+        "StationName": {
+          "displayName": "__TODO__",
+          "props": {
+            "chinese": "__TODO__",
+            "english": "__TODO__",
+            "align": {
+              "displayName": "__TODO__",
+              "left": "__TODO__",
+              "right": "__TODO__"
+            },
+            "background": "__TODO__",
+            "foreground": "__TODO__"
+          }
+        },
+        "Platform": {
+          "displayName": "__TODO__",
+          "props": {
+            "color": "__TODO__",
+            "num": "__TODO__",
+            "background": "__TODO__"
+          }
+        }
+      },
+      "colors": {
+        "background": "__TODO__",
+        "foreground": "__TODO__",
+        "background2": "__TODO__",
+        "foreground2": "__TODO__",
+        "background3": "__TODO__",
+        "foreground3": "__TODO__",
+        "border": "__TODO__",
+        "specline": "__TODO__",
+        "exitletter": "__TODO__",
+        "kwuntongline": "__TODO__",
+        "tsuenwanline": "__TODO__",
+        "islandline": "__TODO__",
+        "tungchungline": "__TODO__",
+        "tseungkwanoline": "__TODO__",
+        "eastrailline": "__TODO__",
+        "tuenmaline": "__TODO__",
+        "disneyline": "__TODO__",
+        "southislandline": "__TODO__",
+        "airportexpress": "__TODO__",
+        "highspeedrail": "__TODO__",
+        "shenzhenmetro": "__TODO__",
+        "lightrail": "__TODO__",
+        "lr505": "__TODO__",
+        "lr507": "__TODO__",
+        "lr610": "__TODO__",
+        "lr614": "__TODO__",
+        "lr614p": "__TODO__",
+        "lr615": "__TODO__",
+        "lr615p": "__TODO__",
+        "lr705": "__TODO__",
+        "lr706": "__TODO__",
+        "lr751": "__TODO__",
+        "lr761p": "__TODO__",
+        "np360": "__TODO__",
+        "tramways": "__TODO__",
+        "northernlink": "__TODO__",
+        "eastkowloon": "__TODO__",
+        "southislandwest": "__TODO__"
+      }
+    },
+    "beijing": {
+      "displayName": "__TODO__",
+      "colors": {
+        "background": "__TODO__",
+        "foreground": "__TODO__",
+        "textblue": "__TODO__",
+        "white": "__TODO__",
+        "border": "__TODO__",
+        "specline": "__TODO__",
+        "divider": "__TODO__",
+        "facility": "__TODO__",
+        "facilityfemale": "__TODO__",
+        "exit": "__TODO__",
+        "prohibit": "__TODO__",
+        "aedsubstrate": "__TODO__",
+        "line1": "__TODO__",
+        "line2": "__TODO__",
+        "line3": "__TODO__",
+        "line4": "__TODO__",
+        "line5": "__TODO__",
+        "line6": "__TODO__",
+        "line7": "__TODO__",
+        "line8": "__TODO__",
+        "line9": "__TODO__",
+        "line10": "__TODO__",
+        "line11": "__TODO__",
+        "line12": "__TODO__",
+        "line13": "__TODO__",
+        "line14": "__TODO__",
+        "line15": "__TODO__",
+        "line16": "__TODO__",
+        "line17": "__TODO__",
+        "line18": "__TODO__",
+        "line19": "__TODO__",
+        "line22": "__TODO__",
+        "lineyizhuang": "__TODO__",
+        "linefangshan": "__TODO__",
+        "lines1": "__TODO__",
+        "linechangping": "__TODO__",
+        "line28": "__TODO__",
+        "linexijiao": "__TODO__",
+        "linecapitalairport": "__TODO__",
+        "linedaxingairport": "__TODO__",
+        "linetram": "__TODO__"
+      },
+      "components": {
+        "Text": {
+          "displayName": "__TODO__",
+          "props": {
+            "chinese": "__TODO__",
+            "english": "__TODO__",
+            "weight": {
+              "normal": "__TODO__",
+              "medium": "__TODO__",
+              "bold": "__TODO__",
+              "displayName": "__TODO__"
+            },
+            "letterSpacing": "__TODO__",
+            "fontSizeZh": "__TODO__",
+            "fontSizeEn": "__TODO__",
+            "lineGap": "__TODO__",
+            "align": {
+              "left": "__TODO__",
+              "center": "__TODO__",
+              "right": "__TODO__",
+              "displayName": "__TODO__"
+            },
+            "foreground": "__TODO__",
+            "background": "__TODO__",
+            "background2": "__TODO__"
+          }
+        },
+        "SpecLine": {
+          "displayName": "__TODO__",
+          "props": {
+            "width": "__TODO__",
+            "foreground": "__TODO__",
+            "background": "__TODO__",
+            "background2": "__TODO__"
+          }
+        },
+        "Spacing": {
+          "displayName": "__TODO__",
+          "props": {
+            "background": "__TODO__",
+            "background2": "__TODO__"
+          }
+        },
+        "Blank": {
+          "displayName": "__TODO__",
+          "props": {
+            "width": "__TODO__",
+            "background": "__TODO__",
+            "background2": "__TODO__"
+          }
+        },
+        "LineNum": {
+          "displayName": "__TODO__",
+          "props": {
+            "lineId": "__TODO__",
+            "colorKey": {
+              "displayName": "__TODO__"
+            },
+            "textZh": "__TODO__",
+            "textEn": "__TODO__",
+            "size": {
+              "displayName": "__TODO__"
+            },
+            "extendLeft": "__TODO__",
+            "extendRight": "__TODO__",
+            "foreground": "__TODO__",
+            "background": "__TODO__",
+            "background2": "__TODO__"
+          }
+        },
+        "Arrow": {
+          "displayName": "__TODO__",
+          "props": {
+            "direction": {
+              "displayName": "__TODO__"
+            },
+            "showText": "__TODO__",
+            "textZh": "__TODO__",
+            "textEn": "__TODO__",
+            "align": {
+              "displayName": "__TODO__"
+            },
+            "foreground": "__TODO__",
+            "background": "__TODO__",
+            "background2": "__TODO__"
+          }
+        },
+        "TrainDirection": {
+          "displayName": "__TODO__",
+          "props": {
+            "prefixZh": "__TODO__",
+            "prefixEn": "__TODO__",
+            "destinationZh": "__TODO__",
+            "destinationEn": "__TODO__",
+            "align": {
+              "displayName": "__TODO__"
+            },
+            "foreground": "__TODO__",
+            "background": "__TODO__",
+            "background2": "__TODO__"
+          }
+        },
+        "LoopNextStation": {
+          "displayName": "__TODO__",
+          "props": {
+            "nextZh": "__TODO__",
+            "nextEn": "__TODO__",
+            "stationZh": "__TODO__",
+            "stationEn": "__TODO__",
+            "align": {
+              "displayName": "__TODO__"
+            },
+            "foreground": "__TODO__",
+            "background": "__TODO__",
+            "background2": "__TODO__"
+          }
+        },
+        "DualText": {
+          "displayName": "__TODO__",
+          "props": {
+            "line1chinese": "__TODO__",
+            "line1english": "__TODO__",
+            "line2chinese": "__TODO__",
+            "line2english": "__TODO__",
+            "align": {
+              "displayName": "__TODO__"
+            },
+            "weight": {
+              "displayName": "__TODO__"
+            },
+            "letterSpacing": "__TODO__",
+            "foreground": "__TODO__",
+            "background": "__TODO__",
+            "background2": "__TODO__"
+          }
+        },
+        "ExitNum": {
+          "displayName": "__TODO__",
+          "props": {
+            "exits": "__TODO__",
+            "exitLetter": "__TODO__",
+            "exitNumber": "__TODO__",
+            "directions": {
+              "displayName": "__TODO__"
+            },
+            "textZh": "__TODO__",
+            "textEn": "__TODO__",
+            "foreground": "__TODO__",
+            "background": "__TODO__",
+            "background2": "__TODO__"
+          }
+        },
+        "Icon": {
+          "displayName": "__TODO__",
+          "props": {
+            "icon": {
+              "displayName": "__TODO__",
+              "escalator_left": "__TODO__",
+              "stairs_left": "__TODO__",
+              "restroom": "__TODO__",
+              "restroom_accessible": "__TODO__",
+              "elevator": "__TODO__",
+              "elevator_accessible": "__TODO__",
+              "accessibility": "__TODO__",
+              "nursing_room": "__TODO__",
+              "aed": "__TODO__",
+              "restroom_third": "__TODO__",
+              "restroom_men": "__TODO__",
+              "restroom_women": "__TODO__",
+              "guide_dog": "__TODO__",
+              "no_entry_dark": "__TODO__",
+              "no_entry_light": "__TODO__",
+              "escalator_right": "__TODO__",
+              "stairs_right": "__TODO__",
+              "ticket_vending": "__TODO__",
+              "ticket_service": "__TODO__",
+              "inquiry": "__TODO__",
+              "customer_service": "__TODO__",
+              "police": "__TODO__",
+              "help_button": "__TODO__",
+              "security_check": "__TODO__",
+              "luggage_check": "__TODO__",
+              "ramp": "__TODO__",
+              "lifting_platform": "__TODO__",
+              "accessibility_white": "__TODO__",
+              "elderly": "__TODO__",
+              "stroller": "__TODO__",
+              "pregnant": "__TODO__",
+              "luggage": "__TODO__",
+              "brush_beijing": "__TODO__",
+              "city_gate": "__TODO__",
+              "metro_a": "__TODO__",
+              "metro_b": "__TODO__",
+              "prohibited": "__TODO__"
+            },
+            "rotation": {
+              "displayName": "__TODO__"
+            },
+            "flipH": "__TODO__",
+            "flipV": "__TODO__",
+            "foreground": "__TODO__",
+            "background": "__TODO__",
+            "background2": "__TODO__"
+          }
+        },
+        "ExitIcon": {
+          "displayName": "__TODO__",
+          "props": {
+            "variant": {
+              "displayName": "__TODO__"
+            },
+            "padding": {
+              "displayName": "__TODO__"
+            },
+            "background": "__TODO__",
+            "background2": "__TODO__"
+          }
+        }
+      },
+      "common": {
+        "weight": {
+          "normal": "__TODO__",
+          "medium": "__TODO__",
+          "bold": "__TODO__"
+        },
+        "size": {
+          "default": "__TODO__",
+          "small": "__TODO__"
+        },
+        "direction": {
+          "left": "__TODO__",
+          "right": "__TODO__",
+          "up": "__TODO__",
+          "down": "__TODO__",
+          "up-left": "__TODO__",
+          "up-right": "__TODO__",
+          "down-left": "__TODO__",
+          "down-right": "__TODO__",
+          "uturn-left": "__TODO__",
+          "uturn-right": "__TODO__",
+          "back-left": "__TODO__",
+          "back-right": "__TODO__"
+        },
+        "align": {
+          "left": "__TODO__",
+          "center": "__TODO__",
+          "right": "__TODO__"
+        },
+        "direction4": {
+          "east": "__TODO__",
+          "west": "__TODO__",
+          "south": "__TODO__",
+          "north": "__TODO__"
+        },
+        "padding": {
+          "none": "__TODO__",
+          "inset": "__TODO__"
+        },
+        "exitVariant": {
+          "exitA": "__TODO__",
+          "exitB": "__TODO__",
+          "exitC": "__TODO__",
+          "exitLongA": "__TODO__",
+          "exitLongB": "__TODO__",
+          "emergency": "__TODO__"
+        }
+      }
+    },
+    "beijingOld": {
+      "displayName": "__TODO__",
+      "colors": {
+        "background": "__TODO__",
+        "foreground": "__TODO__",
+        "textblue": "__TODO__",
+        "white": "__TODO__",
+        "border": "__TODO__",
+        "divider": "__TODO__",
+        "exit": "__TODO__",
+        "prohibit": "__TODO__",
+        "line1": "__TODO__",
+        "line2": "__TODO__",
+        "line3": "__TODO__",
+        "line4": "__TODO__",
+        "line5": "__TODO__",
+        "line6": "__TODO__",
+        "line7": "__TODO__",
+        "line8": "__TODO__",
+        "line9": "__TODO__",
+        "line10": "__TODO__",
+        "line11": "__TODO__",
+        "line12": "__TODO__",
+        "line13": "__TODO__",
+        "line14": "__TODO__",
+        "line15": "__TODO__",
+        "line16": "__TODO__",
+        "line17": "__TODO__",
+        "line18": "__TODO__",
+        "line19": "__TODO__",
+        "line22": "__TODO__",
+        "line28": "__TODO__",
+        "lineyizhuang": "__TODO__",
+        "linefangshan": "__TODO__",
+        "lines1": "__TODO__",
+        "linechangping": "__TODO__",
+        "linexijiao": "__TODO__",
+        "linecapitalairport": "__TODO__",
+        "linedaxingairport": "__TODO__"
+      },
+      "common": {
+        "weight": {
+          "normal": "__TODO__",
+          "medium": "__TODO__",
+          "bold": "__TODO__"
+        },
+        "direction": {
+          "left": "__TODO__",
+          "right": "__TODO__",
+          "up": "__TODO__",
+          "down": "__TODO__",
+          "up-left": "__TODO__",
+          "up-right": "__TODO__",
+          "down-left": "__TODO__",
+          "down-right": "__TODO__",
+          "uturn-left": "__TODO__",
+          "uturn-right": "__TODO__",
+          "back-left": "__TODO__",
+          "back-right": "__TODO__"
+        },
+        "direction4": {
+          "east": "__TODO__",
+          "west": "__TODO__",
+          "south": "__TODO__",
+          "north": "__TODO__"
+        },
+        "align": {
+          "left": "__TODO__",
+          "center": "__TODO__",
+          "right": "__TODO__"
+        },
+        "size": {
+          "default": "__TODO__",
+          "small": "__TODO__"
+        },
+        "padding": {
+          "none": "__TODO__",
+          "inset": "__TODO__"
+        },
+        "none": "__TODO__",
+        "toTrainVariant": {
+          "solid": "__TODO__",
+          "outline": "__TODO__"
+        },
+        "exitVariant": {
+          "single": "__TODO__",
+          "double": "__TODO__"
+        }
+      },
+      "components": {
+        "Text": {
+          "displayName": "__TODO__",
+          "props": {
+            "chinese": "__TODO__",
+            "english": "__TODO__",
+            "weight": {
+              "normal": "__TODO__",
+              "medium": "__TODO__",
+              "bold": "__TODO__",
+              "displayName": "__TODO__"
+            },
+            "letterSpacing": "__TODO__",
+            "fontSizeZh": "__TODO__",
+            "fontSizeEn": "__TODO__",
+            "lineGap": "__TODO__",
+            "align": {
+              "left": "__TODO__",
+              "center": "__TODO__",
+              "right": "__TODO__",
+              "displayName": "__TODO__"
+            },
+            "foreground": "__TODO__",
+            "background": "__TODO__"
+          }
+        },
+        "SpecLine": {
+          "displayName": "__TODO__",
+          "props": {
+            "width": "__TODO__",
+            "foreground": "__TODO__",
+            "background": "__TODO__"
+          }
+        },
+        "Spacing": {
+          "displayName": "__TODO__",
+          "props": {
+            "background": "__TODO__"
+          }
+        },
+        "Blank": {
+          "displayName": "__TODO__",
+          "props": {
+            "width": "__TODO__",
+            "background": "__TODO__"
+          }
+        },
+        "Arrow": {
+          "displayName": "__TODO__",
+          "props": {
+            "direction": {
+              "displayName": "__TODO__"
+            },
+            "foreground": "__TODO__",
+            "background": "__TODO__"
+          }
+        },
+        "Line": {
+          "displayName": "__TODO__",
+          "props": {
+            "lineId": "__TODO__",
+            "colorKey": {
+              "displayName": "__TODO__"
+            },
+            "textZh": "__TODO__",
+            "textEn": "__TODO__",
+            "size": {
+              "displayName": "__TODO__"
+            },
+            "foreground": "__TODO__",
+            "background": "__TODO__"
+          }
+        },
+        "ToTrain": {
+          "displayName": "__TODO__",
+          "props": {
+            "variant": {
+              "displayName": "__TODO__"
+            },
+            "foreground": "__TODO__",
+            "plateColor": "__TODO__",
+            "strokeColor": "__TODO__",
+            "background": "__TODO__"
+          }
+        },
+        "DualText": {
+          "displayName": "__TODO__",
+          "props": {
+            "line1chinese": "__TODO__",
+            "line1english": "__TODO__",
+            "line2chinese": "__TODO__",
+            "line2english": "__TODO__",
+            "showEn": "__TODO__",
+            "align": {
+              "displayName": "__TODO__"
+            },
+            "weight": {
+              "displayName": "__TODO__"
+            },
+            "letterSpacing": "__TODO__",
+            "foreground": "__TODO__",
+            "background": "__TODO__"
+          }
+        },
+        "ExitLetter": {
+          "displayName": "__TODO__",
+          "props": {
+            "exits": "__TODO__",
+            "exitLetter": "__TODO__",
+            "variant": {
+              "displayName": "__TODO__"
+            },
+            "foreground": "__TODO__",
+            "background": "__TODO__"
+          }
+        },
+        "StationSign": {
+          "displayName": "__TODO__",
+          "props": {
+            "nameZh": "__TODO__",
+            "nameEn": "__TODO__",
+            "showLogo": "__TODO__",
+            "foreground": "__TODO__",
+            "background": "__TODO__"
+          }
+        },
+        "Icon": {
+          "displayName": "__TODO__",
+          "props": {
+            "icon": {
+              "displayName": "__TODO__",
+              "escalator_right": "__TODO__",
+              "stairs_right": "__TODO__",
+              "ticket_vending": "__TODO__",
+              "ticket_service": "__TODO__",
+              "inquiry": "__TODO__",
+              "customer_service": "__TODO__",
+              "police": "__TODO__",
+              "help_button": "__TODO__",
+              "security_check": "__TODO__",
+              "luggage_check": "__TODO__",
+              "ramp": "__TODO__",
+              "lifting_platform": "__TODO__",
+              "accessibility_white": "__TODO__",
+              "elderly": "__TODO__",
+              "stroller": "__TODO__",
+              "pregnant": "__TODO__",
+              "luggage": "__TODO__",
+              "gate_arrow_down": "__TODO__",
+              "no_entry_cross": "__TODO__",
+              "no_entry_cross_framed": "__TODO__"
+            },
+            "rotation": {
+              "displayName": "__TODO__"
+            },
+            "flipH": "__TODO__",
+            "flipV": "__TODO__",
+            "foreground": "__TODO__",
+            "background": "__TODO__"
+          }
+        },
+        "ExitIcon": {
+          "displayName": "__TODO__",
+          "props": {
+            "padding": {
+              "displayName": "__TODO__"
+            },
+            "background": "__TODO__"
+          }
+        }
+      }
+    }
+  }
+}
