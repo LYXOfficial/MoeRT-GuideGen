@@ -224,3 +224,50 @@ html[lang="pt-PT"] {
 ::selection {
   background: #a4c4f494;
 }
+
+/* 全站 Switch 统一放大（默认 40×24、small 26×16 都太小，编辑弹窗里尤其难按）。
+   只改几何不动颜色（深色/浅色两套 token 照吃）；body 前缀提一级特异度，
+   压过组件自带样式且与加载顺序无关；不用 !important。尺寸公式沿用官方：
+   checked 位移 = 轨道宽 − 钮宽 − 两侧各 2px 边框垫衬。 */
+body .semi-switch {
+  width: 56px;
+  height: 32px;
+  border-radius: 16px;
+}
+body .semi-switch .semi-switch-knob {
+  width: 26px;
+  height: 26px;
+  top: 2px;
+  border-radius: 13px;
+  transform: translateX(2px);
+}
+body .semi-switch:active .semi-switch-knob {
+  width: 34px;
+}
+body .semi-switch-checked .semi-switch-knob {
+  transform: translateX(26px);
+}
+body .semi-switch-checked:active .semi-switch-knob {
+  transform: translateX(18px);
+}
+body .semi-switch-small {
+  width: 44px;
+  height: 26px;
+  border-radius: 13px;
+}
+body .semi-switch-small .semi-switch-knob {
+  width: 20px;
+  height: 20px;
+  top: 2px;
+  border-radius: 10px;
+  transform: translateX(2px);
+}
+body .semi-switch-small:active .semi-switch-knob {
+  width: 26px;
+}
+body .semi-switch-small.semi-switch-checked .semi-switch-knob {
+  transform: translateX(20px);
+}
+body .semi-switch-small.semi-switch-checked:active .semi-switch-knob {
+  transform: translateX(12px);
+}

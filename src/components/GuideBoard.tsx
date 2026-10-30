@@ -142,6 +142,16 @@ interface GuideBoardProps {
 // 注意：渲染层不做任何配色覆盖，只按 item.props 原样渲染；
 // 配色在落板那一刻已固化进 props（见 addItemToRow / bakeDropColors），
 // 之后改底板不再回头覆盖已上板的组件。
+/**
+ * 容器件判定：成都双行容器 + 东京 Frame。
+ * Frame 刻意复用双行容器的数据契约（外层 two-row-container / 行 two-row-container-row，
+ * rowIndex 恒 0），所以从 GuideBoard / Editor 的角度两者完全一样：
+ * children 在 props.children、需要 onItemClick、拖拽与删除走同一套逻辑。
+ */
+export const isContainerItemType = (itemType?: string) =>
+  !!itemType &&
+  (itemType.includes("TwoRowContainer") || itemType.includes("Frame"));
+
 const BoardItemContent = memo(function BoardItemContent({
   item,
   selectedId,
@@ -153,7 +163,7 @@ const BoardItemContent = memo(function BoardItemContent({
   return React.cloneElement(item.element, {
     ...item.props,
     // 双行容器内部条目被选中时让它给对应子条目盖遮罩
-    ...(item.type?.includes("TwoRowContainer") ? { selectedId } : {}),
+    ...(isContainerItemType(item.type) ? { selectedId } : {}),
   });
 });
 // memo：平移时 Editor 重渲染（现在手势中已不 render，落账时 render 一次），
@@ -477,11 +487,12 @@ const GuideBoardCols = memo(forwardRef<GuideBoardRef, GuideBoardProps>(
       colorKeys: Set<string>,
       itemType?: string
     ) => {
+      // 重庆(0)/北京新(3)/东京(5)：落板固化板色；其余主题固化 transparent
       // 透明常量取当前主题 colors.ts（各主题定义一致），别写字面量
       const transparent = themes[currentTheme][1].colors.colors.transparent;
       const gapLike = isGapLike(itemType);
       if (colorKeys.has("background") && !gapLike) {
-        if (currentTheme === 0 || currentTheme === 3) {
+        if (currentTheme === 0 || currentTheme === 3 || currentTheme === 5) {
           if (boardBackground) {
             finalProps.background = boardBackground;
           }
@@ -490,7 +501,7 @@ const GuideBoardCols = memo(forwardRef<GuideBoardRef, GuideBoardProps>(
         }
       }
       if (colorKeys.has("background2") && !gapLike) {
-        if (currentTheme === 0 || currentTheme === 3) {
+        if (currentTheme === 0 || currentTheme === 3 || currentTheme === 5) {
           if (boardBackground) {
             finalProps.background2 = boardBackground;
           }
@@ -554,7 +565,7 @@ const GuideBoardCols = memo(forwardRef<GuideBoardRef, GuideBoardProps>(
                 };
 
                 // 双行容器需要补 onItemClick，内部条目才能被编辑/删除
-                if (item.type?.includes("TwoRowContainer")) {
+                if (isContainerItemType(item.type)) {
                   const kids = (item.props?.children as GuideItem[][]) || [
                     [],
                     [],
@@ -625,7 +636,7 @@ const GuideBoardCols = memo(forwardRef<GuideBoardRef, GuideBoardProps>(
             // 双行容器：children 在 props.children，且要补 onItemClick，
             // 内部条目才能打开编辑/被删除
             const rebuilt: GuideItem =
-              item.type?.includes("TwoRowContainer")
+              isContainerItemType(item.type)
                 ? makeContainerItem(
                     item,
                     (item.props?.children as GuideItem[][]) || [[], []]
@@ -727,7 +738,16 @@ const GuideBoardCols = memo(forwardRef<GuideBoardRef, GuideBoardProps>(
         addItemToTwoRowContainer: (containerId: string, rowIndex: number, item: GuideItem, insertIndex?: number, fresh?: boolean) => {
           setRows(prev => {
             const newRows = prev.map(row => row.map(rowItem => {
-              if (rowItem.id === containerId && rowItem.type?.includes('TwoRowContainer')) {
+              if (rowItem.id === containerId && isContainerItemType(rowItem.type)) {
+                // Frame 里不允许放「间距」：框宽由内容决定，间距没有剩余空间可分，
+                // 放进去只会是 0 宽的死件（用户拍板：干脆不让拖进去）
+                if (
+                  rowItem.type?.includes("Frame") &&
+                  typeof item.type === "string" &&
+                  item.type.includes("Spacing")
+                ) {
+                  return rowItem;
+                }
                 // 找到目标容器，更新其 children
                 const currentChildren = (rowItem.props?.children as GuideItem[][]) || [[], []];
                 const newChildren = [...currentChildren];
@@ -817,7 +837,7 @@ const GuideBoardCols = memo(forwardRef<GuideBoardRef, GuideBoardProps>(
           let removed: GuideItem | null = null;
           setRows(prev => {
             const newRows = prev.map(row => row.map(rowItem => {
-              if (rowItem.id === containerId && rowItem.type?.includes('TwoRowContainer')) {
+              if (rowItem.id === containerId && isContainerItemType(rowItem.type)) {
                 const currentChildren = (rowItem.props?.children as GuideItem[][]) || [[], []];
                 const newChildren = [...currentChildren];
                 
@@ -892,7 +912,7 @@ const GuideBoardCols = memo(forwardRef<GuideBoardRef, GuideBoardProps>(
               row.map(rowItem => {
                 if (
                   rowItem.id !== containerId ||
-                  !rowItem.type?.includes("TwoRowContainer")
+                  !isContainerItemType(rowItem.type)
                 ) {
                   return rowItem;
                 }
@@ -1216,7 +1236,7 @@ const GuideBoardCols = memo(forwardRef<GuideBoardRef, GuideBoardProps>(
                 padding: "16px",
                 boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
                 borderRadius: "16px",
-                width: 200,
+                width: 250,
                 // 弹窗内容可能比视口还高（如站点编号的卡片列表），
                 // 翻转/贴边都救不了「本身放不下」的情况：封顶后内部滚动。
                 // 用 dvh 跟随移动端地址栏收放（与项目其它地方一致）。
@@ -1243,7 +1263,12 @@ const GuideBoardCols = memo(forwardRef<GuideBoardRef, GuideBoardProps>(
                   <EditingPropsContext.Provider
                     value={editingItem.item.props || {}}
                   >
-                    {config.forms.map((form: PropForm, index: number) => (
+                    {config.forms
+                      .filter(
+                        (form: PropForm) =>
+                          !form.visible || form.visible(editingItem.item.props || {})
+                      )
+                      .map((form: PropForm, index: number) => (
                       <div key={index} className="flex flex-col gap-1">
                         <Typography.Text
                           type="tertiary"

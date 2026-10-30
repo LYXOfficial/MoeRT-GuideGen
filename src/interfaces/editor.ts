@@ -2,6 +2,11 @@ export interface PropForm {
   key: string;
   label: string;
   element: React.ReactElement;
+  /**
+   * 条件显示：返回 false 时编辑弹窗里隐藏这一项。
+   * 例：站名关掉「显示徽章」后，徽章那一组参数就不该出现。
+   */
+  visible?: (props: Record<string, any>) => boolean;
 }
 
 export interface EditorConfig {

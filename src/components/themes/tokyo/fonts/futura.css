@@ -1,0 +1,13 @@
+/**
+ * 站号字母字体：Futura Bold（CI 指南的调查结论，2017 年实调）。
+ * 本地无系统字体时用这里自托管的 woff2（已传图床 fonts/ 目录，
+ * 与博客其它字体同一套做法：https://img.0v0.my/fonts/）。
+ * 许可证：Futura PT 为商业字体，仅本地/自用，不随仓库分发。
+ */
+@font-face {
+  font-family: "Futura Metro";
+  src: url("https://img.0v0.my/fonts/FuturaPT-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}

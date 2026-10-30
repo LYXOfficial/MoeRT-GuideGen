@@ -8,7 +8,10 @@ import {
   type ReactElement,
 } from "react";
 import ComponentsList from "./ComponentsList";
-import GuideBoardCols, { type GuideBoardRef } from "./GuideBoard";
+import GuideBoardCols, {
+  isContainerItemType,
+  type GuideBoardRef,
+} from "./GuideBoard";
 import type { GuideItem } from "../interfaces/guide";
 import type { SaveData } from "../interfaces/editor";
 import Salt from "./Salt";
@@ -1502,7 +1505,7 @@ export default function Editor({
 
     const isSpacing = item.type?.includes("Spacing");
     const isBlank = item.type?.includes("Blank");
-    const ghost = item.type?.includes("TwoRowContainer")
+    const ghost = isContainerItemType(item.type)
       ? cloneElement(item.element as ReactElement<any>, { preview: true })
       : cloneElement(item.element as ReactElement<any>, inject);
 
@@ -1667,7 +1670,7 @@ export default function Editor({
       const draggedType = String(
         (activeData.boardItem ?? activeData.item)?.type ?? ""
       );
-      if (draggedType.includes("TwoRowContainer")) return;
+      if (isContainerItemType(draggedType)) return;
 
       // 处理双行容器内部拖拽（行内排序或跨行移动）
       if (isTwoRowInternalDrag) {
@@ -2486,7 +2489,7 @@ export default function Editor({
           collision => dataOf(collision).containerId !== activeId
         );
         // 双行容器不能拖进双行容器，直接忽略所有容器区域，按普通行处理
-        if (draggedType.includes("TwoRowContainer")) {
+        if (isContainerItemType(draggedType)) {
           pool = pool.filter(collision => !isTwoRowArea(dataOf(collision)));
         }
         if (pool.length === 0) pool = base;
@@ -2511,7 +2514,7 @@ export default function Editor({
         );
         const isTwoRowActive =
           activeData.context === "two-row" ||
-          draggedType.includes("TwoRowContainer");
+          isContainerItemType(draggedType);
         if (twoRowHits.length > 0 && !isTwoRowActive) {
           const dc = (twoRowHits[0]?.data?.droppableContainer ?? {}) as any;
           const node = (dc.node?.current ?? dc.node) as HTMLElement | null;

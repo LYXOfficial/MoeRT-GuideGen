@@ -2,11 +2,13 @@ import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import Backend from "i18next-http-backend";
-import zhCNRaw from "../../public/locales/zh-CN/translation.json?raw";
+// public/ 下的文件不能被 JS import（Vite 会直接报错），所以 src 里留一份副本做兜底。
+// 改 public/locales/zh-CN/translation.json 后请同步这份（见 AGENTS.md 的 i18n 约定）。
+import bundledZhCNJson from "../locales/zh-CN.json";
 
 // zh-CN 打包进产物做兜底资源：locales 请求 404 / 断网时简中界面照常可用，
 // 其它语言加载失败时缺键也回落到中文而不是裸 key
-const bundledZhCN = JSON.parse(zhCNRaw);
+const bundledZhCN = bundledZhCNJson as Record<string, unknown>;
 
 const SUPPORTED_LNGS = [
   "zh-CN",
