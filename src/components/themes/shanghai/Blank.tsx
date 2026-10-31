@@ -1,7 +1,7 @@
 import colors from "./define/colors";
 import type { EditorConfig } from "../../../interfaces/editor";
 import {
-  MultiRowBackground,
+  BackgroundBox,
   backgroundFormItems,
   numberFormItem,
 } from "./Background";
@@ -30,7 +30,7 @@ function Blank({
   background = blankDefaultProps.background,
 }: BlankProps) {
   return (
-    <MultiRowBackground
+    <BackgroundBox
       background={background}
       className="h-full"
       style={{ width: width ?? 20 }}

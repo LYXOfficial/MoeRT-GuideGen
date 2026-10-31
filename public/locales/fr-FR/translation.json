@@ -2260,12 +2260,6 @@
             "color2": "Couleur de ligne (bas)",
             "foreground": "Couleur du texte",
             "border": "Couleur de bordure",
-            "radius": "Rayon",
-            "height": "Hauteur",
-            "fontSizeZh": "Taille chinois",
-            "fontSizeEn": "Taille anglais",
-            "paddingX": "Marge latérale",
-            "lineGap": "Écart",
             "background": "Fond"
           }
         },
@@ -2288,7 +2282,6 @@
               "down-left": "Bas-gauche",
               "down-right": "Bas-droite"
             },
-            "size": "Taille",
             "foreground": "Couleur du texte",
             "background": "Fond"
           }
@@ -2328,9 +2321,7 @@
               "bus": "Bus",
               "parking": "Parking"
             },
-            "size": "Taille",
             "rotation": "Rotation",
-            "paddingX": "Marge latérale",
             "foreground": "Couleur du texte",
             "background": "Fond"
           }

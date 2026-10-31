@@ -2259,12 +2259,6 @@
             "color2": "路綫色（下段）",
             "foreground": "前景色",
             "border": "邊框色",
-            "radius": "圓角",
-            "height": "高度",
-            "fontSizeZh": "中文字號",
-            "fontSizeEn": "英文字號",
-            "paddingX": "左右內邊距",
-            "lineGap": "中英間距",
             "background": "背景色"
           }
         },
@@ -2287,7 +2281,6 @@
               "down-left": "左下",
               "down-right": "右下"
             },
-            "size": "尺寸",
             "foreground": "前景色",
             "background": "背景色"
           }
@@ -2327,9 +2320,7 @@
               "bus": "巴士",
               "parking": "停車場"
             },
-            "size": "尺寸",
             "rotation": "旋轉",
-            "paddingX": "左右留白",
             "foreground": "前景色",
             "background": "背景色"
           }

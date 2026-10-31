@@ -3,7 +3,7 @@ import { InputNumber, Select, TextArea } from "@douyinfe/semi-ui";
 import colors, { fontFamilyEn, fontFamilyZh } from "./define/colors";
 import type { EditorConfig } from "../../../interfaces/editor";
 import {
-  MultiRowBackground,
+  BackgroundBox,
   backgroundFormItems,
   foregroundFormItem,
 } from "./Background";
@@ -236,7 +236,7 @@ export default function Text({
   ]);
 
   return (
-    <MultiRowBackground
+    <BackgroundBox
       background={background}
       style={{ height: ROW_H, width: layout.width + EDGE_PAD * 2 }}
     >
@@ -276,7 +276,7 @@ export default function Text({
           </text>
         ))}
       </svg>
-    </MultiRowBackground>
+    </BackgroundBox>
   );
 }
 

@@ -1,7 +1,7 @@
 import colors from "./define/colors";
 import type { EditorConfig } from "../../../interfaces/editor";
 import {
-  MultiRowBackground,
+  BackgroundBox,
   backgroundFormItems,
   foregroundFormItem,
   numberFormItem,
@@ -38,7 +38,7 @@ function SpecLine({
 }: SpecLineProps) {
   const lineWidth = Math.max(1, width ?? 2);
   return (
-    <MultiRowBackground
+    <BackgroundBox
       background={background}
       className="z-10"
       style={{ width: lineWidth, height: 64 }}
@@ -49,7 +49,7 @@ function SpecLine({
           fill={foreground}
         />
       </svg>
-    </MultiRowBackground>
+    </BackgroundBox>
   );
 }
 

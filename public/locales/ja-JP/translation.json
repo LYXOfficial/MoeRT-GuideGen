@@ -2259,12 +2259,6 @@
             "color2": "路線色（下段・任意）",
             "foreground": "前景色",
             "border": "枠線色",
-            "radius": "角丸",
-            "height": "高さ",
-            "fontSizeZh": "中国語のサイズ",
-            "fontSizeEn": "英語のサイズ",
-            "paddingX": "左右の余白",
-            "lineGap": "中英の間隔",
             "background": "背景色"
           }
         },
@@ -2287,7 +2281,6 @@
               "down-left": "左下",
               "down-right": "右下"
             },
-            "size": "サイズ",
             "foreground": "前景色",
             "background": "背景色"
           }
@@ -2327,9 +2320,7 @@
               "bus": "バス",
               "parking": "駐車場"
             },
-            "size": "サイズ",
             "rotation": "回転",
-            "paddingX": "左右の余白",
             "foreground": "前景色",
             "background": "背景色"
           }

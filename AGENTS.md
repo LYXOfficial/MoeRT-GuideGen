@@ -569,8 +569,9 @@ python3 text_probe.py                                   # 解析 <use> 得到真
     换算表、与官方网络图的对照见 `docs/shanghai/notes/颜色与字体.md`。
   - 字体：中文思源黑体（继承北京那套 Noto Sans SC）+ **Helvetica**（项目已有
     `public/fonts/Helvetica.ttf`，`fonts/helvetica.css` 注册）。
-- **背景彻底单色**（用户拍板 2026-11-01）：`shanghai/Background.tsx` 的 `MultiRowBackground`
-  不读 `background2`、不画渐变；所有组件 props 里已删除 `background2`，编辑器只给一项「背景色」。
+- **背景彻底单色**（用户拍板 2026-11-01）：`shanghai/Background.tsx` **已删掉 `MultiRowBackground`**，
+  只留一层 `BackgroundBox`（一个 div 直接铺 backgroundColor，relative 定位给绝对定位的牌面用）；
+  所有组件 props 里也没有 `background2`，编辑器只给一项「背景色」。
   面板文案也不带单位注释（「字距」不写「（em）」，「尺寸」不写「（px）」）。
 - **文字对齐按墨迹**：中文与拉丁的 side bearing 不同，按排字原点对齐会让英文探出 1–2px
   （左对齐探左、右对齐探右）。`define/text.ts` 用 canvas `actualBoundingBoxLeft/Right` 取墨迹范围，
@@ -578,11 +579,16 @@ python3 text_probe.py                                   # 解析 <use> 得到真
   `actualBoundingBoxAscent/Descent`（offsetY=0 时墨迹正中，不再是 est 0.88em）。
 - **双行文本 = 两组「中文 + 英文」**（图 54 的「老沪闵路 / Laohumin Rd.」＋「龙华寺 / Long Hua Temple」），
   默认 19 / 10.5、组间距 4；哪组两个字段都空就整组跳过（用户指出第一版只做了一组，是错的）。
-- **线路标**：数字/文字线路标左右各留 3px 透明边（「适当留一点点间隙」），两者都不再有 `offsetY`；
-  文字线路标的「线路色（下段）」不再写「可空」（填成和上段一样就是单色）。
+- **线路标**：数字线路标左右各 3px、文字线路标左右各 **6px** 透明边；两者都不再有 `offsetY`。
+  文字线路标的版式**全部写死**（用户要求：圆角 3、牌高 44.5、中文 21、英文 10、左右内边距 10、
+  中英间距 4），编辑器只剩 文字 / 线路色上下段 / 前景色 / 边框色 / 背景色。
+  「线路色（下段）」不再写「可空」（填成和上段一样就是单色）。
 - **分隔线**：上下各留 8px（用户嫌 3px 太贴边）。
-- **图标**：`Icon` 的下拉**不带搜索框**，选项行有 18px 预览图（Semi 的 Option 只认 `label`，
-  传给 children 会被忽略）；「服务中心」用 p45_08 柜台版（p46 那版画的就是男+女，等于厕所）。
+- **图标**：边长固定 **50**、左右留白固定 **2**（用户要求不必开放调整），编辑器只有
+  图标 / 旋转 / 前景色 / 背景色；下拉**不带搜索框**，选项行有 18px 预览图（Semi 的 Option
+  只认 `label`，传给 children 会被忽略）；「服务中心」用 p45_08 柜台版
+  （p46 那版画的就是男+女，等于厕所）。
+- **箭头**：边长固定 **44**（不再开放调整），编辑器只有 形状 / 方向 / 前景色 / 背景色。
 - **尺寸换算**：行高 64px = 牌面高；徽章边长 44.5（0.695H）、白描边 1.3、数字字号 40、
   文字线路标牌高 44.5 / 圆角 3 / 字号 20+10。完整测量表见 `docs/shanghai/notes/组件规格.md`。
 - **箭头坑（重要）**：上海这套箭头不是「实心三角 + 台阶肩」，而是 **V 形人字臂 + 矩形杆**

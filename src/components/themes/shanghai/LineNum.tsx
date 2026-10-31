@@ -2,7 +2,7 @@ import { InputNumber } from "@douyinfe/semi-ui";
 import colors, { fontFamilyEn } from "./define/colors";
 import type { EditorConfig } from "../../../interfaces/editor";
 import {
-  MultiRowBackground,
+  BackgroundBox,
   backgroundFormItems,
   foregroundFormItem,
   colorFormItem,
@@ -92,7 +92,7 @@ export default function LineNum({
   void fontsReady;
 
   return (
-    <MultiRowBackground
+    <BackgroundBox
       background={background}
       style={{ height: ROW_H, width: box }}
     >
@@ -123,7 +123,7 @@ export default function LineNum({
           {text}
         </text>
       </svg>
-    </MultiRowBackground>
+    </BackgroundBox>
   );
 }
 

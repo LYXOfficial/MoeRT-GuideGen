@@ -1,8 +1,8 @@
-import { InputNumber, Select } from "@douyinfe/semi-ui";
+import { Select } from "@douyinfe/semi-ui";
 import colors from "./define/colors";
 import type { EditorConfig } from "../../../interfaces/editor";
 import {
-  MultiRowBackground,
+  BackgroundBox,
   backgroundFormItems,
   foregroundFormItem,
 } from "./Background";
@@ -17,33 +17,29 @@ import { ICON_GLYPHS } from "./icons/icon-registry";
  *  - 单色：形状跟随前景色、底板由 background/background2 决定（没有写死色值）
  *  - 自带圆角/直角细框（标准里外框属于图形本身）
  *  - 可 90° 整数倍旋转
- *  - 左右留一点间距（paddingX，默认 2px），既能和别的元素分开，又不会太散
+ *  - 边长固定 50px、左右各留 2px（用户要求：这两项没必要开放调整）
  */
 export interface IconProps {
   icon: string;
-  /** 图形边长（px） */
-  size?: number;
   /** 旋转角度：0 / 90 / 180 / 270 */
   rotation?: number;
-  /** 左右留白（px） */
-  paddingX?: number;
   foreground?: string;
   background?: string;
 }
 
 export const iconDefaultProps: IconProps = {
   icon: "gate_in",
-  size: 44,
   rotation: 0,
-  paddingX: 2,
   foreground: colors.foreground,
   background: colors.transparent,
 };
 
+/** 图形边长与左右留白锁死（用户要求：没必要开放调整） */
+const ICON_SIZE = 50;
+const PAD_X = 2;
+
 const SCOPE = "themes.shanghai.components.Icon.props";
 const ICON_KEY_SCOPE = `${SCOPE}.icon`;
-const SIZE_MIN = 16;
-const SIZE_MAX = 72;
 
 export const iconEditorConfig = (
   t: (key: string) => string
@@ -87,11 +83,6 @@ export const iconEditorConfig = (
       ),
     },
     {
-      key: "size",
-      label: `${SCOPE}.size`,
-      element: <InputNumber step={1} min={SIZE_MIN} max={SIZE_MAX} />,
-    },
-    {
       key: "rotation",
       label: `${SCOPE}.rotation`,
       element: (
@@ -103,11 +94,6 @@ export const iconEditorConfig = (
         </Select>
       ),
     },
-    {
-      key: "paddingX",
-      label: `${SCOPE}.paddingX`,
-      element: <InputNumber step={1} min={0} max={24} />,
-    },
     foregroundFormItem(SCOPE),
     ...backgroundFormItems(SCOPE),
   ],
@@ -115,22 +101,19 @@ export const iconEditorConfig = (
 
 export default function Icon({
   icon = iconDefaultProps.icon,
-  size = iconDefaultProps.size,
   rotation = iconDefaultProps.rotation,
-  paddingX = iconDefaultProps.paddingX,
   foreground = iconDefaultProps.foreground,
   background = iconDefaultProps.background,
 }: IconProps) {
   const entry =
     ICON_GLYPHS.find(item => item.key === icon) ?? ICON_GLYPHS[0];
   const Glyph = entry.glyph;
-  const side = Math.min(SIZE_MAX, Math.max(SIZE_MIN, Number(size) || 44));
-  const pad = Math.max(0, Number(paddingX) || 0);
+  const side = ICON_SIZE;
   const angle = ((Number(rotation) || 0) % 360 + 360) % 360;
-  const boxW = side + pad * 2;
+  const boxW = side + PAD_X * 2;
 
   return (
-    <MultiRowBackground
+    <BackgroundBox
       background={background}
       style={{ height: ROW_H, width: boxW }}
     >
@@ -153,7 +136,7 @@ export default function Icon({
           <Glyph color={foreground ?? colors.foreground} />
         </div>
       </div>
-    </MultiRowBackground>
+    </BackgroundBox>
   );
 }
 

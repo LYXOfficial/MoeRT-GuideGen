@@ -3,7 +3,7 @@ import { InputNumber, Select, TextArea } from "@douyinfe/semi-ui";
 import colors, { fontFamilyEn } from "./define/colors";
 import type { EditorConfig } from "../../../interfaces/editor";
 import {
-  MultiRowBackground,
+  BackgroundBox,
   backgroundFormItems,
   foregroundFormItem,
 } from "./Background";
@@ -171,7 +171,7 @@ export default function BigEn({
   const boxW = layout[0]?.width ?? 1;
 
   return (
-    <MultiRowBackground
+    <BackgroundBox
       background={background}
       style={{ height: ROW_H, width: boxW + EDGE_PAD * 2 }}
     >
@@ -196,7 +196,7 @@ export default function BigEn({
           </text>
         ))}
       </svg>
-    </MultiRowBackground>
+    </BackgroundBox>
   );
 }
 

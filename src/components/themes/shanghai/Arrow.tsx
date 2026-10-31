@@ -1,8 +1,8 @@
-import { InputNumber, Select } from "@douyinfe/semi-ui";
+import { Select } from "@douyinfe/semi-ui";
 import colors from "./define/colors";
 import type { EditorConfig } from "../../../interfaces/editor";
 import {
-  MultiRowBackground,
+  BackgroundBox,
   backgroundFormItems,
   foregroundFormItem,
 } from "./Background";
@@ -32,8 +32,6 @@ export type ArrowDirection =
 export interface ArrowProps {
   shape?: ArrowShape;
   direction?: ArrowDirection;
-  /** 箭头独占的方块边长（px） */
-  size?: number;
   foreground?: string;
   background?: string;
 }
@@ -41,7 +39,6 @@ export interface ArrowProps {
 export const arrowDefaultProps: ArrowProps = {
   shape: "straight",
   direction: "up",
-  size: 44,
   foreground: colors.foreground,
   background: colors.transparent,
 };
@@ -69,8 +66,8 @@ const TURN_ANGLE: Record<ArrowDirection, number> = {
 };
 
 const SCOPE = "themes.shanghai.components.Arrow.props";
-const SIZE_MIN = 16;
-const SIZE_MAX = 72;
+/** 箭头方块边长锁死（用户要求：没必要开放调整） */
+const ARROW_SIZE = 44;
 
 export const arrowEditorConfig = (
   t: (key: string) => string
@@ -114,11 +111,6 @@ export const arrowEditorConfig = (
         </Select>
       ),
     },
-    {
-      key: "size",
-      label: `${SCOPE}.size`,
-      element: <InputNumber step={1} min={SIZE_MIN} max={SIZE_MAX} />,
-    },
     foregroundFormItem(SCOPE),
     ...backgroundFormItems(SCOPE),
   ],
@@ -127,11 +119,10 @@ export const arrowEditorConfig = (
 export default function Arrow({
   shape = arrowDefaultProps.shape,
   direction = arrowDefaultProps.direction,
-  size = arrowDefaultProps.size,
   foreground = arrowDefaultProps.foreground,
   background = arrowDefaultProps.background,
 }: ArrowProps) {
-  const side = Math.min(SIZE_MAX, Math.max(SIZE_MIN, Number(size) || 44));
+  const side = ARROW_SIZE;
   const dir = (direction ?? "up") as ArrowDirection;
   const isTurn = shape === "turn";
   const Glyph = isTurn ? TurnRightGlyph : UpArrowGlyph;
@@ -141,9 +132,9 @@ export default function Arrow({
     : (STRAIGHT_ANGLE[dir] ?? 0);
 
   return (
-    <MultiRowBackground
+    <BackgroundBox
       background={background}
-      style={{ height: ROW_H, width: side }}
+      style={{ height: ROW_H, width: side + 10 }}
     >
       <div
         style={{
@@ -152,6 +143,8 @@ export default function Arrow({
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
+          marginLeft: 5,
+          marginRight: 5,
         }}
       >
         <div
@@ -164,7 +157,7 @@ export default function Arrow({
           <Glyph color={foreground ?? colors.foreground} />
         </div>
       </div>
-    </MultiRowBackground>
+    </BackgroundBox>
   );
 }
 

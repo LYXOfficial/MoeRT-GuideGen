@@ -2260,12 +2260,6 @@
             "color2": "Line colour (lower)",
             "foreground": "Foreground",
             "border": "Border colour",
-            "radius": "Radius",
-            "height": "Height",
-            "fontSizeZh": "Chinese size",
-            "fontSizeEn": "English size",
-            "paddingX": "Horizontal padding",
-            "lineGap": "Bilingual gap",
             "background": "Background"
           }
         },
@@ -2288,7 +2282,6 @@
               "down-left": "Down-left",
               "down-right": "Down-right"
             },
-            "size": "Size",
             "foreground": "Foreground",
             "background": "Background"
           }
@@ -2328,9 +2321,7 @@
               "bus": "Bus",
               "parking": "Parking"
             },
-            "size": "Size",
             "rotation": "Rotation",
-            "paddingX": "Horizontal padding",
             "foreground": "Foreground",
             "background": "Background"
           }

@@ -2260,12 +2260,6 @@
             "color2": "Color de línea (inf.)",
             "foreground": "Color del texto",
             "border": "Color de borde",
-            "radius": "Radio",
-            "height": "Altura",
-            "fontSizeZh": "Tamaño chino",
-            "fontSizeEn": "Tamaño inglés",
-            "paddingX": "Margen lateral",
-            "lineGap": "Separación",
             "background": "Fondo"
           }
         },
@@ -2288,7 +2282,6 @@
               "down-left": "Abajo izq.",
               "down-right": "Abajo dcha."
             },
-            "size": "Tamaño",
             "foreground": "Color del texto",
             "background": "Fondo"
           }
@@ -2328,9 +2321,7 @@
               "bus": "Autobús",
               "parking": "Aparcamiento"
             },
-            "size": "Tamaño",
             "rotation": "Rotación",
-            "paddingX": "Margen lateral",
             "foreground": "Color del texto",
             "background": "Fondo"
           }

@@ -2260,12 +2260,6 @@
             "color2": "Linienfarbe (unten)",
             "foreground": "Vordergrundfarbe",
             "border": "Rahmenfarbe",
-            "radius": "Radius",
-            "height": "Höhe",
-            "fontSizeZh": "Chinesisch-Größe",
-            "fontSizeEn": "Englisch-Größe",
-            "paddingX": "Seitenabstand",
-            "lineGap": "Abstand",
             "background": "Hintergrund"
           }
         },
@@ -2288,7 +2282,6 @@
               "down-left": "Unten links",
               "down-right": "Unten rechts"
             },
-            "size": "Größe",
             "foreground": "Vordergrundfarbe",
             "background": "Hintergrund"
           }
@@ -2328,9 +2321,7 @@
               "bus": "Bus",
               "parking": "Parkplatz"
             },
-            "size": "Größe",
             "rotation": "Drehung",
-            "paddingX": "Seitenabstand",
             "foreground": "Vordergrundfarbe",
             "background": "Hintergrund"
           }

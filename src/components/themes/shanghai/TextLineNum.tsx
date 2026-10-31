@@ -1,55 +1,49 @@
 import { useMemo } from "react";
-import { InputNumber, TextArea } from "@douyinfe/semi-ui";
+import { TextArea } from "@douyinfe/semi-ui";
 import colors, { fontFamilyEn, fontFamilyZh } from "./define/colors";
 import type { EditorConfig } from "../../../interfaces/editor";
 import {
-  MultiRowBackground,
+  BackgroundBox,
   backgroundFormItems,
   foregroundFormItem,
   colorFormItem,
 } from "./Background";
-import { PLATE_H, ROW_H } from "./define/layout";
-import {
-  measureText,
-  useFontsReady,
-  weightCss,
-  type TextWeight,
-} from "./define/text";
+import { ROW_H } from "./define/layout";
+import { measureText, useFontsReady, weightCss } from "./define/text";
 import { normalizeSvgLine } from "../../../utils/svgText";
 
 /**
  * 文字线路标（附录 A 右列「线路名称及识别色在深灰底色上的表达」）。
  *
- * 版式：小圆角矩形（半径 ≈ 0.06 高）+ 白色描边，两行文字：
- * 中文在上、英文在下；磁浮线是上下两段色（青绿 / 橙），所以底色支持双色。
- * 白描边、圆角、两段色都按原始图形（磁浮线、市域线两块牌）实测：
- *  - 牌高 = 44.5px（与数字徽章同高，能并排贴合）
- *  - 中文 ≈ 20px、英文 ≈ 10px、左右内边距 6px
+ * 版式全部锁死（用户要求：这些参数没必要开放调整，按标准图写死）：
+ *  - 牌高 44.5、圆角 3、白描边 1
+ *  - 中文 21px / 英文 10px（Helvetica）、左右内边距 10、中英间距 4
+ *  - 磁浮线是上下两段色（青绿 / 橙），所以底色支持双色；两段同色即单色
+ *  - 左右各留 6px 透明边（用户要求比数字线路标的 3px 再多一点）
  */
 export interface TextLineNumProps {
   chinese: string;
   english: string;
   /** 上段 / 单色线路色 */
   color1: string;
-  /** 下段线路色（磁浮为橙色；留空则整块单色） */
+  /** 下段线路色（磁浮为橙色；填成和上段一样就是单色） */
   color2?: string;
   /** 文字颜色 */
   foreground?: string;
   /** 描边色 */
   border?: string;
-  /** 圆角（px） */
-  radius?: number;
-  /** 牌高（px） */
-  height?: number;
-  fontSizeZh?: number;
-  fontSizeEn?: number;
-  /** 左右内边距（px） */
-  paddingX?: number;
-  weight?: TextWeight;
-  /** 中英之间空隙（px） */
-  lineGap?: number;
   background?: string;
 }
+
+/** 锁死的版式（来自标准附录 A 线路名称牌实测） */
+const PLATE_H = 44.5;
+const RADIUS = 3;
+const BORDER_W = 1;
+const ZH_SIZE = 21;
+const EN_SIZE = 10;
+const PAD_X = 10;
+const GAP = 4;
+const GAP_X = 6;
 
 export const textLineNumDefaultProps: TextLineNumProps = {
   chinese: "磁浮线",
@@ -58,13 +52,6 @@ export const textLineNumDefaultProps: TextLineNumProps = {
   color2: colors.maglev2,
   foreground: colors.white,
   border: colors.white,
-  radius: 3,
-  height: PLATE_H,
-  fontSizeZh: 20,
-  fontSizeEn: 10,
-  paddingX: 6,
-  weight: "medium",
-  lineGap: 2,
   background: colors.transparent,
 };
 
@@ -88,36 +75,6 @@ export const textLineNumEditorConfig = (
     colorFormItem(SCOPE, "color2"),
     foregroundFormItem(SCOPE),
     colorFormItem(SCOPE, "border"),
-    {
-      key: "radius",
-      label: `${SCOPE}.radius`,
-      element: <InputNumber step={0.5} min={0} max={12} />,
-    },
-    {
-      key: "height",
-      label: `${SCOPE}.height`,
-      element: <InputNumber step={0.5} min={24} max={64} />,
-    },
-    {
-      key: "fontSizeZh",
-      label: `${SCOPE}.fontSizeZh`,
-      element: <InputNumber step={1} min={8} max={48} />,
-    },
-    {
-      key: "fontSizeEn",
-      label: `${SCOPE}.fontSizeEn`,
-      element: <InputNumber step={1} min={6} max={32} />,
-    },
-    {
-      key: "paddingX",
-      label: `${SCOPE}.paddingX`,
-      element: <InputNumber step={0.5} min={0} max={20} />,
-    },
-    {
-      key: "lineGap",
-      label: `${SCOPE}.lineGap`,
-      element: <InputNumber step={1} min={0} max={16} />,
-    },
     ...backgroundFormItems(SCOPE),
   ],
 });
@@ -129,43 +86,29 @@ export default function TextLineNum({
   color2 = textLineNumDefaultProps.color2,
   foreground = textLineNumDefaultProps.foreground,
   border = textLineNumDefaultProps.border,
-  radius = textLineNumDefaultProps.radius,
-  height = textLineNumDefaultProps.height,
-  fontSizeZh = textLineNumDefaultProps.fontSizeZh,
-  fontSizeEn = textLineNumDefaultProps.fontSizeEn,
-  paddingX = textLineNumDefaultProps.paddingX,
-  weight = textLineNumDefaultProps.weight,
-  lineGap = textLineNumDefaultProps.lineGap,
   background = textLineNumDefaultProps.background,
 }: TextLineNumProps) {
   const fontsReady = useFontsReady();
-  const weightValue = weightCss(weight ?? "medium");
-  const plateH = Math.min(64, Math.max(24, Number(height) || PLATE_H));
-  const zhSize = Math.max(8, Math.min(48, Number(fontSizeZh) || 20));
-  const enSize = Math.max(6, Math.min(32, Number(fontSizeEn) || 10));
-  const pad = Math.max(0, Number(paddingX) || 0);
-  const gap = Math.max(0, Number(lineGap) || 0);
-  const r = Math.max(0, Math.min(12, Number(radius) || 0));
+  const weightValue = weightCss("medium");
   const zh = normalizeSvgLine(chinese);
   const en = normalizeSvgLine(english);
-  const zhFont = `${weightValue} ${zhSize}px ${fontFamilyZh}`;
-  const enFont = `${weightValue} ${enSize}px ${fontFamilyEn}`;
+  const zhFont = `${weightValue} ${ZH_SIZE}px ${fontFamilyZh}`;
+  const enFont = `${weightValue} ${EN_SIZE}px ${fontFamilyEn}`;
   const plateW = useMemo(
     () =>
       Math.ceil(Math.max(measureText(zh, zhFont), measureText(en, enFont))) +
-      pad * 2,
-    [zh, en, zhFont, enFont, pad, fontsReady]
+      PAD_X * 2,
+    [zh, en, zhFont, enFont, fontsReady]
   );
-  const gapX = 3;
-  const boxW = plateW + gapX * 2;
-  const top = (ROW_H - plateH) / 2;
-  const zhInk = zhSize * 0.88;
-  const enCap = enSize * 0.716;
-  const enDesc = enSize * 0.25;
-  const inkH = zhInk + gap + enCap + enDesc;
-  const contentTop = top + (plateH - inkH) / 2;
-  const zhBaseline = contentTop + zhInk;
-  const enBaseline = zhBaseline + gap + enCap;
+  const boxW = plateW + GAP_X * 2;
+  const top = (ROW_H - PLATE_H) / 2;
+  const zhInk = ZH_SIZE * 0.88;
+  const enCap = EN_SIZE * 0.716;
+  const enDesc = EN_SIZE * 0.25;
+  const inkH = zhInk + GAP + enCap + enDesc;
+  const contentTop = top + (PLATE_H - inkH) / 2;
+  const zhBaseline = contentTop + zhInk - top;
+  const enBaseline = zhBaseline + GAP + enCap;
 
   const bands = color2 && color2 !== color1 ? [color1, color2] : [color1];
   const bg =
@@ -174,28 +117,28 @@ export default function TextLineNum({
       : `linear-gradient(to bottom, ${bands[0]} 0% 50%, ${bands[1]} 50% 100%)`;
 
   return (
-    <MultiRowBackground
+    <BackgroundBox
       background={background}
       style={{ height: ROW_H, width: boxW }}
     >
       <div
         style={{
           position: "absolute",
-          left: gapX,
-          right: gapX,
+          left: GAP_X,
+          right: GAP_X,
           top,
-          height: plateH,
-          borderRadius: r,
-          border: `1px solid ${border}`,
+          height: PLATE_H,
+          borderRadius: RADIUS,
+          border: `${BORDER_W}px solid ${border}`,
           background: bg,
           overflow: "hidden",
         }}
       >
-        <svg width={plateW} height={plateH} style={{ display: "block" }}>
+        <svg width={plateW} height={PLATE_H} style={{ display: "block" }}>
           <text
-            x={pad}
-            y={zhBaseline - top}
-            fontSize={zhSize}
+            x={PAD_X}
+            y={zhBaseline}
+            fontSize={ZH_SIZE}
             fontWeight={weightValue}
             fill={foreground}
             fontFamily={fontFamilyZh}
@@ -204,9 +147,9 @@ export default function TextLineNum({
             {zh}
           </text>
           <text
-            x={pad}
-            y={enBaseline - top}
-            fontSize={enSize}
+            x={PAD_X}
+            y={enBaseline}
+            fontSize={EN_SIZE}
             fontWeight={weightValue}
             fill={foreground}
             fontFamily={fontFamilyEn}
@@ -216,7 +159,7 @@ export default function TextLineNum({
           </text>
         </svg>
       </div>
-    </MultiRowBackground>
+    </BackgroundBox>
   );
 }
 

@@ -4,11 +4,9 @@ import CustomColorPicker from "../../CustomColorPicker";
 import type { PropForm } from "../../../interfaces/editor";
 
 /**
- * 组件背景：上海主题**只做单色**（用户拍板：不做上下分行）。
- * 名字沿用 MultiRowBackground 是为了和别的主题共用调用形状，
- * 但这里不读 background2、也不画渐变 —— 传入的背景色直接铺满整块。
+ * 组件背景：一层普通 div，直接铺背景色（上海主题只做单色，没有任何多行/渐变逻辑）。
  */
-export function MultiRowBackground({
+export function BackgroundBox({
   background,
   className,
   style,
@@ -20,12 +18,12 @@ export function MultiRowBackground({
   children?: ReactNode;
 }) {
   return (
-    <div className={className} style={{ position: "relative", ...style }}>
-      <div
-        aria-hidden
-        style={{ position: "absolute", inset: 0, backgroundColor: background }}
-      />
-      <div style={{ position: "relative", height: "100%" }}>{children}</div>
+    <div
+      className={className}
+      // relative：TextLineNum 的牌面是绝对定位的，需要这一层当定位基准
+      style={{ position: "relative", backgroundColor: background, ...style }}
+    >
+      {children}
     </div>
   );
 }

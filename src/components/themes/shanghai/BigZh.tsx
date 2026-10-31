@@ -3,7 +3,7 @@ import { InputNumber, Select, TextArea } from "@douyinfe/semi-ui";
 import colors, { fontFamilyZh } from "./define/colors";
 import type { EditorConfig } from "../../../interfaces/editor";
 import {
-  MultiRowBackground,
+  BackgroundBox,
   backgroundFormItems,
   foregroundFormItem,
 } from "./Background";
@@ -175,7 +175,7 @@ export default function BigZh({
   const boxW = layout[0]?.width ?? 1;
 
   return (
-    <MultiRowBackground
+    <BackgroundBox
       background={background}
       style={{ height: ROW_H, width: boxW + EDGE_PAD * 2 }}
     >
@@ -200,7 +200,7 @@ export default function BigZh({
           </text>
         ))}
       </svg>
-    </MultiRowBackground>
+    </BackgroundBox>
   );
 }
 

@@ -1,6 +1,6 @@
 import colors from "./define/colors";
 import type { EditorConfig } from "../../../interfaces/editor";
-import { MultiRowBackground, backgroundFormItems } from "./Background";
+import { BackgroundBox, backgroundFormItems } from "./Background";
 
 export interface SpacingProps {
   background?: string;
@@ -20,7 +20,7 @@ function Spacing({
   background = spacingDefaultProps.background,
 }: SpacingProps) {
   return (
-    <MultiRowBackground
+    <BackgroundBox
       background={background}
       className="flex-1 w-full h-full"
     />

@@ -3,7 +3,7 @@ import { Input, InputNumber, Select } from "@douyinfe/semi-ui";
 import colors, { fontFamilyEn } from "./define/colors";
 import type { EditorConfig } from "../../../interfaces/editor";
 import {
-  MultiRowBackground,
+  BackgroundBox,
   backgroundFormItems,
   foregroundFormItem,
 } from "./Background";
@@ -39,7 +39,7 @@ export const numAlphabetDefaultProps: NumAlphabetProps = {
   value: "3",
   weight: "normal",
   fontWeight: 400,
-  fontSize: 62,
+  fontSize: 56,
   letterSpacing: 0,
   offsetY: 0,
   foreground: colors.foreground,
@@ -131,7 +131,7 @@ export default function NumAlphabet({
   }, [value, size, dy, ls, weightValue, fontsReady]);
 
   return (
-    <MultiRowBackground
+    <BackgroundBox
       background={background}
       style={{ height: ROW_H, width: layout.width + EDGE_PAD * 2 }}
     >
@@ -153,7 +153,7 @@ export default function NumAlphabet({
           {layout.text}
         </text>
       </svg>
-    </MultiRowBackground>
+    </BackgroundBox>
   );
 }
 

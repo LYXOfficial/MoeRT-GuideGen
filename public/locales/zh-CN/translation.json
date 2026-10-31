@@ -2259,12 +2259,6 @@
             "color2": "线路色（下段）",
             "foreground": "前景色",
             "border": "边框色",
-            "radius": "圆角",
-            "height": "高度",
-            "fontSizeZh": "中文字号",
-            "fontSizeEn": "英文字号",
-            "paddingX": "左右内边距",
-            "lineGap": "中英间距",
             "background": "背景色"
           }
         },
@@ -2287,7 +2281,6 @@
               "down-left": "左下",
               "down-right": "右下"
             },
-            "size": "尺寸",
             "foreground": "前景色",
             "background": "背景色"
           }
@@ -2327,9 +2320,7 @@
               "bus": "公共汽车",
               "parking": "停车场"
             },
-            "size": "尺寸",
             "rotation": "旋转",
-            "paddingX": "左右留白",
             "foreground": "前景色",
             "background": "背景色"
           }

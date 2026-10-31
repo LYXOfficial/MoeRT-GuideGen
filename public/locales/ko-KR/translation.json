@@ -2259,12 +2259,6 @@
             "color2": "노선색(하단, 선택)",
             "foreground": "전경색",
             "border": "테두리색",
-            "radius": "모서리",
-            "height": "높이",
-            "fontSizeZh": "중국어 크기",
-            "fontSizeEn": "영어 크기",
-            "paddingX": "좌우 여백",
-            "lineGap": "중영문 간격",
             "background": "배경색"
           }
         },
@@ -2287,7 +2281,6 @@
               "down-left": "왼쪽 아래",
               "down-right": "오른쪽 아래"
             },
-            "size": "크기",
             "foreground": "전경색",
             "background": "배경색"
           }
@@ -2327,9 +2320,7 @@
               "bus": "버스",
               "parking": "주차장"
             },
-            "size": "크기",
             "rotation": "회전",
-            "paddingX": "좌우 여백",
             "foreground": "전경색",
             "background": "배경색"
           }
