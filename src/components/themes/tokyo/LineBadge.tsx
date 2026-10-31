@@ -46,7 +46,7 @@ export const lineBadgeDefaultProps: LineBadgeProps = {
   number: "19",
   color: colors.lineG,
   size: "large",
-  plate: "none",
+  plate: "rect",
   plateColor: "#ffffff",
   platePadding: 4,
   foreground: "#1a1a1a",

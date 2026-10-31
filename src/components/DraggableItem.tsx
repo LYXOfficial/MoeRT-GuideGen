@@ -197,7 +197,9 @@ export default function DraggableItem({
     opacity: isDragging ? 0.5 : 1,
     touchAction: "none",
     position: "relative" as const,
-    willChange: "transform",
+    // 只在**真的在拖**的时候提升合成层。常驻 will-change 会让每个组件各自成为
+    // 一个合成层、缓存 1× 位图，画板放大时整片糊着放大（点一下才重绘=用户看到的「模糊」）
+    willChange: isDragging ? "transform" : "auto",
     // -1px 是为了和相邻组件互相压住接缝（避免中间露 1px 板底色）。
     // 但行首 / 行尾那一侧没有邻居可压，负边距只会把组件顶出行外、
     // 被 overflow:hidden 裁掉 1px —— 组件自己设了跟底板不同的背景色时，

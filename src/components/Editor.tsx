@@ -433,10 +433,20 @@ export default function Editor({
   // 手势结束 commitPan 落账一次（新对象，触发一次渲染同步 state）。
   const panLayerRef = useRef<HTMLDivElement | null>(null);
   const panRef = useRef(pan);
+  // 平移手势中把合成层打开（只做合成器偏移，丝滑），停手 160ms 后关掉：
+  // 关掉那一刻浏览器会按当前倍率重新光栅化，于是「缩放后模糊」也不会常驻。
+  const [isPanning, setIsPanning] = useState(false);
+  const panEndTimerRef = useRef<number | null>(null);
   const writePanLive = (p: { x: number; y: number }) => {
     panRef.current = p;
     const el = panLayerRef.current;
     if (el) el.style.transform = `translate(${p.x}px, ${p.y}px)`;
+    setIsPanning(true);
+    if (panEndTimerRef.current) window.clearTimeout(panEndTimerRef.current);
+    panEndTimerRef.current = window.setTimeout(() => {
+      panEndTimerRef.current = null;
+      setIsPanning(false);
+    }, 160);
   };
   const commitPan = useCallback((p: { x: number; y: number }) => {
     panRef.current = p;
@@ -2679,7 +2689,9 @@ export default function Editor({
                 // 提升为独立合成层：平移只做合成器偏移，不重绘整块画板
                 // （否则 200% 缩放下每帧要重新光栅化整棵 SVG 子树，掉到 ~30fps）
                 // 缩放刚变过的那一帧先摘掉，逼合成层按新倍率重光栅化，避免「放大后一直糊」
-                willChange: reRaster ? "auto" : "transform",
+                // 只在手势期间提升合成层：手势一结束就摘掉，
+                // 合成层缓存的是手势开始那一刻的位图，常驻就会「放大后一直糊」
+                willChange: isDragging || isZooming || isPanning || reRaster ? "transform" : "auto",
               }}
             >
               {/* 内层只负责缩放：变换/补间与改动前完全一致，缩放行为零变化。
@@ -2691,6 +2703,9 @@ export default function Editor({
                   {
                     transform: `scale(${zoom})`,
                     transformOrigin: "center",
+                    // 缩放层本身也不能常驻合成：常驻时它缓存的是 1× 位图，
+                    // 放大后直接拉伸那张位图 → 「模糊，点一下才清楚」
+                    willChange: isDragging || isZooming || isPanning ? "transform" : "auto",
                     transition:
                       isDragging || isZooming ? "none" : "transform 0.1s ease-out",
                     cursor: isDragging ? "grabbing" : "default",
