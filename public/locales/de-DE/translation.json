@@ -2049,6 +2049,324 @@
         "operator-metro": "Tokyo Metro",
         "operator-toei": "Toei-Verkehrsbetriebe"
       }
+    },
+    "shanghai": {
+      "displayName": "Shanghai Metro",
+      "colors": {
+        "transparent": "Transparent",
+        "background": "Hintergrund (dunkelgrau)",
+        "foreground": "Vordergrund (weiß)",
+        "background2": "Weißer Grund",
+        "foreground2": "Dunkelgrauer Text",
+        "border": "Rahmen (weiß)",
+        "white": "Weiß",
+        "black": "Schwarz",
+        "specline": "Trennlinie",
+        "exitBackground": "Ausgang-Hintergrund",
+        "exitForeground": "Ausgang-Gelb",
+        "shentongRed": "Shentong-Rot",
+        "line1": "Linie 1",
+        "line2": "Linie 2",
+        "line3": "Linie 3",
+        "line4": "Linie 4",
+        "line5": "Linie 5",
+        "line6": "Linie 6",
+        "line7": "Linie 7",
+        "line8": "Linie 8",
+        "line9": "Linie 9",
+        "line10": "Linie 10",
+        "line11": "Linie 11",
+        "line12": "Linie 12",
+        "line13": "Linie 13",
+        "line14": "Linie 14",
+        "line15": "Linie 15",
+        "line16": "Linie 16",
+        "line17": "Linie 17",
+        "line18": "Linie 18",
+        "line19": "Linie 19",
+        "line20": "Linie 20",
+        "line21": "Linie 21",
+        "line22": "Linie 22",
+        "line23": "Linie 23",
+        "linepujiang": "Pujiang-Linie",
+        "linesuburban": "Vorortbahn",
+        "maglev1": "Transrapid (oben)",
+        "maglev2": "Transrapid (unten)"
+      },
+      "common": {
+        "weight": {
+          "normal": "Normal",
+          "medium": "Mittel",
+          "bold": "Fett"
+        },
+        "align": {
+          "left": "Linksbündig",
+          "center": "Zentriert",
+          "right": "Rechtsbündig"
+        },
+        "direction": {
+          "up": "Oben",
+          "down": "Unten",
+          "left": "Links",
+          "right": "Rechts",
+          "up-left": "Oben links",
+          "up-right": "Oben rechts",
+          "down-left": "Unten links",
+          "down-right": "Unten rechts"
+        },
+        "shape": {
+          "straight": "Gerade",
+          "turn": "Geknickt"
+        }
+      },
+      "components": {
+        "Text": {
+          "displayName": "Zweisprachiger Text",
+          "props": {
+            "chinese": "Chinesisch",
+            "english": "Englisch",
+            "weight": {
+              "displayName": "Schriftstärke",
+              "normal": "Normal",
+              "medium": "Mittel",
+              "bold": "Fett"
+            },
+            "align": {
+              "displayName": "Ausrichtung",
+              "left": "Linksbündig",
+              "center": "Zentriert",
+              "right": "Rechtsbündig"
+            },
+            "letterSpacing": "Laufweite (em)",
+            "fontSizeZh": "Chinesisch-Größe (px)",
+            "fontSizeEn": "Englisch-Größe (px)",
+            "lineGap": "Abstand (px)",
+            "offsetY": "Vertikaler Versatz (px)",
+            "foreground": "Vordergrundfarbe",
+            "background": "Hintergrund (Zeile 1)",
+            "background2": "Hintergrund (Zeile 2)"
+          }
+        },
+        "BigZh": {
+          "displayName": "Großes Chinesisch",
+          "props": {
+            "chinese": "Chinesisch",
+            "weight": {
+              "displayName": "Schriftstärke",
+              "normal": "Normal",
+              "medium": "Mittel",
+              "bold": "Fett"
+            },
+            "align": {
+              "displayName": "Ausrichtung",
+              "left": "Linksbündig",
+              "center": "Zentriert",
+              "right": "Rechtsbündig"
+            },
+            "letterSpacing": "Laufweite (em)",
+            "fontSize": "Schriftgröße (px)",
+            "lineHeight": "Zeilenabstand",
+            "offsetY": "Vertikaler Versatz (px)",
+            "foreground": "Vordergrundfarbe",
+            "background": "Hintergrund (Zeile 1)",
+            "background2": "Hintergrund (Zeile 2)"
+          }
+        },
+        "BigEn": {
+          "displayName": "Großes Englisch",
+          "props": {
+            "english": "Englisch",
+            "weight": {
+              "displayName": "Schriftstärke",
+              "normal": "Normal",
+              "medium": "Mittel",
+              "bold": "Fett"
+            },
+            "align": {
+              "displayName": "Ausrichtung",
+              "left": "Linksbündig",
+              "center": "Zentriert",
+              "right": "Rechtsbündig"
+            },
+            "letterSpacing": "Laufweite (em)",
+            "fontSize": "Schriftgröße (px)",
+            "lineHeight": "Zeilenabstand",
+            "offsetY": "Vertikaler Versatz (px)",
+            "foreground": "Vordergrundfarbe",
+            "background": "Hintergrund (Zeile 1)",
+            "background2": "Hintergrund (Zeile 2)"
+          }
+        },
+        "NumAlphabet": {
+          "displayName": "Zahl/Buchstabe",
+          "props": {
+            "value": "Inhalt",
+            "weight": {
+              "displayName": "Schriftstärke",
+              "normal": "Normal",
+              "medium": "Mittel",
+              "bold": "Fett"
+            },
+            "fontSize": "Schriftgröße (px)",
+            "letterSpacing": "Laufweite (em)",
+            "offsetY": "Vertikaler Versatz (px)",
+            "foreground": "Vordergrundfarbe",
+            "background": "Hintergrund (Zeile 1)",
+            "background2": "Hintergrund (Zeile 2)"
+          }
+        },
+        "DualText": {
+          "displayName": "Zweizeiliger Text",
+          "props": {
+            "chinese": "Chinesisch",
+            "english": "Englisch",
+            "weight": {
+              "displayName": "Schriftstärke",
+              "normal": "Normal",
+              "medium": "Mittel",
+              "bold": "Fett"
+            },
+            "align": {
+              "displayName": "Ausrichtung",
+              "left": "Linksbündig",
+              "center": "Zentriert",
+              "right": "Rechtsbündig"
+            },
+            "letterSpacing": "Laufweite (em)",
+            "fontSizeZh": "Chinesisch-Größe (px)",
+            "fontSizeEn": "Englisch-Größe (px)",
+            "lineGap": "Abstand (px)",
+            "offsetY": "Vertikaler Versatz (px)",
+            "foreground": "Vordergrundfarbe",
+            "background": "Hintergrund (Zeile 1)",
+            "background2": "Hintergrund (Zeile 2)"
+          }
+        },
+        "LineNum": {
+          "displayName": "Liniennummer",
+          "props": {
+            "number": "Liniennummer",
+            "size": "Größe (px)",
+            "offsetY": "Vertikaler Versatz (px)",
+            "foreground": "Vordergrundfarbe",
+            "lineColor": "Linienfarbe",
+            "border": "Rahmenfarbe",
+            "background": "Hintergrund (Zeile 1)",
+            "background2": "Hintergrund (Zeile 2)"
+          }
+        },
+        "TextLineNum": {
+          "displayName": "Linienname",
+          "props": {
+            "chinese": "Chinesisch",
+            "english": "Englisch",
+            "color1": "Linienfarbe (oben)",
+            "color2": "Linienfarbe (unten, optional)",
+            "foreground": "Vordergrundfarbe",
+            "border": "Rahmenfarbe",
+            "radius": "Radius (px)",
+            "height": "Höhe (px)",
+            "fontSizeZh": "Chinesisch-Größe (px)",
+            "fontSizeEn": "Englisch-Größe (px)",
+            "paddingX": "Seitenabstand (px)",
+            "lineGap": "Abstand (px)",
+            "background": "Hintergrund (Zeile 1)",
+            "background2": "Hintergrund (Zeile 2)"
+          }
+        },
+        "Arrow": {
+          "displayName": "Pfeil",
+          "props": {
+            "shape": {
+              "displayName": "Form",
+              "straight": "Gerade",
+              "turn": "Geknickt"
+            },
+            "direction": {
+              "displayName": "Richtung",
+              "up": "Oben",
+              "down": "Unten",
+              "left": "Links",
+              "right": "Rechts",
+              "up-left": "Oben links",
+              "up-right": "Oben rechts",
+              "down-left": "Unten links",
+              "down-right": "Unten rechts"
+            },
+            "size": "Größe (px)",
+            "foreground": "Vordergrundfarbe",
+            "background": "Hintergrund (Zeile 1)",
+            "background2": "Hintergrund (Zeile 2)"
+          }
+        },
+        "Icon": {
+          "displayName": "Piktogramm",
+          "props": {
+            "icon": {
+              "displayName": "Piktogramm",
+              "metro_logo": "Shentong-Logo",
+              "gate_in": "Eingangssperren",
+              "gate_out": "Ausgangssperren",
+              "ticket_service": "Fahrkartenverkauf",
+              "service_center": "Servicecenter",
+              "restroom": "Toilette",
+              "security": "Sicherheit",
+              "shopping": "Einkaufszentrum",
+              "ticket_office": "Fahrkartenschalter",
+              "station_in": "Einstieg",
+              "station_out": "Ausstieg",
+              "restroom_third": "Dritte Toilette",
+              "restroom_men": "Herrentoilette",
+              "restroom_women": "Damentoilette",
+              "nursing_room": "Stillraum",
+              "waiting_area": "Wartebereich",
+              "elevator_accessible": "Barrierefreier Aufzug",
+              "accessibility": "Barrierefreie Einrichtung",
+              "ramp": "Barrierefreie Rampe",
+              "no_entry": "Durchgang verboten",
+              "metro": "U-Bahn",
+              "suburban_rail": "Vorortbahn",
+              "maglev": "Transrapid",
+              "taxi": "Taxi",
+              "train": "Zug",
+              "airplane": "Flugzeug",
+              "coach": "Reisebus",
+              "bus": "Bus",
+              "parking": "Parkplatz"
+            },
+            "size": "Größe (px)",
+            "rotation": "Drehung",
+            "paddingX": "Seitenabstand (px)",
+            "foreground": "Vordergrundfarbe",
+            "background": "Hintergrund (Zeile 1)",
+            "background2": "Hintergrund (Zeile 2)"
+          }
+        },
+        "Spacing": {
+          "displayName": "Abstand",
+          "props": {
+            "background": "Hintergrund (Zeile 1)",
+            "background2": "Hintergrund (Zeile 2)"
+          }
+        },
+        "Blank": {
+          "displayName": "Leerraum",
+          "props": {
+            "width": "Linienstärke (px)",
+            "background": "Hintergrund (Zeile 1)",
+            "background2": "Hintergrund (Zeile 2)"
+          }
+        },
+        "SpecLine": {
+          "displayName": "Trennlinie",
+          "props": {
+            "width": "Linienstärke (px)",
+            "foreground": "Vordergrundfarbe",
+            "background": "Hintergrund (Zeile 1)",
+            "background2": "Hintergrund (Zeile 2)"
+          }
+        }
+      }
     }
   }
 }

@@ -28,6 +28,11 @@ pnpm dev                                  # 开发服务器（5173 端口，常�
 - ✅ **M8 北京旧版（2015 / 经典样式）主题已完成**（2026-10-24）：
   `src/components/themes/beijing-old/`，THEME_INDEX 4，key `themes.beijingOld`，
   tsc / biome / build 三绿已提交。要点见 §4 末尾「旧版主题」，遗留项见 §9。
+- ✅ **上海地铁主题**（2026-11-01）：`src/components/themes/shanghai/`，THEME_INDEX 6，
+  key `themes.shanghai`。依据 DB31/T 1104（2025-11 修订征求意见稿）建成 12 个组件
+  （LineNum / TextLineNum / Text / BigZh / BigEn / NumAlphabet / DualText / Arrow / Icon /
+  SpecLine / Spacing / Blank），图形符号 28 个 + 申通标志，线路色 24 组全部来自标准 CMYK。
+  资料与实测笔记在 `docs/shanghai/`（见 §11），tsc / biome / build 三绿。
 - ✅ 编辑器交互（PC + 移动端）：拖拽/点按判定、触屏长按、小元件热区、删除区可见矩形、
   编辑菜单稳定性、整页缩放禁用等，全部修复并提交（见 §7/§8）。
 - ✅ **全应用深色/浅色模式**（2026-10-25）：初始跟随浏览器 `prefers-color-scheme`，
@@ -550,3 +555,29 @@ python3 text_probe.py                                   # 解析 <use> 得到真
   另一个 agent 并发改文件时尤其别硬耗：dev server 被它改崩了，验证必然超时，直接收手。
 - 图标几何永远走提取管线，别手绘。
 - 不要在根目录新建任何测试文件/临时文件/截图文件/占位文件（.playwright-mcp下的文件除外，它们是被gitignore了的），应该放到系统的 temp 目录，如`/tmp/` `C:\Users\xxx\Appdata\Local\temp`
+
+## 11. 上海主题（DB31/T 1104）
+
+- **规范来源**：上海市地方标准 **DB31/T 1104《城市轨道交通导向标识系统设计规范》**
+  （2018 首发，2025-11 修订征求意见稿）。原文、整页预览、附图裁切都在 `docs/shanghai/`。
+  和北京不同，**上海没有公开的 VI 包/vitool 等价物**，标准的附录 A/B/C 就是全部素材，
+  且附图是 150 ppi 位图（图标只能描摹，不能像 visys.pdf 那样抠矢量路径）。
+- **主题要点**：
+  - 底色 = 6.4.1「深灰 C0 M0 Y0 K92-95」→ `#2D2B2E`；进站/换乘信息白、
+    **出站信息黄 `#FFCF00`（C0 M18 Y94 K0）**；申通标志红 `#E3001B`（C0 M100 Y100 K0）。
+  - 线路色 = 附录 A 的 CMYK 经 ISO Coated（FOGRA27）转 sRGB（24 组，含磁浮双色）。
+    换算表、与官方网络图的对照见 `docs/shanghai/notes/颜色与字体.md`。
+  - 字体：中文思源黑体（继承北京那套 Noto Sans SC）+ **Helvetica**（项目已有
+    `public/fonts/Helvetica.ttf`，`fonts/helvetica.css` 注册）。
+- **尺寸换算**：行高 64px = 牌面高；徽章边长 44.5（0.695H）、白描边 1.3、数字字号 40、
+  文字线路标牌高 44.5 / 圆角 3 / 字号 20+10。完整测量表见 `docs/shanghai/notes/组件规格.md`。
+- **箭头坑（重要）**：上海这套箭头不是「实心三角 + 台阶肩」，而是 **V 形人字臂 + 矩形杆**
+  （臂外端竖直平切、下沿斜收回杆侧），实测比例见组件规格 §8。
+  **标准里没有 90° 弯折箭头**：图 54 那条是直行右箭头；`TurnRightGlyph` 是按同一套比例
+  构造的（折角取 180° 调头箭头的内外半径），要严格照抄图 54 用 `RightArrowGlyph`。
+- **图形符号**：`icons/pictograms-real.tsx`（28 个，potrace 描摹，单色跟随前景色）+
+  `icons/logo-real.tsx`（申通标志）。标准里「服务中心」画得像厕所、「禁止通行」是圆环+横杠，
+  都是原图如此，照抄不改。提取管线见 `docs/shanghai/notes/图标提取.md`。
+- **i18n 坑（又踩了一次）**：`public/locales/zh-CN/translation.json` 改完必须同步
+  **`src/locales/zh-CN.json`**（打包兜底资源），否则简中界面里新主题名会显示成裸 key
+  `themes.shanghai.displayName`。其它 10 种语言走 `public/locales/` 的后端加载，不用同步。

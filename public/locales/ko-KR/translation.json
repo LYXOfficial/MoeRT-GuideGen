@@ -2048,6 +2048,324 @@
         "operator-metro": "도쿄 메트로",
         "operator-toei": "도에이 교통"
       }
+    },
+    "shanghai": {
+      "displayName": "상하이 지하철",
+      "colors": {
+        "transparent": "투명",
+        "background": "배경(진회색)",
+        "foreground": "전경(흰색)",
+        "background2": "흰 바탕",
+        "foreground2": "진회색 글자",
+        "border": "테두리(흰색)",
+        "white": "흰색",
+        "black": "검정",
+        "specline": "구분선",
+        "exitBackground": "출구 배경",
+        "exitForeground": "출구 노랑",
+        "shentongRed": "선퉁 레드",
+        "line1": "1호선",
+        "line2": "2호선",
+        "line3": "3호선",
+        "line4": "4호선",
+        "line5": "5호선",
+        "line6": "6호선",
+        "line7": "7호선",
+        "line8": "8호선",
+        "line9": "9호선",
+        "line10": "10호선",
+        "line11": "11호선",
+        "line12": "12호선",
+        "line13": "13호선",
+        "line14": "14호선",
+        "line15": "15호선",
+        "line16": "16호선",
+        "line17": "17호선",
+        "line18": "18호선",
+        "line19": "19호선",
+        "line20": "20호선",
+        "line21": "21호선",
+        "line22": "22호선",
+        "line23": "23호선",
+        "linepujiang": "푸장선",
+        "linesuburban": "시역선",
+        "maglev1": "자기부상(상단)",
+        "maglev2": "자기부상(하단)"
+      },
+      "common": {
+        "weight": {
+          "normal": "보통",
+          "medium": "중간",
+          "bold": "굵게"
+        },
+        "align": {
+          "left": "왼쪽 정렬",
+          "center": "가운데",
+          "right": "오른쪽 정렬"
+        },
+        "direction": {
+          "up": "위",
+          "down": "아래",
+          "left": "왼쪽",
+          "right": "오른쪽",
+          "up-left": "왼쪽 위",
+          "up-right": "오른쪽 위",
+          "down-left": "왼쪽 아래",
+          "down-right": "오른쪽 아래"
+        },
+        "shape": {
+          "straight": "직진",
+          "turn": "꺾임"
+        }
+      },
+      "components": {
+        "Text": {
+          "displayName": "중영문 텍스트",
+          "props": {
+            "chinese": "중국어",
+            "english": "영어",
+            "weight": {
+              "displayName": "굵기",
+              "normal": "보통",
+              "medium": "중간",
+              "bold": "굵게"
+            },
+            "align": {
+              "displayName": "정렬",
+              "left": "왼쪽 정렬",
+              "center": "가운데",
+              "right": "오른쪽 정렬"
+            },
+            "letterSpacing": "자간(em)",
+            "fontSizeZh": "중국어 크기(px)",
+            "fontSizeEn": "영어 크기(px)",
+            "lineGap": "중영문 간격(px)",
+            "offsetY": "상하 오프셋(px)",
+            "foreground": "전경색",
+            "background": "배경색(1행)",
+            "background2": "배경색(2행)"
+          }
+        },
+        "BigZh": {
+          "displayName": "큰 중국어",
+          "props": {
+            "chinese": "중국어",
+            "weight": {
+              "displayName": "굵기",
+              "normal": "보통",
+              "medium": "중간",
+              "bold": "굵게"
+            },
+            "align": {
+              "displayName": "정렬",
+              "left": "왼쪽 정렬",
+              "center": "가운데",
+              "right": "오른쪽 정렬"
+            },
+            "letterSpacing": "자간(em)",
+            "fontSize": "글자 크기(px)",
+            "lineHeight": "줄 간격",
+            "offsetY": "상하 오프셋(px)",
+            "foreground": "전경색",
+            "background": "배경색(1행)",
+            "background2": "배경색(2행)"
+          }
+        },
+        "BigEn": {
+          "displayName": "큰 영어",
+          "props": {
+            "english": "영어",
+            "weight": {
+              "displayName": "굵기",
+              "normal": "보통",
+              "medium": "중간",
+              "bold": "굵게"
+            },
+            "align": {
+              "displayName": "정렬",
+              "left": "왼쪽 정렬",
+              "center": "가운데",
+              "right": "오른쪽 정렬"
+            },
+            "letterSpacing": "자간(em)",
+            "fontSize": "글자 크기(px)",
+            "lineHeight": "줄 간격",
+            "offsetY": "상하 오프셋(px)",
+            "foreground": "전경색",
+            "background": "배경색(1행)",
+            "background2": "배경색(2행)"
+          }
+        },
+        "NumAlphabet": {
+          "displayName": "숫자/문자",
+          "props": {
+            "value": "내용",
+            "weight": {
+              "displayName": "굵기",
+              "normal": "보통",
+              "medium": "중간",
+              "bold": "굵게"
+            },
+            "fontSize": "글자 크기(px)",
+            "letterSpacing": "자간(em)",
+            "offsetY": "상하 오프셋(px)",
+            "foreground": "전경색",
+            "background": "배경색(1행)",
+            "background2": "배경색(2행)"
+          }
+        },
+        "DualText": {
+          "displayName": "두 줄 텍스트",
+          "props": {
+            "chinese": "중국어",
+            "english": "영어",
+            "weight": {
+              "displayName": "굵기",
+              "normal": "보통",
+              "medium": "중간",
+              "bold": "굵게"
+            },
+            "align": {
+              "displayName": "정렬",
+              "left": "왼쪽 정렬",
+              "center": "가운데",
+              "right": "오른쪽 정렬"
+            },
+            "letterSpacing": "자간(em)",
+            "fontSizeZh": "중국어 크기(px)",
+            "fontSizeEn": "영어 크기(px)",
+            "lineGap": "중영문 간격(px)",
+            "offsetY": "상하 오프셋(px)",
+            "foreground": "전경색",
+            "background": "배경색(1행)",
+            "background2": "배경색(2행)"
+          }
+        },
+        "LineNum": {
+          "displayName": "번호 배지",
+          "props": {
+            "number": "노선 번호",
+            "size": "크기(px)",
+            "offsetY": "상하 오프셋(px)",
+            "foreground": "전경색",
+            "lineColor": "노선색",
+            "border": "테두리색",
+            "background": "배경색(1행)",
+            "background2": "배경색(2행)"
+          }
+        },
+        "TextLineNum": {
+          "displayName": "노선명 배지",
+          "props": {
+            "chinese": "중국어",
+            "english": "영어",
+            "color1": "노선색(상단)",
+            "color2": "노선색(하단, 선택)",
+            "foreground": "전경색",
+            "border": "테두리색",
+            "radius": "모서리(px)",
+            "height": "높이(px)",
+            "fontSizeZh": "중국어 크기(px)",
+            "fontSizeEn": "영어 크기(px)",
+            "paddingX": "좌우 여백(px)",
+            "lineGap": "중영문 간격(px)",
+            "background": "배경색(1행)",
+            "background2": "배경색(2행)"
+          }
+        },
+        "Arrow": {
+          "displayName": "화살표",
+          "props": {
+            "shape": {
+              "displayName": "모양",
+              "straight": "직진",
+              "turn": "꺾임"
+            },
+            "direction": {
+              "displayName": "방향",
+              "up": "위",
+              "down": "아래",
+              "left": "왼쪽",
+              "right": "오른쪽",
+              "up-left": "왼쪽 위",
+              "up-right": "오른쪽 위",
+              "down-left": "왼쪽 아래",
+              "down-right": "오른쪽 아래"
+            },
+            "size": "크기(px)",
+            "foreground": "전경색",
+            "background": "배경색(1행)",
+            "background2": "배경색(2행)"
+          }
+        },
+        "Icon": {
+          "displayName": "픽토그램",
+          "props": {
+            "icon": {
+              "displayName": "픽토그램",
+              "metro_logo": "선퉁 로고",
+              "gate_in": "입장 개찰",
+              "gate_out": "출장 개찰",
+              "ticket_service": "승차권 판매",
+              "service_center": "서비스 센터",
+              "restroom": "화장실",
+              "security": "보안",
+              "shopping": "쇼핑몰",
+              "ticket_office": "매표소",
+              "station_in": "입장",
+              "station_out": "출장",
+              "restroom_third": "제3화장실",
+              "restroom_men": "남자 화장실",
+              "restroom_women": "여자 화장실",
+              "nursing_room": "수유실",
+              "waiting_area": "대기 구역",
+              "elevator_accessible": "무장애 엘리베이터",
+              "accessibility": "무장애 시설",
+              "ramp": "무장애 경사로",
+              "no_entry": "통행 금지",
+              "metro": "지하철",
+              "suburban_rail": "시역선",
+              "maglev": "자기부상",
+              "taxi": "택시",
+              "train": "기차",
+              "airplane": "비행기",
+              "coach": "장거리 버스",
+              "bus": "버스",
+              "parking": "주차장"
+            },
+            "size": "크기(px)",
+            "rotation": "회전",
+            "paddingX": "좌우 여백(px)",
+            "foreground": "전경색",
+            "background": "배경색(1행)",
+            "background2": "배경색(2행)"
+          }
+        },
+        "Spacing": {
+          "displayName": "간격",
+          "props": {
+            "background": "배경색(1행)",
+            "background2": "배경색(2행)"
+          }
+        },
+        "Blank": {
+          "displayName": "공백",
+          "props": {
+            "width": "선 두께(px)",
+            "background": "배경색(1행)",
+            "background2": "배경색(2행)"
+          }
+        },
+        "SpecLine": {
+          "displayName": "구분선",
+          "props": {
+            "width": "선 두께(px)",
+            "foreground": "전경색",
+            "background": "배경색(1행)",
+            "background2": "배경색(2행)"
+          }
+        }
+      }
     }
   }
 }

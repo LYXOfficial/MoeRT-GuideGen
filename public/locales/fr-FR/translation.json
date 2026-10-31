@@ -2049,6 +2049,324 @@
         "operator-metro": "Tokyo Metro",
         "operator-toei": "Transports Toei"
       }
+    },
+    "shanghai": {
+      "displayName": "Métro de Shanghai",
+      "colors": {
+        "transparent": "Transparent",
+        "background": "Fond (gris foncé)",
+        "foreground": "Texte (blanc)",
+        "background2": "Fond blanc",
+        "foreground2": "Texte gris foncé",
+        "border": "Bordure (blanche)",
+        "white": "Blanc",
+        "black": "Noir",
+        "specline": "Séparateur",
+        "exitBackground": "Fond sortie",
+        "exitForeground": "Jaune sortie",
+        "shentongRed": "Rouge Shentong",
+        "line1": "Ligne 1",
+        "line2": "Ligne 2",
+        "line3": "Ligne 3",
+        "line4": "Ligne 4",
+        "line5": "Ligne 5",
+        "line6": "Ligne 6",
+        "line7": "Ligne 7",
+        "line8": "Ligne 8",
+        "line9": "Ligne 9",
+        "line10": "Ligne 10",
+        "line11": "Ligne 11",
+        "line12": "Ligne 12",
+        "line13": "Ligne 13",
+        "line14": "Ligne 14",
+        "line15": "Ligne 15",
+        "line16": "Ligne 16",
+        "line17": "Ligne 17",
+        "line18": "Ligne 18",
+        "line19": "Ligne 19",
+        "line20": "Ligne 20",
+        "line21": "Ligne 21",
+        "line22": "Ligne 22",
+        "line23": "Ligne 23",
+        "linepujiang": "Ligne Pujiang",
+        "linesuburban": "Ligne suburbaine",
+        "maglev1": "Maglev (haut)",
+        "maglev2": "Maglev (bas)"
+      },
+      "common": {
+        "weight": {
+          "normal": "Normal",
+          "medium": "Moyen",
+          "bold": "Gras"
+        },
+        "align": {
+          "left": "Gauche",
+          "center": "Centré",
+          "right": "Droite"
+        },
+        "direction": {
+          "up": "Haut",
+          "down": "Bas",
+          "left": "Gauche",
+          "right": "Droite",
+          "up-left": "Haut-gauche",
+          "up-right": "Haut-droite",
+          "down-left": "Bas-gauche",
+          "down-right": "Bas-droite"
+        },
+        "shape": {
+          "straight": "Tout droit",
+          "turn": "Tournant"
+        }
+      },
+      "components": {
+        "Text": {
+          "displayName": "Texte bilingue",
+          "props": {
+            "chinese": "Chinois",
+            "english": "Anglais",
+            "weight": {
+              "displayName": "Graisse",
+              "normal": "Normal",
+              "medium": "Moyen",
+              "bold": "Gras"
+            },
+            "align": {
+              "displayName": "Alignement",
+              "left": "Gauche",
+              "center": "Centré",
+              "right": "Droite"
+            },
+            "letterSpacing": "Interlettrage (em)",
+            "fontSizeZh": "Taille chinois (px)",
+            "fontSizeEn": "Taille anglais (px)",
+            "lineGap": "Écart (px)",
+            "offsetY": "Décalage vertical (px)",
+            "foreground": "Couleur du texte",
+            "background": "Fond (ligne 1)",
+            "background2": "Fond (ligne 2)"
+          }
+        },
+        "BigZh": {
+          "displayName": "Grand chinois",
+          "props": {
+            "chinese": "Chinois",
+            "weight": {
+              "displayName": "Graisse",
+              "normal": "Normal",
+              "medium": "Moyen",
+              "bold": "Gras"
+            },
+            "align": {
+              "displayName": "Alignement",
+              "left": "Gauche",
+              "center": "Centré",
+              "right": "Droite"
+            },
+            "letterSpacing": "Interlettrage (em)",
+            "fontSize": "Taille (px)",
+            "lineHeight": "Interligne",
+            "offsetY": "Décalage vertical (px)",
+            "foreground": "Couleur du texte",
+            "background": "Fond (ligne 1)",
+            "background2": "Fond (ligne 2)"
+          }
+        },
+        "BigEn": {
+          "displayName": "Grand anglais",
+          "props": {
+            "english": "Anglais",
+            "weight": {
+              "displayName": "Graisse",
+              "normal": "Normal",
+              "medium": "Moyen",
+              "bold": "Gras"
+            },
+            "align": {
+              "displayName": "Alignement",
+              "left": "Gauche",
+              "center": "Centré",
+              "right": "Droite"
+            },
+            "letterSpacing": "Interlettrage (em)",
+            "fontSize": "Taille (px)",
+            "lineHeight": "Interligne",
+            "offsetY": "Décalage vertical (px)",
+            "foreground": "Couleur du texte",
+            "background": "Fond (ligne 1)",
+            "background2": "Fond (ligne 2)"
+          }
+        },
+        "NumAlphabet": {
+          "displayName": "Chiffre/lettre",
+          "props": {
+            "value": "Contenu",
+            "weight": {
+              "displayName": "Graisse",
+              "normal": "Normal",
+              "medium": "Moyen",
+              "bold": "Gras"
+            },
+            "fontSize": "Taille (px)",
+            "letterSpacing": "Interlettrage (em)",
+            "offsetY": "Décalage vertical (px)",
+            "foreground": "Couleur du texte",
+            "background": "Fond (ligne 1)",
+            "background2": "Fond (ligne 2)"
+          }
+        },
+        "DualText": {
+          "displayName": "Texte sur deux lignes",
+          "props": {
+            "chinese": "Chinois",
+            "english": "Anglais",
+            "weight": {
+              "displayName": "Graisse",
+              "normal": "Normal",
+              "medium": "Moyen",
+              "bold": "Gras"
+            },
+            "align": {
+              "displayName": "Alignement",
+              "left": "Gauche",
+              "center": "Centré",
+              "right": "Droite"
+            },
+            "letterSpacing": "Interlettrage (em)",
+            "fontSizeZh": "Taille chinois (px)",
+            "fontSizeEn": "Taille anglais (px)",
+            "lineGap": "Écart (px)",
+            "offsetY": "Décalage vertical (px)",
+            "foreground": "Couleur du texte",
+            "background": "Fond (ligne 1)",
+            "background2": "Fond (ligne 2)"
+          }
+        },
+        "LineNum": {
+          "displayName": "Numéro de ligne",
+          "props": {
+            "number": "Numéro de ligne",
+            "size": "Taille (px)",
+            "offsetY": "Décalage vertical (px)",
+            "foreground": "Couleur du texte",
+            "lineColor": "Couleur de ligne",
+            "border": "Couleur de bordure",
+            "background": "Fond (ligne 1)",
+            "background2": "Fond (ligne 2)"
+          }
+        },
+        "TextLineNum": {
+          "displayName": "Nom de ligne",
+          "props": {
+            "chinese": "Chinois",
+            "english": "Anglais",
+            "color1": "Couleur de ligne (haut)",
+            "color2": "Couleur de ligne (bas, optionnel)",
+            "foreground": "Couleur du texte",
+            "border": "Couleur de bordure",
+            "radius": "Rayon (px)",
+            "height": "Hauteur (px)",
+            "fontSizeZh": "Taille chinois (px)",
+            "fontSizeEn": "Taille anglais (px)",
+            "paddingX": "Marge latérale (px)",
+            "lineGap": "Écart (px)",
+            "background": "Fond (ligne 1)",
+            "background2": "Fond (ligne 2)"
+          }
+        },
+        "Arrow": {
+          "displayName": "Flèche",
+          "props": {
+            "shape": {
+              "displayName": "Forme",
+              "straight": "Tout droit",
+              "turn": "Tournant"
+            },
+            "direction": {
+              "displayName": "Direction",
+              "up": "Haut",
+              "down": "Bas",
+              "left": "Gauche",
+              "right": "Droite",
+              "up-left": "Haut-gauche",
+              "up-right": "Haut-droite",
+              "down-left": "Bas-gauche",
+              "down-right": "Bas-droite"
+            },
+            "size": "Taille (px)",
+            "foreground": "Couleur du texte",
+            "background": "Fond (ligne 1)",
+            "background2": "Fond (ligne 2)"
+          }
+        },
+        "Icon": {
+          "displayName": "Pictogramme",
+          "props": {
+            "icon": {
+              "displayName": "Pictogramme",
+              "metro_logo": "Logo Shentong",
+              "gate_in": "Portiques d'entrée",
+              "gate_out": "Portiques de sortie",
+              "ticket_service": "Vente de billets",
+              "service_center": "Centre de services",
+              "restroom": "Toilettes",
+              "security": "Sécurité",
+              "shopping": "Centre commercial",
+              "ticket_office": "Guichet",
+              "station_in": "Entrée",
+              "station_out": "Sortie",
+              "restroom_third": "Troisième toilette",
+              "restroom_men": "Toilettes hommes",
+              "restroom_women": "Toilettes femmes",
+              "nursing_room": "Espace allaitement",
+              "waiting_area": "Salle d'attente",
+              "elevator_accessible": "Ascenseur accessible",
+              "accessibility": "Équipement accessible",
+              "ramp": "Rampe accessible",
+              "no_entry": "Entrée interdite",
+              "metro": "Métro",
+              "suburban_rail": "Ligne suburbaine",
+              "maglev": "Maglev",
+              "taxi": "Taxi",
+              "train": "Train",
+              "airplane": "Avion",
+              "coach": "Autocar",
+              "bus": "Bus",
+              "parking": "Parking"
+            },
+            "size": "Taille (px)",
+            "rotation": "Rotation",
+            "paddingX": "Marge latérale (px)",
+            "foreground": "Couleur du texte",
+            "background": "Fond (ligne 1)",
+            "background2": "Fond (ligne 2)"
+          }
+        },
+        "Spacing": {
+          "displayName": "Espacement",
+          "props": {
+            "background": "Fond (ligne 1)",
+            "background2": "Fond (ligne 2)"
+          }
+        },
+        "Blank": {
+          "displayName": "Vide",
+          "props": {
+            "width": "Épaisseur (px)",
+            "background": "Fond (ligne 1)",
+            "background2": "Fond (ligne 2)"
+          }
+        },
+        "SpecLine": {
+          "displayName": "Séparateur",
+          "props": {
+            "width": "Épaisseur (px)",
+            "foreground": "Couleur du texte",
+            "background": "Fond (ligne 1)",
+            "background2": "Fond (ligne 2)"
+          }
+        }
+      }
     }
   }
 }

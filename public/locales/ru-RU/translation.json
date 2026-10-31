@@ -2051,6 +2051,324 @@
         "operator-metro": "Tokyo Metro",
         "operator-toei": "Toei Transportation"
       }
+    },
+    "shanghai": {
+      "displayName": "Шанхайский метрополитен",
+      "colors": {
+        "transparent": "Прозрачный",
+        "background": "Фон (тёмно-серый)",
+        "foreground": "Текст (белый)",
+        "background2": "Белое поле",
+        "foreground2": "Тёмно-серый текст",
+        "border": "Обводка (белая)",
+        "white": "Белый",
+        "black": "Чёрный",
+        "specline": "Разделитель",
+        "exitBackground": "Фон выхода",
+        "exitForeground": "Жёлтый выхода",
+        "shentongRed": "Красный Shentong",
+        "line1": "Линия 1",
+        "line2": "Линия 2",
+        "line3": "Линия 3",
+        "line4": "Линия 4",
+        "line5": "Линия 5",
+        "line6": "Линия 6",
+        "line7": "Линия 7",
+        "line8": "Линия 8",
+        "line9": "Линия 9",
+        "line10": "Линия 10",
+        "line11": "Линия 11",
+        "line12": "Линия 12",
+        "line13": "Линия 13",
+        "line14": "Линия 14",
+        "line15": "Линия 15",
+        "line16": "Линия 16",
+        "line17": "Линия 17",
+        "line18": "Линия 18",
+        "line19": "Линия 19",
+        "line20": "Линия 20",
+        "line21": "Линия 21",
+        "line22": "Линия 22",
+        "line23": "Линия 23",
+        "linepujiang": "Линия Pujiang",
+        "linesuburban": "Пригородная линия",
+        "maglev1": "Маглев (верх)",
+        "maglev2": "Маглев (низ)"
+      },
+      "common": {
+        "weight": {
+          "normal": "Обычный",
+          "medium": "Средний",
+          "bold": "Жирный"
+        },
+        "align": {
+          "left": "По левому краю",
+          "center": "По центру",
+          "right": "По правому краю"
+        },
+        "direction": {
+          "up": "Вверх",
+          "down": "Вниз",
+          "left": "Влево",
+          "right": "Вправо",
+          "up-left": "Влево-вверх",
+          "up-right": "Вправо-вверх",
+          "down-left": "Влево-вниз",
+          "down-right": "Вправо-вниз"
+        },
+        "shape": {
+          "straight": "Прямая",
+          "turn": "С поворотом"
+        }
+      },
+      "components": {
+        "Text": {
+          "displayName": "Двуязычный текст",
+          "props": {
+            "chinese": "Китайский",
+            "english": "Английский",
+            "weight": {
+              "displayName": "Насыщенность",
+              "normal": "Обычный",
+              "medium": "Средний",
+              "bold": "Жирный"
+            },
+            "align": {
+              "displayName": "Выравнивание",
+              "left": "По левому краю",
+              "center": "По центру",
+              "right": "По правому краю"
+            },
+            "letterSpacing": "Межбуквенное (em)",
+            "fontSizeZh": "Размер китайского (px)",
+            "fontSizeEn": "Размер английского (px)",
+            "lineGap": "Интервал (px)",
+            "offsetY": "Смещение по вертикали (px)",
+            "foreground": "Цвет текста",
+            "background": "Фон (строка 1)",
+            "background2": "Фон (строка 2)"
+          }
+        },
+        "BigZh": {
+          "displayName": "Крупный китайский",
+          "props": {
+            "chinese": "Китайский",
+            "weight": {
+              "displayName": "Насыщенность",
+              "normal": "Обычный",
+              "medium": "Средний",
+              "bold": "Жирный"
+            },
+            "align": {
+              "displayName": "Выравнивание",
+              "left": "По левому краю",
+              "center": "По центру",
+              "right": "По правому краю"
+            },
+            "letterSpacing": "Межбуквенное (em)",
+            "fontSize": "Размер шрифта (px)",
+            "lineHeight": "Межстрочный интервал",
+            "offsetY": "Смещение по вертикали (px)",
+            "foreground": "Цвет текста",
+            "background": "Фон (строка 1)",
+            "background2": "Фон (строка 2)"
+          }
+        },
+        "BigEn": {
+          "displayName": "Крупный английский",
+          "props": {
+            "english": "Английский",
+            "weight": {
+              "displayName": "Насыщенность",
+              "normal": "Обычный",
+              "medium": "Средний",
+              "bold": "Жирный"
+            },
+            "align": {
+              "displayName": "Выравнивание",
+              "left": "По левому краю",
+              "center": "По центру",
+              "right": "По правому краю"
+            },
+            "letterSpacing": "Межбуквенное (em)",
+            "fontSize": "Размер шрифта (px)",
+            "lineHeight": "Межстрочный интервал",
+            "offsetY": "Смещение по вертикали (px)",
+            "foreground": "Цвет текста",
+            "background": "Фон (строка 1)",
+            "background2": "Фон (строка 2)"
+          }
+        },
+        "NumAlphabet": {
+          "displayName": "Цифра/буква",
+          "props": {
+            "value": "Содержимое",
+            "weight": {
+              "displayName": "Насыщенность",
+              "normal": "Обычный",
+              "medium": "Средний",
+              "bold": "Жирный"
+            },
+            "fontSize": "Размер шрифта (px)",
+            "letterSpacing": "Межбуквенное (em)",
+            "offsetY": "Смещение по вертикали (px)",
+            "foreground": "Цвет текста",
+            "background": "Фон (строка 1)",
+            "background2": "Фон (строка 2)"
+          }
+        },
+        "DualText": {
+          "displayName": "Двухстрочный текст",
+          "props": {
+            "chinese": "Китайский",
+            "english": "Английский",
+            "weight": {
+              "displayName": "Насыщенность",
+              "normal": "Обычный",
+              "medium": "Средний",
+              "bold": "Жирный"
+            },
+            "align": {
+              "displayName": "Выравнивание",
+              "left": "По левому краю",
+              "center": "По центру",
+              "right": "По правому краю"
+            },
+            "letterSpacing": "Межбуквенное (em)",
+            "fontSizeZh": "Размер китайского (px)",
+            "fontSizeEn": "Размер английского (px)",
+            "lineGap": "Интервал (px)",
+            "offsetY": "Смещение по вертикали (px)",
+            "foreground": "Цвет текста",
+            "background": "Фон (строка 1)",
+            "background2": "Фон (строка 2)"
+          }
+        },
+        "LineNum": {
+          "displayName": "Номер линии",
+          "props": {
+            "number": "Номер линии",
+            "size": "Размер (px)",
+            "offsetY": "Смещение по вертикали (px)",
+            "foreground": "Цвет текста",
+            "lineColor": "Цвет линии",
+            "border": "Цвет обводки",
+            "background": "Фон (строка 1)",
+            "background2": "Фон (строка 2)"
+          }
+        },
+        "TextLineNum": {
+          "displayName": "Название линии",
+          "props": {
+            "chinese": "Китайский",
+            "english": "Английский",
+            "color1": "Цвет линии (верх)",
+            "color2": "Цвет линии (низ, необяз.)",
+            "foreground": "Цвет текста",
+            "border": "Цвет обводки",
+            "radius": "Радиус (px)",
+            "height": "Высота (px)",
+            "fontSizeZh": "Размер китайского (px)",
+            "fontSizeEn": "Размер английского (px)",
+            "paddingX": "Отступы по бокам (px)",
+            "lineGap": "Интервал (px)",
+            "background": "Фон (строка 1)",
+            "background2": "Фон (строка 2)"
+          }
+        },
+        "Arrow": {
+          "displayName": "Стрелка",
+          "props": {
+            "shape": {
+              "displayName": "Форма",
+              "straight": "Прямая",
+              "turn": "С поворотом"
+            },
+            "direction": {
+              "displayName": "Направление",
+              "up": "Вверх",
+              "down": "Вниз",
+              "left": "Влево",
+              "right": "Вправо",
+              "up-left": "Влево-вверх",
+              "up-right": "Вправо-вверх",
+              "down-left": "Влево-вниз",
+              "down-right": "Вправо-вниз"
+            },
+            "size": "Размер (px)",
+            "foreground": "Цвет текста",
+            "background": "Фон (строка 1)",
+            "background2": "Фон (строка 2)"
+          }
+        },
+        "Icon": {
+          "displayName": "Пиктограмма",
+          "props": {
+            "icon": {
+              "displayName": "Пиктограмма",
+              "metro_logo": "Логотип Shentong",
+              "gate_in": "Входные турникеты",
+              "gate_out": "Выходные турникеты",
+              "ticket_service": "Продажа билетов",
+              "service_center": "Сервисный центр",
+              "restroom": "Туалет",
+              "security": "Охрана",
+              "shopping": "Торговый центр",
+              "ticket_office": "Билетная касса",
+              "station_in": "Вход",
+              "station_out": "Выход",
+              "restroom_third": "Третий туалет",
+              "restroom_men": "Мужской туалет",
+              "restroom_women": "Женский туалет",
+              "nursing_room": "Комната матери и ребёнка",
+              "waiting_area": "Зона ожидания",
+              "elevator_accessible": "Доступный лифт",
+              "accessibility": "Доступная среда",
+              "ramp": "Доступный пандус",
+              "no_entry": "Проход запрещён",
+              "metro": "Метро",
+              "suburban_rail": "Пригородная линия",
+              "maglev": "Маглев",
+              "taxi": "Такси",
+              "train": "Поезд",
+              "airplane": "Самолёт",
+              "coach": "Междугородний автобус",
+              "bus": "Автобус",
+              "parking": "Парковка"
+            },
+            "size": "Размер (px)",
+            "rotation": "Поворот",
+            "paddingX": "Отступы по бокам (px)",
+            "foreground": "Цвет текста",
+            "background": "Фон (строка 1)",
+            "background2": "Фон (строка 2)"
+          }
+        },
+        "Spacing": {
+          "displayName": "Отступ",
+          "props": {
+            "background": "Фон (строка 1)",
+            "background2": "Фон (строка 2)"
+          }
+        },
+        "Blank": {
+          "displayName": "Пробел",
+          "props": {
+            "width": "Толщина (px)",
+            "background": "Фон (строка 1)",
+            "background2": "Фон (строка 2)"
+          }
+        },
+        "SpecLine": {
+          "displayName": "Разделитель",
+          "props": {
+            "width": "Толщина (px)",
+            "foreground": "Цвет текста",
+            "background": "Фон (строка 1)",
+            "background2": "Фон (строка 2)"
+          }
+        }
+      }
     }
   }
 }

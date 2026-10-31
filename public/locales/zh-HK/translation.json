@@ -2048,6 +2048,324 @@
         "operator-metro": "東京地鐵",
         "operator-toei": "都營交通"
       }
+    },
+    "shanghai": {
+      "displayName": "上海地鐵",
+      "colors": {
+        "transparent": "透明",
+        "background": "背景（深灰）",
+        "foreground": "前景（白）",
+        "background2": "白底",
+        "foreground2": "深灰字",
+        "border": "邊框（白）",
+        "white": "白色",
+        "black": "黑色",
+        "specline": "分隔綫",
+        "exitBackground": "出口底色",
+        "exitForeground": "出口黃",
+        "shentongRed": "申通紅",
+        "line1": "1 號綫",
+        "line2": "2 號綫",
+        "line3": "3 號綫",
+        "line4": "4 號綫",
+        "line5": "5 號綫",
+        "line6": "6 號綫",
+        "line7": "7 號綫",
+        "line8": "8 號綫",
+        "line9": "9 號綫",
+        "line10": "10 號綫",
+        "line11": "11 號綫",
+        "line12": "12 號綫",
+        "line13": "13 號綫",
+        "line14": "14 號綫",
+        "line15": "15 號綫",
+        "line16": "16 號綫",
+        "line17": "17 號綫",
+        "line18": "18 號綫",
+        "line19": "19 號綫",
+        "line20": "20 號綫",
+        "line21": "21 號綫",
+        "line22": "22 號綫",
+        "line23": "23 號綫",
+        "linepujiang": "浦江綫",
+        "linesuburban": "市域綫",
+        "maglev1": "磁浮（上段）",
+        "maglev2": "磁浮（下段）"
+      },
+      "common": {
+        "weight": {
+          "normal": "標準",
+          "medium": "中黑",
+          "bold": "粗黑"
+        },
+        "align": {
+          "left": "左對齊",
+          "center": "居中",
+          "right": "右對齊"
+        },
+        "direction": {
+          "up": "上",
+          "down": "下",
+          "left": "左",
+          "right": "右",
+          "up-left": "左上",
+          "up-right": "右上",
+          "down-left": "左下",
+          "down-right": "右下"
+        },
+        "shape": {
+          "straight": "直行",
+          "turn": "轉彎"
+        }
+      },
+      "components": {
+        "Text": {
+          "displayName": "中英文字",
+          "props": {
+            "chinese": "中文",
+            "english": "英文",
+            "weight": {
+              "displayName": "字重",
+              "normal": "標準",
+              "medium": "中黑",
+              "bold": "粗黑"
+            },
+            "align": {
+              "displayName": "對齊",
+              "left": "左對齊",
+              "center": "居中",
+              "right": "右對齊"
+            },
+            "letterSpacing": "字距（em）",
+            "fontSizeZh": "中文字號（px）",
+            "fontSizeEn": "英文字號（px）",
+            "lineGap": "中英間距（px）",
+            "offsetY": "上下偏移（px）",
+            "foreground": "前景色",
+            "background": "背景色（第一行）",
+            "background2": "背景色（第二行）"
+          }
+        },
+        "BigZh": {
+          "displayName": "中文大字",
+          "props": {
+            "chinese": "中文",
+            "weight": {
+              "displayName": "字重",
+              "normal": "標準",
+              "medium": "中黑",
+              "bold": "粗黑"
+            },
+            "align": {
+              "displayName": "對齊",
+              "left": "左對齊",
+              "center": "居中",
+              "right": "右對齊"
+            },
+            "letterSpacing": "字距（em）",
+            "fontSize": "字號（px）",
+            "lineHeight": "行距倍數",
+            "offsetY": "上下偏移（px）",
+            "foreground": "前景色",
+            "background": "背景色（第一行）",
+            "background2": "背景色（第二行）"
+          }
+        },
+        "BigEn": {
+          "displayName": "英文大字",
+          "props": {
+            "english": "英文",
+            "weight": {
+              "displayName": "字重",
+              "normal": "標準",
+              "medium": "中黑",
+              "bold": "粗黑"
+            },
+            "align": {
+              "displayName": "對齊",
+              "left": "左對齊",
+              "center": "居中",
+              "right": "右對齊"
+            },
+            "letterSpacing": "字距（em）",
+            "fontSize": "字號（px）",
+            "lineHeight": "行距倍數",
+            "offsetY": "上下偏移（px）",
+            "foreground": "前景色",
+            "background": "背景色（第一行）",
+            "background2": "背景色（第二行）"
+          }
+        },
+        "NumAlphabet": {
+          "displayName": "數字/字母",
+          "props": {
+            "value": "內容",
+            "weight": {
+              "displayName": "字重",
+              "normal": "標準",
+              "medium": "中黑",
+              "bold": "粗黑"
+            },
+            "fontSize": "字號（px）",
+            "letterSpacing": "字距（em）",
+            "offsetY": "上下偏移（px）",
+            "foreground": "前景色",
+            "background": "背景色（第一行）",
+            "background2": "背景色（第二行）"
+          }
+        },
+        "DualText": {
+          "displayName": "雙行文字",
+          "props": {
+            "chinese": "中文",
+            "english": "英文",
+            "weight": {
+              "displayName": "字重",
+              "normal": "標準",
+              "medium": "中黑",
+              "bold": "粗黑"
+            },
+            "align": {
+              "displayName": "對齊",
+              "left": "左對齊",
+              "center": "居中",
+              "right": "右對齊"
+            },
+            "letterSpacing": "字距（em）",
+            "fontSizeZh": "中文字號（px）",
+            "fontSizeEn": "英文字號（px）",
+            "lineGap": "中英間距（px）",
+            "offsetY": "上下偏移（px）",
+            "foreground": "前景色",
+            "background": "背景色（第一行）",
+            "background2": "背景色（第二行）"
+          }
+        },
+        "LineNum": {
+          "displayName": "數字路綫標",
+          "props": {
+            "number": "路綫編號",
+            "size": "尺寸（px）",
+            "offsetY": "上下偏移（px）",
+            "foreground": "前景色",
+            "lineColor": "路綫色",
+            "border": "邊框色",
+            "background": "背景色（第一行）",
+            "background2": "背景色（第二行）"
+          }
+        },
+        "TextLineNum": {
+          "displayName": "文字路綫標",
+          "props": {
+            "chinese": "中文",
+            "english": "英文",
+            "color1": "路綫色（上段）",
+            "color2": "路綫色（下段，可空）",
+            "foreground": "前景色",
+            "border": "邊框色",
+            "radius": "圓角（px）",
+            "height": "高度（px）",
+            "fontSizeZh": "中文字號（px）",
+            "fontSizeEn": "英文字號（px）",
+            "paddingX": "左右內邊距（px）",
+            "lineGap": "中英間距（px）",
+            "background": "背景色（第一行）",
+            "background2": "背景色（第二行）"
+          }
+        },
+        "Arrow": {
+          "displayName": "箭頭",
+          "props": {
+            "shape": {
+              "displayName": "形狀",
+              "straight": "直行",
+              "turn": "轉彎"
+            },
+            "direction": {
+              "displayName": "方向",
+              "up": "上",
+              "down": "下",
+              "left": "左",
+              "right": "右",
+              "up-left": "左上",
+              "up-right": "右上",
+              "down-left": "左下",
+              "down-right": "右下"
+            },
+            "size": "尺寸（px）",
+            "foreground": "前景色",
+            "background": "背景色（第一行）",
+            "background2": "背景色（第二行）"
+          }
+        },
+        "Icon": {
+          "displayName": "圖示",
+          "props": {
+            "icon": {
+              "displayName": "圖示",
+              "metro_logo": "申通標誌",
+              "gate_in": "入閘驗票",
+              "gate_out": "出閘驗票",
+              "ticket_service": "售票服務",
+              "service_center": "服務中心",
+              "restroom": "洗手間",
+              "security": "安全保衛",
+              "shopping": "商場/購物中心",
+              "ticket_office": "售票處",
+              "station_in": "入站",
+              "station_out": "出站",
+              "restroom_third": "第三洗手間",
+              "restroom_men": "男洗手間",
+              "restroom_women": "女洗手間",
+              "nursing_room": "母嬰室",
+              "waiting_area": "等候區",
+              "elevator_accessible": "無障礙升降機",
+              "accessibility": "無障礙設施",
+              "ramp": "無障礙斜道",
+              "no_entry": "禁止通行",
+              "metro": "地鐵",
+              "suburban_rail": "市域綫",
+              "maglev": "磁浮",
+              "taxi": "的士",
+              "train": "火車",
+              "airplane": "飛機",
+              "coach": "長途巴士",
+              "bus": "巴士",
+              "parking": "停車場"
+            },
+            "size": "尺寸（px）",
+            "rotation": "旋轉",
+            "paddingX": "左右留白（px）",
+            "foreground": "前景色",
+            "background": "背景色（第一行）",
+            "background2": "背景色（第二行）"
+          }
+        },
+        "Spacing": {
+          "displayName": "間距",
+          "props": {
+            "background": "背景色（第一行）",
+            "background2": "背景色（第二行）"
+          }
+        },
+        "Blank": {
+          "displayName": "空格",
+          "props": {
+            "width": "綫寬（px）",
+            "background": "背景色（第一行）",
+            "background2": "背景色（第二行）"
+          }
+        },
+        "SpecLine": {
+          "displayName": "分隔綫",
+          "props": {
+            "width": "綫寬（px）",
+            "foreground": "前景色",
+            "background": "背景色（第一行）",
+            "background2": "背景色（第二行）"
+          }
+        }
+      }
     }
   }
 }

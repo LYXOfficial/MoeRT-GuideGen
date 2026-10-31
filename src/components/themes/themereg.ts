@@ -4,6 +4,7 @@ import HongkongTheme from "./hongkong/theme";
 import BeijingTheme from "./beijing/theme";
 import BeijingOldTheme from "./beijing-old/theme";
 import TokyoTheme from "./tokyo/theme";
+import ShanghaiTheme from "./shanghai/theme";
 import type Theme from "../../interfaces/theme";
 
 const themes: [string, Theme][] = [
@@ -13,6 +14,7 @@ const themes: [string, Theme][] = [
   ["themes.beijing", BeijingTheme],
   ["themes.beijingOld", BeijingOldTheme],
   ["themes.tokyo-metro", TokyoTheme],
+  ["themes.shanghai", ShanghaiTheme],
 ];
 
 export default themes;

@@ -2048,6 +2048,324 @@
         "operator-metro": "東京メトロ",
         "operator-toei": "東京都交通局"
       }
+    },
+    "shanghai": {
+      "displayName": "上海メトロ",
+      "colors": {
+        "transparent": "透明",
+        "background": "背景（濃いグレー）",
+        "foreground": "前景（白）",
+        "background2": "白地",
+        "foreground2": "濃いグレーの文字",
+        "border": "枠線（白）",
+        "white": "白",
+        "black": "黒",
+        "specline": "区切り線",
+        "exitBackground": "出口の背景",
+        "exitForeground": "出口の黄色",
+        "shentongRed": "申通レッド",
+        "line1": "1号線",
+        "line2": "2号線",
+        "line3": "3号線",
+        "line4": "4号線",
+        "line5": "5号線",
+        "line6": "6号線",
+        "line7": "7号線",
+        "line8": "8号線",
+        "line9": "9号線",
+        "line10": "10号線",
+        "line11": "11号線",
+        "line12": "12号線",
+        "line13": "13号線",
+        "line14": "14号線",
+        "line15": "15号線",
+        "line16": "16号線",
+        "line17": "17号線",
+        "line18": "18号線",
+        "line19": "19号線",
+        "line20": "20号線",
+        "line21": "21号線",
+        "line22": "22号線",
+        "line23": "23号線",
+        "linepujiang": "浦江線",
+        "linesuburban": "市域線",
+        "maglev1": "マグレブ（上段）",
+        "maglev2": "マグレブ（下段）"
+      },
+      "common": {
+        "weight": {
+          "normal": "標準",
+          "medium": "中太",
+          "bold": "太字"
+        },
+        "align": {
+          "left": "左揃え",
+          "center": "中央",
+          "right": "右揃え"
+        },
+        "direction": {
+          "up": "上",
+          "down": "下",
+          "left": "左",
+          "right": "右",
+          "up-left": "左上",
+          "up-right": "右上",
+          "down-left": "左下",
+          "down-right": "右下"
+        },
+        "shape": {
+          "straight": "直進",
+          "turn": "曲がる"
+        }
+      },
+      "components": {
+        "Text": {
+          "displayName": "中英テキスト",
+          "props": {
+            "chinese": "中国語",
+            "english": "英語",
+            "weight": {
+              "displayName": "文字の太さ",
+              "normal": "標準",
+              "medium": "中太",
+              "bold": "太字"
+            },
+            "align": {
+              "displayName": "揃え",
+              "left": "左揃え",
+              "center": "中央",
+              "right": "右揃え"
+            },
+            "letterSpacing": "字間（em）",
+            "fontSizeZh": "中国語のサイズ（px）",
+            "fontSizeEn": "英語のサイズ（px）",
+            "lineGap": "中英の間隔（px）",
+            "offsetY": "上下オフセット（px）",
+            "foreground": "前景色",
+            "background": "背景色（1行目）",
+            "background2": "背景色（2行目）"
+          }
+        },
+        "BigZh": {
+          "displayName": "大きい中国語",
+          "props": {
+            "chinese": "中国語",
+            "weight": {
+              "displayName": "文字の太さ",
+              "normal": "標準",
+              "medium": "中太",
+              "bold": "太字"
+            },
+            "align": {
+              "displayName": "揃え",
+              "left": "左揃え",
+              "center": "中央",
+              "right": "右揃え"
+            },
+            "letterSpacing": "字間（em）",
+            "fontSize": "文字サイズ（px）",
+            "lineHeight": "行間",
+            "offsetY": "上下オフセット（px）",
+            "foreground": "前景色",
+            "background": "背景色（1行目）",
+            "background2": "背景色（2行目）"
+          }
+        },
+        "BigEn": {
+          "displayName": "大きい英語",
+          "props": {
+            "english": "英語",
+            "weight": {
+              "displayName": "文字の太さ",
+              "normal": "標準",
+              "medium": "中太",
+              "bold": "太字"
+            },
+            "align": {
+              "displayName": "揃え",
+              "left": "左揃え",
+              "center": "中央",
+              "right": "右揃え"
+            },
+            "letterSpacing": "字間（em）",
+            "fontSize": "文字サイズ（px）",
+            "lineHeight": "行間",
+            "offsetY": "上下オフセット（px）",
+            "foreground": "前景色",
+            "background": "背景色（1行目）",
+            "background2": "背景色（2行目）"
+          }
+        },
+        "NumAlphabet": {
+          "displayName": "数字/英字",
+          "props": {
+            "value": "内容",
+            "weight": {
+              "displayName": "文字の太さ",
+              "normal": "標準",
+              "medium": "中太",
+              "bold": "太字"
+            },
+            "fontSize": "文字サイズ（px）",
+            "letterSpacing": "字間（em）",
+            "offsetY": "上下オフセット（px）",
+            "foreground": "前景色",
+            "background": "背景色（1行目）",
+            "background2": "背景色（2行目）"
+          }
+        },
+        "DualText": {
+          "displayName": "2行テキスト",
+          "props": {
+            "chinese": "中国語",
+            "english": "英語",
+            "weight": {
+              "displayName": "文字の太さ",
+              "normal": "標準",
+              "medium": "中太",
+              "bold": "太字"
+            },
+            "align": {
+              "displayName": "揃え",
+              "left": "左揃え",
+              "center": "中央",
+              "right": "右揃え"
+            },
+            "letterSpacing": "字間（em）",
+            "fontSizeZh": "中国語のサイズ（px）",
+            "fontSizeEn": "英語のサイズ（px）",
+            "lineGap": "中英の間隔（px）",
+            "offsetY": "上下オフセット（px）",
+            "foreground": "前景色",
+            "background": "背景色（1行目）",
+            "background2": "背景色（2行目）"
+          }
+        },
+        "LineNum": {
+          "displayName": "番号バッジ",
+          "props": {
+            "number": "路線番号",
+            "size": "サイズ（px）",
+            "offsetY": "上下オフセット（px）",
+            "foreground": "前景色",
+            "lineColor": "路線色",
+            "border": "枠線色",
+            "background": "背景色（1行目）",
+            "background2": "背景色（2行目）"
+          }
+        },
+        "TextLineNum": {
+          "displayName": "路線名バッジ",
+          "props": {
+            "chinese": "中国語",
+            "english": "英語",
+            "color1": "路線色（上段）",
+            "color2": "路線色（下段・任意）",
+            "foreground": "前景色",
+            "border": "枠線色",
+            "radius": "角丸（px）",
+            "height": "高さ（px）",
+            "fontSizeZh": "中国語のサイズ（px）",
+            "fontSizeEn": "英語のサイズ（px）",
+            "paddingX": "左右の余白（px）",
+            "lineGap": "中英の間隔（px）",
+            "background": "背景色（1行目）",
+            "background2": "背景色（2行目）"
+          }
+        },
+        "Arrow": {
+          "displayName": "矢印",
+          "props": {
+            "shape": {
+              "displayName": "形",
+              "straight": "直進",
+              "turn": "曲がる"
+            },
+            "direction": {
+              "displayName": "方向",
+              "up": "上",
+              "down": "下",
+              "left": "左",
+              "right": "右",
+              "up-left": "左上",
+              "up-right": "右上",
+              "down-left": "左下",
+              "down-right": "右下"
+            },
+            "size": "サイズ（px）",
+            "foreground": "前景色",
+            "background": "背景色（1行目）",
+            "background2": "背景色（2行目）"
+          }
+        },
+        "Icon": {
+          "displayName": "ピクトグラム",
+          "props": {
+            "icon": {
+              "displayName": "ピクトグラム",
+              "metro_logo": "申通ロゴ",
+              "gate_in": "入場改札",
+              "gate_out": "出場改札",
+              "ticket_service": "きっぷ販売",
+              "service_center": "サービスセンター",
+              "restroom": "トイレ",
+              "security": "警備",
+              "shopping": "ショッピングセンター",
+              "ticket_office": "きっぷ売り場",
+              "station_in": "入場",
+              "station_out": "出場",
+              "restroom_third": "多目的トイレ",
+              "restroom_men": "男性トイレ",
+              "restroom_women": "女性トイレ",
+              "nursing_room": "授乳室",
+              "waiting_area": "待合エリア",
+              "elevator_accessible": "バリアフリーエレベーター",
+              "accessibility": "バリアフリー設備",
+              "ramp": "バリアフリースロープ",
+              "no_entry": "通行禁止",
+              "metro": "地下鉄",
+              "suburban_rail": "市域線",
+              "maglev": "マグレブ",
+              "taxi": "タクシー",
+              "train": "鉄道",
+              "airplane": "飛行機",
+              "coach": "長距離バス",
+              "bus": "バス",
+              "parking": "駐車場"
+            },
+            "size": "サイズ（px）",
+            "rotation": "回転",
+            "paddingX": "左右の余白（px）",
+            "foreground": "前景色",
+            "background": "背景色（1行目）",
+            "background2": "背景色（2行目）"
+          }
+        },
+        "Spacing": {
+          "displayName": "間隔",
+          "props": {
+            "background": "背景色（1行目）",
+            "background2": "背景色（2行目）"
+          }
+        },
+        "Blank": {
+          "displayName": "空白",
+          "props": {
+            "width": "線幅（px）",
+            "background": "背景色（1行目）",
+            "background2": "背景色（2行目）"
+          }
+        },
+        "SpecLine": {
+          "displayName": "区切り線",
+          "props": {
+            "width": "線幅（px）",
+            "foreground": "前景色",
+            "background": "背景色（1行目）",
+            "background2": "背景色（2行目）"
+          }
+        }
+      }
     }
   }
 }

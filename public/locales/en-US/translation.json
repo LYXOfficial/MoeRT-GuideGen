@@ -2049,6 +2049,324 @@
         "operator-metro": "Tokyo Metro",
         "operator-toei": "Toei Transportation"
       }
+    },
+    "shanghai": {
+      "displayName": "Shanghai Metro",
+      "colors": {
+        "transparent": "Transparent",
+        "background": "Background (dark grey)",
+        "foreground": "Foreground (white)",
+        "background2": "White board",
+        "foreground2": "Dark grey text",
+        "border": "Border (white)",
+        "white": "White",
+        "black": "Black",
+        "specline": "Divider",
+        "exitBackground": "Exit background",
+        "exitForeground": "Exit yellow",
+        "shentongRed": "Shentong red",
+        "line1": "Line 1",
+        "line2": "Line 2",
+        "line3": "Line 3",
+        "line4": "Line 4",
+        "line5": "Line 5",
+        "line6": "Line 6",
+        "line7": "Line 7",
+        "line8": "Line 8",
+        "line9": "Line 9",
+        "line10": "Line 10",
+        "line11": "Line 11",
+        "line12": "Line 12",
+        "line13": "Line 13",
+        "line14": "Line 14",
+        "line15": "Line 15",
+        "line16": "Line 16",
+        "line17": "Line 17",
+        "line18": "Line 18",
+        "line19": "Line 19",
+        "line20": "Line 20",
+        "line21": "Line 21",
+        "line22": "Line 22",
+        "line23": "Line 23",
+        "linepujiang": "Pujiang Line",
+        "linesuburban": "Suburban Railway",
+        "maglev1": "Maglev (upper)",
+        "maglev2": "Maglev (lower)"
+      },
+      "common": {
+        "weight": {
+          "normal": "Regular",
+          "medium": "Medium",
+          "bold": "Bold"
+        },
+        "align": {
+          "left": "Left",
+          "center": "Center",
+          "right": "Right"
+        },
+        "direction": {
+          "up": "Up",
+          "down": "Down",
+          "left": "Left",
+          "right": "Right",
+          "up-left": "Up-left",
+          "up-right": "Up-right",
+          "down-left": "Down-left",
+          "down-right": "Down-right"
+        },
+        "shape": {
+          "straight": "Straight",
+          "turn": "Turn"
+        }
+      },
+      "components": {
+        "Text": {
+          "displayName": "Bilingual text",
+          "props": {
+            "chinese": "Chinese",
+            "english": "English",
+            "weight": {
+              "displayName": "Weight",
+              "normal": "Regular",
+              "medium": "Medium",
+              "bold": "Bold"
+            },
+            "align": {
+              "displayName": "Alignment",
+              "left": "Left",
+              "center": "Center",
+              "right": "Right"
+            },
+            "letterSpacing": "Letter spacing (em)",
+            "fontSizeZh": "Chinese size (px)",
+            "fontSizeEn": "English size (px)",
+            "lineGap": "Bilingual gap (px)",
+            "offsetY": "Vertical offset (px)",
+            "foreground": "Foreground",
+            "background": "Background (row 1)",
+            "background2": "Background (row 2)"
+          }
+        },
+        "BigZh": {
+          "displayName": "Large Chinese",
+          "props": {
+            "chinese": "Chinese",
+            "weight": {
+              "displayName": "Weight",
+              "normal": "Regular",
+              "medium": "Medium",
+              "bold": "Bold"
+            },
+            "align": {
+              "displayName": "Alignment",
+              "left": "Left",
+              "center": "Center",
+              "right": "Right"
+            },
+            "letterSpacing": "Letter spacing (em)",
+            "fontSize": "Font size (px)",
+            "lineHeight": "Line height",
+            "offsetY": "Vertical offset (px)",
+            "foreground": "Foreground",
+            "background": "Background (row 1)",
+            "background2": "Background (row 2)"
+          }
+        },
+        "BigEn": {
+          "displayName": "Large English",
+          "props": {
+            "english": "English",
+            "weight": {
+              "displayName": "Weight",
+              "normal": "Regular",
+              "medium": "Medium",
+              "bold": "Bold"
+            },
+            "align": {
+              "displayName": "Alignment",
+              "left": "Left",
+              "center": "Center",
+              "right": "Right"
+            },
+            "letterSpacing": "Letter spacing (em)",
+            "fontSize": "Font size (px)",
+            "lineHeight": "Line height",
+            "offsetY": "Vertical offset (px)",
+            "foreground": "Foreground",
+            "background": "Background (row 1)",
+            "background2": "Background (row 2)"
+          }
+        },
+        "NumAlphabet": {
+          "displayName": "Number/Letter",
+          "props": {
+            "value": "Content",
+            "weight": {
+              "displayName": "Weight",
+              "normal": "Regular",
+              "medium": "Medium",
+              "bold": "Bold"
+            },
+            "fontSize": "Font size (px)",
+            "letterSpacing": "Letter spacing (em)",
+            "offsetY": "Vertical offset (px)",
+            "foreground": "Foreground",
+            "background": "Background (row 1)",
+            "background2": "Background (row 2)"
+          }
+        },
+        "DualText": {
+          "displayName": "Two-line text",
+          "props": {
+            "chinese": "Chinese",
+            "english": "English",
+            "weight": {
+              "displayName": "Weight",
+              "normal": "Regular",
+              "medium": "Medium",
+              "bold": "Bold"
+            },
+            "align": {
+              "displayName": "Alignment",
+              "left": "Left",
+              "center": "Center",
+              "right": "Right"
+            },
+            "letterSpacing": "Letter spacing (em)",
+            "fontSizeZh": "Chinese size (px)",
+            "fontSizeEn": "English size (px)",
+            "lineGap": "Bilingual gap (px)",
+            "offsetY": "Vertical offset (px)",
+            "foreground": "Foreground",
+            "background": "Background (row 1)",
+            "background2": "Background (row 2)"
+          }
+        },
+        "LineNum": {
+          "displayName": "Number badge",
+          "props": {
+            "number": "Line number",
+            "size": "Size (px)",
+            "offsetY": "Vertical offset (px)",
+            "foreground": "Foreground",
+            "lineColor": "Line colour",
+            "border": "Border colour",
+            "background": "Background (row 1)",
+            "background2": "Background (row 2)"
+          }
+        },
+        "TextLineNum": {
+          "displayName": "Name badge",
+          "props": {
+            "chinese": "Chinese",
+            "english": "English",
+            "color1": "Line colour (upper)",
+            "color2": "Line colour (lower, optional)",
+            "foreground": "Foreground",
+            "border": "Border colour",
+            "radius": "Radius (px)",
+            "height": "Height (px)",
+            "fontSizeZh": "Chinese size (px)",
+            "fontSizeEn": "English size (px)",
+            "paddingX": "Horizontal padding (px)",
+            "lineGap": "Bilingual gap (px)",
+            "background": "Background (row 1)",
+            "background2": "Background (row 2)"
+          }
+        },
+        "Arrow": {
+          "displayName": "Arrow",
+          "props": {
+            "shape": {
+              "displayName": "Shape",
+              "straight": "Straight",
+              "turn": "Turn"
+            },
+            "direction": {
+              "displayName": "Direction",
+              "up": "Up",
+              "down": "Down",
+              "left": "Left",
+              "right": "Right",
+              "up-left": "Up-left",
+              "up-right": "Up-right",
+              "down-left": "Down-left",
+              "down-right": "Down-right"
+            },
+            "size": "Size (px)",
+            "foreground": "Foreground",
+            "background": "Background (row 1)",
+            "background2": "Background (row 2)"
+          }
+        },
+        "Icon": {
+          "displayName": "Pictogram",
+          "props": {
+            "icon": {
+              "displayName": "Pictogram",
+              "metro_logo": "Metro logo",
+              "gate_in": "Entrance gate",
+              "gate_out": "Exit gate",
+              "ticket_service": "Ticket service",
+              "service_center": "Service centre",
+              "restroom": "Restroom",
+              "security": "Security",
+              "shopping": "Shopping mall",
+              "ticket_office": "Ticket office",
+              "station_in": "Enter station",
+              "station_out": "Leave station",
+              "restroom_third": "Third restroom",
+              "restroom_men": "Men's restroom",
+              "restroom_women": "Women's restroom",
+              "nursing_room": "Nursery",
+              "waiting_area": "Waiting area",
+              "elevator_accessible": "Accessible lift",
+              "accessibility": "Accessible facility",
+              "ramp": "Accessible ramp",
+              "no_entry": "No entry",
+              "metro": "Metro",
+              "suburban_rail": "Suburban railway",
+              "maglev": "Maglev",
+              "taxi": "Taxi",
+              "train": "Train",
+              "airplane": "Airplane",
+              "coach": "Coach",
+              "bus": "Bus",
+              "parking": "Parking"
+            },
+            "size": "Size (px)",
+            "rotation": "Rotation",
+            "paddingX": "Horizontal padding (px)",
+            "foreground": "Foreground",
+            "background": "Background (row 1)",
+            "background2": "Background (row 2)"
+          }
+        },
+        "Spacing": {
+          "displayName": "Spacer",
+          "props": {
+            "background": "Background (row 1)",
+            "background2": "Background (row 2)"
+          }
+        },
+        "Blank": {
+          "displayName": "Blank",
+          "props": {
+            "width": "Line width (px)",
+            "background": "Background (row 1)",
+            "background2": "Background (row 2)"
+          }
+        },
+        "SpecLine": {
+          "displayName": "Divider",
+          "props": {
+            "width": "Line width (px)",
+            "foreground": "Foreground",
+            "background": "Background (row 1)",
+            "background2": "Background (row 2)"
+          }
+        }
+      }
     }
   }
 }
