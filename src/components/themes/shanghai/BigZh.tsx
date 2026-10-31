@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { InputNumber, Select, TextArea } from "@douyinfe/semi-ui";
+import { Input, InputNumber, Select } from "@douyinfe/semi-ui";
 import colors, { fontFamilyZh } from "./define/colors";
 import type { EditorConfig } from "../../../interfaces/editor";
 import {
@@ -15,7 +15,7 @@ import {
   weightCss,
   type TextWeight,
 } from "./define/text";
-import { EDGE_PAD, ROW_H } from "./define/layout";
+import { ROW_H } from "./define/layout";
 
 /**
  * 中文大字（标准图 42「康新公路站」左边那段）。
@@ -33,8 +33,6 @@ export interface BigZhProps {
   /** 字距（em） */
   letterSpacing?: number;
   fontSize?: number;
-  /** 行距倍数（× 字号） */
-  lineHeight?: number;
   /** 整体上下偏移（px） */
   offsetY?: number;
   foreground?: string;
@@ -47,11 +45,13 @@ export const bigZhDefaultProps: BigZhProps = {
   weight: "medium",
   letterSpacing: 0.02,
   fontSize: 28,
-  lineHeight: 1.08,
   offsetY: 0,
   foreground: colors.foreground,
   background: colors.transparent,
 };
+
+/** 左右边距写死 5px（用户要求） */
+const PAD_X = 5;
 
 const SIZE_MIN = 10;
 const SIZE_MAX = 96;
@@ -69,7 +69,7 @@ export const bigZhEditorConfig = (
     {
       key: "chinese",
       label: `${SCOPE}.chinese`,
-      element: <TextArea autosize={{ minRows: 1, maxRows: 3 }} />,
+      element: <Input />,
     },
     {
       key: "weight",
@@ -116,11 +116,6 @@ export const bigZhEditorConfig = (
       element: <InputNumber step={1} min={SIZE_MIN} max={SIZE_MAX} />,
     },
     {
-      key: "lineHeight",
-      label: `${SCOPE}.lineHeight`,
-      element: <InputNumber step={0.01} min={0.8} max={2} />,
-    },
-    {
       key: "offsetY",
       label: `${SCOPE}.offsetY`,
       element: <InputNumber step={1} min={-32} max={32} />,
@@ -136,7 +131,6 @@ export default function BigZh({
   weight = bigZhDefaultProps.weight,
   letterSpacing = bigZhDefaultProps.letterSpacing,
   fontSize = bigZhDefaultProps.fontSize,
-  lineHeight = bigZhDefaultProps.lineHeight,
   offsetY = bigZhDefaultProps.offsetY,
   foreground = bigZhDefaultProps.foreground,
   background = bigZhDefaultProps.background,
@@ -144,43 +138,42 @@ export default function BigZh({
   const fontsReady = useFontsReady();
   const weightValue = weightCss(weight ?? "medium");
   const size = clamp(fontSize, SIZE_MIN, SIZE_MAX, 33);
-  const lh = clamp(lineHeight, 0.8, 2, 1.08);
   const dy = Number(offsetY) || 0;
   const ls = Number(letterSpacing) || 0;
   const alignMode = align ?? "left";
 
   const layout = useMemo(() => {
-    const lines = normalizeSvgLines(chinese);
+    // 中文大字按标准就是单行：输入里的换行直接当空格处理
+    const lines = [normalizeSvgLines(chinese).join(" ")];
     const font = `${weightValue} ${size}px ${fontFamilyZh}`;
     const metrics = lines.map(line => measureInk(line, font, ls, size));
     const width = Math.max(
       1,
       Math.ceil(Math.max(0, ...metrics.map(m => m.inkWidth)))
     );
-    const step = size * lh;
-    // 真实墨迹：取多行的最大上/下伸，整块按墨迹居中
+    // 真实墨迹：整块按墨迹居中
     const ascent = Math.max(0, ...metrics.map(m => m.inkAscent));
     const descent = Math.max(0, ...metrics.map(m => m.inkDescent));
-    const inkH = (lines.length - 1) * step + ascent + descent;
+    const inkH = ascent + descent;
     const top = (ROW_H - inkH) / 2 + dy;
     return lines.map((line, i) => ({
       line,
-      x: inkShift(metrics[i], width, alignMode) + EDGE_PAD,
-      y: top + ascent + i * step,
+      x: inkShift(metrics[i], width, alignMode) + PAD_X,
+      y: top + ascent,
       width,
     }));
     // fontsReady 参与依赖：字体就绪后重新量
-  }, [chinese, size, lh, dy, ls, weightValue, alignMode, fontsReady]);
+  }, [chinese, size, dy, ls, weightValue, alignMode, fontsReady]);
 
   const boxW = layout[0]?.width ?? 1;
 
   return (
     <BackgroundBox
       background={background}
-      style={{ height: ROW_H, width: boxW + EDGE_PAD * 2 }}
+      style={{ height: ROW_H, width: boxW + PAD_X * 2 }}
     >
       <svg
-        width={boxW + EDGE_PAD * 2}
+        width={boxW + PAD_X * 2}
         height={ROW_H}
         style={{ display: "block" }}
       >

@@ -2163,7 +2163,6 @@
             },
             "letterSpacing": "字間",
             "fontSize": "文字サイズ",
-            "lineHeight": "行間",
             "offsetY": "上下オフセット",
             "foreground": "前景色",
             "background": "背景色"
@@ -2243,10 +2242,10 @@
           "displayName": "番号バッジ",
           "props": {
             "number": "路線番号",
-            "size": "サイズ",
-            "foreground": "前景色",
+            "textColor": "文字色",
             "lineColor": "路線色",
             "border": "枠線色",
+            "gapX": "左右の余白",
             "background": "背景色"
           }
         },
@@ -2257,7 +2256,7 @@
             "english": "英語",
             "color1": "路線色（上段）",
             "color2": "路線色（下段・任意）",
-            "foreground": "前景色",
+            "textColor": "文字色",
             "border": "枠線色",
             "background": "背景色"
           }

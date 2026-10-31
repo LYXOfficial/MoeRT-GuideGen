@@ -2163,7 +2163,6 @@
             },
             "letterSpacing": "자간",
             "fontSize": "글자 크기",
-            "lineHeight": "줄 간격",
             "offsetY": "상하 오프셋",
             "foreground": "전경색",
             "background": "배경색"
@@ -2243,10 +2242,10 @@
           "displayName": "번호 배지",
           "props": {
             "number": "노선 번호",
-            "size": "크기",
-            "foreground": "전경색",
+            "textColor": "글자 색",
             "lineColor": "노선색",
             "border": "테두리색",
+            "gapX": "좌우 여백",
             "background": "배경색"
           }
         },
@@ -2257,7 +2256,7 @@
             "english": "영어",
             "color1": "노선색(상단)",
             "color2": "노선색(하단, 선택)",
-            "foreground": "전경색",
+            "textColor": "글자 색",
             "border": "테두리색",
             "background": "배경색"
           }

@@ -15,7 +15,7 @@ import {
   weightCss,
   type TextWeight,
 } from "./define/text";
-import { EDGE_PAD, ROW_H } from "./define/layout";
+import { ROW_H } from "./define/layout";
 
 /**
  * 英文大字（标准图 42「KANGXIN HIGHWAY STATION」那段）。
@@ -50,6 +50,9 @@ export const bigEnDefaultProps: BigEnProps = {
   foreground: colors.foreground,
   background: colors.transparent,
 };
+
+/** 左右边距写死 5px（用户要求） */
+const PAD_X = 5;
 
 const SIZE_MIN = 6;
 const SIZE_MAX = 64;
@@ -162,7 +165,7 @@ export default function BigEn({
     const top = (ROW_H - inkH) / 2 + dy;
     return lines.map((line, i) => ({
       line,
-      x: inkShift(metrics[i], width, alignMode) + EDGE_PAD,
+      x: inkShift(metrics[i], width, alignMode) + PAD_X,
       y: top + ascent + i * step,
       width,
     }));
@@ -173,10 +176,10 @@ export default function BigEn({
   return (
     <BackgroundBox
       background={background}
-      style={{ height: ROW_H, width: boxW + EDGE_PAD * 2 }}
+      style={{ height: ROW_H, width: boxW + PAD_X * 2 }}
     >
       <svg
-        width={boxW + EDGE_PAD * 2}
+        width={boxW + PAD_X * 2}
         height={ROW_H}
         style={{ display: "block" }}
       >

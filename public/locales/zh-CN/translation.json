@@ -2163,7 +2163,6 @@
             },
             "letterSpacing": "字距",
             "fontSize": "字号",
-            "lineHeight": "行距倍数",
             "offsetY": "上下偏移",
             "foreground": "前景色",
             "background": "背景色"
@@ -2243,10 +2242,10 @@
           "displayName": "数字线路标",
           "props": {
             "number": "线路编号",
-            "size": "尺寸",
-            "foreground": "前景色",
+            "textColor": "文字颜色",
             "lineColor": "线路色",
             "border": "边框色",
+            "gapX": "左右边距",
             "background": "背景色"
           }
         },
@@ -2257,7 +2256,7 @@
             "english": "英文",
             "color1": "线路色（上段）",
             "color2": "线路色（下段）",
-            "foreground": "前景色",
+            "textColor": "文字颜色",
             "border": "边框色",
             "background": "背景色"
           }

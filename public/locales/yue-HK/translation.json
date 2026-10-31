@@ -2163,7 +2163,6 @@
             },
             "letterSpacing": "字距",
             "fontSize": "字號",
-            "lineHeight": "行距倍數",
             "offsetY": "上下偏移",
             "foreground": "前景色",
             "background": "背景色"
@@ -2243,10 +2242,10 @@
           "displayName": "數字路綫標",
           "props": {
             "number": "路綫編號",
-            "size": "尺寸",
-            "foreground": "前景色",
+            "textColor": "文字顏色",
             "lineColor": "路綫色",
             "border": "邊框色",
+            "gapX": "左右邊距",
             "background": "背景色"
           }
         },
@@ -2257,7 +2256,7 @@
             "english": "英文",
             "color1": "路綫色（上段）",
             "color2": "路綫色（下段）",
-            "foreground": "前景色",
+            "textColor": "文字顏色",
             "border": "邊框色",
             "background": "背景色"
           }

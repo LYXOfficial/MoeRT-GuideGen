@@ -2164,7 +2164,6 @@
             },
             "letterSpacing": "Interlettrage",
             "fontSize": "Taille",
-            "lineHeight": "Interligne",
             "offsetY": "Décalage vertical",
             "foreground": "Couleur du texte",
             "background": "Fond"
@@ -2244,10 +2243,10 @@
           "displayName": "Numéro de ligne",
           "props": {
             "number": "Numéro de ligne",
-            "size": "Taille",
-            "foreground": "Couleur du texte",
+            "textColor": "Couleur du texte",
             "lineColor": "Couleur de ligne",
             "border": "Couleur de bordure",
+            "gapX": "Marge latérale",
             "background": "Fond"
           }
         },
@@ -2258,7 +2257,7 @@
             "english": "Anglais",
             "color1": "Couleur de ligne (haut)",
             "color2": "Couleur de ligne (bas)",
-            "foreground": "Couleur du texte",
+            "textColor": "Couleur du texte",
             "border": "Couleur de bordure",
             "background": "Fond"
           }

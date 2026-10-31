@@ -50,15 +50,15 @@ export const dualTextDefaultProps: DualTextProps = {
   line1english: "Laohumin Rd.",
   line2chinese: "龙华寺",
   line2english: "Long Hua Temple",
-  align: "center",
+  align: "left",
   weight: "medium",
   letterSpacing: 0,
-  fontSizeZh: 19,
-  fontSizeEn: 10.5,
+  fontSizeZh: 11,
+  fontSizeEn: 7,
   lineGap: 1.5,
   pairGap: 4,
   offsetY: 0,
-  foreground: colors.foreground,
+  foreground: colors.exitForeground,
   background: colors.transparent,
 };
 
@@ -145,7 +145,7 @@ export const dualTextEditorConfig = (
     {
       key: "lineGap",
       label: `${SCOPE}.lineGap`,
-      element: <InputNumber step={1} min={0} max={24} />,
+      element: <InputNumber step={0.5} min={0} max={24} />,
     },
     {
       key: "pairGap",

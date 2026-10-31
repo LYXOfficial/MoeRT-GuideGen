@@ -5,7 +5,6 @@ import type { EditorConfig } from "../../../interfaces/editor";
 import {
   BackgroundBox,
   backgroundFormItems,
-  foregroundFormItem,
   colorFormItem,
 } from "./Background";
 import { ROW_H } from "./define/layout";
@@ -28,20 +27,20 @@ export interface TextLineNumProps {
   color1: string;
   /** 下段线路色（磁浮为橙色；填成和上段一样就是单色） */
   color2?: string;
-  /** 文字颜色 */
-  foreground?: string;
+  /** 文字颜色（独立于全局「默认前景色」，不会被它覆盖） */
+  textColor?: string;
   /** 描边色 */
   border?: string;
   background?: string;
 }
 
 /** 锁死的版式（来自标准附录 A 线路名称牌实测） */
-const PLATE_H = 44.5;
+const PLATE_H = 40.5;
 const RADIUS = 3;
 const BORDER_W = 1;
-const ZH_SIZE = 21;
-const EN_SIZE = 10;
-const PAD_X = 10;
+const ZH_SIZE = 20;
+const EN_SIZE = 9;
+const PAD_X = 8;
 const GAP = 4;
 const GAP_X = 6;
 
@@ -50,7 +49,7 @@ export const textLineNumDefaultProps: TextLineNumProps = {
   english: "Maglev Line",
   color1: colors.maglev1,
   color2: colors.maglev2,
-  foreground: colors.white,
+  textColor: colors.white,
   border: colors.white,
   background: colors.transparent,
 };
@@ -73,7 +72,7 @@ export const textLineNumEditorConfig = (
     },
     colorFormItem(SCOPE, "color1"),
     colorFormItem(SCOPE, "color2"),
-    foregroundFormItem(SCOPE),
+    colorFormItem(SCOPE, "textColor"),
     colorFormItem(SCOPE, "border"),
     ...backgroundFormItems(SCOPE),
   ],
@@ -84,7 +83,7 @@ export default function TextLineNum({
   english = textLineNumDefaultProps.english,
   color1 = textLineNumDefaultProps.color1,
   color2 = textLineNumDefaultProps.color2,
-  foreground = textLineNumDefaultProps.foreground,
+  textColor = textLineNumDefaultProps.textColor,
   border = textLineNumDefaultProps.border,
   background = textLineNumDefaultProps.background,
 }: TextLineNumProps) {
@@ -140,7 +139,7 @@ export default function TextLineNum({
             y={zhBaseline}
             fontSize={ZH_SIZE}
             fontWeight={weightValue}
-            fill={foreground}
+            fill={textColor}
             fontFamily={fontFamilyZh}
             xmlSpace="preserve"
           >
@@ -151,7 +150,7 @@ export default function TextLineNum({
             y={enBaseline}
             fontSize={EN_SIZE}
             fontWeight={weightValue}
-            fill={foreground}
+            fill={textColor}
             fontFamily={fontFamilyEn}
             xmlSpace="preserve"
           >

@@ -16,7 +16,7 @@ export interface SpecLineProps {
 
 // 上海默认使用黄色分隔线
 export const specLineDefaultProps: SpecLineProps = {
-  width: 3,
+  width: 2,
   foreground: colors.specline,
   background: colors.transparent,
 };

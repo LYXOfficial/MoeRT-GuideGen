@@ -1,14 +1,12 @@
-import { InputNumber } from "@douyinfe/semi-ui";
+import { Input, InputNumber } from "@douyinfe/semi-ui";
 import colors, { fontFamilyEn } from "./define/colors";
 import type { EditorConfig } from "../../../interfaces/editor";
 import {
   BackgroundBox,
   backgroundFormItems,
-  foregroundFormItem,
   colorFormItem,
-  digitFormItem,
 } from "./Background";
-import { BADGE_BORDER, PLATE_H, ROW_H } from "./define/layout";
+import { BADGE_BORDER, ROW_H } from "./define/layout";
 import { measureText, useFontsReady } from "./define/text";
 
 /**
@@ -25,69 +23,111 @@ import { measureText, useFontsReady } from "./define/text";
 export interface LineNumProps {
   /** 线路编号（1–2 位数字） */
   number: string;
-  /** 徽章边长（px） */
-  size?: number;
-  /** 数字颜色 */
-  foreground?: string;
+  /** 数字颜色（独立于全局「默认前景色」，不会被它覆盖） */
+  textColor?: string;
   /** 线路识别色（徽章底色） */
   lineColor?: string;
   /** 描边色 */
   border?: string;
+  /** 左右边距（px），默认 5 */
+  gapX?: number;
   /** 徽章背后的版面底色 */
   background?: string;
 }
 
 export const lineNumDefaultProps: LineNumProps = {
   number: "1",
-  size: PLATE_H,
-  foreground: colors.white,
+  textColor: colors.white,
   lineColor: colors.line1,
   border: colors.white,
+  gapX: 7,
   background: colors.transparent,
 };
 
-const SIZE_MIN = 20;
-const SIZE_MAX = 72;
+/** 徽章边长锁死（用户要求：没必要开放调整） */
+const BADGE_SIZE = 40;
+/** 逗号相对字号（多出口时别太突兀） */
+const COMMA_SCALE = 0.62;
 const SCOPE = "themes.shanghai.components.LineNum.props";
+
+/** 只允许数字与逗号（多线路/多出口时手动写「2,5」） */
+function NumberListInput({
+  value = "",
+  onChange,
+}: {
+  value?: string;
+  onChange?: (value: string) => void;
+}) {
+  return (
+    <Input
+      value={value}
+      maxLength={5}
+      onChange={next =>
+        onChange?.(
+          String(next ?? "")
+            .replace(/[^\d,]/g, "")
+            .slice(0, 5)
+        )
+      }
+    />
+  );
+}
 
 export const lineNumEditorConfig = (
   _t: (key: string) => string
 ): EditorConfig => ({
   forms: [
-    digitFormItem(SCOPE, "number", 2),
     {
-      key: "size",
-      label: `${SCOPE}.size`,
-      element: <InputNumber step={0.5} min={SIZE_MIN} max={SIZE_MAX} />,
+      key: "number",
+      label: `${SCOPE}.number`,
+      element: <NumberListInput />,
     },
-    foregroundFormItem(SCOPE),
+    colorFormItem(SCOPE, "textColor"),
     colorFormItem(SCOPE, "lineColor"),
     colorFormItem(SCOPE, "border"),
+    {
+      key: "gapX",
+      label: `${SCOPE}.gapX`,
+      element: <InputNumber step={1} min={0} max={24} />,
+    },
     ...backgroundFormItems(SCOPE),
   ],
 });
 
 export default function LineNum({
   number = lineNumDefaultProps.number,
-  size = lineNumDefaultProps.size,
-  foreground = lineNumDefaultProps.foreground,
+  textColor = lineNumDefaultProps.textColor,
   lineColor = lineNumDefaultProps.lineColor,
   border = lineNumDefaultProps.border,
+  gapX = lineNumDefaultProps.gapX,
   background = lineNumDefaultProps.background,
 }: LineNumProps) {
   const fontsReady = useFontsReady();
-  const side = Math.min(SIZE_MAX, Math.max(SIZE_MIN, Number(size) || PLATE_H));
-  const text = String(number ?? "").replace(/\D/g, "").slice(0, 2) || "1";
+  const side = BADGE_SIZE;
+  // 允许手动输入逗号（多线路/多出口）：只保留数字与逗号，压缩连续逗号
+  const text =
+    String(number ?? "")
+      .replace(/[^\d,]/g, "")
+      .replace(/,{2,}/g, ",")
+      .replace(/^,|,$/g, "")
+      .slice(0, 5) || "1";
   const fontSize = side * 0.9;
   const cap = fontSize * 0.717;
-  // 左右各留 3px「一点点间隙」：和 号线/图标并排时不至于完全贴死，
-  // 又不像整块留白那样破坏紧凑贴合
-  const gapX = 3;
-  const box = side + gapX * 2;
+  // 左右边距可调（默认 5px）：和 号线/图标并排时留一点缝，又不至于太散
+  const pad = Math.max(0, Number(gapX ?? lineNumDefaultProps.gapX) || 0);
+  const box = side + pad * 2;
   const top = (ROW_H - side) / 2;
   const baseline = top + side / 2 + cap / 2;
   // 两位数字过宽时按比例压窄（保持徽章是正方形）
-  const measured = measureText(text, `400 ${fontSize}px ${fontFamilyEn}`);
+  // 逗号按 0.62 倍渲染，量宽时也按同一字号算，否则居中会偏
+  const segs = (text.match(/,+|[^,]+/g) ?? []).map(part => ({
+    part,
+    size: part.startsWith(",") ? fontSize * COMMA_SCALE : fontSize,
+  }));
+  const measured = segs.reduce(
+    (sum, seg) => sum + measureText(seg.part, `400 ${seg.size}px ${fontFamilyEn}`),
+    0
+  );
   const scale = measured > side * 0.78 ? (side * 0.78) / measured : 1;
   void fontsReady;
 
@@ -98,7 +138,7 @@ export default function LineNum({
     >
       <svg width={box} height={ROW_H} style={{ display: "block" }}>
         <rect
-          x={gapX + BADGE_BORDER / 2}
+          x={pad + BADGE_BORDER / 2}
           y={top + BADGE_BORDER / 2}
           width={side - BADGE_BORDER}
           height={side - BADGE_BORDER}
@@ -111,7 +151,7 @@ export default function LineNum({
           y={baseline}
           fontSize={fontSize}
           fontWeight={400}
-          fill={foreground}
+          fill={textColor}
           fontFamily={fontFamilyEn}
           textAnchor="middle"
           transform={
@@ -120,7 +160,11 @@ export default function LineNum({
               : undefined
           }
         >
-          {text}
+          {segs.map((seg, index) => (
+            <tspan key={index} fontSize={seg.size}>
+              {seg.part}
+            </tspan>
+          ))}
         </text>
       </svg>
     </BackgroundBox>

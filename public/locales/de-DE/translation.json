@@ -2164,7 +2164,6 @@
             },
             "letterSpacing": "Laufweite",
             "fontSize": "Schriftgröße",
-            "lineHeight": "Zeilenabstand",
             "offsetY": "Vertikaler Versatz",
             "foreground": "Vordergrundfarbe",
             "background": "Hintergrund"
@@ -2244,10 +2243,10 @@
           "displayName": "Liniennummer",
           "props": {
             "number": "Liniennummer",
-            "size": "Größe",
-            "foreground": "Vordergrundfarbe",
+            "textColor": "Textfarbe",
             "lineColor": "Linienfarbe",
             "border": "Rahmenfarbe",
+            "gapX": "Seitenabstand",
             "background": "Hintergrund"
           }
         },
@@ -2258,7 +2257,7 @@
             "english": "Englisch",
             "color1": "Linienfarbe (oben)",
             "color2": "Linienfarbe (unten)",
-            "foreground": "Vordergrundfarbe",
+            "textColor": "Textfarbe",
             "border": "Rahmenfarbe",
             "background": "Hintergrund"
           }

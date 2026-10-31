@@ -2164,7 +2164,6 @@
             },
             "letterSpacing": "Letter spacing",
             "fontSize": "Font size",
-            "lineHeight": "Line height",
             "offsetY": "Vertical offset",
             "foreground": "Foreground",
             "background": "Background"
@@ -2244,10 +2243,10 @@
           "displayName": "Number badge",
           "props": {
             "number": "Line number",
-            "size": "Size",
-            "foreground": "Foreground",
+            "textColor": "Text colour",
             "lineColor": "Line colour",
             "border": "Border colour",
+            "gapX": "Horizontal margin",
             "background": "Background"
           }
         },
@@ -2258,7 +2257,7 @@
             "english": "English",
             "color1": "Line colour (upper)",
             "color2": "Line colour (lower)",
-            "foreground": "Foreground",
+            "textColor": "Text colour",
             "border": "Border colour",
             "background": "Background"
           }

@@ -42,9 +42,12 @@ export const numAlphabetDefaultProps: NumAlphabetProps = {
   fontSize: 56,
   letterSpacing: 0,
   offsetY: 0,
-  foreground: colors.foreground,
+  foreground: colors.exitForeground,
   background: colors.transparent,
 };
+
+/** 逗号相对字号（多出口/多线路时别太突兀） */
+const COMMA_SCALE = 0.62;
 
 const SIZE_MIN = 8;
 const SIZE_MAX = 96;
@@ -117,17 +120,24 @@ export default function NumAlphabet({
 
   const layout = useMemo(() => {
     const text = normalizeSvgLine(value);
-    const font = `${weightValue} ${size}px ${fontFamilyEn}`;
+    // 逗号按 0.62 倍渲染：多出口/多线路「3,5」里的逗号不会又大又突兀
+    const parts = text.match(/,+|[^,]+/g) ?? [];
+    const segs = parts.map(part => {
+      const comma = part.startsWith(",");
+      const segSize = comma ? size * COMMA_SCALE : size;
+      const font = `${weightValue} ${segSize}px ${fontFamilyEn}`;
+      return { part, segSize, width: measureText(part, font) };
+    });
     const width = Math.max(
       1,
       Math.ceil(
-        measureText(text, font) +
+        segs.reduce((sum, seg) => sum + seg.width, 0) +
           ls * size * Math.max(0, Array.from(text).length - 1)
       )
     );
     const cap = size * 0.717;
     const baseline = (ROW_H - cap) / 2 + cap + dy;
-    return { text, width, baseline };
+    return { text, segs, width, baseline };
   }, [value, size, dy, ls, weightValue, fontsReady]);
 
   return (
@@ -150,7 +160,11 @@ export default function NumAlphabet({
           letterSpacing={`${ls}em`}
           xmlSpace="preserve"
         >
-          {layout.text}
+          {layout.segs.map((seg, index) => (
+            <tspan key={index} fontSize={seg.segSize}>
+              {seg.part}
+            </tspan>
+          ))}
         </text>
       </svg>
     </BackgroundBox>

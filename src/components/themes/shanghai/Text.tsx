@@ -46,10 +46,10 @@ export interface TextProps {
 }
 
 export const textDefaultProps: TextProps = {
-  chinese: "出口",
-  english: "Exit",
+  chinese: "号线",
+  english: "Line",
   align: "left",
-  weight: "medium",
+  weight: "normal",
   letterSpacing: 0,
   fontSizeZh: 28,
   fontSizeEn: 13,
