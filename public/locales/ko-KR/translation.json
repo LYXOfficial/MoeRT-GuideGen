@@ -2280,6 +2280,9 @@
               "down-left": "왼쪽 아래",
               "down-right": "오른쪽 아래"
             },
+            "turnDirection": {
+              "displayName": "꺾이는 방향"
+            },
             "foreground": "전경색",
             "background": "배경색"
           }

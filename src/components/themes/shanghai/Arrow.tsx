@@ -19,6 +19,7 @@ import { UpArrowGlyph, TurnRightGlyph } from "./icons/arrow-real";
  * 不做手绘近似。
  */
 export type ArrowShape = "straight" | "turn";
+export type TurnDirection = "up" | "down" | "left" | "right";
 export type ArrowDirection =
   | "up"
   | "up-right"
@@ -31,7 +32,10 @@ export type ArrowDirection =
 
 export interface ArrowProps {
   shape?: ArrowShape;
+  /** 直行箭头的方向（8 个） */
   direction?: ArrowDirection;
+  /** 拐弯箭头的方向（只有上下左右） */
+  turnDirection?: TurnDirection;
   foreground?: string;
   background?: string;
 }
@@ -39,6 +43,7 @@ export interface ArrowProps {
 export const arrowDefaultProps: ArrowProps = {
   shape: "straight",
   direction: "up",
+  turnDirection: "right",
   foreground: colors.foreground,
   background: colors.transparent,
 };
@@ -54,15 +59,11 @@ const STRAIGHT_ANGLE: Record<ArrowDirection, number> = {
   "up-left": 315,
 };
 
-const TURN_ANGLE: Record<ArrowDirection, number> = {
+const TURN_ANGLE: Record<TurnDirection, number> = {
   right: 0,
   down: 90,
   left: 180,
   up: 270,
-  "up-right": 0,
-  "down-right": 90,
-  "down-left": 180,
-  "up-left": 270,
 };
 
 const SCOPE = "themes.shanghai.components.Arrow.props";
@@ -90,6 +91,7 @@ export const arrowEditorConfig = (
     {
       key: "direction",
       label: `${SCOPE}.direction.displayName`,
+      visible: props => props.shape !== "turn",
       element: (
         <Select>
           {(
@@ -111,6 +113,20 @@ export const arrowEditorConfig = (
         </Select>
       ),
     },
+    {
+      key: "turnDirection",
+      label: `${SCOPE}.turnDirection.displayName`,
+      visible: props => props.shape === "turn",
+      element: (
+        <Select>
+          {(["up", "down", "left", "right"] as TurnDirection[]).map(value => (
+            <Select.Option key={value} value={value}>
+              {t(`themes.shanghai.common.direction.${value}`)}
+            </Select.Option>
+          ))}
+        </Select>
+      ),
+    },
     foregroundFormItem(SCOPE),
     ...backgroundFormItems(SCOPE),
   ],
@@ -119,6 +135,7 @@ export const arrowEditorConfig = (
 export default function Arrow({
   shape = arrowDefaultProps.shape,
   direction = arrowDefaultProps.direction,
+  turnDirection = arrowDefaultProps.turnDirection,
   foreground = arrowDefaultProps.foreground,
   background = arrowDefaultProps.background,
 }: ArrowProps) {
@@ -126,9 +143,9 @@ export default function Arrow({
   const dir = (direction ?? "up") as ArrowDirection;
   const isTurn = shape === "turn";
   const Glyph = isTurn ? TurnRightGlyph : UpArrowGlyph;
-  // 直行箭头支持 8 个方向（斜向 = 45°），拐弯箭头只有 4 个（90°）
+  // 直行箭头支持 8 个方向（斜向 = 45°），拐弯箭头只有 上下左右（90°）
   const angle = isTurn
-    ? (TURN_ANGLE[dir] ?? 0)
+    ? (TURN_ANGLE[turnDirection ?? "right"] ?? 0)
     : (STRAIGHT_ANGLE[dir] ?? 0);
 
   return (

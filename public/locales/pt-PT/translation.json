@@ -2281,6 +2281,9 @@
               "down-left": "Baixo-esquerda",
               "down-right": "Baixo-direita"
             },
+            "turnDirection": {
+              "displayName": "Direção da curva"
+            },
             "foreground": "Cor do texto",
             "background": "Fundo"
           }

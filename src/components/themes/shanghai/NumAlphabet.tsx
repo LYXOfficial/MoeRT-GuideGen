@@ -39,7 +39,7 @@ export const numAlphabetDefaultProps: NumAlphabetProps = {
   value: "3",
   weight: "normal",
   fontWeight: 400,
-  fontSize: 56,
+  fontSize: 60,
   letterSpacing: 0,
   offsetY: 0,
   foreground: colors.exitForeground,
@@ -114,6 +114,9 @@ export default function NumAlphabet({
 }: NumAlphabetProps) {
   const fontsReady = useFontsReady();
   const weightValue = weightCss(weight ?? "normal");
+  // Helvetica.ttf 只有 Regular(400)/Bold(700)，没有 Medium：
+  // 选「中黑」时用极细描边模拟（≈0.02em），否则 400/500 渲染完全一样
+  const fakeMedium = weightValue === 500;
   const size = clamp(fontSize, SIZE_MIN, SIZE_MAX, 62);
   const dy = Number(offsetY) || 0;
   const ls = Number(letterSpacing) || 0;
@@ -154,8 +157,11 @@ export default function NumAlphabet({
           x={EDGE_PAD}
           y={layout.baseline}
           fontSize={size}
-          fontWeight={weightValue}
+          fontWeight={fakeMedium ? 400 : weightValue}
           fill={foreground}
+          stroke={fakeMedium ? foreground : undefined}
+          strokeWidth={fakeMedium ? size * 0.02 : undefined}
+          paintOrder="stroke"
           fontFamily={fontFamilyEn}
           letterSpacing={`${ls}em`}
           xmlSpace="preserve"

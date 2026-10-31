@@ -2280,6 +2280,9 @@
               "down-left": "左下",
               "down-right": "右下"
             },
+            "turnDirection": {
+              "displayName": "轉彎方向"
+            },
             "foreground": "前景色",
             "background": "背景色"
           }

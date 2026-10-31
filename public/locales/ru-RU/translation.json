@@ -2283,6 +2283,9 @@
               "down-left": "Влево-вниз",
               "down-right": "Вправо-вниз"
             },
+            "turnDirection": {
+              "displayName": "Направление поворота"
+            },
             "foreground": "Цвет текста",
             "background": "Фон"
           }
