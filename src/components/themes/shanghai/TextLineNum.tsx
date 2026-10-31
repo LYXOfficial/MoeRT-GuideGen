@@ -51,7 +51,7 @@ export const textLineNumDefaultProps: TextLineNumProps = {
   color2: colors.maglev2,
   textColor: colors.white,
   border: colors.white,
-  background: colors.transparent,
+  background: colors.background,
 };
 
 const SCOPE = "themes.shanghai.components.TextLineNum.props";

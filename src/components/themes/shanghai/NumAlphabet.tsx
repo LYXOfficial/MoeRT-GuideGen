@@ -43,7 +43,7 @@ export const numAlphabetDefaultProps: NumAlphabetProps = {
   letterSpacing: 0,
   offsetY: 0,
   foreground: colors.exitForeground,
-  background: colors.transparent,
+  background: colors.background,
 };
 
 /** 逗号相对字号（多出口/多线路时别太突兀） */

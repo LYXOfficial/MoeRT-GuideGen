@@ -2050,7 +2050,7 @@
       }
     },
     "shanghai": {
-      "displayName": "상하이 지하철",
+      "displayName": "상하이 지하철 스타일",
       "colors": {
         "transparent": "투명",
         "background": "배경(진회색)",

@@ -55,7 +55,7 @@ export const arrowDefaultProps: ArrowProps = {
   direction: "up",
   turnDirection: "up-right",
   foreground: colors.foreground,
-  background: colors.transparent,
+  background: colors.background,
 };
 
 const STRAIGHT_ANGLE: Record<ArrowDirection, number> = {

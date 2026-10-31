@@ -487,12 +487,17 @@ const GuideBoardCols = memo(forwardRef<GuideBoardRef, GuideBoardProps>(
       colorKeys: Set<string>,
       itemType?: string
     ) => {
-      // 重庆(0)/北京新(3)/东京(5)：落板固化板色；其余主题固化 transparent
+      // 重庆(0)/北京新(3)/东京(5)/上海(6)：落板固化板色；其余主题固化 transparent
       // 透明常量取当前主题 colors.ts（各主题定义一致），别写字面量
       const transparent = themes[currentTheme][1].colors.colors.transparent;
       const gapLike = isGapLike(itemType);
       if (colorKeys.has("background") && !gapLike) {
-        if (currentTheme === 0 || currentTheme === 3 || currentTheme === 5) {
+        if (
+          currentTheme === 0 ||
+          currentTheme === 3 ||
+          currentTheme === 5 ||
+          currentTheme === 6
+        ) {
           if (boardBackground) {
             finalProps.background = boardBackground;
           }
@@ -501,7 +506,12 @@ const GuideBoardCols = memo(forwardRef<GuideBoardRef, GuideBoardProps>(
         }
       }
       if (colorKeys.has("background2") && !gapLike) {
-        if (currentTheme === 0 || currentTheme === 3 || currentTheme === 5) {
+        if (
+          currentTheme === 0 ||
+          currentTheme === 3 ||
+          currentTheme === 5 ||
+          currentTheme === 6
+        ) {
           if (boardBackground) {
             finalProps.background2 = boardBackground;
           }

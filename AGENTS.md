@@ -29,7 +29,7 @@ pnpm dev                                  # 开发服务器（5173 端口，常�
   `src/components/themes/beijing-old/`，THEME_INDEX 4，key `themes.beijingOld`，
   tsc / biome / build 三绿已提交。要点见 §4 末尾「旧版主题」，遗留项见 §9。
 - ✅ **上海地铁主题**（2026-11-01）：`src/components/themes/shanghai/`，THEME_INDEX 6，
-  key `themes.shanghai`。依据 DB31/T 1104（2025-11 修订征求意见稿）建成 12 个组件
+  key `themes.shanghai`（显示名「上海地铁风格」）。依据 DB31/T 1104（2025-11 修订征求意见稿）建成 12 个组件
   （LineNum / TextLineNum / Text / BigZh / BigEn / NumAlphabet / DualText / Arrow / Icon /
   SpecLine / Spacing / Blank），图形符号 28 个 + 申通标志，线路色 24 组全部来自标准 CMYK。
   资料与实测笔记在 `docs/shanghai/`（见 §11），tsc / biome / build 三绿。
@@ -569,6 +569,10 @@ python3 text_probe.py                                   # 解析 <use> 得到真
     换算表、与官方网络图的对照见 `docs/shanghai/notes/颜色与字体.md`。
   - 字体：中文思源黑体（继承北京那套 Noto Sans SC）+ **Helvetica**（项目已有
     `public/fonts/Helvetica.ttf`，`fonts/helvetica.css` 注册）。
+- **背景色跟随底板**（用户拍板 2026-11-01）：上海归到「重庆/北京新/东京」那一档
+  （`GuideBoard.tsx` 的 `bakeDropColors` 里 `currentTheme === 6`）：组件 defaultProps 的
+  background 默认是**主题深灰**（不是透明），落板时若有「底板背景色」就固化板色，
+  没有就保留主题色。间距/空格/分隔线仍永远透明。
 - **背景彻底单色**（用户拍板 2026-11-01）：`shanghai/Background.tsx` **已删掉 `MultiRowBackground`**，
   只留一层 `BackgroundBox`（一个 div 直接铺 backgroundColor，relative 定位给绝对定位的牌面用）；
   所有组件 props 里也没有 `background2`，编辑器只给一项「背景色」。

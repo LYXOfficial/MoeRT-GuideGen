@@ -2051,7 +2051,7 @@
       }
     },
     "shanghai": {
-      "displayName": "Métro de Shanghai",
+      "displayName": "Style du métro de Shanghai",
       "colors": {
         "transparent": "Transparent",
         "background": "Fond (gris foncé)",

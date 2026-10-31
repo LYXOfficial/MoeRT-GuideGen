@@ -56,7 +56,7 @@ export const textDefaultProps: TextProps = {
   lineGap: 4,
   offsetY: 0,
   foreground: colors.foreground,
-  background: colors.transparent,
+  background: colors.background,
 };
 
 const ZH_MIN = 8;
