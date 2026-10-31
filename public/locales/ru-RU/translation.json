@@ -1495,7 +1495,7 @@
       }
     },
     "tokyo-metro": {
-      "displayName": "Стиль Токийского метро (東京メトロ)",
+      "displayName": "Стиль Токийского метро",
       "components": {
         "LineBadge": {
           "displayName": "Line badge",

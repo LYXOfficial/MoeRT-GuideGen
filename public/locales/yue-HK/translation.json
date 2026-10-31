@@ -1492,7 +1492,7 @@
       }
     },
     "tokyo-metro": {
-      "displayName": "東京地鐵（東京メトロ）風格",
+      "displayName": "東京地下鐵風格",
       "components": {
         "LineBadge": {
           "displayName": "线路标",
