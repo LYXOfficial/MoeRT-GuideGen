@@ -916,7 +916,7 @@
       }
     },
     "beijing": {
-      "displayName": "베이징(신형)",
+      "displayName": "베이징 지하철(신형) 스타일",
       "colors": {
         "transparent": "투명",
         "background": "바탕색",
@@ -1230,7 +1230,7 @@
       }
     },
     "beijingOld": {
-      "displayName": "베이징 지하철 (클래식)",
+      "displayName": "베이징 지하철(클래식) 스타일",
       "colors": {
         "transparent": "투명",
         "background": "바탕색",

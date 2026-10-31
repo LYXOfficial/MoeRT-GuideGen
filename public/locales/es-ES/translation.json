@@ -167,7 +167,7 @@
   },
   "themes": {
     "chongqing": {
-      "displayName": "Estilo del metro de Chongqing",
+      "displayName": "Estilo del Metro de Chongqing",
       "components": {
         "Arrow": {
           "displayName": "Flecha",
@@ -435,7 +435,7 @@
       }
     },
     "chengdu": {
-      "displayName": "Estilo del metro de Chengdu",
+      "displayName": "Estilo del Metro de Chengdu",
       "components": {
         "Arrow": {
           "displayName": "Flecha",
@@ -917,7 +917,7 @@
       }
     },
     "beijing": {
-      "displayName": "Estilo del metro de Pekín (nuevo)",
+      "displayName": "Estilo del Metro de Pekín (nuevo)",
       "colors": {
         "transparent": "Transparente",
         "background": "Fondo del letrero",
@@ -1231,7 +1231,7 @@
       }
     },
     "beijingOld": {
-      "displayName": "Estilo del metro de Pekín (clásico)",
+      "displayName": "Estilo del Metro de Pekín (clásico)",
       "colors": {
         "transparent": "Transparente",
         "background": "Fondo del letrero",

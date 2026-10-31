@@ -916,7 +916,7 @@
       }
     },
     "beijing": {
-      "displayName": "北京地鐵風格（新）",
+      "displayName": "北京地鐵（新）風格",
       "colors": {
         "transparent": "透明",
         "background": "版面底色",
@@ -1230,7 +1230,7 @@
       }
     },
     "beijingOld": {
-      "displayName": "北京地鐵風格（舊）",
+      "displayName": "北京地鐵（舊）風格",
       "colors": {
         "transparent": "透明",
         "background": "版面底色",

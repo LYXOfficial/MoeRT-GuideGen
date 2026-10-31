@@ -917,7 +917,7 @@
       }
     },
     "beijing": {
-      "displayName": "Peking (neu)",
+      "displayName": "Peking-U-Bahn-Stil (neu)",
       "colors": {
         "transparent": "Transparent",
         "background": "Leinwandhintergrund",
@@ -1231,7 +1231,7 @@
       }
     },
     "beijingOld": {
-      "displayName": "Peking (klassisch)",
+      "displayName": "Peking-U-Bahn-Stil (klassisch)",
       "colors": {
         "transparent": "Transparent",
         "background": "Leinwandhintergrund",

@@ -166,7 +166,7 @@
   },
   "themes": {
     "chongqing": {
-      "displayName": "重慶軌道交通スタイル",
+      "displayName": "重慶軌道交通風",
       "components": {
         "Arrow": {
           "displayName": "矢印",
@@ -434,7 +434,7 @@
       }
     },
     "chengdu": {
-      "displayName": "成都地下鉄スタイル",
+      "displayName": "成都地下鉄風",
       "components": {
         "Arrow": {
           "displayName": "矢印",
@@ -916,7 +916,7 @@
       }
     },
     "beijing": {
-      "displayName": "北京（新版）",
+      "displayName": "北京地下鉄（新）風",
       "colors": {
         "transparent": "透明",
         "background": "地色（背景）",
@@ -1230,7 +1230,7 @@
       }
     },
     "beijingOld": {
-      "displayName": "北京地下鉄（旧スタイル）",
+      "displayName": "北京地下鉄（旧）風",
       "colors": {
         "transparent": "透明",
         "background": "地色（背景）",

@@ -167,7 +167,7 @@
   },
   "themes": {
     "chongqing": {
-      "displayName": "Style Chongqing Rail Transit",
+      "displayName": "Style du métro de Chongqing",
       "components": {
         "Arrow": {
           "displayName": "Flèche",
@@ -435,7 +435,7 @@
       }
     },
     "chengdu": {
-      "displayName": "Style Chengdu Metro",
+      "displayName": "Style du métro de Chengdu",
       "components": {
         "Arrow": {
           "displayName": "Flèche",
@@ -917,7 +917,7 @@
       }
     },
     "beijing": {
-      "displayName": "Style Beijing Metro (nouveau)",
+      "displayName": "Style du métro de Pékin (nouveau)",
       "colors": {
         "transparent": "Transparent",
         "background": "Fond du panneau",
@@ -1231,7 +1231,7 @@
       }
     },
     "beijingOld": {
-      "displayName": "Style Beijing Metro (classique)",
+      "displayName": "Style du métro de Pékin (classique)",
       "colors": {
         "transparent": "Transparent",
         "background": "Fond du panneau",
