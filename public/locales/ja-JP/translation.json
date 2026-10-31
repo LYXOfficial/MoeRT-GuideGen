@@ -715,7 +715,7 @@
       }
     },
     "hongkong": {
-      "displayName": "港鉄（MTR）スタイル",
+      "displayName": "MTR風",
       "components": {
         "Arrow": {
           "displayName": "矢印",
@@ -1492,7 +1492,7 @@
       }
     },
     "tokyo-metro": {
-      "displayName": "東京メトロ風格",
+      "displayName": "東京メトロ風",
       "components": {
         "LineBadge": {
           "displayName": "駅番号",

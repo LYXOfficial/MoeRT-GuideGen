@@ -716,7 +716,7 @@
       }
     },
     "hongkong": {
-      "displayName": "Style MTR (Hong Kong)",
+      "displayName": "Style MTR",
       "components": {
         "Arrow": {
           "displayName": "Flèche",
@@ -1493,7 +1493,7 @@
       }
     },
     "tokyo-metro": {
-      "displayName": "Style Tokyo Metro",
+      "displayName": "Métro de Tokyo (東京メトロ) style",
       "components": {
         "LineBadge": {
           "displayName": "Line badge",
