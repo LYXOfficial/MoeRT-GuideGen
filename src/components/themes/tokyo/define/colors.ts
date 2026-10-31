@@ -91,8 +91,13 @@ export default colors;
 export const fontFamilyZh =
   '"Noto Sans JP", "Noto Sans SC", "Source Han Sans JP", "PingFang JP", "Hiragino Sans", "Microsoft YaHei", sans-serif';
 
-/** 欧文/数字字体：Helvetica（新ゴ 的西文搭配；Futura 只用于站号字母，单独指定） */
-export const fontFamilyEn = `Helvetica, Arial, ${fontFamilyZh}`;
+/**
+ * 欧文/数字字体：**Frutiger**（现场标牌的欧文，2017 实调结论 = Frutiger Bold）。
+ * 仓库只有 `Frutiger-Normal.ttf`（LT 55 Roman），700 由浏览器合成粗体；
+ * 站号字母另有 Futura（`fontFamilyFutura`），和文用 Noto Sans JP。
+ * 兜底顺序：Frutiger → Helvetica → Arial → 和文字体。
+ */
+export const fontFamilyEn = `Frutiger, Helvetica, Arial, ${fontFamilyZh}`;
 
 /** 站号字母：Futura Bold（CI 指南调查结论），系统缺字回落 Helvetica Bold */
 export const fontFamilyFutura = `"Futura Metro", Futura, "Futura PT", "Century Gothic", Helvetica, Arial, ${fontFamilyZh}`;

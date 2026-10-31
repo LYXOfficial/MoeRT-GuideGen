@@ -89,7 +89,7 @@ export const directionDefaultProps: DirectionProps = {
       letter: "TR",
       number: "",
       color: "#00a7db",
-      shape: "rect",
+      shape: "circle",
       thickness: "normal",
     },
     {
@@ -281,10 +281,11 @@ function Direction({
           style={{
             flexWrap: "nowrap",
             lineHeight: 1,
-            height: Math.max(badgeSize ?? 14, enViaSize ?? 9),
+            height: Math.max(badgeSize ?? 13, enViaSize ?? 9),
             overflow: "visible",
             // 徽章之间按尺寸留白（成都那种「一组徽章成串但不粘连」的观感）
             gap: Math.max(4, Math.round((badgeSize ?? 14) * 0.3)),
+            marginTop: badges?.length ? 1 : 0,
           }}
         >
           {(badges ?? [])

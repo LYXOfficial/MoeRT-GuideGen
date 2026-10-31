@@ -398,6 +398,18 @@ export default function Editor({
   }, [applyHistorySnapshot, redo, saveCurrentState]);
 
   const [zoom, setZoom] = useState(1);
+  /**
+   * 缩放「重光栅化」开关：平移层挂了 will-change: transform，会被提升为合成层，
+   * 而合成层缓存的是**上一倍率的位图**。缩放后若不重绘，画面就一直糊着放大，
+   * 直到某个交互（点一下）触发重绘。这里在 zoom 变化后临时摘掉 will-change 一帧，
+   * 逼浏览器按新倍率重新光栅化。
+   */
+  const [reRaster, setReRaster] = useState(false);
+  useEffect(() => {
+    setReRaster(true);
+    const t = window.setTimeout(() => setReRaster(false), 130);
+    return () => window.clearTimeout(t);
+  }, [zoom]);
   // 组件灰框：只是编辑时的辅助线，用 CSS 变量下发，导出前会被临时关掉
   const [showItemFrame, setShowItemFrame] = useState(() => {
     try {
@@ -2666,7 +2678,8 @@ export default function Editor({
                 transform: `translate(${panRef.current.x}px, ${panRef.current.y}px)`,
                 // 提升为独立合成层：平移只做合成器偏移，不重绘整块画板
                 // （否则 200% 缩放下每帧要重新光栅化整棵 SVG 子树，掉到 ~30fps）
-                willChange: "transform",
+                // 缩放刚变过的那一帧先摘掉，逼合成层按新倍率重光栅化，避免「放大后一直糊」
+                willChange: reRaster ? "auto" : "transform",
               }}
             >
               {/* 内层只负责缩放：变换/补间与改动前完全一致，缩放行为零变化。
