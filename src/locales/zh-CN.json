@@ -1587,6 +1587,10 @@
           "props": {
             "icon": "图形",
             "height": "高度",
+            "showFrame": "显示外框",
+            "plateColor": "外框底色",
+            "borderColor": "外框描边色",
+            "borderWidth": "描边宽度",
             "foreground": "前景色",
             "background": "背景色"
           }
@@ -1822,6 +1826,8 @@
             "offsetY": "上下偏移",
             "height": "高度",
             "radius": "圆角",
+            "borderWidth": "边框宽度",
+            "borderColor": "边框色",
             "plateColor": "底板色",
             "background": "背景色",
             "marginX": "左右间距"
@@ -1840,6 +1846,7 @@
         "exitbackground": "出口背景色",
         "exitforeground": "出口前景色",
         "exitnumbackground": "出口号底色",
+        "iconblue": "图记蓝",
         "lineG": "G 银座线",
         "lineM": "M 丸之内线",
         "lineH": "H 日比谷线",

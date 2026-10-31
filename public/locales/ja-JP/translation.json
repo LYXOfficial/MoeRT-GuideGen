@@ -1587,6 +1587,10 @@
           "props": {
             "icon": "図記号",
             "height": "高さ",
+            "showFrame": "枠を表示",
+            "plateColor": "枠の下地色",
+            "borderColor": "枠線色",
+            "borderWidth": "枠線の太さ",
             "foreground": "前景色",
             "background": "背景色"
           }
@@ -1822,6 +1826,8 @@
             "offsetY": "上下オフセット",
             "height": "高さ",
             "radius": "角丸",
+            "borderWidth": "枠線の太さ",
+            "borderColor": "枠線色",
             "plateColor": "下地色",
             "background": "背景色",
             "marginX": "左右の余白"
@@ -1840,6 +1846,7 @@
         "exitbackground": "出口背景色",
         "exitforeground": "出口前景色",
         "exitnumbackground": "出口番号の下地",
+        "iconblue": "図記号の青",
         "lineG": "G 銀座線",
         "lineM": "M 丸ノ内線",
         "lineH": "H 日比谷線",

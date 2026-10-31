@@ -50,7 +50,7 @@
 
 ![](https://img.0v0.my/2026/10/31/e25ebd52e80b0f55.webp)
 
-![](https://img.0v0.my/2026/10/31/fac59cbbb3be946a.webp)
+![](https://img.0v0.my/2026/10/31/715947c670ea0969.webp)
 
 ## 参考资料
 
@@ -100,10 +100,16 @@ https://www.kqqw.com/db50/452899.html
 
 ## 特别鸣谢
 
-除了早年 Copilot 里蹬到的 Claude GPT Gemini外，后来北京地铁使用的模型是
+除了早年 Copilot 里蹬到的 Claude GPT Gemini外，后来北京/东京/上海等使用的模型是
 
-GLM-5.3 GLM-5.3-Flash DeepSeek-V4-Flash-Vision-Exp Deepseek-V4-Flash-0731 Deepseek-V4.1-Flash Deepseek-V4.1-Flash-1017
+- GLM-5.3
+- GLM-5.3-Flash
+- DeepSeek-V4-Flash-Vision-Exp
+- Deepseek-V4-Flash-0731
+- Deepseek-V4.1-Flash
+- Deepseek-V4.1-Flash-1017
+- Muse Spark 1.3 Contributor
 
 以及工具 Claude Code、DeepSeek Harness、ZCode
 
-感谢Z/和k1s2y让我蹬到了虽然不太好用还有点慢但能用的GLM5.3F，感谢梁子开源的超便宜模型和 dsh。
+感谢Z/和k1s2y让我蹬到了虽然不太好用还有点慢但能用的GLM5.3F，感谢梁子开源的超便宜模型和 dsh，感谢OpenCode的超大碗订阅，10刀撬了60刀的MuseSpark和80刀（现在是100刀了）的DeepSeek。

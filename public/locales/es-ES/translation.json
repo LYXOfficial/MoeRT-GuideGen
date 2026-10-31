@@ -1588,6 +1588,10 @@
           "props": {
             "icon": "Pictogram",
             "height": "Height",
+            "showFrame": "Show frame",
+            "plateColor": "Frame fill",
+            "borderColor": "Frame border",
+            "borderWidth": "Border width",
             "foreground": "Foreground",
             "background": "Background"
           }
@@ -1823,6 +1827,8 @@
             "offsetY": "Vertical offset",
             "height": "Height",
             "radius": "Corner radius",
+            "borderWidth": "Border width",
+            "borderColor": "Border colour",
             "plateColor": "Plate colour",
             "background": "Background",
             "marginX": "Side margin"
@@ -1841,6 +1847,7 @@
         "exitbackground": "Color de fondo de la salida",
         "exitforeground": "Color de primer plano de la salida",
         "exitnumbackground": "Fondo del número de salida",
+        "iconblue": "Azul de pictogramas",
         "lineG": "G línea Ginza",
         "lineM": "M línea Marunouchi",
         "lineH": "H línea Hibiya",

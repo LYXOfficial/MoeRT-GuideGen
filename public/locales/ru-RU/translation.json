@@ -1590,6 +1590,10 @@
           "props": {
             "icon": "Pictogram",
             "height": "Height",
+            "showFrame": "Show frame",
+            "plateColor": "Frame fill",
+            "borderColor": "Frame border",
+            "borderWidth": "Border width",
             "foreground": "Foreground",
             "background": "Background"
           }
@@ -1825,6 +1829,8 @@
             "offsetY": "Vertical offset",
             "height": "Height",
             "radius": "Corner radius",
+            "borderWidth": "Border width",
+            "borderColor": "Border colour",
             "plateColor": "Plate colour",
             "background": "Background",
             "marginX": "Side margin"
@@ -1843,6 +1849,7 @@
         "exitbackground": "Фон выхода",
         "exitforeground": "Передний план выхода",
         "exitnumbackground": "Фон номера выхода",
+        "iconblue": "Синий пиктограмм",
         "lineG": "G линия Гиндза",
         "lineM": "M линия Маруноути",
         "lineH": "H линия Хибия",

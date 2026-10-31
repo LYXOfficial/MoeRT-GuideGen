@@ -1,7 +1,8 @@
 # AGENTS.md — 交接文档
 
-> 最后更新：2026-10-28。导出图片保真度修复（见 §7「导出图片」/§8-36，tsc / biome / build 三绿）。
-> 下一阶段目标：**M8 北京旧版（2015 / 经典样式）导视组件库**。（已实现）
+> 最后更新：2026-11-01。上海主题章节（§11）按东京那套结构重写：组件尺寸表 / 颜色 / 字体 /
+> 图形符号 / 背景与落板 / i18n / 坑，共 7 小节；四个卫生间图标重描参数也记在 §11.4。
+> 下一阶段目标：**深圳 / 广州主题**（未定，等用户拍板）；北京旧版已实现、遗留项见 §9。
 
 ---
 
@@ -33,6 +34,9 @@ pnpm dev                                  # 开发服务器（5173 端口，常�
   （LineNum / TextLineNum / Text / BigZh / BigEn / NumAlphabet / DualText / Arrow / Icon /
   SpecLine / Spacing / Blank），图形符号 28 个 + 申通标志，线路色 24 组全部来自标准 CMYK。
   资料与实测笔记在 `docs/shanghai/`（见 §11），tsc / biome / build 三绿。
+- ✅ **东京地铁主题（第二版）**（2026-10-31）：`src/components/themes/tokyo/`，
+  **THEME_INDEX 5**，key `themes.tokyo-metro`（显示名「东京地铁风格」）。16 个组件、
+  157 项官方图记、73 条线路色、11 语言全量；要点与踩坑见 **§12**。
 - ✅ 编辑器交互（PC + 移动端）：拖拽/点按判定、触屏长按、小元件热区、删除区可见矩形、
   编辑菜单稳定性、整页缩放禁用等，全部修复并提交（见 §7/§8）。
 - ✅ **全应用深色/浅色模式**（2026-10-25）：初始跟随浏览器 `prefers-color-scheme`，
@@ -43,9 +47,11 @@ pnpm dev                                  # 开发服务器（5173 端口，常�
 
 ## 3. 主题架构契约（新主题必须遵守）
 
-1. `src/components/themes/themereg.ts` 的数组**顺序即 THEME_INDEX**：
-   `["themes.chongqing", chongqing] 0 / chengdu 1 / hongkong 2 / beijing 3`。
-   旧版注册为第 5 项（建议 key `themes.beijingOld` 或 `themes.beijing-old`，5 个语言都要加 displayName）。
+1. `src/components/themes/themereg.ts` 的数组**顺序即 THEME_INDEX**（当前 7 项）：
+   `chongqing 0 / chengdu 1 / hongkong 2 / beijing 3 / beijingOld 4 / tokyo-metro 5 / shanghai 6`。
+   新增主题要同步：`themereg.ts`、`Background.tsx` 里的 `THEME_INDEX` 常量（取色器用它读色板）、
+   `GuideBoard.tsx` 的 `bakeDropColors` 分支（哪些主题落板固化板色）、`DraggableItem.tsx`
+   的 Spacing/SpecLine 注册、11 个语言包、以及 `src/locales/zh-CN.json` 兜底副本。
 2. 每个组件文件导出形状：`XxxProps`、`xxxDefaultProps`、`xxxEditorConfig(t): EditorConfig`、
    组件上挂静态 `Xxx.getEditorConfig = t => xxxEditorConfig(t)`。
 3. **`Spacing` 和 `SpecLine` 必须在 `src/components/DraggableItem.tsx` 里注册**
@@ -135,370 +141,134 @@ python3 text_probe.py                                   # 解析 <use> 得到真
 字体方案（新版）：中文思源黑体（Normal/Medium/Bold，经 fonts.loli.net 引 Noto Sans SC），
 西文与数字 Arial / Arial Medium（标准 §1.1.4.3）。
 
-## 7. 踩过的坑（前车之鉴）
+## 7. 踩过的坑（改前必读）
 
 **测量与渲染**
-- SVG `letterSpacing` 无单位 = px，不是 em；宽度公式 `rendered = measureText + spacing × (字符数-1)`。
-- `fontZh(500, …)` 曾因 `WEIGHT_VALUE[500]` 为 undefined 得到 `"undefined 11px…"` → canvas 回退字体
-  → 量宽偏小、文字被裁。`weightCss` 现在接受数字；`TEXT_WEIGHT = 500` 必须同时喂测量和 fontWeight。
-- SVG `<text>` 默认 `xml:space="default"` 会**折叠连续空格、丢掉首尾空格**，而 measureText /
-  `getBBox` 按原字符串计宽 → 「打多个空格只显示一个、盒子却按多个空格算宽」或「空格完全不算」。
-  **全主题所有文字组件**已统一修复（2026-10-28）：`src/utils/svgText.ts` 的
-  `normalizeSvgLine`（只把制表/换行换成空格，**首尾空格保留、不 trim**）+ 渲染侧
-  `xmlSpace="preserve"`，量宽与渲染用同一个串。新增文字组件照此办理。
-  注意：判断「字段是否为空」仍用 `.trim()`（只有空格的字段按空处理），但渲染时那串空格照旧保留。
-- 中文 ink ≈ 0.88em、拉丁 cap ≈ 0.716em，所有基线都用 ink 推导，别用 fontSize 居中。
+- SVG `letterSpacing` 无单位 = px；宽度 = `measureText + spacing × (字符数-1)`。
+- `fontZh(500,…)` 曾因 `WEIGHT_VALUE[500]` undefined 得到 `"undefined 11px…"` → 回退字体 → 量宽偏小、
+  文字被裁。`weightCss` 现已接受数字；**字号数字要同时喂测量和 fontWeight**。
+- `<text>` 默认 `xml:space="default"` 会折叠空格但 `getBBox()` 按原串计宽 → 「空格不算宽/盒子变长」。
+  统一走 `src/utils/svgText.ts` 的 `normalizeSvgLine`（只把制表/换行换空格，**首尾空格保留**）+
+  `xmlSpace="preserve"`；判空仍用 `.trim()`。
+- 中文 ink ≈ 0.88em、拉丁 cap ≈ 0.716em，基线按 ink 推，别用 fontSize 居中。
 
 **图标 / 视图箱**
-- 宽扁图形放进方形 viewBox 会被 letterbox 缩小 → 生成脚本要带 `tight_viewbox`。
-- PDF 里的白色版面底盘（格子的背景方块）必须从字形路径里剔除，否则整块白底。
-- `ROLE_OVERRIDE` 可按图标覆盖角色槽（如 AED 的闪电 = secondary）。
+- 宽扁图形塞进方形 viewBox 会被 letterbox 缩小 → 生成脚本带 `tight_viewbox`。
+- PDF 里格子的白色底盘要从字形里剔除，否则整块白底；`ROLE_OVERRIDE` 可按图标换角色槽。
 
 **布局 / CSS**
-- 组件盒高必须 64px 铺满整行（ExitNum 台阶教训，§4）。
-- **画板左右不能留 1px 内边距**（`pl-px pr-px` 已删）：组件设了跟底板不同的背景色时，
-  那 1px 会在最左/最右各露一条底板色，导出图里也是。行首/行尾的组件同时要
-  `flushLeft/flushRight`（不给 -1px 负边距），否则它会被行容器的 `overflow:hidden` 裁掉 1px，
-  同样露底板色。
-- 行容器 `overflow` 必须两轴都 `hidden`（`overflow-x-hidden` 会把另一轴变 auto 冒出滚动条）；
-  溢出内容直接裁掉是用户要求。
-- 行与行背景接缝：MultiRowBackground 用 hard-stop 渐变，别用两个 div。
-- **组件虚线框（DraggableItem 的 outline）必须 `outlineOffset: -2px` 画在盒内**（2026-10-29）：
-  outline 默认画在盒子外侧，上下相邻两行之间，上一行组件的 2px 虚线框下缘正好横在行边界上
-  （outline 在堆叠绘制最后一步，盖住下一行顶部），看起来就是「关了分隔线行间还有白缝/虚线缝」，
-  且与分隔线开关无关。收到盒内后虚线框贴着组件自身边缘画。
-- `body`/外壳高度用 `100dvh`（`global.css` 已覆盖 `.h-screen`），否则移动端地址栏收放整页跳动。
-- **底板配色铁律（2026-10-30，用户逐条拍板：拖上去就定死）**：
-  新拖入的组件在落板那一刻把当前生效色写进 props（`GuideBoard.tsx` 的 `bakeDropColors`），
-  之后改底板配色**绝不回头覆盖已上板的组件**（用户把组件改成什么都随他，
-  哪怕改成别的全局默认色也不动，主题不再介入）。渲染层（`BoardItemContent`）只做原样渲染，
-  禁止再加任何按板色回写的逻辑（之前加过一轮渲染层跟随又删掉，回归过一次）。
-  只有**侧栏新拖入**才固化：`addItemToRow` / `addItemToTwoRowContainer` 的 `fresh` 参数；
-  板内搬家（跨行、进出容器）一律不传、原样搬运，否则等于悄悄改色。
-  固化细则（2026-10-30 定稿，六条）：
-  1. **间距 / 空格 / 分隔线（Spacing/Blank/SpecLine）全主题（含重庆、北京新）背景永远透明**
-     （含 background2），落板也**不固化**板色进去（`bakeDropColors` 的 `isGapLike` 豁免）——
-     否则以后改板色，旧间距会露出色块；想给它们上色自己在编辑器改。
-  2. **成都 / 香港 / 北京旧**：所有组件 defaultProps 的 background 默认 `colors.transparent`
-     （transparent 就是默认值），落板固化 transparent，用户自己改。
-  3. **重庆 / 北京新**：其它组件保留各自的局部默认色（defaultProps 别动，是用户故意设的），
-     全局底板色**有设定才覆盖**局部默认；落板固化解析后的值（全局没设就保留局部默认），
-     不是 transparent。
-  4. **前景色全主题统一**：全局「默认前景色」覆盖局部默认色，落板即定死；
-     没设全局就保留局部默认。**默认色必须永远有值**，不允许留空（undefined/空串）——
-     渲染兜底按各主题规则对齐（其他主题兜底 transparent，重庆/北京新兜底主题色）。
-  5. **background / background2 / foreground 之外的默认值无需介入**，该多少就多少。
-  6. **透明一律用各主题 colors.ts 的 `transparent` 常量**（值一致，5 语言调色板同源），
-     别写字面量 `"transparent"`；GuideBoard 里取
-     `themes[currentTheme][1].colors.colors.transparent`。
-- **background / background2 必须成对处理**：北京主题两行分色，
-  落板、跟随、默认值三处只改一个就是「只有第一行变色」。
-  自查命令（两条都应无输出）：
-  `grep -rn "background.*: *colors\.background" src/components/themes/*/Spacing.tsx src/components/themes/*/Blank.tsx src/components/themes/*/SpecLine.tsx`
-  `grep -rn '"transparent"' src/components/themes/ | grep -v "define/colors.ts"`
+- 组件盒高必须 64px 铺满整行（ExitNum 曾缩到 57.6px 露台阶）。
+- 画板左右**不能留 1px 内边距**；行首/行尾组件要 `flushLeft/flushRight`（不给 −1px 负边距），
+  否则被 `overflow:hidden` 裁 1px、露底板色。行容器 `overflow` 要两轴 `hidden`。
+- 行间背景接缝用 `MultiRowBackground` 的 hard-stop 渐变，别用两个 div。
+- 组件虚线框 `outlineOffset: -2px` 画在盒内（否则压住行边界，看着像「关不掉的白缝」）。
+- `body` 高度用 `100dvh`，否则移动端地址栏收放整页跳。
+- **底板配色铁律（用户逐条拍板：拖上去就定死）**：新拖入组件在落板那刻把当前生效色写进 props
+  （`bakeDropColors`），之后改板色**绝不回头覆盖已上板组件**；渲染层只原样渲染，禁止按板色回写
+  （加过一次又删，回归过一次）。只有侧栏新拖入才固化（`fresh` 参数），板内搬家原样搬运。
+  细则：① 间距/空格/分隔线全主题背景永远透明且不固化板色；② 成都/香港/北京旧 默认 transparent；
+  ③ 重庆/北京新/东京/上海 保留局部默认，全局板色有设定才覆盖；④ 前景色全局覆盖局部、**默认色不能为空**；
+  ⑤ 其它默认值不介入；⑥ 透明一律用各主题 `colors.transparent` 常量，禁写字面量。
+- `background` / `background2` 必须成对处理（北京两行分色，只改一个 = 只有第一行变）。自查：
+  `grep -rn '"transparent"' src/components/themes/ | grep -v define/colors.ts`（应无输出）。
 
-**dnd-kit / 编辑器交互（都是血泪，改前先读懂）**
-- `{...listeners}` 之后再写同名 `onPointerDown` 会**覆盖** dnd-kit 的激活监听 → 彻底拖不动；
-  要叠加自己的逻辑只能用 **capture 变体**（`onPointerDownCapture` 等）。
-- 但 `onPointerUpCapture` 里**绝不能 stopPropagation**：PointerSensor 在 document 上等
-  pointerup 结束「按下待命」，掐断它 PC 上会「点一下就开始拖」。
-- 触屏拖完后浏览器补发的**兼容性鼠标事件**（mousedown+mouseup 几乎同时）会误触「点按」判定、
-  误关编辑菜单；点按判定用 pointer 事件 + `hasMovedRef(>10px)` + `transform` 位移判断，
-  菜单外部关闭用 mousedown + **400ms 宽限期** + Semi 浮层白名单（`.semi-portal` 等）。
-- **不能用 pointerdown 做外部关闭判定**：会绕过 Semi 浮层只拦 mousedown 的内部保护，
-  选个下拉选项整个菜单就没了；也不能在弹窗根节点掐断 pointerdown/mousedown（同理，且
-  Semi 自己的「点外部收起下拉」会失效）。
-- TouchSensor（长按激活）**只该给组件列表卡片用**（列表 `touch-action: pan-y` 可滚动）；
-  画板组件曾因全局长按导致「点一下就进拖拽」。已通过在 `DraggableItem` 里对 `boardItem`
-  摘掉 `onTouchStart` 解决。sensors：`PointerSensor distance:8` + `TouchSensor delay:250 tolerance:8`。
-- 组件 `margin: 0 -1px` 压接缝 + hover/选中置顶 z-40 会盖住 1–3px 的分割线；已用透明热区
-  （`hitPad`，ResizeObserver 实测宽度补到 14px/zoom）+ `.guide-item-hit-expand z-50` 解决。
-- 删除区（组件栏）droppable 用**可见矩形**（`src/utils/visibleRect.ts` + `data-trash-root` +
-  Editor 自定义 measure）：列表可滚动、移动端在抽屉里，整块矩形会把「拖出画布」误判成删除；
-  完全不可见时矩形挪到视口外。
-- **拖拽到双行容器最左/最右 1/6** 时 collision 过滤可能把 `pool` 清空 → `pool[0].id` 白屏
-  （用户实测炸过）。现在空则回退 `base`，且 `pool` 为空有兜底 return。改 collision 前先读 §8-20。
-- DragOverlay 的位移要除以真实屏幕缩放；`DraggableItem` 用 `useLayoutEffect`+ResizeObserver
-  实时量（绘制前），否则跨行重挂首帧比例失真（手拖很远元素只挪一点/抖动）。
-- 拖拽期间：`activeDrag` 时画布手势（单指平移/双指缩放）一律忽略；document 上非被动
-  `touchmove` preventDefault + `body touch-action:none`；viewport 已加
-  `maximum-scale=1.0, user-scalable=no`。
+**dnd-kit / 编辑器交互**
+- `{...listeners}` 之后写同名 `onPointerDown` 会**覆盖** dnd-kit 监听 → 拖不动；要用 capture 变体。
+- 但 `onPointerUpCapture` **绝不能 stopPropagation**（PointerSensor 在 document 等 pointerup，
+  掐断会「点一下就开始拖」）。
+- 触屏拖完浏览器补发兼容性鼠标事件会误触「点按」→ 用 pointer 事件 + `hasMovedRef(>10px)` 判定；
+  菜单外部关闭用 mousedown + 400ms 宽限期 + Semi 浮层白名单。**不能用 pointerdown 做外部关闭**
+  （绕过 Semi 只拦 mousedown 的保护，选个下拉整个菜单就没了）。
+- TouchSensor 长按**只给组件列表卡片**，画板组件要摘掉 `onTouchStart`。sensors：
+  `PointerSensor distance:8` + `TouchSensor delay:250 tolerance:8`。
+- `margin: 0 -1px` 压接缝 + hover z-40 会盖住分割线 → 透明热区 `hitPad`（补到 14px/zoom）
+  + `.guide-item-hit-expand z-50`。
+- 删除区 droppable 用**可见矩形**（`visibleRect.ts` + `data-trash-root`），否则「拖出画布」误判成删除。
+- 拖到双行容器边缘时 collision 可能清空 `pool` → `pool[0].id` 白屏（已加空兜底；**改 collision 前先读双行容器那节**）。
+- DragOverlay 位移要除以真实屏幕缩放；`DraggableItem` 用 `useLayoutEffect`+ResizeObserver 绘制前量。
+- 拖拽期间忽略画布手势；document 上非被动 `touchmove` preventDefault；viewport 已禁整页缩放。
 
-**双行容器（2026-10-25 重做，成都主题 `chengdu/TwoRowContainer.tsx`）**
-- 布局模型：容器宽度 `W = max(30, minWidth, 最宽行内容跨度 × 0.5 + 1)`；两行等宽，
-  行外层 `width:100%`、内层 `.two-row-inner`（未缩放布局）宽度写死 `W / SCALE`。
-  **间距能撑开的前提就是内层有个确定宽度**，`fit-content` 时间距只会收成 0。
-- 量宽度要用**子元素实际占据的区间**（`max(offsetLeft+offsetWidth) - min(offsetLeft)`），
-  不能累加各自 `offsetWidth`：组件之间靠 `margin: 0 -1px` 压接缝，累加会把每条缝隙都算成宽度，
-  条目越多右边剩的空越大（实测 2 条 4px、7 条 9px，就是用户看到的「右边空一块没贴紧」）。
-- 文本类组件（出口名称/站点名称/文字/线路标/方向）宽度来自 `getBBox()`。**只 `await` 一次
-  `document.fonts.ready` 会留下残影**：中文字体是 fonts.loli.net 的远程字体，若它在这之后才加载完，
-  量到的一直是回退字体的宽度 → 盒子比文字宽一截（同样表现为「空一块」）。
-  现在统一改成：先量一次 + `fonts.ready` + `fonts` 的 `loadingdone` + 60/240/800ms 重试。
-- 间距（`flex:1`）不算进自然宽度：它撑开的是剩余空间，算进去会让容器越量越宽（死循环）。
-  `DraggableItem` 给间距挂了 `data-guide-spacing="true"`，测量时跳过它。
-  **只跳过元素不够**（2026-10-26 恶性 bug）：间距后面的组件 `offsetLeft` 包含间距已撑开的
-  宽度，位置跨度仍会被污染 → 容器每测量周期涨 1px 永续变宽（实测 137px/s，只在间距
-  后面还有组件/间距在行首时触发）。必须把该行所有间距的 `offsetWidth` 累加后从跨度里
-  扣掉——Spacing 是 `flex:1 1 0%` 固有宽度 0，扣除后正好还原自然跨度。
-- `.two-row-inner` **必须 `alignItems: stretch`**：间距/空格是 `height:100%`，
-  父级一旦是 `center` 它们就没有高度可撑，盒子塌成 0（容器里的间距/空格点不着就是这个）。
-- `minWidth` 是用户可调参数（编辑器里的「最小宽度」，下限 **30**）；内容更宽时以内容为准。
-- 拖入落点：**行尾一律算「追加到这一行」**。以前左右各留 1/6 宽边带都判成「插到容器前/后」，
-  容器窄（98px）时行尾那 1/6 正好被甩到右边的主行里（用户实测）。现在只有左端一条
-  `min(20px, 宽度×0.15)` 的窄边带判「插到容器前」，且边带必须跟宽度成比例，
-  否则 30px 宽的容器有一大半区域拖不进去。行级命中（带 `containerId`/`rowIndex`）
-  要排在裸容器前面，`over` 落在容器本身时落点处理认不出目标行、会静默退回主行。
+**双行容器（成都 `TwoRowContainer`，Frame 复用同一套契约）**
+- 宽度 `W = max(30, minWidth, 最宽行跨度 × 0.5 + 1)`；两行等宽；内层 `.two-row-inner` 宽写死
+  `W / SCALE` —— **间距能撑开的前提就是内层有确定宽度**（fit-content 时间距必收成 0）。
+- 量宽用**子元素实际占据区间**（`max(offsetLeft+offsetWidth) − min(offsetLeft)`），不能累加 offsetWidth：
+  `-1px` 压接缝会被逐条算成宽度，条目越多右边空得越多。
+- 文本组件宽度来自 `getBBox()`；**只 await 一次 `fonts.ready` 会留残影**（远程中文字体后到），
+  现改为 首量 + `fonts.ready` + `loadingdone` + 60/240/800ms 重试。
+- 间距（`flex:1`）不算进自然宽；`data-guide-spacing` 跳过它，且**要把该行所有间距的 offsetWidth
+  从跨度里扣掉**（否则间距后面的组件 offsetLeft 含已撑开宽度 → 容器每周期 +1px 无限变宽）。
+- `.two-row-inner` 必须 `alignItems: stretch`（间距是 height:100%，父级 center 就塌成 0）。
+- 落点：**行尾一律算「追加到这一行」**；只有左端 `min(20px, 宽×0.15)` 判「插到容器前」；
+  行级命中（带 containerId/rowIndex）要排在裸容器前，否则拿不到 rowIndex 会静默退回主行。
 
-**浮层贴边（2026-10-25）**
-- 编辑弹窗（`.editing-popup`）定位带 `anchor`（触发组件的矩形）：**右侧放不下就翻到左侧**
-  （以前只是把弹窗夹回视口，组件靠右时正好盖住组件）；垂直和组件顶对齐，下方溢出就上移贴边。
-- 颜色面板（296×344）除了自己算 `topLeft/bottomLeft`，还在打开后连跟 ~90 帧做**视口纠偏**：
-  用 CSS 独立属性 `translate` 写内联（不能用 `transform` —— Semi 入场动画在 transform 上，
-  `fill-mode: forwards` 会盖住内联值）。**每帧要先把自己的 translate 清掉再量**，
-  否则量到的是纠偏后的位置、下一帧算出 0 又推回去，来回振荡（实测就卡在这个坑里）。
-  纠偏要连跟而不是量一次：Semi 会在入场动画结束后再定位一次。
-- 全站浮层钳制 `utils/portalClamp.ts` 有两道必踩的坑：
-  ① 它监听全站 `style`/`class` 又自己写 `translate`，写读序列化不一致就 **写→触发→再写死循环**
-  （线上点主题下拉整页卡死）→ 用 `running` 重入锁 + 写完 `takeRecords()` + 数值比较（差 <0.5px 不写）；
-  ② Semi 把**还没显示 / 已隐藏**的浮层停在 `(-9999, -9999)`，那不是「跑到屏幕外」，
-  去钳制它会把浮层拽到画布外几千 px 并留下 translate，表现是「不卡了但弹不出来」→
-  见到哨兵坐标（< -5000）只清掉自己写的 translate 再跳过，别的什么都不做。
-- 间距/空格的命中热区改成按**屏幕宽度**判断（`offsetWidth × zoom < 14`）：
-  原来直接拿布局 px 比，双行容器（×0.5）里明明只有 4~9px 宽的间距被当成「够宽」而不补热区。
-- 窄屏（390px）实测：编辑弹窗、颜色面板、Select 下拉都能完整落在视口内。
+**浮层贴边**
+- 编辑弹窗带 `anchor`：右侧放不下**翻到左侧**；下方溢出上移贴边。
+- 颜色面板要连跟 ~90 帧纠偏，写 CSS 独立属性 `translate`（`transform` 被 Semi 入场动画占用），
+  **每帧先清自己的 translate 再量**，否则来回振荡。
+- `utils/portalClamp.ts` 两个必踩坑：① 写 `translate` 会触发自己的 MutationObserver → 死循环
+  （用重入锁 + `takeRecords()` + 差 <0.5px 不写）；② Semi 未显示浮层停在 `(-9999,-9999)`，
+  见到 <−5000 的哨兵只清自己的 translate 就跳过。
+- 间距/空格命中热区按**屏幕宽**判（`offsetWidth × zoom < 14`）。
 
-**导出图片（2026-10-28）**
-- **宽高都可改、互相等比联动**（2026-10-29）：`ExportDialog` 里两个 `Input` 都能编辑，
-  改任一边另一边按「画板原始宽高比」自动跟随（`setWidthKeepingRatio` /
-  `setHeightKeepingRatio`，比例 = `baseHeight / baseWidth`）。打开对话框时**宽高都从 DOM 现量**
-  （`guide.offsetWidth / offsetHeight`），不再用 `guideHeight` 这个 prop —— 它是 App 里
-  `ResizeObserver` 上报的，而那个 observer 只在挂载时认一次画板节点，换主题/重挂后会失联，
-  高度会停在旧值（出现过「三行 64 应该是 192/196，对话框却给 263」这种怪数）。
-- **导出默认 2×、不乘 devicePixelRatio**（2026-10-29 用户拍板）：打开对话框时 `width = 画板宽 × 2`、
-  `height = 行数×64 × 2`（`EXPORT_DEFAULT_SCALE = 2`），不再乘 DPR —— 以前 512 宽的板在 135% 屏上
-  默认给 691，现在一律 1024×128。倍率滑条 `0.5 … 16`、**step 0.5**，刻度只标 `0.5×/2×/4×/8×/16×`
-  （按真实倍率线性定位，1× 只有 3% 宽，标了会重叠）。输入框上限同步到 16×。
-- **导出尺寸按内容盒算**（2026-10-29 用户拍板）：高度基准取 `guide.clientHeight`（行数×64），
-  不是 `offsetHeight`（+4px 边框）；克隆时把画板边框整个去掉（`style.borderWidth: "0px"`）——
-  边框只是编辑辅助线，去掉后内容正好铺满画布（512 宽画板 → 克隆实测 512×64，行高 64 不多不少）。
-  以前保留边框盒会把内容整体压低/右移 2px，并且让「三行 64」变成 196 而不是 192。
-- **不能改真实节点的 `transform` 再导出**：modern-screenshot 克隆节点时**不会带上
-  `transform-origin`**（克隆根的 `transform` 在、origin 丢，回退成 `50% 50%`）。于是只要
-  导出宽度 ≠ 画板宽度，内容就会绕克隆根中心缩放并整体平移 —— 实测 1.5× 只剩左上角一小块
-  字、2× 整张全空（只剩背景色）。正确做法：不改真实节点，把
-  `transform: scale(width/画板宽)` + `transformOrigin: "top left"` 放进 `domToPng` 的
-  `style` 选项（只作用于克隆根，且后于 computed style 写入）。
-- 导出宽度 ≠ 画板宽度时**必须**靠上面的 transform：`width` 选项只改克隆根盒子尺寸，
-  子元素宽度是原 DOM 的 computed px，不会跟着重排。`scale` 选项别再叠加（会得到 2× 目标尺寸）。
-- 画板外框只是编辑辅助线，但**不能 `border: none`**：2px 边框盒一删，导出内容相对预览
-  整体偏移 (−2,−2)px（对比时像「字体错位」/右边被裁 2px）。改成 `borderColor: transparent`
-  保留占位，画布底色由 `backgroundColor` 填满边框区。
-- 默认导出宽度按 `画板 CSS 宽 × min(devicePixelRatio, 2)`：预览是浏览器按设备像素比栅格化的，
-  1:1 导出在高分屏上再按原尺寸显示会被放大一档，字看起来比预览细/软。
-- 实测（1×，北京新版 Text 25px/500 + Arial 15px/500）：导出图与画板上对应区域**逐像素一致**，
-  差异只在预览里的虚线框/选中框（导出时按设计去掉）——即字体本身没有再替换。
-  注意浏览器对 `foreignObject` 里的文字用灰度抗锯齿；画板预览因为在 `transform` 容器里
-  也是灰度，两边才能对上。拿画布外的普通 DOM 去和导出图对比会出现 LCD 子像素彩边，
-  那是测量方式的问题，不是导出 bug。
-- modern-screenshot 会把文档里**所有 @font-face 子集**都内嵌（Noto Sans SC 5 个字重 ×202 个子集
-  ≈ 1010 条、SVG 约 69MB、首次导出 10s+），慢但字形正确；如果以后导出超时，优先从这里下手。
+**导出图片**
+- 宽高都能改、按画板原始宽高比联动；打开时**从 DOM 现量**（`guide.offsetWidth/clientHeight`），
+  不用 App 上报的 `guideHeight`（ResizeObserver 只在挂载时认一次节点，会失联给旧值）。
+- 默认 **2×**、不乘 DPR；倍率 `0.5…16`、step 0.5。高度基准取 `clientHeight`（行数×64），导出时去掉边框。
+- **不能改真实节点的 transform**：modern-screenshot 克隆会丢 `transform-origin` → 内容整体偏移/空白。
+  正确做法：`transform: scale(宽/画板宽)` + `transformOrigin: "top left"` 放进 `domToPng` 的 `style`。
+  `width` 选项只改克隆根盒子，子元素宽度不重排；别再叠加 `scale` 选项。
+- 画板边框**不能删**（`border:none` 会让内容偏 (−2,−2)）→ 用 `borderColor: transparent` 保留占位。
+- 实测 1× 导出与画板**逐像素一致**（含灰度抗锯齿）；modern-screenshot 会内嵌全部 @font-face 子集
+  （Noto Sans SC ≈1010 条、SVG ~69MB、首次 10s+），导出超时优先从这里下手。
 
-**工程**
-- `pnpm lint` 不可用（无 eslint 配置），用 `pnpm exec biome check`。
-- `src/components/themes/chongqing/NumAlphabet.tsx` 是用户手改的（fontFamily Frutiger）——**不许 revert**。
-- 5173 上常年挂着 dev server；`docs/` 整体 gitignore，原始素材不会入库。
-- locales 手改时保持既有 JSON 风格（2 空格缩进 + 末尾换行），别整文件重排。
-- **App.tsx 的 ResizeObserver 只在挂载时认一次节点**（2026-10-29 留意项）：它盯着
-  `.guide-board` 上报画板高度（顶栏 fit / 导出高度基准都用它）。当前画板节点从不销毁重建，
-  所以永远有效；**将来若给画板加 `key`（比如按主题强制重挂）**，旧节点销毁后监听就失联了，
-  高度会冻结在旧值——到时必须把 observer 改成能在节点重建后重新 attach 的形式
-  （ref callback / key 变化时重新 observe）。
-- **繁体语言是 zh-HK 不是 zh-TW**（2026-10-29 用户拍板，语言菜单旗标 🇭🇰）：目录
-  `public/locales/zh-HK/`，i18n.ts 启动时会把旧 localStorage 的 `zh-TW` 迁移成 `zh-HK`。
-  **港式用词决策，别「纠正」回去**：MTR 线路名用「綫」（港鐵官方写法，如 觀塘綫/荃灣綫）；
-  標籤頁写「分頁」、「裡」写「裏」；「預設/儲存/應用程式/資料/畫布」港台通用，保持原样。
-  **2026-10-29 用户再次拍板：zh-HK 全文件「線」→「綫」**（分隔綫/虛綫框/綫路編號一律「綫」），
-  yue-HK 同步照此。
-  **zh-TW 自动路由到 zh-HK**（2026-10-29）：`src/utils/i18n.ts` 的 `routeLanguage()` 是唯一入口——
-  项目只有一套繁体资源，所以 zh-TW / zh-Hant / zh-MO 一律路由到 zh-HK（`zh-Hans/zh-CN/zh-SG` 给 zh-CN，
-  `yue/zh-yue` 给 yue-HK）。别名码登记在 `supportedLngs` 里（否则 i18next 会在过滤阶段就把
-  navigator 的 zh-TW 回落成 zh-CN），`backend.loadPath` 是函数、按路由结果取文件（免得先 404 一次闪语言），
-  再用 `languageChanged` 微任务兜住运行时传进来的别名码。**加语言包时不要去建 zh-TW 目录。**
-- **11 语言**（2026-10-29）：在 zh-HK 后加 **yue-HK 繁體中文（粵語）**（旗标 🇲🇴 区分），
-  再追加 ru-RU / de-DE / fr-FR / es-ES / pt-PT。`Header.tsx` 的 `languages` 数组顺序即菜单顺序，
-  `src/utils/i18n.ts` 的 `supportedLngs` 必须同步，否则切过去会被回落成中文。
-  非中文语言在 `saves.import.bundleCreated_*` / `saves.archives.exportAllSuccess_*` 上要补
-  单复数形式（俄语 `_one/_few/_many/_other`，其余 `_one/_other`，中文只有 `_other`）。
-- **Blueaka 是 GBK 字体，有坑**（2026-10-29）：「é/è」和整个西里尔字母在 GBK 里都是**全角**字形，
-  俄语界面整片字距被撑开、法语 Thème 变成「Th è me」。`global.css` 里已按 `html[lang]` 给
-  ru/de/fr/es/pt 五种语言换系统比例字体（`--font-sans`），中日韩照旧 Blueaka。
-  **新增语言如果也是拉丁/西里尔文，必须把 lang 加进那条选择器**，否则又会「全角」。
-- **「组件虚线框」开关在侧栏主题下方**（2026-10-29）：曾放顶栏，法/德/俄的标签 ~270px 把顶栏顶爆，
-  收到 xl 以下只留勾选框又被用户判「字都没了」。现在在 `ComponentsList` 主题选择下面，
-  顶栏不再有这个开关（`Header` props 里已删）。
-- **版本号徽标是构建时 baked 进去的**（2026-10-26，`vite.config.ts` 的 `__APP_VERSION__`）：
-  格式 `v26.10.30.127` = `v` + 日期 + 本项目总提交数。dev（一律常驻不重启）**固定显示 `v.dev`**，
-  别指望它跟着提交数涨。生产构建按顺序取值：**写死的仓库**
-  `LYXOfficial/MoeRT-GuideGen` 的 GitHub API（`commits?per_page=1`，Link 头 last 页码即总数，
-  body 第一项取最新提交日期；换仓库用 `GITHUB_REPOSITORY=owner/repo` 覆盖）
-  → 本地 `git rev-list`（浅克隆会先自动 `git fetch --unshallow`，实在拉不到才告警用小数字）
-  → 都拿不到才 `v.dev`。
-  **仓库名必须写死、不许再从 `git remote` 解析**：浅克隆 / 没有 `.git` / origin 被改成镜像地址时
-  解析会失败，而失败是静默的，表现成「明明能连 GitHub 却直接走浅克隆计数」。
-  每次生产构建必打一行 `[version] v… ← 来源`，回退时带「为什么没用 API」的原因。
-  私有仓库构建记得配 `GITHUB_TOKEN` 环境变量，否则 API 404 会直接走本地回退。
+**工程 / i18n**
+- `pnpm lint` 不可用；用 `pnpm exec biome check`。
+- `chongqing/NumAlphabet.tsx` 是用户手改的（Frutiger）——**不许 revert**。
+- `docs/` 整体 gitignore，原始素材不入库；locales 保持 2 空格缩进 + 末尾换行，别整文件重排。
+- **繁体是 zh-HK**（旗标 🇭🇰）：港式用「綫」不写「線」、「裏」不写「裡」、「分頁」；
+  **zh-TW / zh-Hant / zh-MO 全部路由到 zh-HK**（`routeLanguage()` 是唯一入口，别名码要在
+  `supportedLngs` 里，否则 i18next 过滤阶段就回落成 zh-CN）。**别建 zh-TW 目录。**
+- **11 语言**：zh-CN / zh-HK / yue-HK / en-US / ja-JP / ko-KR / ru-RU / de-DE / fr-FR / es-ES / pt-PT。
+  `Header.tsx` 的 `languages` 顺序 = 菜单顺序，`i18n.ts` 的 `supportedLngs` 必须同步；
+  俄语要 `_one/_few/_many/_other`，其余 `_one/_other`，中文只有 `_other`。
+- **Blueaka 是 GBK 字体**：「é/è」和西里尔字母都是全角 → `global.css` 已按 `html[lang]` 给
+  ru/de/fr/es/pt 换系统字体；**新增拉丁/西里尔语言必须加进那条选择器**。
+- **改简中必须同步 `src/locales/zh-CN.json`**（打包兜底副本），否则界面显示裸 key。其它 10 语言走后端加载。
+- 「组件虚线框」开关在**侧栏主题下方**（别挪回顶栏，法德俄标签会把顶栏顶爆）。
+- 版本号徽标：`v26.10.30.127` = `v`+日期+总提交数（`vite.config.ts` 的 `__APP_VERSION__`）；
+  dev 固定 `v.dev`。生产按序取：**写死的仓库** `LYXOfficial/MoeRT-GuideGen` 的 GitHub API
+  → 本地 `git rev-list`（浅克隆先 unshallow）→ `v.dev`。**仓库名必须写死**，从 `git remote`
+  解析在镜像/浅克隆下会静默失败。私有仓库构建配 `GITHUB_TOKEN`。
 
-**深色模式（2026-10-25，全应用）**
-- 双通道切换：`html.dark`（Tailwind v4 `@custom-variant dark`，global.css）+ `body[theme-mode=dark]`
-  （Semi 自带深色主题，semi.css 已含两套 token，无需额外引 CSS）。状态在
-  `src/hooks/useDarkMode.ts`，`index.html` body 开头有一段内联脚本首帧前套用（防闪白）。
-- 深色表面色对齐 Semi token：bg-0 `#16161a` / bg-1 `#232429` / 边框 `#2e2e35`～`#3a3b42`。
-- 覆盖元素级内联颜色时**不能上 `!important`**：导出流程靠内联 `borderColor: transparent`
-  去掉画板外框（边框盒必须留着，见 §7「导出图片」），`!important` 会盖过它把边框漏进导出图 ——
-  画板边框改用 `var(--guide-board-border-override, 主题色)` 方案（global.css 里 `html.dark` 定义 override）。
-- Semi Slider 把手写死 `--semi-color-white`，深色下要在 global.css 单独压成暗色。
-- 深色 hover 覆盖写在 `@media (hover: hover)` 里，天然避开触屏粘滞高亮（别挪回全局）。
-- 切换按钮位置（用户拍板）：桌面在右上按钮组**最右**（GitHub 之后）；移动端在「更多」
-  **左边（倒数第二）**。浅色显示月亮、深色显示太阳（IconMoon/IconSun）。
+**深色模式 / 多存档 / 存档版本号**
+- 深色：`html.dark`（Tailwind）+ `body[theme-mode=dark]`（Semi），`useDarkMode.ts` 管状态，
+  `index.html` 首帧内联脚本防闪白；覆盖内联色**不能用 `!important`**（会盖掉导出用的
+  `borderColor: transparent`，画板边框改走 `--guide-board-border-override`）；Semi Slider 把手要单独压暗；
+  深色 hover 覆盖写在 `@media (hover: hover)` 里。
+- 多存档：`guide-archives`（索引）+ `guide-archive:<id>`（每档一份 SaveData）；自动保存只写活动存档，
+  切换/导入期间 `suspendSaveRef` 冻结；导入支持多选 + 全页拖放（`dragover` 必须 preventDefault）、
+  逐文件校验并给出定位（`findBadSaveItem`）；导出全部存档打 zip（`utils/zip.ts`，无第三方依赖）；
+  崩溃页导出是纯 HTML 弹窗，不依赖 Semi / React。
+- 撤销/重做：历史放 `useRef` 同步读写，`normalizeHistoryState`（剥 element）+ `stableSerialize` 比内容，
+  还原期间 `pause/resume` 挡过渡态，还原后关掉属性弹窗。**根因**：还原用 `{key, ...props}` 重建
+  element，`JSON.stringify` 不相等 → 被当新操作 push 并 `splice` 掉 redo。
+- 存档版本号：唯一取值点 `saveMigrations.ts` 的 `LATEST_SAVE_VERSION`；`isSaveData` 校验用**区间**；
+  **追加式改动不升版本号**，破坏性改动才升 + 在 `MIGRATIONS` 里补迁移（迁移结果不写回 localStorage）。
+  索引 `INDEX_VERSION` 是另一套，版本不匹配会 `return null` → 「存档全部消失」，改它必须补迁移。
 
-**多存档（2026-10-25）**
-- 存储布局：`guide-archives`（索引 `{version,activeId,archives:[{id,name,createdAt,updatedAt}]}`）
-  + `guide-archive:<id>`（每个存档一份 SaveData）；旧 `guide-autosave` 首次启动自动迁移成
-  「我的存档」后删除；清除全部时一并清理。
-- 自动保存只写 `activeArchiveIdRef` 指向的存档；`persistCurrentState` 内容没变直接跳过。
-  切换/导入期间用 `suspendSaveRef` 冻结写入，避免把旧画板塞进新存档。
-- `ArchiveDialog`：新建/导入后**不关弹窗**；切换成功才关；列表固定按 `createdAt` 排序
-  （切换不得跳位），活动行会滚进可视区；三颗动作按钮（导入/新建/清除）`height:28 /
-  padding:4px 0`。**导入/新建两颗按钮并排一行**（`flex-nowrap` + `whitespace-nowrap`），
-  说明文字与按钮同一行、放不下才整组换行；弹窗 `width 600`（560 时正文只剩 282px，
-  而一行要 300px，会被挤断行且右边漏一大块空白）。
-- **浮层贴边会被裁**：Semi 的 `autoAdjustOverflow` 以 `getPopupContainer()`（默认 body）为容器
-  判溢出，body 比视口高 → 它永远觉得"放得下"，所以顶栏/屏幕下沿的 Popover、Tooltip 不会翻转。
-  Select 有自己一套定位逻辑，没这问题。已处理：`CustomColorPicker` 按可视空间自己算
-  `position: topLeft / bottomLeft`（pointerdown 时量，`rePosKey` 跟着变）；
-  顶栏缩放滑块的数值气泡（固定 `position="top"`，必定被窗口上沿裁掉）直接
-  `tooltipVisible={false}`，右边那格百分比本来就在实时更新。
-- 顶栏：桌面文件夹图标 + 当前存档名（`max-w-32 xl:max-w-48` + truncate，hover 跟随顶栏主题蓝）；
-  移动端只在「更多」里；顶栏已移除清除/导入/保存项目图标。
-- 还原失败（主题对不上）：不直接删除/导出，弹窗只给「进入存档管理」，由用户自己切换/删除/下载。
-- 撤销/重做（2026-10-25 重写，见 §8-35）：切换存档或导入后用 `useUndoRedo.reset(state)` 重建基线。
-  历史存在 `useRef` 里同步读写，`canUndo/canRedo` 靠一个 revision 计数器刷新；
-  `saveState` / `undo` / `redo` 全部走 `normalizeHistoryState()`（剥 element → 稳定序列化）
-  再和 `history[currentIndex]` 比内容，相同就不追加 —— 否则撤销后的自动保存会把 redo 分支截掉。
-- 下载名：`moert-guidegen-save-<存档名>_<YYYY-MM-DD_HH-mm-ss>.json`；
-  「导出全部存档」现在打 **zip**：`src/utils/zip.ts`（手写 store 模式 ZIP，无第三方依赖，
-  崩溃页也能直接用），包内每个存档一个 `moert-guidegen-save-<存档名>_<时间戳>.json`，
-  内容和「单独下载某个存档」完全一致（就是 localStorage 里的原始文本）。
-  存档管理底部「清除全部存档」左边也有同一个按钮。
-  **旧的整包 JSON（`{type:"moert-guidegen-archives", ...}`）导入支持已在 2026-10-29 彻底删除**：
-  `ArchiveBundle` 类型、`createArchiveBundle`、`isArchiveBundle` 全部移除，导入只接受单个存档 JSON
-  （或直接拖 zip 里的单个文件）。`createArchiveBundle` 从加入起就没有任何调用点（导出走 zip），
-  `isArchiveBundle` 也只剩一条导入兼容分支，用户确认「不需要兼容」，一并删掉。
-- 崩溃页导出：ErrorBoundary 的「导出存档」打开纯 HTML 弹窗（**不依赖 Semi / React 主题**），
-  列出全部存档、每行可单独导出；「导出全部存档」同样打 zip（复用 `exportAllArchivesZip`）。
-  深色只写 `@media (prefers-color-scheme: dark)` 的 CSS，不用 JS 判断（崩溃时 JS 状态不可靠）。
-- **导入支持多选 + 全页拖放**（2026-10-29）：`importSaveData` 的 file input 带 `multiple`，
-  真正干活的 `importFiles(files: File[])` 逐文件解析（`migrateSaveData` → `isSaveData` → 主题校验），
-  单个失败不影响其它文件；全部处理完**切到最后一个成功导入的存档**（列表会自动滚到它）。
-  提示分三种：只有 1 个文件 → 成功用 `saves.import.created`、失败给具体原因；
-  多个全成功 → `saves.import.multiOk`（已导入 {{count}} 个）；有失败 → `saves.import.multiPartial`
-  （已导入 {{success}} 个，{{failed}} 个失败）后面接第一条失败原因。
-  全页拖放走 window 上的 `dragenter/dragover/dragleave/drop`，只认 `dataTransfer.types` 含 `Files`
-  （**不会干扰 dnd-kit**，它走 pointer 事件），`dragover` 必须 preventDefault 否则浏览器会直接打开文件
-  把当前画板顶掉；dragenter/dragleave 用 depth 计数防闪烁；遮罩是 `z-[9999] pointer-events-none`。
-  非 .json 文件 → `saves.import.onlyJson`。
-- **导入时做组件条目级校验**（2026-10-29）：`findBadSaveItem()` 会逐行逐项检查
-  `id`（非空字符串）/ `type`（非空字符串）/ `props`（对象或空，但不能是数字/字符串）/
-  `type` 是否在解析出的主题 `components` 里（`displayName` 全等，形如
-  `themes.<主题>.components.<组件>`）。任何一条不合格就**整份文件拒收**并给出定位：
-  「第 N 行第 M 个组件：缺少有效的 id / 类型在当前主题里不存在（xxx）」。
-  以前这些坏条目会被 `createArchive` 原样存进去，载入时 GuideBoard 只 `console.warn`
-  然后 `return null` —— 表现就是「导入成功了但少了个元件」，用户完全不知道为什么。
-- DEV-only 全局崩溃页验收：打开 `http://127.0.0.1:5173/?__crash_test=1`，App 挂载后 setState
-  让 `DevGlobalCrash` 在 render 期 `throw`（与存档 / 画板无关，是真正的 React 全局 ErrorBoundary），
-  不改 localStorage；URL 里的 query 会被移除，刷新即恢复。仅用于测崩溃页导出，
-  生产构建里这段分支会被 `import.meta.env.DEV` 去掉。
+## 8. 用户反馈（历史 36 条已全部落实，细节见 git log）
 
-**存档版本号（2026-10-29）**
-- **唯一取值点**：`src/utils/saveMigrations.ts` 的 `LATEST_SAVE_VERSION`。`archiveStore.ts` 的
-  `SAVE_VERSION` 只是它的转出；`buildSaveData` / `createEmptySaveData` 写入用它，
-  `isSaveData` 校验用**区间**（`1 … SAVE_VERSION`，不是 `===`）——所以别再在任何地方写死数字，
-  也别把校验改回等于。
-- **追加式改动不用改版本号**（用户拍板）：新增可选字段、老字段语义不变、组件 props 加可选属性，
-  统统不用动 `version`。`config.boardBackground?` / `boardForeground?` 就是先例——老档缺字段读成
-  `undefined`，代码里用默认值兜住即可。**版本号只在破坏性改动时才动**，别为了「表示改过」而升。
-- **破坏性改动**（字段改名 / 删字段 / 语义变了 / `rows` 结构变了）：`LATEST_SAVE_VERSION` 加一，
-  并在 `MIGRATIONS` 里按「旧版本号 → 迁移函数」补一条（返回带新 version 的完整数据）。
-  迁移会自动在 `loadArchiveData`、导入工程文件、旧 `guide-autosave` 迁移三处、`isSaveData` 之前
-  逐级执行，且有 16 步防环；但**迁移结果不写回 localStorage**，要等下一次自动保存才落成新版本。
-- 索引 `INDEX_VERSION`（`guide-archives`）是另一个格式，各管各的，别跟存档版本号搅在一起。
-  （曾经的整包备份 `ArchiveBundle.version` 已随整套 bundle 代码删除，见上「多存档」。）注意 `readIndex()` 版本不匹配时直接 `return null`，
-  会走「没有存档 → 新建空存档」分支，旧索引里的存档条目就全部没有入口了（数据其实还在
-  `guide-archive:<id>` 里）——真要改索引版本必须自己补迁移。
-
-## 8. 用户反馈记录（每条都已修复，按时间序）
-
-1. 「你的样式完全不一样，抄 svg 重新读 pdf」→ 全面改为 PDF 矢量提取（§5）。
-2. line 样式不对 → LineNum 按 PDF 重做（底板=背景色、色带、内容居中）。
-3. 箭头与文字间距不对 → 按标准图比例重排 Arrow。
-4. 禁止通行的预览不是实际图标 → Icon 预览用真实字形 + 固定配色。
-5. 彩色图标定色、非彩色跟随前景色、砍重复色、白色图标候选框里换黑色预览。
-6. text 组件：不设换行宽度、多行 TextArea、字号可调（钳 8–48）。
-7. 溢出行部分直接隐藏（overflow 两轴 hidden）。
-8. 改背景色后面的背景没用 → ExitIcon 背景与图形配色解耦、盒恒 64 高。
-9. 出口长A/长B（= 出口特殊样式 A/B）→ 提取 visys p4（A 绿底白字 3.0；B **= A 换色**：
-   白底绿字、同字形同尺寸——素材里那版大 4/3 的绿字是用户明确不要的）。
-10. 出口长B 又被当「只有图形」做错过一轮 → 最终定案如上。
-11. 出入口编号：图二官方布局（牌高 1.5a、字母 ink 1.0a、数字 0.75a、中文 0.34a、英文 0.245a、
-    间隙 0.05a/0.25a）+ 左右 5px。
-12. 数字和字母间距拉远（NUM_GAP → 1）、中文相对英文居中 + 顶对齐数字顶 + 大一号
-    （ZH 20）、英文小一号（EN 13）。
-13. 整体 ×0.9 但**不能用 scale**（会留边距）→ 系数乘进所有尺寸。
-14. 不要 `South-West`，要 `Southwest`。
-15. ExitNum 与出口图标挤一块：字母缩了、背景没缩 → 背景铺满整行 64px、内容 0.9 居中（§3-8）。
-16. 字母编号/附加数字括号说明删掉；字母数字一对一 → 卡片式编辑器（同成都站点编号）。
-17. 删除非空行弹确认「真的要删除此行吗，行内的组件将被清空」（空行直接删）。
-18. 总行数 >1 时第一行也要有减号、可删。
-19. LineNum 英文多空格：显示折叠但色块变长 → normalizeSvgLine + xmlSpace=preserve。
-20. 拖到双行容器边缘白屏（`pool[0].id` crash，成都主题复现）→ §7 兜底修复。
-21. 移动端：必须先横拖再上拖 / 拖拽时整页被缩放位移 → TouchSensor 长按 + 拖拽期手势屏蔽。
-22. PC 点一下就进拖拽（我引入的 stopPropagation bug）→ 移除。
-23. 菜单点一下就消失 / 拖一半蹦菜单 / 菜单编辑不了 / 点别处应关掉二级下拉 →
-    pointer 判定 + 宽限期 + Semi 白名单，**别再动这套**（§7）。
-24. 拖出画布没进组件列表也删除 + 遮罩铺满整块 → 可见矩形。
-25. 「填充→间距」「空白→空格」改名（5 语言）。
-26. 彻底禁止整页缩放 → viewport user-scalable=no。
-27. LineNum 英文比中文长时中文对齐英文（不影响无数字居中）→ 右对齐锚点。
-28. 多存档管理：新建 / 切换 / 重命名 / 副本 / 下载 / 删除 / 导入 / 清除全部；自动保存只写活动存档，
-    旧单存档自动迁移（见 §7「多存档」）。
-29. 顶栏移除清除 / 导入 / 保存项目图标，入口改文件夹图标 + 当前存档名；长名字截断 + tooltip，
-    hover 跟随主题蓝。弹窗内导入 / 新建 / 清除按钮统一 `height:28 / padding:4px 0`。
-30. 新建存档、导入存档成功后**不关闭**存档管理弹窗；切换存档成功才关；列表按创建序稳定，
-    活动行自动滚进可视区。
-31. 存档载入失败不再直接给「删除 / 导出」，统一引导进存档管理；失败 toast 改
-    「存档载入失败（原存档未受影响）」。
-32. 导出名统一 `moert-guidegen-save-存档名_时间戳.json`；崩溃页增加「导出全部存档」整包备份，
-    存档管理支持整包导入。
-33. 损坏存档生成器只用于报错 UI 验收，验收完成后已删除（勿再往生产 UI 加测试入口）。
-34. 崩溃页导出改为类似存档管理的弹窗：单存档 / 全部存档；深色只做
-    `prefers-color-scheme` CSS；初始存档名已确认随浏览器语言（en `Save 1` / ja `保存 1` /
-    ko `저장 1`）。
-35. 「redo 有严重问题」→ 实测症状：**撤销一次之后 redo 只能走一步，约 0.8 秒后按钮永久变灰**。
-    根因链：撤销 → 200ms 后 `isUndoRedoing=false` → 重渲染让 GuideBoard 拿到新的
-    `onConfigChange` → 其 10ms 防抖触发 → Editor 的 500ms 配置防抖到点 → `saveCurrentState()`
-    → `JSON.stringify(getState())` 和 `history[currentIndex]` 不相等（还原时
-    `restoreState` 用 `{key, ...props}` 重建 React 元素，新建时是 `{...props}`、element 的
-    `key`/`_owner` 不同）→ 被当成新操作 push，顺手 `splice(index+1)` 把 redo 分支删了。
-    重写要点：历史搬到 `useRef` 同步读写（连按不再丢步）、`normalizeHistoryState` 剥掉 element
-    再比内容、`stableSerialize` 键名排序后比较、撤销/重做前先 `flush()` 未落账的防抖状态、
-    还原期间用 `pause/resume` 挡过渡态（不再用 200ms 时间窗，那会把用户这期间的真实修改丢掉）、
-    还原后关掉属性弹窗（旧 props 快照会让撤销掉的内容复活）、Ctrl+Shift+Z / Cmd+Z 支持。
-36. 「导出的图片和编辑框里预览的字体有细微差别」→ 实测：1:1 导出与画板**逐像素一致**，
-    字体没有被替换；真正的差异来自导出流程本身，已修（详见 §7「导出图片」）：
-    ① 导出宽度 ≠ 画板宽度时 `transform-origin` 丢失 → 内容偏移/空白（改在 domToPng 的 style 里给）；
-    ② `border:none` 让内容相对预览偏移 (−2,−2)px（改成 `borderColor: transparent` 保留边框盒）；
-    ③ 默认导出宽度改为 `画板宽 × min(devicePixelRatio, 2)`，高分屏下不再比预览糊一档。
+保留仍有指导意义的结论（其余要么已并入 §7，要么是一次性问题）：
+- **一次只做他说的那件事**：他要的是「抄参考」，不是我的再创作（第 1 条整轮返工的教训）。
+- 尺寸/比例一律**先量像素再动手**，回复里给测量表；「大概差不多」会被打回。
+- 出口长B = 出口长A **换色**（白底绿字），不是另画一套大字。
+- 出入口编号：字母数字**一对一**，卡片式编辑器（同成都 StationNumber），不要括号说明。
+- 不要 `South-West`，要 `Southwest`（只首字母大写）。
+- 删除非空行要二次确认；总行数 >1 时第一行也要有减号。
+- 「填充→间距」「空白→空格」是用户亲自改的名，别改回去。
+- 撤销/重做根因：还原时用 `{key, ...props}` 重建 element，`JSON.stringify` 与原状态不等 →
+  被当成新操作 push 并 `splice` 掉 redo 分支。修法见 §7「撤销/重做」。
+- 导出「字体有细微差别」不是字体问题，是导出流程（origin 丢失 / border 盒 / 倍率），见 §7。
 
 ## 9. 北京旧版（2015 / 经典样式）主题 —— 已完成，遗留项如下
 
@@ -556,63 +326,167 @@ python3 text_probe.py                                   # 解析 <use> 得到真
 - 图标几何永远走提取管线，别手绘。
 - 不要在根目录新建任何测试文件/临时文件/截图文件/占位文件（.playwright-mcp下的文件除外，它们是被gitignore了的），应该放到系统的 temp 目录，如`/tmp/` `C:\Users\xxx\Appdata\Local\temp`
 
-## 11. 上海主题（DB31/T 1104）
+## 11. 上海地铁主题（上海地铁风格 / DB31/T 1104）
 
+- key `themes.shanghai`，**THEME_INDEX = 6**，代码 `src/components/themes/shanghai/`；
+  建主题时同步过：`themereg.ts`、`Background.tsx` 的 `THEME_INDEX`、
+  `GuideBoard.tsx` 的 `bakeDropColors`（`currentTheme === 6`）、`DraggableItem.tsx` 的
+  `ShanghaiSpacing / ShanghaiSpecLine` 注册、11 份语言包 + `src/locales/zh-CN.json` 兜底副本。
 - **规范来源**：上海市地方标准 **DB31/T 1104《城市轨道交通导向标识系统设计规范》**
-  （2018 首发，2025-11 修订征求意见稿）。原文、整页预览、附图裁切都在 `docs/shanghai/`。
-  和北京不同，**上海没有公开的 VI 包/vitool 等价物**，标准的附录 A/B/C 就是全部素材，
-  且附图是 150 ppi 位图（图标只能描摹，不能像 visys.pdf 那样抠矢量路径）。
-- **主题要点**：
-  - 底色 = 6.4.1「深灰 C0 M0 Y0 K92-95」→ `#2D2B2E`；进站/换乘信息白、
-    **出站信息黄 `#FFCF00`（C0 M18 Y94 K0）**；申通标志红 `#E3001B`（C0 M100 Y100 K0）。
-  - 线路色 = 附录 A 的 CMYK 经 ISO Coated（FOGRA27）转 sRGB（24 组，含磁浮双色）。
-    换算表、与官方网络图的对照见 `docs/shanghai/notes/颜色与字体.md`。
-  - 字体：中文思源黑体（继承北京那套 Noto Sans SC）+ **Helvetica**（项目已有
-    `public/fonts/Helvetica.ttf`，`fonts/helvetica.css` 注册）。
-- **背景色跟随底板**（用户拍板 2026-11-01）：上海归到「重庆/北京新/东京」那一档
-  （`GuideBoard.tsx` 的 `bakeDropColors` 里 `currentTheme === 6`）：组件 defaultProps 的
-  background 默认是**主题深灰**（不是透明），落板时若有「底板背景色」就固化板色，
-  没有就保留主题色。间距/空格/分隔线仍永远透明。
+  （2018 首发，2025-11 修订征求意见稿）。
+  和北京不同，**上海没有公开的 VI 包 / vitool 等价物**：标准正文 + 附录 A（线路色）+
+  附录 B（图形符号）+ 附录 C 就是全部素材，且附图是 **150 ppi 位图**（每格 ≈48×48 原生像素），
+  **图标只能描摹，不能像 visys.pdf 那样抠矢量路径**。
+- **资料目录**（`docs/` 整体 gitignore，不入库）：
+  `docs/shanghai/raw/01_standard/`（PDF、`pages/` 整页 PNG、`figures/` 附图裁切）、
+  `raw/02_line-colors/`（线路色、`line-colors.json`）、`raw/03_logo/`（申通标志）、
+  `raw/05_scripts/icons/`（`final_trace.py` 裁图+描摹、`generate.py` 生成 TSX）、
+  `notes/`（`规范要点.md` / `颜色与字体.md` / `组件规格.md` / `图标提取.md`）。
+
+### 11.1 组件与尺寸（12 个）
+
+LineNum / TextLineNum / Text / BigZh / BigEn / NumAlphabet / DualText / Arrow / Icon /
+SpecLine / Spacing / Blank。行高 64px = 牌面高，**所有尺寸都按 64px 行高换算**。
+
+| 组件 | 要点（🖐 = 用户亲手调过，只能最小 diff） |
+|---|---|
+| `LineNum` 🖐 | 数字线路标，**边长锁死 40**；左右各留 `gapX`（默认 5、可调）；编号允许手输逗号（`2,5`），逗号按 **0.62 倍字号**渲染；**无 offsetY**；文字色字段叫 **`textColor`**（不叫 `foreground`，否则会被全局「默认前景色」覆盖） |
+| `TextLineNum` 🖐 | 文字线路标，版式**全部写死**：牌高 **40.5**、中文 **20**、英文 **9**、左右内边距 **8**、中英间距 **4**、圆角 **3**、左右透明边 **6**；编辑器只剩 文字 / 线路色上下段 / `textColor` / 边框 / 背景。字段 `chinese/english/color1/color2/textColor/border/background` |
+| `Text` 🖐 | 多行中英，**28 / 13px**，墨迹对齐 + 墨迹居中 |
+| `BigZh` 🖐 | 中文大字，**单行**（`Input`，换行当空格），**28px**，左右写死 **5px**，**没有 `lineHeight`**（用户：本来就是单行） |
+| `BigEn` 🖐 | 英文大字 **15px**、多行、左右写死 **5px** |
+| `NumAlphabet` 🖐 | 大号数字/字母，**56px**，默认前景取 `exitForeground`，500 字重用 `size*0.02` 描边模拟中黑，逗号同样 0.62 倍 |
+| `DualText` 🖐 | **两组**「中文 + 英文」（图 54：老沪闵路 / Laohumin Rd. ＋ 龙华寺 / Long Hua Temple），默认 **11 / 7**、`align: left`、组内行距 1.5、组间距 4、前景 `exitForeground`；**哪组两个字段都空就整组跳过**（第一版只做了一组，是错的） |
+| `Arrow` | 边长锁死 **44**；直行 8 方向 + **拐弯 8 组合**（尾巴朝向-箭头朝向：上-右 / 右-下 / 下-左 / 左-上 / 上-左 / 右-上 / 下-右 / 左-下） |
+| `Icon` | 边长锁死 **50**、左右留白 **2**；编辑器只有 图标 / 旋转 / 前景色 / 背景色 |
+| `SpecLine` 🖐 | 宽 **2**，线体 y = 8→56（上下各留 8，用户嫌 3px 太贴边） |
+| `Spacing` / `Blank` | 全透明（含落板后），displayName 与其它主题统一为「间距 / 空格」 |
+
+其余通用铁律：**`offsetY` 正数向上**（用户指出正负反了，所有文字组件的 `dy` 都已取负）；
+徽章类白描边 1.3、数字字号 40 等实测值见 `docs/shanghai/notes/组件规格.md`。
+
+### 11.2 颜色
+
+- 底色 `background #2D2B2E`（标准 6.4.1「深灰 C0 M0 Y0 K92-95」）；`foreground #FFFFFF`；
+  **出站信息黄 `exitYellow #FFCF00`（C0 M18 Y94 K0）**；申通标志红 `#E3001B`。
+- 线路色 **24 组**：附录 A 的 CMYK 经 **ISO Coated (FOGRA27)** 转 sRGB；含 `line1`–`line23` +
+  `pujiang`（浦江线）/ `suburban`（市域线）/ 磁浮双色 `maglev1 #215E57` + `maglev2 #C54D1F`。
+  换算表与官方网络图对照见 `docs/shanghai/notes/颜色与字体.md`。
+
+### 11.3 字体
+
+中文思源黑体（继承北京那套 Noto Sans SC / `sourcehansans.css`）+ **Helvetica**
+（项目已有 `public/fonts/Helvetica.ttf`，`shanghai/fonts/helvetica.css` 注册）。
+注意该 ttf **只有 400 一个字重**，需要「中黑」的地方一律用**描边**模拟，别写 `font-weight: 500`
+指望浏览器给字形。
+
+### 11.4 图形符号（28 个）
+
+`icons/pictograms-real.tsx`（28 glyph，单色 `fill={color}` + `fillRule="evenodd"`）+
+`icons/logo-real.tsx`（申通标志）+ `icons/arrow-real.tsx`（直行 / 拐弯 / 右箭头）+ `icon-registry.ts`。
+
+- 管线（详见 `docs/shanghai/notes/图标提取.md`）：150 dpi 原生页裁图 → 上采样 → 二值化 →
+  清理 → `potrace` → 等比归一到 `viewBox 0 0 24 24`（铺满 23.2、四周留 0.4）；
+  **不做「填白洞」后处理**（那会把女厕两条腿粘成一块）。
+- 通用阈值 **130**（150 会把腿缝、票券白缝糊死）。
+  **四个卫生间图标例外**（`restroom` / `_men` / `_women` / `_third`，2026-11-01 重描）：
+  ×8 上采样 + `UnsharpMask(radius=2, percent=250)` + 阈值 **118**。源图里手缝 146–165、
+  腿缝 118–134 灰阶，130 会把整条缝判成实心 → 「手粘在身上、两条腿并成一块」。
+  改这几个参数后**必须反渲染到 400px 目视检查手缝、腿缝**（50px 下 0.3 个 viewBox 单位的缝看不出来）。
+- 全部按附录 B 原图（「禁止通行」是**圆环 + 横杠**；「服务中心」用 p45_08 柜台版，
+  p46 那版画的是男+女，等于厕所）。
+
+### 11.5 背景与落板配色
+
 - **背景彻底单色**（用户拍板 2026-11-01）：`shanghai/Background.tsx` **已删掉 `MultiRowBackground`**，
-  只留一层 `BackgroundBox`（一个 div 直接铺 backgroundColor，relative 定位给绝对定位的牌面用）；
-  所有组件 props 里也没有 `background2`，编辑器只给一项「背景色」。
-  面板文案也不带单位注释（「字距」不写「（em）」，「尺寸」不写「（px）」）。
-- **文字对齐按墨迹**：中文与拉丁的 side bearing 不同，按排字原点对齐会让英文探出 1–2px
-  （左对齐探左、右对齐探右）。`define/text.ts` 用 canvas `actualBoundingBoxLeft/Right` 取墨迹范围，
-  `inkShift()` 按墨迹边缘对齐；`BigZh`/`BigEn` 的上下居中同样用
-  `actualBoundingBoxAscent/Descent`（offsetY=0 时墨迹正中，不再是 est 0.88em）。
-- **中文大字单行**（用户要求：本来就是单行，没必要行距）：`BigZh` 去掉了 `lineHeight`，
-  输入框改单行 `Input`（换行当空格）；`BigZh`/`BigEn` 左右边距写死 **5px**。
-- **双行文本 = 两组「中文 + 英文」**（图 54 的「老沪闵路 / Laohumin Rd.」＋「龙华寺 / Long Hua Temple」），
-  默认 19 / 10.5、组间距 4；哪组两个字段都空就整组跳过（用户指出第一版只做了一组，是错的）。
-- **线路标**：数字线路标左右各 3px（`gapX` 可调，默认 5）、文字线路标左右各 **6px** 透明边；
-  两者都不再有 `offsetY`。**文字颜色字段叫 `textColor`（不是 `foreground`）**，
-  这样全局「默认前景色」不会覆盖它。数字线路标编号允许手动输入逗号（`2,5`），
-  逗号按 0.62 倍字号渲染，多出口/多线路时不突兀（`NumAlphabet` 同样处理）。
-  数字线路标边长锁死 40。
-  文字线路标的版式**全部写死**（用户要求：圆角 3、牌高 44.5、中文 21、英文 10、左右内边距 10、
-  中英间距 4），编辑器只剩 文字 / 线路色上下段 / 前景色 / 边框色 / 背景色。
-  「线路色（下段）」不再写「可空」（填成和上段一样就是单色）。
-- **分隔线**：上下各留 8px（用户嫌 3px 太贴边）。
-- **图标**：边长固定 **50**、左右留白固定 **2**（用户要求不必开放调整），编辑器只有
-  图标 / 旋转 / 前景色 / 背景色；下拉**不带搜索框**，选项行有 18px 预览图（Semi 的 Option
-  只认 `label`，传给 children 会被忽略）；「服务中心」用 p45_08 柜台版
-  （p46 那版画的就是男+女，等于厕所）。
-- **箭头**：边长固定 **44**（不再开放调整），编辑器只有 形状 / 方向（或拐弯方向）/ 颜色。
-  直行 8 个方向；**拐弯 8 种组合**（尾巴朝向-箭头朝向）：上-右 / 右-下 / 下-左 / 左-上 /
-  上-左 / 右-上 / 下-右 / 左-下 —— 后四种由母版镜像 + 旋转得到（CSS `rotate(...) scaleX(-1)`，
-  镜像必须先于旋转，函数从右往左生效）。
-- **上下偏移（offsetY）正数向上**：用户指出正负反了，所有文字组件的 `dy` 已取负。
-- **尺寸换算**：行高 64px = 牌面高；徽章边长 44.5（0.695H）、白描边 1.3、数字字号 40、
-  文字线路标牌高 44.5 / 圆角 3 / 字号 20+10。完整测量表见 `docs/shanghai/notes/组件规格.md`。
-- **箭头坑（重要）**：上海这套箭头不是「实心三角 + 台阶肩」，而是 **V 形人字臂 + 矩形杆**
-  （臂外端竖直平切、下沿斜收回杆侧），实测比例见组件规格 §8。
+  只留 `BackgroundBox`（一个 div 直接铺 `backgroundColor`，`position: relative` 给绝对定位的牌面用）；
+  所有组件 props 里**没有 `background2`**，编辑器只给一项「背景色」。
+- **背景色跟随底板**（用户拍板 2026-11-01）：上海归到「重庆 / 北京新 / 东京」那一档 ——
+  `GuideBoard.tsx` 的 `bakeDropColors` 里 `currentTheme === 6`：组件 defaultProps 的 background
+  默认是**主题深灰**（不是透明），落板时若有「底板背景色」就固化板色，没有就保留主题色。
+  间距 / 空格 / 分隔线仍永远透明、不固化。
+- 面板文案**不带单位注释**（「字距」不写「（em）」，「尺寸」不写「（px）」）；
+  「线路色（下段）」不写「可空」（填成和上段一样就是单色）。
+
+### 11.6 i18n
+
+键布局 `themes.shanghai.*`（`displayName` / `components.<Comp>.props.*` / `colors.*`），
+11 语言全量。**坑（踩过两次）**：`public/locales/zh-CN/translation.json` 改完必须同步
+**`src/locales/zh-CN.json`**（打包兜底资源），否则简中界面里主题名会显示成裸 key
+`themes.shanghai.displayName`。其它 10 种语言走 `public/locales/` 的后端加载，不用同步。
+
+### 11.7 上海主题的坑
+
+- **文字按墨迹对齐**：中文与拉丁的 side bearing 不同，按排字原点对齐会让英文探出 1–2px
+  （左对齐探左、右对齐探右）。`define/text.ts` 用 canvas `actualBoundingBoxLeft/Right`
+  取墨迹范围，`inkShift()` 按墨迹边缘对齐；`BigZh`/`BigEn` 的上下居中同样用
+  `actualBoundingBoxAscent/Descent`（`offsetY = 0` 时墨迹正中，不再是 est 0.88em）。
+- **`BackgroundBox` 必须 `position: relative`**：删掉 `MultiRowBackground` 后 `TextLineNum`
+  的牌面靠绝对定位摆位，父层没有定位上下文就会跑到画板外面。
+- **Semi 的 `Select.Option` 只认 `label`**：传给 `children` 会被忽略 —— 图标下拉的 18px 预览
+  必须塞进 `label`（ReactNode）。下拉**不要搜索框**（用户要求）。
+- **拐弯箭头镜像顺序**：CSS 变换从右往左生效，正确写法是 `rotate(...) scaleX(-1)`
+  （先镜像再旋转）；写反会得到错的方向。拐弯方向表单项按 `shape` 互斥显示。
+- **箭头不是「实心三角 + 台阶肩」**，是 **V 形人字臂 + 矩形杆**（臂外端竖直平切、下沿斜收回杆侧）。
   **标准里没有 90° 弯折箭头**：图 54 那条是直行右箭头；`TurnRightGlyph` 是按同一套比例
-  构造的（折角取 180° 调头箭头的内外半径），要严格照抄图 54 用 `RightArrowGlyph`。
-- **图形符号**：`icons/pictograms-real.tsx`（28 个，potrace 描摹，单色跟随前景色）+
-  `icons/logo-real.tsx`（申通标志）。描摹阈值 **130**（150 会把男女图标的腿缝糊死），
-  禁用「填白洞」后处理。图标全部按附录 B 原图（「禁止通行」是圆环+横杠）。
-  提取管线见 `docs/shanghai/notes/图标提取.md`。
-- **i18n 坑（又踩了一次）**：`public/locales/zh-CN/translation.json` 改完必须同步
-  **`src/locales/zh-CN.json`**（打包兜底资源），否则简中界面里新主题名会显示成裸 key
-  `themes.shanghai.displayName`。其它 10 种语言走 `public/locales/` 的后端加载，不用同步。
+  构造的（折角取 180° 调头箭头的内外半径）。要「严格照抄图 54」就用 `RightArrowGlyph`。
+- **图标源位图只有 ~48px**：票据类细线（`ticket_service` / `ticket_office`）描摹后比源图略粗，
+  是分辨率上限，不是参数问题。
+
+## 12. 东京地铁主题（東京メトロ）
+
+- key `themes.tokyo-metro`，**THEME_INDEX = 5**，代码 `src/components/themes/tokyo/`；
+  资料/实测/门匾参考图在 `docs/tokyo/`（不入库）。**只研究长条横幅**：竖排方向牌、
+  带地图的出入口総合案内、现场临时贴纸一律不作参考（用户反复强调）。
+- 16 组件：LineBadge / Route / OperatorLogo / Arrow / Icon / ExitTip / ExitNum / StationName /
+  Direction / TextJa / TextJaEn / TextQuad / SpecLine / Spacing / Blank / Frame。
+- **线路标**：CI 指南 P8 几何（内白圆 0.765A、环厚 0.1175A、字母 ink 0.248A、数字 0.267A、
+  间隙 0.073A）；无数字时字母 ×1.35、单字母再 ×1.75；数字按**墨迹**居中 + 0.02A 字距；
+  圆/圆角方、环厚两档；大 52 / 小 36；Futura。
+- **OperatorLogo**：文案由 `operator` 决定、**不可编辑**（防「都営地下鉄 + 東京メトロ」错配）。
+  メトロ = [亮蓝 `#00a3d9` 方块 + Heart M 0.94H][深蓝 `#0b1f33` 方块 + 「東京メトロ」0.19H 一行]，
+  两块**等大正方形**首尾相贴、各自 `2px solid #fff` 白边、`borderRadius: 2`（四角一致，
+  **不许 0px 单角覆盖**）、右块底色写死、**无英文行**；都営 = 一整块绿 `#00a041` 圆角牌
+  （宽度随内容、非正方形）+ 白色 T 符号 + 「都営地下鉄 / TOEI SUBWAY」两行（0.28H / 0.16H）。
+- **ExitTip**：无圆角、贴顶，默认 `exitnumbackground #3d4757`。**ExitNum**：只有数字/字母
+  （没有「出口/Exit」黑块）、Arial、垂直居中、默认黄底 `#ffc72c` 黑字。
+- **Icon**：157 项官方图记（`guideline_2025.pdf` p12–p31 矢量提取，**勿手改坐标**）+
+  两个彩色运营者 logo；下拉无输入过滤、带 18px 预览、名称走 i18n。
+  **画的是「官方基准框 + 图形」而不是裸图形**（2026-11-01，用户指出边框被丢掉）：
+  框 = 99.09×99.09pt 圆角方（圆角 6.25%）/ ⌀105.26 圆 / 方角方三种，p13 箭头与 p25–p26 禁止**官方无框**；
+  图形在框内**不一定居中**，归一化矩形存在 `icons/pictogram-frames.ts`（`x/y/w/h`，框边长 = 1）。
+  `height` = **框边长**（默认 52）、`plateColor` 白牌 / `borderColor` / `borderWidth`（默认 1.5）/
+  `showFrame`（**默认关**：没有显式值就不画框，老存档不会被塞进白牌）；
+  描边用 `boxShadow: inset 0 0 0 Npx <color>`（不占布局、跟着圆角裁）。
+  反白用法（现场蓝底白图）= plateColor 蓝 + foreground 白 + borderWidth 0。
+- **Direction**：目的地+「方面」+经由+罗马字+英文线路名+**可增删徽章组**（成都 StationNumber
+  那套卡片 UI，新增默认 `A`）；**无行距字段**；三行容器锁 `lineHeight: 1`（否则「日英之间空一截」）。
+- **TextQuad**：日/英各一行，中韩同排（`zhkoSameLine` 可关）。文字组件**无折行宽度**，
+  换行用 TextArea 回车；`define/wrap.ts` 已删除。
+- **Frame**：默认高 48、`marginX` 留白、`plateColor`（白牌）与 `background` 分离；子项按
+  `框高/64` 缩放；内容靠左、`transformOrigin: top left`、内层锁 `height: 64`。
+  **测宽顺序**：量未缩放宽 `W` → 框宽 `W×scale+padding×2+1` → 内层宽写 `W`（反过来推会把
+  内层算窄，末项被裁、间距撑不开）。**框内禁止放间距**（`addItemToTwoRowContainer` 拒收）。
+- **颜色**：深蓝 `#0b1f33` / 白底黑字（`background3`+`foreground3`）/ 出口黄 `#ffc72c`+黑；
+  线路色 **73 条** = 9 条メトロ（CI P9）+ 53 条都市圈其它运营商（键名 `line`+缩写，
+  文案「缩写 + 当地线路名」）。**仍缺**（不硬填）：TT/TX/SR/HS/横浜市営 B·G/新京成 SL/東葉 TR；
+  双色徽章 R、NT 只存主色。
+- **字体**：和文 Noto Sans JP；站号字母+数字 **Futura Bold**（自托管图床 woff2）；欧文
+  **Frutiger**（标牌用语，复用 chongqing 已注册的 `Frutiger` → `/fonts/Frutiger-Normal.ttf`，
+  **只有 Roman，700 靠合成粗体**）。注：官方 CI PDF 内嵌欧文是 Helvetica（`pdffonts` 实测）
+  ——品牌层 Helvetica、标牌层 Frutiger。
+
+### 12.1 东京主题的坑
+
+- **容器判定**：`GuideBoard` 曾有两处写死 `includes('TwoRowContainer')`，Frame 不含该子串 →
+  「拖进去没反应 / 框内排序空转」都表现为**静默无操作**。现统一用 `isContainerItemType()`
+  （`GuideBoard.tsx` 导出，`Editor.tsx` 同用）。新增容器件必须检查该谓词覆盖的每一处。
+- **Frame 复用双行容器契约**：行 droppable `type: "two-row-container-row"` + `rowIndex: 0`、
+  子项 `context: "two-row"`、内层挂 `two-row-inner`。**不要再注册 `two-row-container` 层**：
+  两个矩形重合时指针可能命中容器本身、拿不到 rowIndex，会静默退回主行。
+- **`public/` 不能被 JS import**（Vite 报错白屏）：简中兜底改 `src/locales/zh-CN.json`，
+  **改 `public/locales/zh-CN/translation.json` 后必须同步这份副本**（同 §11 那条坑）。
+- **缩放后发糊**：平移层/缩放层/卡片曾常驻 `will-change: transform`，合成层缓存 1× 位图，
+  放大即拉伸→「糊着，点一下才清楚」。现在只在手势期间开（停手 160ms 关→重光栅化）；
+  **完全去掉会让平移变卡**，所以是「手势开、静止关」。
+- 图记名走 `themes.tokyo-metro.pictograms.<id>`，缺键回退 `pictogramLabel(p, lang)`。

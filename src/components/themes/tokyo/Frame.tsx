@@ -43,6 +43,10 @@ export interface FrameProps {
   offsetY?: number;
   /** 圆角（px） */
   radius?: number;
+  /** 外框描边宽度（px），0 = 不描边 */
+  borderWidth?: number;
+  /** 外框描边色 */
+  borderColor?: string;
   /** 左右外侧留白（px）：白牌子离邻居的间距 */
   marginX?: number;
   /** 框高（px），默认 64 = 整行；调小则框浮在行中 */
@@ -62,6 +66,9 @@ export const frameDefaultProps: Partial<FrameProps> = {
   paddingX: 4,
   offsetY: 0,
   radius: 6,
+  // 描边默认关（老档/老版面不变）；要「有边的白牌」自己在编辑器里加
+  borderWidth: 0,
+  borderColor: colors.foreground3,
   // 默认比整行小一圈（现场白牌子四周都露底板）
   height: 48,
   marginX: 4,
@@ -79,6 +86,8 @@ function Frame({
   paddingX = 4,
   offsetY = 0,
   radius = 6,
+  borderWidth = 0,
+  borderColor = colors.foreground3,
   height = 48,
   marginX = 4,
   selectedId,
@@ -207,6 +216,11 @@ function Frame({
           height,
           backgroundColor: finalPlate,
           borderRadius: radius,
+          // 描边用 inset 阴影：不占布局（框高/内层宽度都不受影响）、跟着圆角裁
+          boxShadow:
+            (borderWidth ?? 0) > 0
+              ? `inset 0 0 0 ${borderWidth}px ${borderColor}`
+              : undefined,
           paddingLeft: paddingX,
           paddingRight: paddingX,
           marginTop: offsetY * 2,
@@ -355,6 +369,16 @@ export const frameEditorConfig = (_t: (key: string) => string): EditorConfig => 
       key: "radius",
       label: "themes.tokyo-metro.components.Frame.props.radius",
       element: <InputNumber min={0} max={32} />,
+    },
+    {
+      key: "borderWidth",
+      label: "themes.tokyo-metro.components.Frame.props.borderWidth",
+      element: <InputNumber min={0} max={8} step={0.5} />,
+    },
+    {
+      key: "borderColor",
+      label: "themes.tokyo-metro.components.Frame.props.borderColor",
+      element: <CustomColorPicker currentTheme={5} />,
     },
     {
       key: "plateColor",

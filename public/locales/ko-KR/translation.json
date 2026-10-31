@@ -1587,6 +1587,10 @@
           "props": {
             "icon": "Pictogram",
             "height": "Height",
+            "showFrame": "Show frame",
+            "plateColor": "Frame fill",
+            "borderColor": "Frame border",
+            "borderWidth": "Border width",
             "foreground": "Foreground",
             "background": "Background"
           }
@@ -1822,6 +1826,8 @@
             "offsetY": "Vertical offset",
             "height": "Height",
             "radius": "Corner radius",
+            "borderWidth": "Border width",
+            "borderColor": "Border colour",
             "plateColor": "Plate colour",
             "background": "Background",
             "marginX": "Side margin"
@@ -1840,6 +1846,7 @@
         "exitbackground": "출구 배경색",
         "exitforeground": "출구 전경색",
         "exitnumbackground": "출구 번호 바탕",
+        "iconblue": "픽토그램 파랑",
         "lineG": "G 긴자선",
         "lineM": "M 마루노우치선",
         "lineH": "H 히비야선",
