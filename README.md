@@ -6,7 +6,7 @@
 
 轨道交通导视牌（导向标识牌）Web 编辑器，所见即所得。
 
-- 内置重庆轨道交通、成都地铁、MTR、北京地铁（新版 / 旧样式）五套主题风格，可随时切换；未来计划添加上海+广州；
+- 内置重庆轨道交通、成都地铁、MTR、北京地铁（新版 / 旧样式）、东京地下铁、上海地铁七套主题风格，可随时切换；未来计划添加广州；
 - 以「行 + 组件」自由拼搭：线路号、线路名、车站名、出口、方向箭头、服务设施图标（电梯 / 楼梯 / 洗手间等）以及双行容器；
 - 点击组件即可编辑属性，行可增删，牌面宽度、分隔线、组件虚线框均可调节；
 - 撤销 / 重做、localStorage 多存档管理与自动保存、工程 JSON 导入 / 单存档下载导出、导出高清 PNG；
@@ -48,6 +48,10 @@
 
 ![](https://img.0v0.my/2026/09/09/6f6c5ad452fcd.webp)
 
+![](https://img.0v0.my/2026/10/31/e25ebd52e80b0f55.webp)
+
+![](https://img.0v0.my/2026/10/31/fac59cbbb3be946a.webp)
+
 ## 参考资料
 
 DBJ50T-274-2017 《重庆市轨道交通客运服务标志标准》
@@ -71,6 +75,11 @@ MTR字体来源于MTR Sung和思源宋体调整对齐拼接后的字体，对于
 北京地铁（新旧）参考：https://centralgo.site/download/，字体为思源黑体和 Arial
 
 北京地铁（旧）参考：https://dbba.sacinfo.org.cn/portal/online/dd07f66ad7286140d052b7664d1617f27d9e050cee986b8b2bad00737b873859 公共交通客运标志 第2部分：城市轨道交通 DB11/T 657.2-2024 
+
+东京地下铁参考：東京メトロ官方 CI 指南（标志 / 线路记号 / 站编号 / 线路色，从 https://www.tokyometro.jp/support/trademark/index.html 的 PDF 直链经 Wayback 取回）、東京都《标准案内サイン指针 铁道等编》（https://www.sangyo-rodo.metro.tokyo.lg.jp/tourism/shisaku/signs）、TREI 的サインシステム作品页（https://trei.jp/works/tokyo_metro_manual/）与 2015 年改定专号（https://www.tokyometro.jp/corporate/newsletter/metroNews20150317_54.pdf）；图形符号用「標準案内用図記号ガイドライン 2025」（https://www.ecomo.or.jp/barrierfree/pictogram/picto_top2025.html）。字体为思源黑体（Noto Sans JP）+ Futura PT + Helvetica
+
+上海地铁参考：上海市地方标准 DB31/T 1104《城市轨道交通导向标识系统设计规范》（2018 首发，2025-11 修订征求意见稿），全文 PDF：https://upload.wikimedia.org/wikipedia/commons/c/c9/城市轨道交通导向标识系统设计规范（征求意见稿）.pdf ；官方网络示意图：http://www.smtdc.com/en/pdf/Shanghai%20Metro%20Network%20Map.pdf （原链已失效，取自 Wayback）；线路图另见上海地铁官网 https://www.shmetro.com 。底色深灰 / 出站黄 / 申通红 / 24 组线路色全部取自标准 6.4 条与附录 A 的 CMYK（ISO Coated 转 sRGB），图形符号按附录 B 的位图描摹（阈值 130），申通标志取自 https://commons.wikimedia.org/wiki/File:Shanghai_Metro_logo.svg 。字体为思源黑体 + Helvetica
+
 
 ## 碎碎念
 
