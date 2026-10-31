@@ -35,8 +35,6 @@ export interface LineNumProps {
   border?: string;
   /** 徽章背后的版面底色 */
   background?: string;
-  background2?: string;
-  offsetY?: number;
 }
 
 export const lineNumDefaultProps: LineNumProps = {
@@ -46,8 +44,6 @@ export const lineNumDefaultProps: LineNumProps = {
   lineColor: colors.line1,
   border: colors.white,
   background: colors.transparent,
-  background2: colors.transparent,
-  offsetY: 0,
 };
 
 const SIZE_MIN = 20;
@@ -68,11 +64,6 @@ export const lineNumEditorConfig = (
     colorFormItem(SCOPE, "lineColor"),
     colorFormItem(SCOPE, "border"),
     ...backgroundFormItems(SCOPE),
-    {
-      key: "offsetY",
-      label: `${SCOPE}.offsetY`,
-      element: <InputNumber step={1} min={-32} max={32} />,
-    },
   ],
 });
 
@@ -83,17 +74,17 @@ export default function LineNum({
   lineColor = lineNumDefaultProps.lineColor,
   border = lineNumDefaultProps.border,
   background = lineNumDefaultProps.background,
-  background2 = lineNumDefaultProps.background2,
-  offsetY = lineNumDefaultProps.offsetY,
 }: LineNumProps) {
   const fontsReady = useFontsReady();
   const side = Math.min(SIZE_MAX, Math.max(SIZE_MIN, Number(size) || PLATE_H));
   const text = String(number ?? "").replace(/\D/g, "").slice(0, 2) || "1";
   const fontSize = side * 0.9;
   const cap = fontSize * 0.717;
-  const dy = Number(offsetY) || 0;
-  const box = side + 2;
-  const top = (ROW_H - side) / 2 + dy;
+  // 左右各留 3px「一点点间隙」：和 号线/图标并排时不至于完全贴死，
+  // 又不像整块留白那样破坏紧凑贴合
+  const gapX = 3;
+  const box = side + gapX * 2;
+  const top = (ROW_H - side) / 2;
   const baseline = top + side / 2 + cap / 2;
   // 两位数字过宽时按比例压窄（保持徽章是正方形）
   const measured = measureText(text, `400 ${fontSize}px ${fontFamilyEn}`);
@@ -103,12 +94,11 @@ export default function LineNum({
   return (
     <MultiRowBackground
       background={background}
-      background2={background2}
       style={{ height: ROW_H, width: box }}
     >
       <svg width={box} height={ROW_H} style={{ display: "block" }}>
         <rect
-          x={1 + BADGE_BORDER / 2}
+          x={gapX + BADGE_BORDER / 2}
           y={top + BADGE_BORDER / 2}
           width={side - BADGE_BORDER}
           height={side - BADGE_BORDER}

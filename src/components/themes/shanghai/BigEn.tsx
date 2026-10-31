@@ -9,7 +9,8 @@ import {
 } from "./Background";
 import { normalizeSvgLines } from "../../../utils/svgText";
 import {
-  measureText,
+  inkShift,
+  measureInk,
   useFontsReady,
   weightCss,
   type TextWeight,
@@ -22,7 +23,7 @@ import { EDGE_PAD, ROW_H } from "./define/layout";
  * 版式实测（图 43 英文站名 ink 98/430，含下伸部）：
  *  - 默认字号 15px（0.235H）
  *  - 可换行、可调行距 / 对齐 / 字距 / 字重 / 上下偏移
- *  - 默认字距 0.01em，略大于中英文字组件
+ *  - 上下按**真实墨迹**（actualBoundingBoxAscent/Descent）居中，offsetY=0 时视觉正中
  */
 export interface BigEnProps {
   english: string;
@@ -36,11 +37,10 @@ export interface BigEnProps {
   offsetY?: number;
   foreground?: string;
   background?: string;
-  background2?: string;
 }
 
 export const bigEnDefaultProps: BigEnProps = {
-  english: "KANGXIN HIGHWAY STATION",
+  english: "HONGQIAO INTERNATIONAL\n AIRPORT TERMINAL 2",
   align: "left",
   weight: "medium",
   letterSpacing: 0.01,
@@ -49,13 +49,11 @@ export const bigEnDefaultProps: BigEnProps = {
   offsetY: 0,
   foreground: colors.foreground,
   background: colors.transparent,
-  background2: colors.transparent,
 };
 
 const SIZE_MIN = 6;
 const SIZE_MAX = 64;
-const EN_CAP = 0.716;
-const EN_DESC = 0.25;
+const SCOPE = "themes.shanghai.components.BigEn.props";
 
 const clamp = (v: unknown, min: number, max: number, fb: number) => {
   const n = Number(v);
@@ -68,12 +66,12 @@ export const bigEnEditorConfig = (
   forms: [
     {
       key: "english",
-      label: "themes.shanghai.components.BigEn.props.english",
+      label: `${SCOPE}.english`,
       element: <TextArea autosize={{ minRows: 1, maxRows: 4 }} />,
     },
     {
       key: "weight",
-      label: "themes.shanghai.components.BigEn.props.weight.displayName",
+      label: `${SCOPE}.weight.displayName`,
       element: (
         <Select>
           <Select.Option value="normal">
@@ -90,7 +88,7 @@ export const bigEnEditorConfig = (
     },
     {
       key: "align",
-      label: "themes.shanghai.components.BigEn.props.align.displayName",
+      label: `${SCOPE}.align.displayName`,
       element: (
         <Select>
           <Select.Option value="left">
@@ -107,26 +105,26 @@ export const bigEnEditorConfig = (
     },
     {
       key: "letterSpacing",
-      label: "themes.shanghai.components.BigEn.props.letterSpacing",
+      label: `${SCOPE}.letterSpacing`,
       element: <InputNumber step={0.005} min={-0.05} max={0.5} />,
     },
     {
       key: "fontSize",
-      label: "themes.shanghai.components.BigEn.props.fontSize",
+      label: `${SCOPE}.fontSize`,
       element: <InputNumber step={1} min={SIZE_MIN} max={SIZE_MAX} />,
     },
     {
       key: "lineHeight",
-      label: "themes.shanghai.components.BigEn.props.lineHeight",
+      label: `${SCOPE}.lineHeight`,
       element: <InputNumber step={0.01} min={0.8} max={2} />,
     },
     {
       key: "offsetY",
-      label: "themes.shanghai.components.BigEn.props.offsetY",
+      label: `${SCOPE}.offsetY`,
       element: <InputNumber step={1} min={-32} max={32} />,
     },
-    foregroundFormItem("themes.shanghai.components.BigEn.props"),
-    ...backgroundFormItems("themes.shanghai.components.BigEn.props"),
+    foregroundFormItem(SCOPE),
+    ...backgroundFormItems(SCOPE),
   ],
 });
 
@@ -140,7 +138,6 @@ export default function BigEn({
   offsetY = bigEnDefaultProps.offsetY,
   foreground = bigEnDefaultProps.foreground,
   background = bigEnDefaultProps.background,
-  background2 = bigEnDefaultProps.background2,
 }: BigEnProps) {
   const fontsReady = useFontsReady();
   const weightValue = weightCss(weight ?? "medium");
@@ -148,48 +145,46 @@ export default function BigEn({
   const lh = clamp(lineHeight, 0.8, 2, 1.2);
   const dy = Number(offsetY) || 0;
   const ls = Number(letterSpacing) || 0;
+  const alignMode = align ?? "left";
 
   const layout = useMemo(() => {
     const lines = normalizeSvgLines(english);
     const font = `${weightValue} ${size}px ${fontFamilyEn}`;
+    const metrics = lines.map(line => measureInk(line, font, ls, size));
     const width = Math.max(
-      0,
-      ...lines.map(
-        line =>
-          measureText(line, font) +
-          ls * size * Math.max(0, Array.from(line).length - 1)
-      )
+      1,
+      Math.ceil(Math.max(0, ...metrics.map(m => m.inkWidth)))
     );
     const step = size * lh;
-    const cap = size * EN_CAP;
-    const inkH = (lines.length - 1) * step + cap + size * EN_DESC;
-    // 以「cap 顶」对齐：首行基线 = 顶部 + cap
+    const ascent = Math.max(0, ...metrics.map(m => m.inkAscent));
+    const descent = Math.max(0, ...metrics.map(m => m.inkDescent));
+    const inkH = (lines.length - 1) * step + ascent + descent;
     const top = (ROW_H - inkH) / 2 + dy;
-    return { lines, width: Math.max(1, Math.ceil(width)), step, cap, top, font };
-  }, [english, size, lh, dy, ls, weightValue, fontsReady]);
+    return lines.map((line, i) => ({
+      line,
+      x: inkShift(metrics[i], width, alignMode) + EDGE_PAD,
+      y: top + ascent + i * step,
+      width,
+    }));
+  }, [english, size, lh, dy, ls, weightValue, alignMode, fontsReady]);
 
-  const anchor =
-    align === "center" ? "middle" : align === "right" ? "end" : "start";
-  const groupX =
-    align === "center"
-      ? layout.width / 2
-      : align === "right"
-        ? layout.width
-        : 0;
+  const boxW = layout[0]?.width ?? 1;
 
   return (
     <MultiRowBackground
       background={background}
-      background2={background2}
-      style={{ height: ROW_H, width: layout.width + EDGE_PAD * 2 }}
+      style={{ height: ROW_H, width: boxW + EDGE_PAD * 2 }}
     >
       <svg
-        width={layout.width + EDGE_PAD * 2}
+        width={boxW + EDGE_PAD * 2}
         height={ROW_H}
         style={{ display: "block" }}
       >
-        <g transform={`translate(${groupX + EDGE_PAD}, 0)`} textAnchor={anchor}>
+        {layout.map((p, index) => (
           <text
+            key={index}
+            x={p.x}
+            y={p.y}
             fontSize={size}
             fontWeight={weightValue}
             fill={foreground}
@@ -197,17 +192,9 @@ export default function BigEn({
             letterSpacing={`${ls}em`}
             xmlSpace="preserve"
           >
-            {layout.lines.map((line, index) => (
-              <tspan
-                key={index}
-                x={0}
-                y={layout.top + layout.cap + index * layout.step}
-              >
-                {line}
-              </tspan>
-            ))}
+            {p.line}
           </text>
-        </g>
+        ))}
       </svg>
     </MultiRowBackground>
   );

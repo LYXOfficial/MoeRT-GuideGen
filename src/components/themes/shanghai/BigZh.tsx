@@ -9,7 +9,8 @@ import {
 } from "./Background";
 import { normalizeSvgLines } from "../../../utils/svgText";
 import {
-  measureText,
+  inkShift,
+  measureInk,
   useFontsReady,
   weightCss,
   type TextWeight,
@@ -23,6 +24,7 @@ import { EDGE_PAD, ROW_H } from "./define/layout";
  *  - 默认字号 33px（0.52H × 0.88 ink）
  *  - 默认字距 0.02em，略大于中英文字组件（用户要求）
  *  - 只认 TextArea 里的换行，不按宽度折行
+ *  - 上下按**真实墨迹**（actualBoundingBoxAscent/Descent）居中，offsetY=0 时视觉正中
  */
 export interface BigZhProps {
   chinese: string;
@@ -37,24 +39,23 @@ export interface BigZhProps {
   offsetY?: number;
   foreground?: string;
   background?: string;
-  background2?: string;
 }
 
 export const bigZhDefaultProps: BigZhProps = {
-  chinese: "康新公路站",
+  chinese: "国家会展中心",
   align: "left",
   weight: "medium",
   letterSpacing: 0.02,
-  fontSize: 33,
+  fontSize: 28,
   lineHeight: 1.08,
   offsetY: 0,
   foreground: colors.foreground,
   background: colors.transparent,
-  background2: colors.transparent,
 };
 
 const SIZE_MIN = 10;
 const SIZE_MAX = 96;
+const SCOPE = "themes.shanghai.components.BigZh.props";
 
 const clamp = (v: unknown, min: number, max: number, fb: number) => {
   const n = Number(v);
@@ -67,12 +68,12 @@ export const bigZhEditorConfig = (
   forms: [
     {
       key: "chinese",
-      label: "themes.shanghai.components.BigZh.props.chinese",
+      label: `${SCOPE}.chinese`,
       element: <TextArea autosize={{ minRows: 1, maxRows: 3 }} />,
     },
     {
       key: "weight",
-      label: "themes.shanghai.components.BigZh.props.weight.displayName",
+      label: `${SCOPE}.weight.displayName`,
       element: (
         <Select>
           <Select.Option value="normal">
@@ -89,7 +90,7 @@ export const bigZhEditorConfig = (
     },
     {
       key: "align",
-      label: "themes.shanghai.components.BigZh.props.align.displayName",
+      label: `${SCOPE}.align.displayName`,
       element: (
         <Select>
           <Select.Option value="left">
@@ -106,26 +107,26 @@ export const bigZhEditorConfig = (
     },
     {
       key: "letterSpacing",
-      label: "themes.shanghai.components.BigZh.props.letterSpacing",
+      label: `${SCOPE}.letterSpacing`,
       element: <InputNumber step={0.005} min={-0.05} max={0.5} />,
     },
     {
       key: "fontSize",
-      label: "themes.shanghai.components.BigZh.props.fontSize",
+      label: `${SCOPE}.fontSize`,
       element: <InputNumber step={1} min={SIZE_MIN} max={SIZE_MAX} />,
     },
     {
       key: "lineHeight",
-      label: "themes.shanghai.components.BigZh.props.lineHeight",
+      label: `${SCOPE}.lineHeight`,
       element: <InputNumber step={0.01} min={0.8} max={2} />,
     },
     {
       key: "offsetY",
-      label: "themes.shanghai.components.BigZh.props.offsetY",
+      label: `${SCOPE}.offsetY`,
       element: <InputNumber step={1} min={-32} max={32} />,
     },
-    foregroundFormItem("themes.shanghai.components.BigZh.props"),
-    ...backgroundFormItems("themes.shanghai.components.BigZh.props"),
+    foregroundFormItem(SCOPE),
+    ...backgroundFormItems(SCOPE),
   ],
 });
 
@@ -139,7 +140,6 @@ export default function BigZh({
   offsetY = bigZhDefaultProps.offsetY,
   foreground = bigZhDefaultProps.foreground,
   background = bigZhDefaultProps.background,
-  background2 = bigZhDefaultProps.background2,
 }: BigZhProps) {
   const fontsReady = useFontsReady();
   const weightValue = weightCss(weight ?? "medium");
@@ -147,47 +147,48 @@ export default function BigZh({
   const lh = clamp(lineHeight, 0.8, 2, 1.08);
   const dy = Number(offsetY) || 0;
   const ls = Number(letterSpacing) || 0;
+  const alignMode = align ?? "left";
 
   const layout = useMemo(() => {
     const lines = normalizeSvgLines(chinese);
     const font = `${weightValue} ${size}px ${fontFamilyZh}`;
+    const metrics = lines.map(line => measureInk(line, font, ls, size));
     const width = Math.max(
-      0,
-      ...lines.map(
-        line =>
-          measureText(line, font) +
-          ls * size * Math.max(0, Array.from(line).length - 1)
-      )
+      1,
+      Math.ceil(Math.max(0, ...metrics.map(m => m.inkWidth)))
     );
     const step = size * lh;
-    const ink = size * 0.88;
-    const inkH = (lines.length - 1) * step + ink;
+    // 真实墨迹：取多行的最大上/下伸，整块按墨迹居中
+    const ascent = Math.max(0, ...metrics.map(m => m.inkAscent));
+    const descent = Math.max(0, ...metrics.map(m => m.inkDescent));
+    const inkH = (lines.length - 1) * step + ascent + descent;
     const top = (ROW_H - inkH) / 2 + dy;
-    return { lines, width: Math.max(1, Math.ceil(width)), step, ink, top, font };
-  }, [chinese, size, lh, dy, ls, weightValue, fontsReady]);
+    return lines.map((line, i) => ({
+      line,
+      x: inkShift(metrics[i], width, alignMode) + EDGE_PAD,
+      y: top + ascent + i * step,
+      width,
+    }));
+    // fontsReady 参与依赖：字体就绪后重新量
+  }, [chinese, size, lh, dy, ls, weightValue, alignMode, fontsReady]);
 
-  const anchor =
-    align === "center" ? "middle" : align === "right" ? "end" : "start";
-  const groupX =
-    align === "center"
-      ? layout.width / 2
-      : align === "right"
-        ? layout.width
-        : 0;
+  const boxW = layout[0]?.width ?? 1;
 
   return (
     <MultiRowBackground
       background={background}
-      background2={background2}
-      style={{ height: ROW_H, width: layout.width + EDGE_PAD * 2 }}
+      style={{ height: ROW_H, width: boxW + EDGE_PAD * 2 }}
     >
       <svg
-        width={layout.width + EDGE_PAD * 2}
+        width={boxW + EDGE_PAD * 2}
         height={ROW_H}
         style={{ display: "block" }}
       >
-        <g transform={`translate(${groupX + EDGE_PAD}, 0)`} textAnchor={anchor}>
+        {layout.map((p, index) => (
           <text
+            key={index}
+            x={p.x}
+            y={p.y}
             fontSize={size}
             fontWeight={weightValue}
             fill={foreground}
@@ -195,17 +196,9 @@ export default function BigZh({
             letterSpacing={`${ls}em`}
             xmlSpace="preserve"
           >
-            {layout.lines.map((line, index) => (
-              <tspan
-                key={index}
-                x={0}
-                y={layout.top + layout.ink + index * layout.step}
-              >
-                {line}
-              </tspan>
-            ))}
+            {p.line}
           </text>
-        </g>
+        ))}
       </svg>
     </MultiRowBackground>
   );

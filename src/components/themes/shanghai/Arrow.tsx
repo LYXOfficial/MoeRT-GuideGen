@@ -36,7 +36,6 @@ export interface ArrowProps {
   size?: number;
   foreground?: string;
   background?: string;
-  background2?: string;
 }
 
 export const arrowDefaultProps: ArrowProps = {
@@ -45,7 +44,6 @@ export const arrowDefaultProps: ArrowProps = {
   size: 44,
   foreground: colors.foreground,
   background: colors.transparent,
-  background2: colors.transparent,
 };
 
 const STRAIGHT_ANGLE: Record<ArrowDirection, number> = {
@@ -132,7 +130,6 @@ export default function Arrow({
   size = arrowDefaultProps.size,
   foreground = arrowDefaultProps.foreground,
   background = arrowDefaultProps.background,
-  background2 = arrowDefaultProps.background2,
 }: ArrowProps) {
   const side = Math.min(SIZE_MAX, Math.max(SIZE_MIN, Number(size) || 44));
   const dir = (direction ?? "up") as ArrowDirection;
@@ -146,7 +143,6 @@ export default function Arrow({
   return (
     <MultiRowBackground
       background={background}
-      background2={background2}
       style={{ height: ROW_H, width: side }}
     >
       <div

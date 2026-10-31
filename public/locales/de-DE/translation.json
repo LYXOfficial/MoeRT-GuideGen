@@ -2214,8 +2214,10 @@
         "DualText": {
           "displayName": "Zweizeiliger Text",
           "props": {
-            "chinese": "Chinesisch",
-            "english": "Englisch",
+            "line1chinese": "Zeile 1 Chinesisch",
+            "line1english": "Zeile 1 Englisch",
+            "line2chinese": "Zeile 2 Chinesisch",
+            "line2english": "Zeile 2 Englisch",
             "weight": {
               "displayName": "Schriftstärke",
               "normal": "Normal",
@@ -2232,6 +2234,7 @@
             "fontSizeZh": "Chinesisch-Größe",
             "fontSizeEn": "Englisch-Größe",
             "lineGap": "Abstand",
+            "pairGap": "Abstand zwischen Gruppen",
             "offsetY": "Vertikaler Versatz",
             "foreground": "Vordergrundfarbe",
             "background": "Hintergrund"
@@ -2242,7 +2245,6 @@
           "props": {
             "number": "Liniennummer",
             "size": "Größe",
-            "offsetY": "Vertikaler Versatz",
             "foreground": "Vordergrundfarbe",
             "lineColor": "Linienfarbe",
             "border": "Rahmenfarbe",
@@ -2255,7 +2257,7 @@
             "chinese": "Chinesisch",
             "english": "Englisch",
             "color1": "Linienfarbe (oben)",
-            "color2": "Linienfarbe (unten, optional)",
+            "color2": "Linienfarbe (unten)",
             "foreground": "Vordergrundfarbe",
             "border": "Rahmenfarbe",
             "radius": "Radius",

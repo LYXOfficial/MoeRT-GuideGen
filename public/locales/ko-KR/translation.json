@@ -2213,8 +2213,10 @@
         "DualText": {
           "displayName": "두 줄 텍스트",
           "props": {
-            "chinese": "중국어",
-            "english": "영어",
+            "line1chinese": "첫째 줄 중국어",
+            "line1english": "첫째 줄 영어",
+            "line2chinese": "둘째 줄 중국어",
+            "line2english": "둘째 줄 영어",
             "weight": {
               "displayName": "굵기",
               "normal": "보통",
@@ -2231,6 +2233,7 @@
             "fontSizeZh": "중국어 크기",
             "fontSizeEn": "영어 크기",
             "lineGap": "중영문 간격",
+            "pairGap": "그룹 간격",
             "offsetY": "상하 오프셋",
             "foreground": "전경색",
             "background": "배경색"
@@ -2241,7 +2244,6 @@
           "props": {
             "number": "노선 번호",
             "size": "크기",
-            "offsetY": "상하 오프셋",
             "foreground": "전경색",
             "lineColor": "노선색",
             "border": "테두리색",

@@ -99,3 +99,83 @@ export const fitScale = (
   if (measured <= limit || measured <= 0) return 1;
   return Math.max(minScale, limit / measured);
 };
+
+/**
+ * 文字**墨迹**边界（不是排字宽度）。
+ *
+ * 中文和拉丁的左右侧边距（side bearing）不一样：同一段起点排下来，
+ * 拉丁「E」的墨迹往往比汉字更靠左（约 1–2px），于是「出口 / Exit」左对齐时
+ * 英文会探出去一点；右对齐时则右边探出去（用户实测反馈）。
+ * 这里用 canvas 的 actualBoundingBoxLeft/Right 拿到真实墨迹范围，
+ * 对齐时按墨迹边缘而不是排字原点对齐。
+ *
+ * 以 `<text x=0 textAnchor="start">` 绘制时：墨迹范围 = [-inkLeft, +inkRight]。
+ */
+export interface InkMetrics {
+  /** 原点左侧的墨迹宽度（正数） */
+  inkLeft: number;
+  /** 原点右侧的墨迹宽度（正数） */
+  inkRight: number;
+  /** 墨迹总宽 */
+  inkWidth: number;
+  /** 基线以上的墨迹高度（实际值，比 0.88em 准） */
+  inkAscent: number;
+  /** 基线以下的墨迹高度 */
+  inkDescent: number;
+}
+
+export const measureInk = (
+  text: string,
+  font: string,
+  letterSpacing = 0,
+  fontSize = 0
+): InkMetrics => {
+  if (!text)
+    return {
+      inkLeft: 0,
+      inkRight: 0,
+      inkWidth: 0,
+      inkAscent: 0,
+      inkDescent: 0,
+    };
+  if (!measureCtx && typeof document !== "undefined") {
+    measureCtx = document.createElement("canvas").getContext("2d");
+  }
+  if (!measureCtx) {
+    const size = Number(/(\d+(?:\.\d+)?)px/.exec(font)?.[1] ?? 12);
+    const width = Array.from(text).length * size * 0.6;
+    return {
+      inkLeft: 0,
+      inkRight: width,
+      inkWidth: width,
+      inkAscent: size * 0.88,
+      inkDescent: size * 0.12,
+    };
+  }
+  measureCtx.font = font;
+  const m = measureCtx.measureText(text);
+  const gaps = Math.max(0, Array.from(text).length - 1);
+  const extra = letterSpacing * fontSize * gaps;
+  const left = m.actualBoundingBoxLeft ?? 0;
+  const right = (m.actualBoundingBoxRight ?? m.width) + extra;
+  const size = Number(/(\d+(?:\.\d+)?)px/.exec(font)?.[1] ?? 12);
+  return {
+    inkLeft: left,
+    inkRight: right,
+    inkWidth: left + right,
+    inkAscent: m.actualBoundingBoxAscent ?? size * 0.88,
+    inkDescent: m.actualBoundingBoxDescent ?? size * 0.12,
+  };
+};
+
+/** 按对齐方式求「让墨迹边界对齐」所需的绘制原点偏移 */
+export const inkShift = (
+  metrics: InkMetrics,
+  width: number,
+  align: "left" | "center" | "right"
+): number => {
+  if (align === "right") return width - metrics.inkRight;
+  if (align === "center")
+    return width / 2 - (metrics.inkRight - metrics.inkLeft) / 2;
+  return metrics.inkLeft;
+};

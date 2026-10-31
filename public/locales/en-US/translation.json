@@ -2214,8 +2214,10 @@
         "DualText": {
           "displayName": "Two-line text",
           "props": {
-            "chinese": "Chinese",
-            "english": "English",
+            "line1chinese": "First line Chinese",
+            "line1english": "First line English",
+            "line2chinese": "Second line Chinese",
+            "line2english": "Second line English",
             "weight": {
               "displayName": "Weight",
               "normal": "Regular",
@@ -2232,6 +2234,7 @@
             "fontSizeZh": "Chinese size",
             "fontSizeEn": "English size",
             "lineGap": "Bilingual gap",
+            "pairGap": "Gap between groups",
             "offsetY": "Vertical offset",
             "foreground": "Foreground",
             "background": "Background"
@@ -2242,7 +2245,6 @@
           "props": {
             "number": "Line number",
             "size": "Size",
-            "offsetY": "Vertical offset",
             "foreground": "Foreground",
             "lineColor": "Line colour",
             "border": "Border colour",
@@ -2255,7 +2257,7 @@
             "chinese": "Chinese",
             "english": "English",
             "color1": "Line colour (upper)",
-            "color2": "Line colour (lower, optional)",
+            "color2": "Line colour (lower)",
             "foreground": "Foreground",
             "border": "Border colour",
             "radius": "Radius",

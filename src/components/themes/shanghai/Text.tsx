@@ -9,7 +9,8 @@ import {
 } from "./Background";
 import { normalizeSvgLines } from "../../../utils/svgText";
 import {
-  measureText,
+  inkShift,
+  measureInk,
   useFontsReady,
   weightCss,
   type TextWeight,
@@ -22,9 +23,10 @@ import { EDGE_PAD, ROW_H } from "./define/layout";
  * 版式取自标准图 3／图 4／图 27（内发光牌与墙面信息带）：
  *  - 中文 28px、英文 13px（图 43 实测：中文 ink 164/430 ≈ 0.38H → 字号 0.43H ≈ 28px；
  *    英文 cap 60/430 ≈ 0.14H → 字号 ≈ 13px）
- *  - 中文在上、英文在下，英文默认与中文左对齐
+ *  - 中文在上、英文在下
  *  - 只认用户在 TextArea 里敲的换行，不按宽度自动折行
- *  - 左右只留 1px：与相邻元素靠 margin -1px 压接缝时不会盖到字形
+ *  - 左右按**墨迹边界**对齐（中文和拉丁的 side bearing 不同，
+ *    按排字原点对齐时英文会探出 1–2px），左右各留 1px 防压边
  */
 export interface TextProps {
   chinese: string;
@@ -41,7 +43,6 @@ export interface TextProps {
   offsetY?: number;
   foreground?: string;
   background?: string;
-  background2?: string;
 }
 
 export const textDefaultProps: TextProps = {
@@ -56,14 +57,13 @@ export const textDefaultProps: TextProps = {
   offsetY: 0,
   foreground: colors.foreground,
   background: colors.transparent,
-  background2: colors.transparent,
 };
 
 const ZH_MIN = 8;
 const ZH_MAX = 64;
 const EN_MIN = 6;
 const EN_MAX = 48;
-const LS_MAX = 0.5;
+const SCOPE = "themes.shanghai.components.Text.props";
 
 const clamp = (v: unknown, min: number, max: number, fb: number) => {
   const n = Number(v);
@@ -76,17 +76,17 @@ export const textEditorConfig = (
   forms: [
     {
       key: "chinese",
-      label: "themes.shanghai.components.Text.props.chinese",
+      label: `${SCOPE}.chinese`,
       element: <TextArea autosize={{ minRows: 1, maxRows: 4 }} />,
     },
     {
       key: "english",
-      label: "themes.shanghai.components.Text.props.english",
+      label: `${SCOPE}.english`,
       element: <TextArea autosize={{ minRows: 1, maxRows: 4 }} />,
     },
     {
       key: "weight",
-      label: "themes.shanghai.components.Text.props.weight.displayName",
+      label: `${SCOPE}.weight.displayName`,
       element: (
         <Select>
           <Select.Option value="normal">
@@ -103,7 +103,7 @@ export const textEditorConfig = (
     },
     {
       key: "align",
-      label: "themes.shanghai.components.Text.props.align.displayName",
+      label: `${SCOPE}.align.displayName`,
       element: (
         <Select>
           <Select.Option value="left">
@@ -120,31 +120,31 @@ export const textEditorConfig = (
     },
     {
       key: "letterSpacing",
-      label: "themes.shanghai.components.Text.props.letterSpacing",
-      element: <InputNumber step={0.01} min={-0.1} max={LS_MAX} />,
+      label: `${SCOPE}.letterSpacing`,
+      element: <InputNumber step={0.01} min={-0.1} max={0.5} />,
     },
     {
       key: "fontSizeZh",
-      label: "themes.shanghai.components.Text.props.fontSizeZh",
+      label: `${SCOPE}.fontSizeZh`,
       element: <InputNumber step={1} min={ZH_MIN} max={ZH_MAX} />,
     },
     {
       key: "fontSizeEn",
-      label: "themes.shanghai.components.Text.props.fontSizeEn",
+      label: `${SCOPE}.fontSizeEn`,
       element: <InputNumber step={1} min={EN_MIN} max={EN_MAX} />,
     },
     {
       key: "lineGap",
-      label: "themes.shanghai.components.Text.props.lineGap",
+      label: `${SCOPE}.lineGap`,
       element: <InputNumber step={1} min={0} max={40} />,
     },
     {
       key: "offsetY",
-      label: "themes.shanghai.components.Text.props.offsetY",
+      label: `${SCOPE}.offsetY`,
       element: <InputNumber step={1} min={-32} max={32} />,
     },
-    foregroundFormItem("themes.shanghai.components.Text.props"),
-    ...backgroundFormItems("themes.shanghai.components.Text.props"),
+    foregroundFormItem(SCOPE),
+    ...backgroundFormItems(SCOPE),
   ],
 });
 
@@ -160,7 +160,6 @@ export default function Text({
   offsetY = textDefaultProps.offsetY,
   foreground = textDefaultProps.foreground,
   background = textDefaultProps.background,
-  background2 = textDefaultProps.background2,
 }: TextProps) {
   const fontsReady = useFontsReady();
   const weightValue = weightCss(weight ?? "medium");
@@ -169,70 +168,76 @@ export default function Text({
   const gap = Math.max(0, Number(lineGap) || 0);
   const dy = Number(offsetY) || 0;
   const ls = Number(letterSpacing) || 0;
+  const alignMode = align ?? "left";
 
   const layout = useMemo(() => {
     const zhLines = normalizeSvgLines(chinese);
     const enLines = normalizeSvgLines(english);
     const zhFont = `${weightValue} ${zhSize}px ${fontFamilyZh}`;
     const enFont = `${weightValue} ${enSize}px ${fontFamilyEn}`;
-    const widthOf = (lines: string[], font: string, size: number) =>
-      Math.max(
-        0,
-        ...lines.map(
-          line =>
-            measureText(line, font) +
-            ls * size * Math.max(0, Array.from(line).length - 1)
-        )
-      );
+    const zhMetrics = zhLines.map(line => measureInk(line, zhFont, ls, zhSize));
+    const enMetrics = enLines.map(line => measureInk(line, enFont, ls, enSize));
     const width = Math.max(
-      widthOf(zhLines, zhFont, zhSize),
-      widthOf(enLines, enFont, enSize)
+      1,
+      Math.ceil(
+        Math.max(
+          0,
+          ...zhMetrics.map(m => m.inkWidth),
+          ...enMetrics.map(m => m.inkWidth)
+        )
+      )
     );
     // 行距：中文 1.05em、英文 1.2em（拉丁 ink ≈0.97em）
     const zhStep = zhSize * 1.05;
     const enStep = enSize * 1.2;
-    const zhInk = zhSize * 0.88;
-    const enCap = enSize * 0.716;
-    const enDesc = enSize * 0.25;
+    const zhAscent = Math.max(0, ...zhMetrics.map(m => m.inkAscent));
+    const zhDescent = Math.max(0, ...zhMetrics.map(m => m.inkDescent));
+    const enAscent = Math.max(0, ...enMetrics.map(m => m.inkAscent));
+    const enDescent = Math.max(0, ...enMetrics.map(m => m.inkDescent));
     const inkH =
+      zhAscent +
       (zhLines.length - 1) * zhStep +
-      zhInk +
+      zhDescent +
       gap +
+      enAscent +
       (enLines.length - 1) * enStep +
-      enCap +
-      enDesc;
+      enDescent;
     const top = (ROW_H - inkH) / 2 + dy;
+    const zhFirst = top + zhAscent;
+    const enFirst = zhFirst + (zhLines.length - 1) * zhStep + zhDescent + gap + enAscent;
     return {
-      zhLines,
-      enLines,
-      width: Math.max(1, Math.ceil(width)),
+      width,
       zhStep,
       enStep,
-      inkH,
-      top,
-      zhInk,
-      enCap,
-      zhFont,
-      enFont,
+      zhFirst,
+      enFirst,
+      zh: zhLines.map((line, i) => ({
+        line,
+        x: inkShift(zhMetrics[i], width, alignMode) + EDGE_PAD,
+        y: zhFirst + i * zhStep,
+      })),
+      en: enLines.map((line, i) => ({
+        line,
+        x: inkShift(enMetrics[i], width, alignMode) + EDGE_PAD,
+        y: enFirst + i * enStep,
+      })),
     };
-  }, [chinese, english, zhSize, enSize, gap, dy, ls, weightValue, fontsReady]);
-
-  const anchor =
-    align === "center" ? "middle" : align === "right" ? "end" : "start";
-  const groupX =
-    align === "center"
-      ? layout.width / 2
-      : align === "right"
-        ? layout.width
-        : 0;
-  const zhStart = layout.top + layout.zhInk;
-  const enStart =
-    zhStart + (layout.zhLines.length - 1) * layout.zhStep + gap + layout.enCap;
+  }, [
+    chinese,
+    english,
+    zhSize,
+    enSize,
+    gap,
+    dy,
+    ls,
+    weightValue,
+    alignMode,
+    fontsReady,
+  ]);
 
   return (
     <MultiRowBackground
       background={background}
-      background2={background2}
       style={{ height: ROW_H, width: layout.width + EDGE_PAD * 2 }}
     >
       <svg
@@ -240,11 +245,11 @@ export default function Text({
         height={ROW_H}
         style={{ display: "block" }}
       >
-        <g
-          transform={`translate(${groupX + EDGE_PAD}, 0)`}
-          textAnchor={anchor}
-        >
+        {layout.zh.map((p, index) => (
           <text
+            key={`zh-${index}`}
+            x={p.x}
+            y={p.y}
             fontSize={zhSize}
             fontWeight={weightValue}
             fill={foreground}
@@ -252,17 +257,14 @@ export default function Text({
             letterSpacing={`${ls}em`}
             xmlSpace="preserve"
           >
-            {layout.zhLines.map((line, index) => (
-              <tspan
-                key={index}
-                x={0}
-                y={zhStart + index * layout.zhStep}
-              >
-                {line}
-              </tspan>
-            ))}
+            {p.line}
           </text>
+        ))}
+        {layout.en.map((p, index) => (
           <text
+            key={`en-${index}`}
+            x={p.x}
+            y={p.y}
             fontSize={enSize}
             fontWeight={weightValue}
             fill={foreground}
@@ -270,17 +272,9 @@ export default function Text({
             letterSpacing={`${ls}em`}
             xmlSpace="preserve"
           >
-            {layout.enLines.map((line, index) => (
-              <tspan
-                key={index}
-                x={0}
-                y={enStart + index * layout.enStep}
-              >
-                {line}
-              </tspan>
-            ))}
+            {p.line}
           </text>
-        </g>
+        ))}
       </svg>
     </MultiRowBackground>
   );

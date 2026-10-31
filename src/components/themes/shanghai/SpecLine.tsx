@@ -12,7 +12,6 @@ export interface SpecLineProps {
   width?: number;
   foreground?: string;
   background?: string;
-  background2?: string;
 }
 
 // 上海默认使用黄色分隔线
@@ -20,7 +19,6 @@ export const specLineDefaultProps: SpecLineProps = {
   width: 3,
   foreground: colors.specline,
   background: colors.transparent,
-  background2: colors.transparent,
 };
 
 export const specLineEditorConfig = (
@@ -37,19 +35,17 @@ function SpecLine({
   width = specLineDefaultProps.width,
   foreground = specLineDefaultProps.foreground,
   background = specLineDefaultProps.background,
-  background2 = specLineDefaultProps.background2,
 }: SpecLineProps) {
   const lineWidth = Math.max(1, width ?? 2);
   return (
     <MultiRowBackground
       background={background}
-      background2={background2}
       className="z-10"
       style={{ width: lineWidth, height: 64 }}
     >
       <svg width={lineWidth} height={64}>
         <path
-          d={`M 0 3 L ${lineWidth} 3 L ${lineWidth} 61 L 0 61 Z`}
+          d={`M 0 8 L ${lineWidth} 8 L ${lineWidth} 56 L 0 56 Z`}
           fill={foreground}
         />
       </svg>

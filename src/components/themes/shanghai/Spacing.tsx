@@ -4,12 +4,10 @@ import { MultiRowBackground, backgroundFormItems } from "./Background";
 
 export interface SpacingProps {
   background?: string;
-  background2?: string;
 }
 
 export const spacingDefaultProps: SpacingProps = {
   background: colors.transparent,
-  background2: colors.transparent,
 };
 
 export const spacingEditorConfig = (
@@ -20,12 +18,10 @@ export const spacingEditorConfig = (
 
 function Spacing({
   background = spacingDefaultProps.background,
-  background2 = spacingDefaultProps.background2,
 }: SpacingProps) {
   return (
     <MultiRowBackground
       background={background}
-      background2={background2}
       className="flex-1 w-full h-full"
     />
   );

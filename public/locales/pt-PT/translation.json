@@ -2214,8 +2214,10 @@
         "DualText": {
           "displayName": "Texto em duas linhas",
           "props": {
-            "chinese": "Chinês",
-            "english": "Inglês",
+            "line1chinese": "Linha 1 chinês",
+            "line1english": "Linha 1 inglês",
+            "line2chinese": "Linha 2 chinês",
+            "line2english": "Linha 2 inglês",
             "weight": {
               "displayName": "Espessura",
               "normal": "Normal",
@@ -2232,6 +2234,7 @@
             "fontSizeZh": "Tamanho chinês",
             "fontSizeEn": "Tamanho inglês",
             "lineGap": "Intervalo",
+            "pairGap": "Intervalo entre grupos",
             "offsetY": "Deslocamento vertical",
             "foreground": "Cor do texto",
             "background": "Fundo"
@@ -2242,7 +2245,6 @@
           "props": {
             "number": "Número de linha",
             "size": "Tamanho",
-            "offsetY": "Deslocamento vertical",
             "foreground": "Cor do texto",
             "lineColor": "Cor da linha",
             "border": "Cor do contorno",
@@ -2255,7 +2257,7 @@
             "chinese": "Chinês",
             "english": "Inglês",
             "color1": "Cor da linha (sup.)",
-            "color2": "Cor da linha (inf., opcional)",
+            "color2": "Cor da linha (inf.)",
             "foreground": "Cor do texto",
             "border": "Cor do contorno",
             "radius": "Raio",

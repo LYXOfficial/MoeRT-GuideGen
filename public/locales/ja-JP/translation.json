@@ -2213,8 +2213,10 @@
         "DualText": {
           "displayName": "2行テキスト",
           "props": {
-            "chinese": "中国語",
-            "english": "英語",
+            "line1chinese": "1行目 中国語",
+            "line1english": "1行目 英語",
+            "line2chinese": "2行目 中国語",
+            "line2english": "2行目 英語",
             "weight": {
               "displayName": "文字の太さ",
               "normal": "標準",
@@ -2231,6 +2233,7 @@
             "fontSizeZh": "中国語のサイズ",
             "fontSizeEn": "英語のサイズ",
             "lineGap": "中英の間隔",
+            "pairGap": "組の間隔",
             "offsetY": "上下オフセット",
             "foreground": "前景色",
             "background": "背景色"
@@ -2241,7 +2244,6 @@
           "props": {
             "number": "路線番号",
             "size": "サイズ",
-            "offsetY": "上下オフセット",
             "foreground": "前景色",
             "lineColor": "路線色",
             "border": "枠線色",

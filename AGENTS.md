@@ -569,9 +569,20 @@ python3 text_probe.py                                   # 解析 <use> 得到真
     换算表、与官方网络图的对照见 `docs/shanghai/notes/颜色与字体.md`。
   - 字体：中文思源黑体（继承北京那套 Noto Sans SC）+ **Helvetica**（项目已有
     `public/fonts/Helvetica.ttf`，`fonts/helvetica.css` 注册）。
-- **背景不做上下分行**（用户拍板 2026-11-01）：`shanghai/Background.tsx` 的 `backgroundFormItems`
-  只给一项背景色；组件 props 里的 `background2` 保留（旧存档/落板逻辑会写）但编辑器不展示。
+- **背景彻底单色**（用户拍板 2026-11-01）：`shanghai/Background.tsx` 的 `MultiRowBackground`
+  不读 `background2`、不画渐变；所有组件 props 里已删除 `background2`，编辑器只给一项「背景色」。
   面板文案也不带单位注释（「字距」不写「（em）」，「尺寸」不写「（px）」）。
+- **文字对齐按墨迹**：中文与拉丁的 side bearing 不同，按排字原点对齐会让英文探出 1–2px
+  （左对齐探左、右对齐探右）。`define/text.ts` 用 canvas `actualBoundingBoxLeft/Right` 取墨迹范围，
+  `inkShift()` 按墨迹边缘对齐；`BigZh`/`BigEn` 的上下居中同样用
+  `actualBoundingBoxAscent/Descent`（offsetY=0 时墨迹正中，不再是 est 0.88em）。
+- **双行文本 = 两组「中文 + 英文」**（图 54 的「老沪闵路 / Laohumin Rd.」＋「龙华寺 / Long Hua Temple」），
+  默认 19 / 10.5、组间距 4；哪组两个字段都空就整组跳过（用户指出第一版只做了一组，是错的）。
+- **线路标**：数字/文字线路标左右各留 3px 透明边（「适当留一点点间隙」），两者都不再有 `offsetY`；
+  文字线路标的「线路色（下段）」不再写「可空」（填成和上段一样就是单色）。
+- **分隔线**：上下各留 8px（用户嫌 3px 太贴边）。
+- **图标**：`Icon` 的下拉**不带搜索框**，选项行有 18px 预览图（Semi 的 Option 只认 `label`，
+  传给 children 会被忽略）；「服务中心」用 p45_08 柜台版（p46 那版画的就是男+女，等于厕所）。
 - **尺寸换算**：行高 64px = 牌面高；徽章边长 44.5（0.695H）、白描边 1.3、数字字号 40、
   文字线路标牌高 44.5 / 圆角 3 / 字号 20+10。完整测量表见 `docs/shanghai/notes/组件规格.md`。
 - **箭头坑（重要）**：上海这套箭头不是「实心三角 + 台阶肩」，而是 **V 形人字臂 + 矩形杆**
@@ -579,8 +590,9 @@ python3 text_probe.py                                   # 解析 <use> 得到真
   **标准里没有 90° 弯折箭头**：图 54 那条是直行右箭头；`TurnRightGlyph` 是按同一套比例
   构造的（折角取 180° 调头箭头的内外半径），要严格照抄图 54 用 `RightArrowGlyph`。
 - **图形符号**：`icons/pictograms-real.tsx`（28 个，potrace 描摹，单色跟随前景色）+
-  `icons/logo-real.tsx`（申通标志）。标准里「服务中心」画得像厕所、「禁止通行」是圆环+横杠，
-  都是原图如此，照抄不改。提取管线见 `docs/shanghai/notes/图标提取.md`。
+  `icons/logo-real.tsx`（申通标志）。描摹阈值 **130**（150 会把男女图标的腿缝糊死），
+  禁用「填白洞」后处理。图标全部按附录 B 原图（「禁止通行」是圆环+横杠）。
+  提取管线见 `docs/shanghai/notes/图标提取.md`。
 - **i18n 坑（又踩了一次）**：`public/locales/zh-CN/translation.json` 改完必须同步
   **`src/locales/zh-CN.json`**（打包兜底资源），否则简中界面里新主题名会显示成裸 key
   `themes.shanghai.displayName`。其它 10 种语言走 `public/locales/` 的后端加载，不用同步。

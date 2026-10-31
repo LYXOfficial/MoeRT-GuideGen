@@ -2213,8 +2213,10 @@
         "DualText": {
           "displayName": "雙行文字",
           "props": {
-            "chinese": "中文",
-            "english": "英文",
+            "line1chinese": "第一行中文",
+            "line1english": "第一行英文",
+            "line2chinese": "第二行中文",
+            "line2english": "第二行英文",
             "weight": {
               "displayName": "字重",
               "normal": "標準",
@@ -2231,6 +2233,7 @@
             "fontSizeZh": "中文字號",
             "fontSizeEn": "英文字號",
             "lineGap": "中英間距",
+            "pairGap": "組間距",
             "offsetY": "上下偏移",
             "foreground": "前景色",
             "background": "背景色"
@@ -2241,7 +2244,6 @@
           "props": {
             "number": "路綫編號",
             "size": "尺寸",
-            "offsetY": "上下偏移",
             "foreground": "前景色",
             "lineColor": "路綫色",
             "border": "邊框色",
@@ -2254,7 +2256,7 @@
             "chinese": "中文",
             "english": "英文",
             "color1": "路綫色（上段）",
-            "color2": "路綫色（下段，可空）",
+            "color2": "路綫色（下段）",
             "foreground": "前景色",
             "border": "邊框色",
             "radius": "圓角",

@@ -1,5 +1,5 @@
 import type { FC } from "react";
-import type { GlyphProps } from "./glyph-types";
+import type { GlyphBox, GlyphProps } from "./glyph-types";
 import {
   NoEntryGlyph,
   ElevatorAccessibleGlyph,
@@ -35,7 +35,7 @@ import { MetroLogoGlyph } from "./logo-real";
 export interface IconGlyphEntry {
   /** i18n 后缀：themes.shanghai.components.Icon.props.icon.<key> */
   key: string;
-  glyph: FC<GlyphProps>;
+  glyph: FC<GlyphProps & GlyphBox>;
 }
 
 /**

@@ -48,9 +48,7 @@ export interface TextLineNumProps {
   weight?: TextWeight;
   /** 中英之间空隙（px） */
   lineGap?: number;
-  offsetY?: number;
   background?: string;
-  background2?: string;
 }
 
 export const textLineNumDefaultProps: TextLineNumProps = {
@@ -67,9 +65,7 @@ export const textLineNumDefaultProps: TextLineNumProps = {
   paddingX: 6,
   weight: "medium",
   lineGap: 2,
-  offsetY: 0,
   background: colors.transparent,
-  background2: colors.transparent,
 };
 
 const SCOPE = "themes.shanghai.components.TextLineNum.props";
@@ -122,11 +118,6 @@ export const textLineNumEditorConfig = (
       label: `${SCOPE}.lineGap`,
       element: <InputNumber step={1} min={0} max={16} />,
     },
-    {
-      key: "offsetY",
-      label: `${SCOPE}.offsetY`,
-      element: <InputNumber step={1} min={-24} max={24} />,
-    },
     ...backgroundFormItems(SCOPE),
   ],
 });
@@ -145,9 +136,7 @@ export default function TextLineNum({
   paddingX = textLineNumDefaultProps.paddingX,
   weight = textLineNumDefaultProps.weight,
   lineGap = textLineNumDefaultProps.lineGap,
-  offsetY = textLineNumDefaultProps.offsetY,
   background = textLineNumDefaultProps.background,
-  background2 = textLineNumDefaultProps.background2,
 }: TextLineNumProps) {
   const fontsReady = useFontsReady();
   const weightValue = weightCss(weight ?? "medium");
@@ -167,8 +156,9 @@ export default function TextLineNum({
       pad * 2,
     [zh, en, zhFont, enFont, pad, fontsReady]
   );
-  const boxW = plateW + 2;
-  const top = (ROW_H - plateH) / 2 + (Number(offsetY) || 0);
+  const gapX = 3;
+  const boxW = plateW + gapX * 2;
+  const top = (ROW_H - plateH) / 2;
   const zhInk = zhSize * 0.88;
   const enCap = enSize * 0.716;
   const enDesc = enSize * 0.25;
@@ -186,14 +176,13 @@ export default function TextLineNum({
   return (
     <MultiRowBackground
       background={background}
-      background2={background2}
       style={{ height: ROW_H, width: boxW }}
     >
       <div
         style={{
           position: "absolute",
-          left: 1,
-          right: 1,
+          left: gapX,
+          right: gapX,
           top,
           height: plateH,
           borderRadius: r,

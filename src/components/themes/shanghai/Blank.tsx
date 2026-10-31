@@ -9,13 +9,11 @@ import {
 export interface BlankProps {
   width?: number;
   background?: string;
-  background2?: string;
 }
 
 export const blankDefaultProps: BlankProps = {
   width: 20,
   background: colors.transparent,
-  background2: colors.transparent,
 };
 
 export const blankEditorConfig = (
@@ -30,12 +28,10 @@ export const blankEditorConfig = (
 function Blank({
   width = blankDefaultProps.width,
   background = blankDefaultProps.background,
-  background2 = blankDefaultProps.background2,
 }: BlankProps) {
   return (
     <MultiRowBackground
       background={background}
-      background2={background2}
       className="h-full"
       style={{ width: width ?? 20 }}
     />

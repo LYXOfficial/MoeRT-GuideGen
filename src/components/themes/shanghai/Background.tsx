@@ -1,55 +1,30 @@
-import colors from "./define/colors";
 import type { CSSProperties, FC, ReactNode } from "react";
 import { Input, InputNumber, Select } from "@douyinfe/semi-ui";
 import CustomColorPicker from "../../CustomColorPicker";
 import type { PropForm } from "../../../interfaces/editor";
 
 /**
- * 多行背景：所有上海组件的背景色都支持「多行」，
- * 例如 background = 6 号线色、background2 = S1 号线色，即上下各占一半。
+ * 组件背景：上海主题**只做单色**（用户拍板：不做上下分行）。
+ * 名字沿用 MultiRowBackground 是为了和别的主题共用调用形状，
+ * 但这里不读 background2、也不画渐变 —— 传入的背景色直接铺满整块。
  */
-export const backgroundRows = (
-  background?: string,
-  background2?: string
-): string[] => {
-  const rows = [background, background2].filter(
-    (c): c is string => typeof c === "string" && c.length > 0
-  );
-  return rows.length > 0 ? rows : [colors.transparent];
-};
-
 export function MultiRowBackground({
   background,
-  background2,
   className,
   style,
   children,
 }: {
   background?: string;
-  background2?: string;
   className?: string;
   style?: CSSProperties;
   children?: ReactNode;
 }) {
-  const rows = backgroundRows(background, background2);
-  // 用「硬停」渐变一次画完多行背景：原来是 flex 子块各占一半，
-  // 高度出现小数时（如组件被缩放 0.62，或 65px 高）两行之间会露出 1px 的缝。
-  const bgStyle: CSSProperties =
-    rows.length === 1
-      ? { backgroundColor: rows[0] }
-      : {
-          background: `linear-gradient(to bottom, ${rows
-            .map(
-              (color, index) =>
-                `${color} ${(index / rows.length) * 100}% ${
-                  ((index + 1) / rows.length) * 100
-                }%`
-            )
-            .join(", ")})`,
-        };
   return (
     <div className={className} style={{ position: "relative", ...style }}>
-      <div aria-hidden style={{ position: "absolute", inset: 0, ...bgStyle }} />
+      <div
+        aria-hidden
+        style={{ position: "absolute", inset: 0, backgroundColor: background }}
+      />
       <div style={{ position: "relative", height: "100%" }}>{children}</div>
     </div>
   );
@@ -73,8 +48,7 @@ export const backgroundFormItems = (scope: string): PropForm[] => [
     label: `${scope}.background`,
     element: <CustomColorPicker currentTheme={THEME_INDEX} />,
   },
-  // 上海不做上下分行分色（用户拍板 2026-11-01）：只暴露一项背景色。
-  // 组件 props 里的 background2 仍然保留（旧存档/落板逻辑会写），但编辑器不展示。
+  // 上海不做上下分行分色（用户拍板 2026-11-01）：组件 props 里也彻底没有 background2。
 ];
 
 /** 任意颜色字段（线路色、边框色等）：表单项标题取 `<scope>.<key>` */

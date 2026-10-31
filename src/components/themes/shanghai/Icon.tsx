@@ -29,7 +29,6 @@ export interface IconProps {
   paddingX?: number;
   foreground?: string;
   background?: string;
-  background2?: string;
 }
 
 export const iconDefaultProps: IconProps = {
@@ -39,7 +38,6 @@ export const iconDefaultProps: IconProps = {
   paddingX: 2,
   foreground: colors.foreground,
   background: colors.transparent,
-  background2: colors.transparent,
 };
 
 const SCOPE = "themes.shanghai.components.Icon.props";
@@ -55,12 +53,36 @@ export const iconEditorConfig = (
       key: "icon",
       label: `${ICON_KEY_SCOPE}.displayName`,
       element: (
-        <Select filter style={{ width: "100%" }}>
-          {ICON_GLYPHS.map(entry => (
-            <Select.Option key={entry.key} value={entry.key}>
-              {t(`${ICON_KEY_SCOPE}.${entry.key}`)}
-            </Select.Option>
-          ))}
+        <Select style={{ width: "100%" }}>
+          {ICON_GLYPHS.map(entry => {
+            const Glyph = entry.glyph;
+            const text = t(`${ICON_KEY_SCOPE}.${entry.key}`);
+            // Semi 的 Option 只认 label（ReactNode），children 会被忽略
+            const label = (
+              <span
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 8,
+                }}
+              >
+                <span
+                  style={{
+                    width: 18,
+                    height: 18,
+                    flex: "0 0 18px",
+                    display: "inline-flex",
+                  }}
+                >
+                  <Glyph color="currentColor" width="100%" height="100%" />
+                </span>
+                <span>{text}</span>
+              </span>
+            );
+            return (
+              <Select.Option key={entry.key} value={entry.key} label={label} />
+            );
+          })}
         </Select>
       ),
     },
@@ -98,7 +120,6 @@ export default function Icon({
   paddingX = iconDefaultProps.paddingX,
   foreground = iconDefaultProps.foreground,
   background = iconDefaultProps.background,
-  background2 = iconDefaultProps.background2,
 }: IconProps) {
   const entry =
     ICON_GLYPHS.find(item => item.key === icon) ?? ICON_GLYPHS[0];
@@ -111,7 +132,6 @@ export default function Icon({
   return (
     <MultiRowBackground
       background={background}
-      background2={background2}
       style={{ height: ROW_H, width: boxW }}
     >
       <div

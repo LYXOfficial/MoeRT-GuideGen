@@ -33,7 +33,6 @@ export interface NumAlphabetProps {
   offsetY?: number;
   foreground?: string;
   background?: string;
-  background2?: string;
 }
 
 export const numAlphabetDefaultProps: NumAlphabetProps = {
@@ -45,7 +44,6 @@ export const numAlphabetDefaultProps: NumAlphabetProps = {
   offsetY: 0,
   foreground: colors.foreground,
   background: colors.transparent,
-  background2: colors.transparent,
 };
 
 const SIZE_MIN = 8;
@@ -110,7 +108,6 @@ export default function NumAlphabet({
   offsetY = numAlphabetDefaultProps.offsetY,
   foreground = numAlphabetDefaultProps.foreground,
   background = numAlphabetDefaultProps.background,
-  background2 = numAlphabetDefaultProps.background2,
 }: NumAlphabetProps) {
   const fontsReady = useFontsReady();
   const weightValue = weightCss(weight ?? "normal");
@@ -136,7 +133,6 @@ export default function NumAlphabet({
   return (
     <MultiRowBackground
       background={background}
-      background2={background2}
       style={{ height: ROW_H, width: layout.width + EDGE_PAD * 2 }}
     >
       <svg
