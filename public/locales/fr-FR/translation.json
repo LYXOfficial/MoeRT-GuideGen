@@ -2137,14 +2137,13 @@
               "center": "Centré",
               "right": "Droite"
             },
-            "letterSpacing": "Interlettrage (em)",
-            "fontSizeZh": "Taille chinois (px)",
-            "fontSizeEn": "Taille anglais (px)",
-            "lineGap": "Écart (px)",
-            "offsetY": "Décalage vertical (px)",
+            "letterSpacing": "Interlettrage",
+            "fontSizeZh": "Taille chinois",
+            "fontSizeEn": "Taille anglais",
+            "lineGap": "Écart",
+            "offsetY": "Décalage vertical",
             "foreground": "Couleur du texte",
-            "background": "Fond (ligne 1)",
-            "background2": "Fond (ligne 2)"
+            "background": "Fond"
           }
         },
         "BigZh": {
@@ -2163,13 +2162,12 @@
               "center": "Centré",
               "right": "Droite"
             },
-            "letterSpacing": "Interlettrage (em)",
-            "fontSize": "Taille (px)",
+            "letterSpacing": "Interlettrage",
+            "fontSize": "Taille",
             "lineHeight": "Interligne",
-            "offsetY": "Décalage vertical (px)",
+            "offsetY": "Décalage vertical",
             "foreground": "Couleur du texte",
-            "background": "Fond (ligne 1)",
-            "background2": "Fond (ligne 2)"
+            "background": "Fond"
           }
         },
         "BigEn": {
@@ -2188,13 +2186,12 @@
               "center": "Centré",
               "right": "Droite"
             },
-            "letterSpacing": "Interlettrage (em)",
-            "fontSize": "Taille (px)",
+            "letterSpacing": "Interlettrage",
+            "fontSize": "Taille",
             "lineHeight": "Interligne",
-            "offsetY": "Décalage vertical (px)",
+            "offsetY": "Décalage vertical",
             "foreground": "Couleur du texte",
-            "background": "Fond (ligne 1)",
-            "background2": "Fond (ligne 2)"
+            "background": "Fond"
           }
         },
         "NumAlphabet": {
@@ -2207,12 +2204,11 @@
               "medium": "Moyen",
               "bold": "Gras"
             },
-            "fontSize": "Taille (px)",
-            "letterSpacing": "Interlettrage (em)",
-            "offsetY": "Décalage vertical (px)",
+            "fontSize": "Taille",
+            "letterSpacing": "Interlettrage",
+            "offsetY": "Décalage vertical",
             "foreground": "Couleur du texte",
-            "background": "Fond (ligne 1)",
-            "background2": "Fond (ligne 2)"
+            "background": "Fond"
           }
         },
         "DualText": {
@@ -2232,27 +2228,25 @@
               "center": "Centré",
               "right": "Droite"
             },
-            "letterSpacing": "Interlettrage (em)",
-            "fontSizeZh": "Taille chinois (px)",
-            "fontSizeEn": "Taille anglais (px)",
-            "lineGap": "Écart (px)",
-            "offsetY": "Décalage vertical (px)",
+            "letterSpacing": "Interlettrage",
+            "fontSizeZh": "Taille chinois",
+            "fontSizeEn": "Taille anglais",
+            "lineGap": "Écart",
+            "offsetY": "Décalage vertical",
             "foreground": "Couleur du texte",
-            "background": "Fond (ligne 1)",
-            "background2": "Fond (ligne 2)"
+            "background": "Fond"
           }
         },
         "LineNum": {
           "displayName": "Numéro de ligne",
           "props": {
             "number": "Numéro de ligne",
-            "size": "Taille (px)",
-            "offsetY": "Décalage vertical (px)",
+            "size": "Taille",
+            "offsetY": "Décalage vertical",
             "foreground": "Couleur du texte",
             "lineColor": "Couleur de ligne",
             "border": "Couleur de bordure",
-            "background": "Fond (ligne 1)",
-            "background2": "Fond (ligne 2)"
+            "background": "Fond"
           }
         },
         "TextLineNum": {
@@ -2264,14 +2258,13 @@
             "color2": "Couleur de ligne (bas, optionnel)",
             "foreground": "Couleur du texte",
             "border": "Couleur de bordure",
-            "radius": "Rayon (px)",
-            "height": "Hauteur (px)",
-            "fontSizeZh": "Taille chinois (px)",
-            "fontSizeEn": "Taille anglais (px)",
-            "paddingX": "Marge latérale (px)",
-            "lineGap": "Écart (px)",
-            "background": "Fond (ligne 1)",
-            "background2": "Fond (ligne 2)"
+            "radius": "Rayon",
+            "height": "Hauteur",
+            "fontSizeZh": "Taille chinois",
+            "fontSizeEn": "Taille anglais",
+            "paddingX": "Marge latérale",
+            "lineGap": "Écart",
+            "background": "Fond"
           }
         },
         "Arrow": {
@@ -2293,10 +2286,9 @@
               "down-left": "Bas-gauche",
               "down-right": "Bas-droite"
             },
-            "size": "Taille (px)",
+            "size": "Taille",
             "foreground": "Couleur du texte",
-            "background": "Fond (ligne 1)",
-            "background2": "Fond (ligne 2)"
+            "background": "Fond"
           }
         },
         "Icon": {
@@ -2334,36 +2326,32 @@
               "bus": "Bus",
               "parking": "Parking"
             },
-            "size": "Taille (px)",
+            "size": "Taille",
             "rotation": "Rotation",
-            "paddingX": "Marge latérale (px)",
+            "paddingX": "Marge latérale",
             "foreground": "Couleur du texte",
-            "background": "Fond (ligne 1)",
-            "background2": "Fond (ligne 2)"
+            "background": "Fond"
           }
         },
         "Spacing": {
           "displayName": "Espacement",
           "props": {
-            "background": "Fond (ligne 1)",
-            "background2": "Fond (ligne 2)"
+            "background": "Fond"
           }
         },
         "Blank": {
           "displayName": "Vide",
           "props": {
-            "width": "Épaisseur (px)",
-            "background": "Fond (ligne 1)",
-            "background2": "Fond (ligne 2)"
+            "width": "Largeur",
+            "background": "Fond"
           }
         },
         "SpecLine": {
           "displayName": "Séparateur",
           "props": {
-            "width": "Épaisseur (px)",
+            "width": "Épaisseur",
             "foreground": "Couleur du texte",
-            "background": "Fond (ligne 1)",
-            "background2": "Fond (ligne 2)"
+            "background": "Fond"
           }
         }
       }

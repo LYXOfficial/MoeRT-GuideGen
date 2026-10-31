@@ -73,11 +73,8 @@ export const backgroundFormItems = (scope: string): PropForm[] => [
     label: `${scope}.background`,
     element: <CustomColorPicker currentTheme={THEME_INDEX} />,
   },
-  {
-    key: "background2",
-    label: `${scope}.background2`,
-    element: <CustomColorPicker currentTheme={THEME_INDEX} />,
-  },
+  // 上海不做上下分行分色（用户拍板 2026-11-01）：只暴露一项背景色。
+  // 组件 props 里的 background2 仍然保留（旧存档/落板逻辑会写），但编辑器不展示。
 ];
 
 /** 任意颜色字段（线路色、边框色等）：表单项标题取 `<scope>.<key>` */

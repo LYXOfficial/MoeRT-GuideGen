@@ -2136,14 +2136,13 @@
               "center": "居中",
               "right": "右對齊"
             },
-            "letterSpacing": "字距（em）",
-            "fontSizeZh": "中文字號（px）",
-            "fontSizeEn": "英文字號（px）",
-            "lineGap": "中英間距（px）",
-            "offsetY": "上下偏移（px）",
+            "letterSpacing": "字距",
+            "fontSizeZh": "中文字號",
+            "fontSizeEn": "英文字號",
+            "lineGap": "中英間距",
+            "offsetY": "上下偏移",
             "foreground": "前景色",
-            "background": "背景色（第一行）",
-            "background2": "背景色（第二行）"
+            "background": "背景色"
           }
         },
         "BigZh": {
@@ -2162,13 +2161,12 @@
               "center": "居中",
               "right": "右對齊"
             },
-            "letterSpacing": "字距（em）",
-            "fontSize": "字號（px）",
+            "letterSpacing": "字距",
+            "fontSize": "字號",
             "lineHeight": "行距倍數",
-            "offsetY": "上下偏移（px）",
+            "offsetY": "上下偏移",
             "foreground": "前景色",
-            "background": "背景色（第一行）",
-            "background2": "背景色（第二行）"
+            "background": "背景色"
           }
         },
         "BigEn": {
@@ -2187,13 +2185,12 @@
               "center": "居中",
               "right": "右對齊"
             },
-            "letterSpacing": "字距（em）",
-            "fontSize": "字號（px）",
+            "letterSpacing": "字距",
+            "fontSize": "字號",
             "lineHeight": "行距倍數",
-            "offsetY": "上下偏移（px）",
+            "offsetY": "上下偏移",
             "foreground": "前景色",
-            "background": "背景色（第一行）",
-            "background2": "背景色（第二行）"
+            "background": "背景色"
           }
         },
         "NumAlphabet": {
@@ -2206,12 +2203,11 @@
               "medium": "中黑",
               "bold": "粗黑"
             },
-            "fontSize": "字號（px）",
-            "letterSpacing": "字距（em）",
-            "offsetY": "上下偏移（px）",
+            "fontSize": "字號",
+            "letterSpacing": "字距",
+            "offsetY": "上下偏移",
             "foreground": "前景色",
-            "background": "背景色（第一行）",
-            "background2": "背景色（第二行）"
+            "background": "背景色"
           }
         },
         "DualText": {
@@ -2231,27 +2227,25 @@
               "center": "居中",
               "right": "右對齊"
             },
-            "letterSpacing": "字距（em）",
-            "fontSizeZh": "中文字號（px）",
-            "fontSizeEn": "英文字號（px）",
-            "lineGap": "中英間距（px）",
-            "offsetY": "上下偏移（px）",
+            "letterSpacing": "字距",
+            "fontSizeZh": "中文字號",
+            "fontSizeEn": "英文字號",
+            "lineGap": "中英間距",
+            "offsetY": "上下偏移",
             "foreground": "前景色",
-            "background": "背景色（第一行）",
-            "background2": "背景色（第二行）"
+            "background": "背景色"
           }
         },
         "LineNum": {
           "displayName": "數字路綫標",
           "props": {
             "number": "路綫編號",
-            "size": "尺寸（px）",
-            "offsetY": "上下偏移（px）",
+            "size": "尺寸",
+            "offsetY": "上下偏移",
             "foreground": "前景色",
             "lineColor": "路綫色",
             "border": "邊框色",
-            "background": "背景色（第一行）",
-            "background2": "背景色（第二行）"
+            "background": "背景色"
           }
         },
         "TextLineNum": {
@@ -2263,14 +2257,13 @@
             "color2": "路綫色（下段，可空）",
             "foreground": "前景色",
             "border": "邊框色",
-            "radius": "圓角（px）",
-            "height": "高度（px）",
-            "fontSizeZh": "中文字號（px）",
-            "fontSizeEn": "英文字號（px）",
-            "paddingX": "左右內邊距（px）",
-            "lineGap": "中英間距（px）",
-            "background": "背景色（第一行）",
-            "background2": "背景色（第二行）"
+            "radius": "圓角",
+            "height": "高度",
+            "fontSizeZh": "中文字號",
+            "fontSizeEn": "英文字號",
+            "paddingX": "左右內邊距",
+            "lineGap": "中英間距",
+            "background": "背景色"
           }
         },
         "Arrow": {
@@ -2292,10 +2285,9 @@
               "down-left": "左下",
               "down-right": "右下"
             },
-            "size": "尺寸（px）",
+            "size": "尺寸",
             "foreground": "前景色",
-            "background": "背景色（第一行）",
-            "background2": "背景色（第二行）"
+            "background": "背景色"
           }
         },
         "Icon": {
@@ -2333,36 +2325,32 @@
               "bus": "巴士",
               "parking": "停車場"
             },
-            "size": "尺寸（px）",
+            "size": "尺寸",
             "rotation": "旋轉",
-            "paddingX": "左右留白（px）",
+            "paddingX": "左右留白",
             "foreground": "前景色",
-            "background": "背景色（第一行）",
-            "background2": "背景色（第二行）"
+            "background": "背景色"
           }
         },
         "Spacing": {
           "displayName": "間距",
           "props": {
-            "background": "背景色（第一行）",
-            "background2": "背景色（第二行）"
+            "background": "背景色"
           }
         },
         "Blank": {
           "displayName": "空格",
           "props": {
-            "width": "綫寬（px）",
-            "background": "背景色（第一行）",
-            "background2": "背景色（第二行）"
+            "width": "寬度",
+            "background": "背景色"
           }
         },
         "SpecLine": {
           "displayName": "分隔綫",
           "props": {
-            "width": "綫寬（px）",
+            "width": "綫寬",
             "foreground": "前景色",
-            "background": "背景色（第一行）",
-            "background2": "背景色（第二行）"
+            "background": "背景色"
           }
         }
       }

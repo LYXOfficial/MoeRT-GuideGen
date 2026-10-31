@@ -569,6 +569,9 @@ python3 text_probe.py                                   # 解析 <use> 得到真
     换算表、与官方网络图的对照见 `docs/shanghai/notes/颜色与字体.md`。
   - 字体：中文思源黑体（继承北京那套 Noto Sans SC）+ **Helvetica**（项目已有
     `public/fonts/Helvetica.ttf`，`fonts/helvetica.css` 注册）。
+- **背景不做上下分行**（用户拍板 2026-11-01）：`shanghai/Background.tsx` 的 `backgroundFormItems`
+  只给一项背景色；组件 props 里的 `background2` 保留（旧存档/落板逻辑会写）但编辑器不展示。
+  面板文案也不带单位注释（「字距」不写「（em）」，「尺寸」不写「（px）」）。
 - **尺寸换算**：行高 64px = 牌面高；徽章边长 44.5（0.695H）、白描边 1.3、数字字号 40、
   文字线路标牌高 44.5 / 圆角 3 / 字号 20+10。完整测量表见 `docs/shanghai/notes/组件规格.md`。
 - **箭头坑（重要）**：上海这套箭头不是「实心三角 + 台阶肩」，而是 **V 形人字臂 + 矩形杆**

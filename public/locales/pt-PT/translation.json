@@ -2137,14 +2137,13 @@
               "center": "Centrado",
               "right": "Direita"
             },
-            "letterSpacing": "Espaçamento de letras (em)",
-            "fontSizeZh": "Tamanho chinês (px)",
-            "fontSizeEn": "Tamanho inglês (px)",
-            "lineGap": "Intervalo (px)",
-            "offsetY": "Deslocamento vertical (px)",
+            "letterSpacing": "Espaçamento de letras",
+            "fontSizeZh": "Tamanho chinês",
+            "fontSizeEn": "Tamanho inglês",
+            "lineGap": "Intervalo",
+            "offsetY": "Deslocamento vertical",
             "foreground": "Cor do texto",
-            "background": "Fundo (linha 1)",
-            "background2": "Fundo (linha 2)"
+            "background": "Fundo"
           }
         },
         "BigZh": {
@@ -2163,13 +2162,12 @@
               "center": "Centrado",
               "right": "Direita"
             },
-            "letterSpacing": "Espaçamento de letras (em)",
-            "fontSize": "Tamanho (px)",
+            "letterSpacing": "Espaçamento de letras",
+            "fontSize": "Tamanho",
             "lineHeight": "Entrelinha",
-            "offsetY": "Deslocamento vertical (px)",
+            "offsetY": "Deslocamento vertical",
             "foreground": "Cor do texto",
-            "background": "Fundo (linha 1)",
-            "background2": "Fundo (linha 2)"
+            "background": "Fundo"
           }
         },
         "BigEn": {
@@ -2188,13 +2186,12 @@
               "center": "Centrado",
               "right": "Direita"
             },
-            "letterSpacing": "Espaçamento de letras (em)",
-            "fontSize": "Tamanho (px)",
+            "letterSpacing": "Espaçamento de letras",
+            "fontSize": "Tamanho",
             "lineHeight": "Entrelinha",
-            "offsetY": "Deslocamento vertical (px)",
+            "offsetY": "Deslocamento vertical",
             "foreground": "Cor do texto",
-            "background": "Fundo (linha 1)",
-            "background2": "Fundo (linha 2)"
+            "background": "Fundo"
           }
         },
         "NumAlphabet": {
@@ -2207,12 +2204,11 @@
               "medium": "Médio",
               "bold": "Negrito"
             },
-            "fontSize": "Tamanho (px)",
-            "letterSpacing": "Espaçamento de letras (em)",
-            "offsetY": "Deslocamento vertical (px)",
+            "fontSize": "Tamanho",
+            "letterSpacing": "Espaçamento de letras",
+            "offsetY": "Deslocamento vertical",
             "foreground": "Cor do texto",
-            "background": "Fundo (linha 1)",
-            "background2": "Fundo (linha 2)"
+            "background": "Fundo"
           }
         },
         "DualText": {
@@ -2232,27 +2228,25 @@
               "center": "Centrado",
               "right": "Direita"
             },
-            "letterSpacing": "Espaçamento de letras (em)",
-            "fontSizeZh": "Tamanho chinês (px)",
-            "fontSizeEn": "Tamanho inglês (px)",
-            "lineGap": "Intervalo (px)",
-            "offsetY": "Deslocamento vertical (px)",
+            "letterSpacing": "Espaçamento de letras",
+            "fontSizeZh": "Tamanho chinês",
+            "fontSizeEn": "Tamanho inglês",
+            "lineGap": "Intervalo",
+            "offsetY": "Deslocamento vertical",
             "foreground": "Cor do texto",
-            "background": "Fundo (linha 1)",
-            "background2": "Fundo (linha 2)"
+            "background": "Fundo"
           }
         },
         "LineNum": {
           "displayName": "Número de linha",
           "props": {
             "number": "Número de linha",
-            "size": "Tamanho (px)",
-            "offsetY": "Deslocamento vertical (px)",
+            "size": "Tamanho",
+            "offsetY": "Deslocamento vertical",
             "foreground": "Cor do texto",
             "lineColor": "Cor da linha",
             "border": "Cor do contorno",
-            "background": "Fundo (linha 1)",
-            "background2": "Fundo (linha 2)"
+            "background": "Fundo"
           }
         },
         "TextLineNum": {
@@ -2264,14 +2258,13 @@
             "color2": "Cor da linha (inf., opcional)",
             "foreground": "Cor do texto",
             "border": "Cor do contorno",
-            "radius": "Raio (px)",
-            "height": "Altura (px)",
-            "fontSizeZh": "Tamanho chinês (px)",
-            "fontSizeEn": "Tamanho inglês (px)",
-            "paddingX": "Margem lateral (px)",
-            "lineGap": "Intervalo (px)",
-            "background": "Fundo (linha 1)",
-            "background2": "Fundo (linha 2)"
+            "radius": "Raio",
+            "height": "Altura",
+            "fontSizeZh": "Tamanho chinês",
+            "fontSizeEn": "Tamanho inglês",
+            "paddingX": "Margem lateral",
+            "lineGap": "Intervalo",
+            "background": "Fundo"
           }
         },
         "Arrow": {
@@ -2293,10 +2286,9 @@
               "down-left": "Baixo-esquerda",
               "down-right": "Baixo-direita"
             },
-            "size": "Tamanho (px)",
+            "size": "Tamanho",
             "foreground": "Cor do texto",
-            "background": "Fundo (linha 1)",
-            "background2": "Fundo (linha 2)"
+            "background": "Fundo"
           }
         },
         "Icon": {
@@ -2334,36 +2326,32 @@
               "bus": "Autocarro urbano",
               "parking": "Parque de estacionamento"
             },
-            "size": "Tamanho (px)",
+            "size": "Tamanho",
             "rotation": "Rotação",
-            "paddingX": "Margem lateral (px)",
+            "paddingX": "Margem lateral",
             "foreground": "Cor do texto",
-            "background": "Fundo (linha 1)",
-            "background2": "Fundo (linha 2)"
+            "background": "Fundo"
           }
         },
         "Spacing": {
           "displayName": "Espaçamento",
           "props": {
-            "background": "Fundo (linha 1)",
-            "background2": "Fundo (linha 2)"
+            "background": "Fundo"
           }
         },
         "Blank": {
           "displayName": "Vazio",
           "props": {
-            "width": "Espessura (px)",
-            "background": "Fundo (linha 1)",
-            "background2": "Fundo (linha 2)"
+            "width": "Largura",
+            "background": "Fundo"
           }
         },
         "SpecLine": {
           "displayName": "Separador",
           "props": {
-            "width": "Espessura (px)",
+            "width": "Espessura",
             "foreground": "Cor do texto",
-            "background": "Fundo (linha 1)",
-            "background2": "Fundo (linha 2)"
+            "background": "Fundo"
           }
         }
       }

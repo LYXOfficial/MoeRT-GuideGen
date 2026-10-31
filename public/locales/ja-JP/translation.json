@@ -2136,14 +2136,13 @@
               "center": "中央",
               "right": "右揃え"
             },
-            "letterSpacing": "字間（em）",
-            "fontSizeZh": "中国語のサイズ（px）",
-            "fontSizeEn": "英語のサイズ（px）",
-            "lineGap": "中英の間隔（px）",
-            "offsetY": "上下オフセット（px）",
+            "letterSpacing": "字間",
+            "fontSizeZh": "中国語のサイズ",
+            "fontSizeEn": "英語のサイズ",
+            "lineGap": "中英の間隔",
+            "offsetY": "上下オフセット",
             "foreground": "前景色",
-            "background": "背景色（1行目）",
-            "background2": "背景色（2行目）"
+            "background": "背景色"
           }
         },
         "BigZh": {
@@ -2162,13 +2161,12 @@
               "center": "中央",
               "right": "右揃え"
             },
-            "letterSpacing": "字間（em）",
-            "fontSize": "文字サイズ（px）",
+            "letterSpacing": "字間",
+            "fontSize": "文字サイズ",
             "lineHeight": "行間",
-            "offsetY": "上下オフセット（px）",
+            "offsetY": "上下オフセット",
             "foreground": "前景色",
-            "background": "背景色（1行目）",
-            "background2": "背景色（2行目）"
+            "background": "背景色"
           }
         },
         "BigEn": {
@@ -2187,13 +2185,12 @@
               "center": "中央",
               "right": "右揃え"
             },
-            "letterSpacing": "字間（em）",
-            "fontSize": "文字サイズ（px）",
+            "letterSpacing": "字間",
+            "fontSize": "文字サイズ",
             "lineHeight": "行間",
-            "offsetY": "上下オフセット（px）",
+            "offsetY": "上下オフセット",
             "foreground": "前景色",
-            "background": "背景色（1行目）",
-            "background2": "背景色（2行目）"
+            "background": "背景色"
           }
         },
         "NumAlphabet": {
@@ -2206,12 +2203,11 @@
               "medium": "中太",
               "bold": "太字"
             },
-            "fontSize": "文字サイズ（px）",
-            "letterSpacing": "字間（em）",
-            "offsetY": "上下オフセット（px）",
+            "fontSize": "文字サイズ",
+            "letterSpacing": "字間",
+            "offsetY": "上下オフセット",
             "foreground": "前景色",
-            "background": "背景色（1行目）",
-            "background2": "背景色（2行目）"
+            "background": "背景色"
           }
         },
         "DualText": {
@@ -2231,27 +2227,25 @@
               "center": "中央",
               "right": "右揃え"
             },
-            "letterSpacing": "字間（em）",
-            "fontSizeZh": "中国語のサイズ（px）",
-            "fontSizeEn": "英語のサイズ（px）",
-            "lineGap": "中英の間隔（px）",
-            "offsetY": "上下オフセット（px）",
+            "letterSpacing": "字間",
+            "fontSizeZh": "中国語のサイズ",
+            "fontSizeEn": "英語のサイズ",
+            "lineGap": "中英の間隔",
+            "offsetY": "上下オフセット",
             "foreground": "前景色",
-            "background": "背景色（1行目）",
-            "background2": "背景色（2行目）"
+            "background": "背景色"
           }
         },
         "LineNum": {
           "displayName": "番号バッジ",
           "props": {
             "number": "路線番号",
-            "size": "サイズ（px）",
-            "offsetY": "上下オフセット（px）",
+            "size": "サイズ",
+            "offsetY": "上下オフセット",
             "foreground": "前景色",
             "lineColor": "路線色",
             "border": "枠線色",
-            "background": "背景色（1行目）",
-            "background2": "背景色（2行目）"
+            "background": "背景色"
           }
         },
         "TextLineNum": {
@@ -2263,14 +2257,13 @@
             "color2": "路線色（下段・任意）",
             "foreground": "前景色",
             "border": "枠線色",
-            "radius": "角丸（px）",
-            "height": "高さ（px）",
-            "fontSizeZh": "中国語のサイズ（px）",
-            "fontSizeEn": "英語のサイズ（px）",
-            "paddingX": "左右の余白（px）",
-            "lineGap": "中英の間隔（px）",
-            "background": "背景色（1行目）",
-            "background2": "背景色（2行目）"
+            "radius": "角丸",
+            "height": "高さ",
+            "fontSizeZh": "中国語のサイズ",
+            "fontSizeEn": "英語のサイズ",
+            "paddingX": "左右の余白",
+            "lineGap": "中英の間隔",
+            "background": "背景色"
           }
         },
         "Arrow": {
@@ -2292,10 +2285,9 @@
               "down-left": "左下",
               "down-right": "右下"
             },
-            "size": "サイズ（px）",
+            "size": "サイズ",
             "foreground": "前景色",
-            "background": "背景色（1行目）",
-            "background2": "背景色（2行目）"
+            "background": "背景色"
           }
         },
         "Icon": {
@@ -2333,36 +2325,32 @@
               "bus": "バス",
               "parking": "駐車場"
             },
-            "size": "サイズ（px）",
+            "size": "サイズ",
             "rotation": "回転",
-            "paddingX": "左右の余白（px）",
+            "paddingX": "左右の余白",
             "foreground": "前景色",
-            "background": "背景色（1行目）",
-            "background2": "背景色（2行目）"
+            "background": "背景色"
           }
         },
         "Spacing": {
           "displayName": "間隔",
           "props": {
-            "background": "背景色（1行目）",
-            "background2": "背景色（2行目）"
+            "background": "背景色"
           }
         },
         "Blank": {
           "displayName": "空白",
           "props": {
-            "width": "線幅（px）",
-            "background": "背景色（1行目）",
-            "background2": "背景色（2行目）"
+            "width": "幅",
+            "background": "背景色"
           }
         },
         "SpecLine": {
           "displayName": "区切り線",
           "props": {
-            "width": "線幅（px）",
+            "width": "線幅",
             "foreground": "前景色",
-            "background": "背景色（1行目）",
-            "background2": "背景色（2行目）"
+            "background": "背景色"
           }
         }
       }

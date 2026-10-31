@@ -2136,14 +2136,13 @@
               "center": "가운데",
               "right": "오른쪽 정렬"
             },
-            "letterSpacing": "자간(em)",
-            "fontSizeZh": "중국어 크기(px)",
-            "fontSizeEn": "영어 크기(px)",
-            "lineGap": "중영문 간격(px)",
-            "offsetY": "상하 오프셋(px)",
+            "letterSpacing": "자간",
+            "fontSizeZh": "중국어 크기",
+            "fontSizeEn": "영어 크기",
+            "lineGap": "중영문 간격",
+            "offsetY": "상하 오프셋",
             "foreground": "전경색",
-            "background": "배경색(1행)",
-            "background2": "배경색(2행)"
+            "background": "배경색"
           }
         },
         "BigZh": {
@@ -2162,13 +2161,12 @@
               "center": "가운데",
               "right": "오른쪽 정렬"
             },
-            "letterSpacing": "자간(em)",
-            "fontSize": "글자 크기(px)",
+            "letterSpacing": "자간",
+            "fontSize": "글자 크기",
             "lineHeight": "줄 간격",
-            "offsetY": "상하 오프셋(px)",
+            "offsetY": "상하 오프셋",
             "foreground": "전경색",
-            "background": "배경색(1행)",
-            "background2": "배경색(2행)"
+            "background": "배경색"
           }
         },
         "BigEn": {
@@ -2187,13 +2185,12 @@
               "center": "가운데",
               "right": "오른쪽 정렬"
             },
-            "letterSpacing": "자간(em)",
-            "fontSize": "글자 크기(px)",
+            "letterSpacing": "자간",
+            "fontSize": "글자 크기",
             "lineHeight": "줄 간격",
-            "offsetY": "상하 오프셋(px)",
+            "offsetY": "상하 오프셋",
             "foreground": "전경색",
-            "background": "배경색(1행)",
-            "background2": "배경색(2행)"
+            "background": "배경색"
           }
         },
         "NumAlphabet": {
@@ -2206,12 +2203,11 @@
               "medium": "중간",
               "bold": "굵게"
             },
-            "fontSize": "글자 크기(px)",
-            "letterSpacing": "자간(em)",
-            "offsetY": "상하 오프셋(px)",
+            "fontSize": "글자 크기",
+            "letterSpacing": "자간",
+            "offsetY": "상하 오프셋",
             "foreground": "전경색",
-            "background": "배경색(1행)",
-            "background2": "배경색(2행)"
+            "background": "배경색"
           }
         },
         "DualText": {
@@ -2231,27 +2227,25 @@
               "center": "가운데",
               "right": "오른쪽 정렬"
             },
-            "letterSpacing": "자간(em)",
-            "fontSizeZh": "중국어 크기(px)",
-            "fontSizeEn": "영어 크기(px)",
-            "lineGap": "중영문 간격(px)",
-            "offsetY": "상하 오프셋(px)",
+            "letterSpacing": "자간",
+            "fontSizeZh": "중국어 크기",
+            "fontSizeEn": "영어 크기",
+            "lineGap": "중영문 간격",
+            "offsetY": "상하 오프셋",
             "foreground": "전경색",
-            "background": "배경색(1행)",
-            "background2": "배경색(2행)"
+            "background": "배경색"
           }
         },
         "LineNum": {
           "displayName": "번호 배지",
           "props": {
             "number": "노선 번호",
-            "size": "크기(px)",
-            "offsetY": "상하 오프셋(px)",
+            "size": "크기",
+            "offsetY": "상하 오프셋",
             "foreground": "전경색",
             "lineColor": "노선색",
             "border": "테두리색",
-            "background": "배경색(1행)",
-            "background2": "배경색(2행)"
+            "background": "배경색"
           }
         },
         "TextLineNum": {
@@ -2263,14 +2257,13 @@
             "color2": "노선색(하단, 선택)",
             "foreground": "전경색",
             "border": "테두리색",
-            "radius": "모서리(px)",
-            "height": "높이(px)",
-            "fontSizeZh": "중국어 크기(px)",
-            "fontSizeEn": "영어 크기(px)",
-            "paddingX": "좌우 여백(px)",
-            "lineGap": "중영문 간격(px)",
-            "background": "배경색(1행)",
-            "background2": "배경색(2행)"
+            "radius": "모서리",
+            "height": "높이",
+            "fontSizeZh": "중국어 크기",
+            "fontSizeEn": "영어 크기",
+            "paddingX": "좌우 여백",
+            "lineGap": "중영문 간격",
+            "background": "배경색"
           }
         },
         "Arrow": {
@@ -2292,10 +2285,9 @@
               "down-left": "왼쪽 아래",
               "down-right": "오른쪽 아래"
             },
-            "size": "크기(px)",
+            "size": "크기",
             "foreground": "전경색",
-            "background": "배경색(1행)",
-            "background2": "배경색(2행)"
+            "background": "배경색"
           }
         },
         "Icon": {
@@ -2333,36 +2325,32 @@
               "bus": "버스",
               "parking": "주차장"
             },
-            "size": "크기(px)",
+            "size": "크기",
             "rotation": "회전",
-            "paddingX": "좌우 여백(px)",
+            "paddingX": "좌우 여백",
             "foreground": "전경색",
-            "background": "배경색(1행)",
-            "background2": "배경색(2행)"
+            "background": "배경색"
           }
         },
         "Spacing": {
           "displayName": "간격",
           "props": {
-            "background": "배경색(1행)",
-            "background2": "배경색(2행)"
+            "background": "배경색"
           }
         },
         "Blank": {
           "displayName": "공백",
           "props": {
-            "width": "선 두께(px)",
-            "background": "배경색(1행)",
-            "background2": "배경색(2행)"
+            "width": "너비",
+            "background": "배경색"
           }
         },
         "SpecLine": {
           "displayName": "구분선",
           "props": {
-            "width": "선 두께(px)",
+            "width": "선 두께",
             "foreground": "전경색",
-            "background": "배경색(1행)",
-            "background2": "배경색(2행)"
+            "background": "배경색"
           }
         }
       }

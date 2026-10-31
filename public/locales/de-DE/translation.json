@@ -2137,14 +2137,13 @@
               "center": "Zentriert",
               "right": "Rechtsbündig"
             },
-            "letterSpacing": "Laufweite (em)",
-            "fontSizeZh": "Chinesisch-Größe (px)",
-            "fontSizeEn": "Englisch-Größe (px)",
-            "lineGap": "Abstand (px)",
-            "offsetY": "Vertikaler Versatz (px)",
+            "letterSpacing": "Laufweite",
+            "fontSizeZh": "Chinesisch-Größe",
+            "fontSizeEn": "Englisch-Größe",
+            "lineGap": "Abstand",
+            "offsetY": "Vertikaler Versatz",
             "foreground": "Vordergrundfarbe",
-            "background": "Hintergrund (Zeile 1)",
-            "background2": "Hintergrund (Zeile 2)"
+            "background": "Hintergrund"
           }
         },
         "BigZh": {
@@ -2163,13 +2162,12 @@
               "center": "Zentriert",
               "right": "Rechtsbündig"
             },
-            "letterSpacing": "Laufweite (em)",
-            "fontSize": "Schriftgröße (px)",
+            "letterSpacing": "Laufweite",
+            "fontSize": "Schriftgröße",
             "lineHeight": "Zeilenabstand",
-            "offsetY": "Vertikaler Versatz (px)",
+            "offsetY": "Vertikaler Versatz",
             "foreground": "Vordergrundfarbe",
-            "background": "Hintergrund (Zeile 1)",
-            "background2": "Hintergrund (Zeile 2)"
+            "background": "Hintergrund"
           }
         },
         "BigEn": {
@@ -2188,13 +2186,12 @@
               "center": "Zentriert",
               "right": "Rechtsbündig"
             },
-            "letterSpacing": "Laufweite (em)",
-            "fontSize": "Schriftgröße (px)",
+            "letterSpacing": "Laufweite",
+            "fontSize": "Schriftgröße",
             "lineHeight": "Zeilenabstand",
-            "offsetY": "Vertikaler Versatz (px)",
+            "offsetY": "Vertikaler Versatz",
             "foreground": "Vordergrundfarbe",
-            "background": "Hintergrund (Zeile 1)",
-            "background2": "Hintergrund (Zeile 2)"
+            "background": "Hintergrund"
           }
         },
         "NumAlphabet": {
@@ -2207,12 +2204,11 @@
               "medium": "Mittel",
               "bold": "Fett"
             },
-            "fontSize": "Schriftgröße (px)",
-            "letterSpacing": "Laufweite (em)",
-            "offsetY": "Vertikaler Versatz (px)",
+            "fontSize": "Schriftgröße",
+            "letterSpacing": "Laufweite",
+            "offsetY": "Vertikaler Versatz",
             "foreground": "Vordergrundfarbe",
-            "background": "Hintergrund (Zeile 1)",
-            "background2": "Hintergrund (Zeile 2)"
+            "background": "Hintergrund"
           }
         },
         "DualText": {
@@ -2232,27 +2228,25 @@
               "center": "Zentriert",
               "right": "Rechtsbündig"
             },
-            "letterSpacing": "Laufweite (em)",
-            "fontSizeZh": "Chinesisch-Größe (px)",
-            "fontSizeEn": "Englisch-Größe (px)",
-            "lineGap": "Abstand (px)",
-            "offsetY": "Vertikaler Versatz (px)",
+            "letterSpacing": "Laufweite",
+            "fontSizeZh": "Chinesisch-Größe",
+            "fontSizeEn": "Englisch-Größe",
+            "lineGap": "Abstand",
+            "offsetY": "Vertikaler Versatz",
             "foreground": "Vordergrundfarbe",
-            "background": "Hintergrund (Zeile 1)",
-            "background2": "Hintergrund (Zeile 2)"
+            "background": "Hintergrund"
           }
         },
         "LineNum": {
           "displayName": "Liniennummer",
           "props": {
             "number": "Liniennummer",
-            "size": "Größe (px)",
-            "offsetY": "Vertikaler Versatz (px)",
+            "size": "Größe",
+            "offsetY": "Vertikaler Versatz",
             "foreground": "Vordergrundfarbe",
             "lineColor": "Linienfarbe",
             "border": "Rahmenfarbe",
-            "background": "Hintergrund (Zeile 1)",
-            "background2": "Hintergrund (Zeile 2)"
+            "background": "Hintergrund"
           }
         },
         "TextLineNum": {
@@ -2264,14 +2258,13 @@
             "color2": "Linienfarbe (unten, optional)",
             "foreground": "Vordergrundfarbe",
             "border": "Rahmenfarbe",
-            "radius": "Radius (px)",
-            "height": "Höhe (px)",
-            "fontSizeZh": "Chinesisch-Größe (px)",
-            "fontSizeEn": "Englisch-Größe (px)",
-            "paddingX": "Seitenabstand (px)",
-            "lineGap": "Abstand (px)",
-            "background": "Hintergrund (Zeile 1)",
-            "background2": "Hintergrund (Zeile 2)"
+            "radius": "Radius",
+            "height": "Höhe",
+            "fontSizeZh": "Chinesisch-Größe",
+            "fontSizeEn": "Englisch-Größe",
+            "paddingX": "Seitenabstand",
+            "lineGap": "Abstand",
+            "background": "Hintergrund"
           }
         },
         "Arrow": {
@@ -2293,10 +2286,9 @@
               "down-left": "Unten links",
               "down-right": "Unten rechts"
             },
-            "size": "Größe (px)",
+            "size": "Größe",
             "foreground": "Vordergrundfarbe",
-            "background": "Hintergrund (Zeile 1)",
-            "background2": "Hintergrund (Zeile 2)"
+            "background": "Hintergrund"
           }
         },
         "Icon": {
@@ -2334,36 +2326,32 @@
               "bus": "Bus",
               "parking": "Parkplatz"
             },
-            "size": "Größe (px)",
+            "size": "Größe",
             "rotation": "Drehung",
-            "paddingX": "Seitenabstand (px)",
+            "paddingX": "Seitenabstand",
             "foreground": "Vordergrundfarbe",
-            "background": "Hintergrund (Zeile 1)",
-            "background2": "Hintergrund (Zeile 2)"
+            "background": "Hintergrund"
           }
         },
         "Spacing": {
           "displayName": "Abstand",
           "props": {
-            "background": "Hintergrund (Zeile 1)",
-            "background2": "Hintergrund (Zeile 2)"
+            "background": "Hintergrund"
           }
         },
         "Blank": {
           "displayName": "Leerraum",
           "props": {
-            "width": "Linienstärke (px)",
-            "background": "Hintergrund (Zeile 1)",
-            "background2": "Hintergrund (Zeile 2)"
+            "width": "Breite",
+            "background": "Hintergrund"
           }
         },
         "SpecLine": {
           "displayName": "Trennlinie",
           "props": {
-            "width": "Linienstärke (px)",
+            "width": "Linienstärke",
             "foreground": "Vordergrundfarbe",
-            "background": "Hintergrund (Zeile 1)",
-            "background2": "Hintergrund (Zeile 2)"
+            "background": "Hintergrund"
           }
         }
       }

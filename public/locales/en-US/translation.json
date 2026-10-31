@@ -2137,14 +2137,13 @@
               "center": "Center",
               "right": "Right"
             },
-            "letterSpacing": "Letter spacing (em)",
-            "fontSizeZh": "Chinese size (px)",
-            "fontSizeEn": "English size (px)",
-            "lineGap": "Bilingual gap (px)",
-            "offsetY": "Vertical offset (px)",
+            "letterSpacing": "Letter spacing",
+            "fontSizeZh": "Chinese size",
+            "fontSizeEn": "English size",
+            "lineGap": "Bilingual gap",
+            "offsetY": "Vertical offset",
             "foreground": "Foreground",
-            "background": "Background (row 1)",
-            "background2": "Background (row 2)"
+            "background": "Background"
           }
         },
         "BigZh": {
@@ -2163,13 +2162,12 @@
               "center": "Center",
               "right": "Right"
             },
-            "letterSpacing": "Letter spacing (em)",
-            "fontSize": "Font size (px)",
+            "letterSpacing": "Letter spacing",
+            "fontSize": "Font size",
             "lineHeight": "Line height",
-            "offsetY": "Vertical offset (px)",
+            "offsetY": "Vertical offset",
             "foreground": "Foreground",
-            "background": "Background (row 1)",
-            "background2": "Background (row 2)"
+            "background": "Background"
           }
         },
         "BigEn": {
@@ -2188,13 +2186,12 @@
               "center": "Center",
               "right": "Right"
             },
-            "letterSpacing": "Letter spacing (em)",
-            "fontSize": "Font size (px)",
+            "letterSpacing": "Letter spacing",
+            "fontSize": "Font size",
             "lineHeight": "Line height",
-            "offsetY": "Vertical offset (px)",
+            "offsetY": "Vertical offset",
             "foreground": "Foreground",
-            "background": "Background (row 1)",
-            "background2": "Background (row 2)"
+            "background": "Background"
           }
         },
         "NumAlphabet": {
@@ -2207,12 +2204,11 @@
               "medium": "Medium",
               "bold": "Bold"
             },
-            "fontSize": "Font size (px)",
-            "letterSpacing": "Letter spacing (em)",
-            "offsetY": "Vertical offset (px)",
+            "fontSize": "Font size",
+            "letterSpacing": "Letter spacing",
+            "offsetY": "Vertical offset",
             "foreground": "Foreground",
-            "background": "Background (row 1)",
-            "background2": "Background (row 2)"
+            "background": "Background"
           }
         },
         "DualText": {
@@ -2232,27 +2228,25 @@
               "center": "Center",
               "right": "Right"
             },
-            "letterSpacing": "Letter spacing (em)",
-            "fontSizeZh": "Chinese size (px)",
-            "fontSizeEn": "English size (px)",
-            "lineGap": "Bilingual gap (px)",
-            "offsetY": "Vertical offset (px)",
+            "letterSpacing": "Letter spacing",
+            "fontSizeZh": "Chinese size",
+            "fontSizeEn": "English size",
+            "lineGap": "Bilingual gap",
+            "offsetY": "Vertical offset",
             "foreground": "Foreground",
-            "background": "Background (row 1)",
-            "background2": "Background (row 2)"
+            "background": "Background"
           }
         },
         "LineNum": {
           "displayName": "Number badge",
           "props": {
             "number": "Line number",
-            "size": "Size (px)",
-            "offsetY": "Vertical offset (px)",
+            "size": "Size",
+            "offsetY": "Vertical offset",
             "foreground": "Foreground",
             "lineColor": "Line colour",
             "border": "Border colour",
-            "background": "Background (row 1)",
-            "background2": "Background (row 2)"
+            "background": "Background"
           }
         },
         "TextLineNum": {
@@ -2264,14 +2258,13 @@
             "color2": "Line colour (lower, optional)",
             "foreground": "Foreground",
             "border": "Border colour",
-            "radius": "Radius (px)",
-            "height": "Height (px)",
-            "fontSizeZh": "Chinese size (px)",
-            "fontSizeEn": "English size (px)",
-            "paddingX": "Horizontal padding (px)",
-            "lineGap": "Bilingual gap (px)",
-            "background": "Background (row 1)",
-            "background2": "Background (row 2)"
+            "radius": "Radius",
+            "height": "Height",
+            "fontSizeZh": "Chinese size",
+            "fontSizeEn": "English size",
+            "paddingX": "Horizontal padding",
+            "lineGap": "Bilingual gap",
+            "background": "Background"
           }
         },
         "Arrow": {
@@ -2293,10 +2286,9 @@
               "down-left": "Down-left",
               "down-right": "Down-right"
             },
-            "size": "Size (px)",
+            "size": "Size",
             "foreground": "Foreground",
-            "background": "Background (row 1)",
-            "background2": "Background (row 2)"
+            "background": "Background"
           }
         },
         "Icon": {
@@ -2334,36 +2326,32 @@
               "bus": "Bus",
               "parking": "Parking"
             },
-            "size": "Size (px)",
+            "size": "Size",
             "rotation": "Rotation",
-            "paddingX": "Horizontal padding (px)",
+            "paddingX": "Horizontal padding",
             "foreground": "Foreground",
-            "background": "Background (row 1)",
-            "background2": "Background (row 2)"
+            "background": "Background"
           }
         },
         "Spacing": {
           "displayName": "Spacer",
           "props": {
-            "background": "Background (row 1)",
-            "background2": "Background (row 2)"
+            "background": "Background"
           }
         },
         "Blank": {
           "displayName": "Blank",
           "props": {
-            "width": "Line width (px)",
-            "background": "Background (row 1)",
-            "background2": "Background (row 2)"
+            "width": "Width",
+            "background": "Background"
           }
         },
         "SpecLine": {
           "displayName": "Divider",
           "props": {
-            "width": "Line width (px)",
+            "width": "Line width",
             "foreground": "Foreground",
-            "background": "Background (row 1)",
-            "background2": "Background (row 2)"
+            "background": "Background"
           }
         }
       }

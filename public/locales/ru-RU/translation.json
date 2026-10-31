@@ -2139,14 +2139,13 @@
               "center": "По центру",
               "right": "По правому краю"
             },
-            "letterSpacing": "Межбуквенное (em)",
-            "fontSizeZh": "Размер китайского (px)",
-            "fontSizeEn": "Размер английского (px)",
-            "lineGap": "Интервал (px)",
-            "offsetY": "Смещение по вертикали (px)",
+            "letterSpacing": "Межбуквенное",
+            "fontSizeZh": "Размер китайского",
+            "fontSizeEn": "Размер английского",
+            "lineGap": "Интервал",
+            "offsetY": "Смещение по вертикали",
             "foreground": "Цвет текста",
-            "background": "Фон (строка 1)",
-            "background2": "Фон (строка 2)"
+            "background": "Фон"
           }
         },
         "BigZh": {
@@ -2165,13 +2164,12 @@
               "center": "По центру",
               "right": "По правому краю"
             },
-            "letterSpacing": "Межбуквенное (em)",
-            "fontSize": "Размер шрифта (px)",
+            "letterSpacing": "Межбуквенное",
+            "fontSize": "Размер шрифта",
             "lineHeight": "Межстрочный интервал",
-            "offsetY": "Смещение по вертикали (px)",
+            "offsetY": "Смещение по вертикали",
             "foreground": "Цвет текста",
-            "background": "Фон (строка 1)",
-            "background2": "Фон (строка 2)"
+            "background": "Фон"
           }
         },
         "BigEn": {
@@ -2190,13 +2188,12 @@
               "center": "По центру",
               "right": "По правому краю"
             },
-            "letterSpacing": "Межбуквенное (em)",
-            "fontSize": "Размер шрифта (px)",
+            "letterSpacing": "Межбуквенное",
+            "fontSize": "Размер шрифта",
             "lineHeight": "Межстрочный интервал",
-            "offsetY": "Смещение по вертикали (px)",
+            "offsetY": "Смещение по вертикали",
             "foreground": "Цвет текста",
-            "background": "Фон (строка 1)",
-            "background2": "Фон (строка 2)"
+            "background": "Фон"
           }
         },
         "NumAlphabet": {
@@ -2209,12 +2206,11 @@
               "medium": "Средний",
               "bold": "Жирный"
             },
-            "fontSize": "Размер шрифта (px)",
-            "letterSpacing": "Межбуквенное (em)",
-            "offsetY": "Смещение по вертикали (px)",
+            "fontSize": "Размер шрифта",
+            "letterSpacing": "Межбуквенное",
+            "offsetY": "Смещение по вертикали",
             "foreground": "Цвет текста",
-            "background": "Фон (строка 1)",
-            "background2": "Фон (строка 2)"
+            "background": "Фон"
           }
         },
         "DualText": {
@@ -2234,27 +2230,25 @@
               "center": "По центру",
               "right": "По правому краю"
             },
-            "letterSpacing": "Межбуквенное (em)",
-            "fontSizeZh": "Размер китайского (px)",
-            "fontSizeEn": "Размер английского (px)",
-            "lineGap": "Интервал (px)",
-            "offsetY": "Смещение по вертикали (px)",
+            "letterSpacing": "Межбуквенное",
+            "fontSizeZh": "Размер китайского",
+            "fontSizeEn": "Размер английского",
+            "lineGap": "Интервал",
+            "offsetY": "Смещение по вертикали",
             "foreground": "Цвет текста",
-            "background": "Фон (строка 1)",
-            "background2": "Фон (строка 2)"
+            "background": "Фон"
           }
         },
         "LineNum": {
           "displayName": "Номер линии",
           "props": {
             "number": "Номер линии",
-            "size": "Размер (px)",
-            "offsetY": "Смещение по вертикали (px)",
+            "size": "Размер",
+            "offsetY": "Смещение по вертикали",
             "foreground": "Цвет текста",
             "lineColor": "Цвет линии",
             "border": "Цвет обводки",
-            "background": "Фон (строка 1)",
-            "background2": "Фон (строка 2)"
+            "background": "Фон"
           }
         },
         "TextLineNum": {
@@ -2266,14 +2260,13 @@
             "color2": "Цвет линии (низ, необяз.)",
             "foreground": "Цвет текста",
             "border": "Цвет обводки",
-            "radius": "Радиус (px)",
-            "height": "Высота (px)",
-            "fontSizeZh": "Размер китайского (px)",
-            "fontSizeEn": "Размер английского (px)",
-            "paddingX": "Отступы по бокам (px)",
-            "lineGap": "Интервал (px)",
-            "background": "Фон (строка 1)",
-            "background2": "Фон (строка 2)"
+            "radius": "Радиус",
+            "height": "Высота",
+            "fontSizeZh": "Размер китайского",
+            "fontSizeEn": "Размер английского",
+            "paddingX": "Отступы по бокам",
+            "lineGap": "Интервал",
+            "background": "Фон"
           }
         },
         "Arrow": {
@@ -2295,10 +2288,9 @@
               "down-left": "Влево-вниз",
               "down-right": "Вправо-вниз"
             },
-            "size": "Размер (px)",
+            "size": "Размер",
             "foreground": "Цвет текста",
-            "background": "Фон (строка 1)",
-            "background2": "Фон (строка 2)"
+            "background": "Фон"
           }
         },
         "Icon": {
@@ -2336,36 +2328,32 @@
               "bus": "Автобус",
               "parking": "Парковка"
             },
-            "size": "Размер (px)",
+            "size": "Размер",
             "rotation": "Поворот",
-            "paddingX": "Отступы по бокам (px)",
+            "paddingX": "Отступы по бокам",
             "foreground": "Цвет текста",
-            "background": "Фон (строка 1)",
-            "background2": "Фон (строка 2)"
+            "background": "Фон"
           }
         },
         "Spacing": {
           "displayName": "Отступ",
           "props": {
-            "background": "Фон (строка 1)",
-            "background2": "Фон (строка 2)"
+            "background": "Фон"
           }
         },
         "Blank": {
           "displayName": "Пробел",
           "props": {
-            "width": "Толщина (px)",
-            "background": "Фон (строка 1)",
-            "background2": "Фон (строка 2)"
+            "width": "Ширина",
+            "background": "Фон"
           }
         },
         "SpecLine": {
           "displayName": "Разделитель",
           "props": {
-            "width": "Толщина (px)",
+            "width": "Толщина",
             "foreground": "Цвет текста",
-            "background": "Фон (строка 1)",
-            "background2": "Фон (строка 2)"
+            "background": "Фон"
           }
         }
       }
