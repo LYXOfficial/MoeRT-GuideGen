@@ -118,7 +118,8 @@ export default function NumAlphabet({
   // 选「中黑」时用极细描边模拟（≈0.02em），否则 400/500 渲染完全一样
   const fakeMedium = weightValue === 500;
   const size = clamp(fontSize, SIZE_MIN, SIZE_MAX, 62);
-  const dy = Number(offsetY) || 0;
+  // 上下偏移：正数向上（和编辑器里的 ↑ 箭头一致）
+  const dy = -(Number(offsetY) || 0);
   const ls = Number(letterSpacing) || 0;
 
   const layout = useMemo(() => {

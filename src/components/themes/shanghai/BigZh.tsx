@@ -138,7 +138,8 @@ export default function BigZh({
   const fontsReady = useFontsReady();
   const weightValue = weightCss(weight ?? "medium");
   const size = clamp(fontSize, SIZE_MIN, SIZE_MAX, 33);
-  const dy = Number(offsetY) || 0;
+  // 上下偏移：正数向上（和编辑器里的 ↑ 箭头一致）
+  const dy = -(Number(offsetY) || 0);
   const ls = Number(letterSpacing) || 0;
   const alignMode = align ?? "left";
 

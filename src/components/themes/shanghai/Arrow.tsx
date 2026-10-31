@@ -13,13 +13,12 @@ import { UpArrowGlyph, TurnRightGlyph } from "./icons/arrow-real";
  * 箭头（标准图 B.1 方向标识 / 图 54 出入口信息组合）。
  *
  * 只保留两个母版：
- *  - 直行箭头（标准里的「往前（上）」）—— 8 个方向靠旋转
- *  - 右拐箭头（图 54 里「老沪闵路」那条弯折箭头）—— 4 个方向靠旋转
- * 图形本身由 `icons/arrow-real.tsx` 从原始图形精确提取（见 docs/shanghai/notes/arrow-report.md），
- * 不做手绘近似。
+ *  - 直行箭头（B.1「往前（上）」）—— 8 个方向靠旋转
+ *  - 右拐箭头（图 54 那条 90° 弯折箭头，母版是「上→右」）—— 8 种组合：
+ *    四个拐角 × 箭头在两头（例如「左-上」= 尾巴朝左、头朝上；「上-左」= 尾巴朝上、头朝左）。
+ *    后四种由母版镜像 + 旋转得到，不需要另画。
  */
 export type ArrowShape = "straight" | "turn";
-export type TurnDirection = "up" | "down" | "left" | "right";
 export type ArrowDirection =
   | "up"
   | "up-right"
@@ -30,12 +29,23 @@ export type ArrowDirection =
   | "left"
   | "up-left";
 
+/** 拐弯方向：先写尾巴朝向，再写箭头朝向 */
+export type TurnPair =
+  | "up-right"
+  | "right-down"
+  | "down-left"
+  | "left-up"
+  | "up-left"
+  | "right-up"
+  | "down-right"
+  | "left-down";
+
 export interface ArrowProps {
   shape?: ArrowShape;
   /** 直行箭头的方向（8 个） */
   direction?: ArrowDirection;
-  /** 拐弯箭头的方向（只有上下左右） */
-  turnDirection?: TurnDirection;
+  /** 拐弯箭头（8 种组合） */
+  turnDirection?: TurnPair;
   foreground?: string;
   background?: string;
 }
@@ -43,7 +53,7 @@ export interface ArrowProps {
 export const arrowDefaultProps: ArrowProps = {
   shape: "straight",
   direction: "up",
-  turnDirection: "right",
+  turnDirection: "up-right",
   foreground: colors.foreground,
   background: colors.transparent,
 };
@@ -59,14 +69,34 @@ const STRAIGHT_ANGLE: Record<ArrowDirection, number> = {
   "up-left": 315,
 };
 
-const TURN_ANGLE: Record<TurnDirection, number> = {
-  right: 0,
-  down: 90,
-  left: 180,
-  up: 270,
+/** 母版是「上→右」：rot 为顺时针角度，mirror 先左右镜像再旋转 */
+const TURN_VARIANT: Record<
+  TurnPair,
+  { rot: number; mirror: boolean; tail: ArrowDirection; head: ArrowDirection }
+> = {
+  "up-right": { rot: 0, mirror: false, tail: "up", head: "right" },
+  "right-down": { rot: 90, mirror: false, tail: "right", head: "down" },
+  "down-left": { rot: 180, mirror: false, tail: "down", head: "left" },
+  "left-up": { rot: 270, mirror: false, tail: "left", head: "up" },
+  "up-left": { rot: 0, mirror: true, tail: "up", head: "left" },
+  "right-up": { rot: 90, mirror: true, tail: "right", head: "up" },
+  "down-right": { rot: 180, mirror: true, tail: "down", head: "right" },
+  "left-down": { rot: 270, mirror: true, tail: "left", head: "down" },
 };
 
+const TURN_ORDER: TurnPair[] = [
+  "up-right",
+  "right-down",
+  "down-left",
+  "left-up",
+  "up-left",
+  "right-up",
+  "down-right",
+  "left-down",
+];
+
 const SCOPE = "themes.shanghai.components.Arrow.props";
+
 /** 箭头方块边长锁死（用户要求：没必要开放调整） */
 const ARROW_SIZE = 44;
 
@@ -119,11 +149,16 @@ export const arrowEditorConfig = (
       visible: props => props.shape === "turn",
       element: (
         <Select>
-          {(["up", "down", "left", "right"] as TurnDirection[]).map(value => (
-            <Select.Option key={value} value={value}>
-              {t(`themes.shanghai.common.direction.${value}`)}
-            </Select.Option>
-          ))}
+          {TURN_ORDER.map(value => {
+            const v = TURN_VARIANT[value];
+            return (
+              <Select.Option key={value} value={value}>
+                {`${t(`themes.shanghai.common.direction.${v.tail}`)}-${t(
+                  `themes.shanghai.common.direction.${v.head}`
+                )}`}
+              </Select.Option>
+            );
+          })}
         </Select>
       ),
     },
@@ -143,15 +178,22 @@ export default function Arrow({
   const dir = (direction ?? "up") as ArrowDirection;
   const isTurn = shape === "turn";
   const Glyph = isTurn ? TurnRightGlyph : UpArrowGlyph;
-  // 直行箭头支持 8 个方向（斜向 = 45°），拐弯箭头只有 上下左右（90°）
+  const variant =
+    TURN_VARIANT[(turnDirection ?? "up-right") as TurnPair] ??
+    TURN_VARIANT["up-right"];
   const angle = isTurn
-    ? (TURN_ANGLE[turnDirection ?? "right"] ?? 0)
+    ? variant.rot
     : (STRAIGHT_ANGLE[dir] ?? 0);
+  // 先镜像再旋转：CSS 函数从右往左生效，所以 rotate 写在前面
+  const parts: string[] = [];
+  if (angle) parts.push(`rotate(${angle}deg)`);
+  if (isTurn && variant.mirror) parts.push("scaleX(-1)");
+  const transform = parts.length > 0 ? parts.join(" ") : undefined;
 
   return (
     <BackgroundBox
       background={background}
-      style={{ height: ROW_H, width: side + 10 }}
+      style={{ height: ROW_H, width: side }}
     >
       <div
         style={{
@@ -160,17 +202,9 @@ export default function Arrow({
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          marginLeft: 5,
-          marginRight: 5,
         }}
       >
-        <div
-          style={{
-            width: side,
-            height: side,
-            transform: angle ? `rotate(${angle}deg)` : undefined,
-          }}
-        >
+        <div style={{ width: side, height: side, transform }}>
           <Glyph color={foreground ?? colors.foreground} />
         </div>
       </div>

@@ -184,7 +184,8 @@ export default function DualText({
   const enSize = clamp(fontSizeEn, 6, 48, 10.5);
   const gap = Math.max(0, Number(lineGap) || 0);
   const pair = Math.max(0, Number(pairGap) || 0);
-  const dy = Number(offsetY) || 0;
+  // 上下偏移：正数向上（和编辑器里的 ↑ 箭头一致）
+  const dy = -(Number(offsetY) || 0);
   const ls = Number(letterSpacing) || 0;
   const alignMode = align ?? "center";
 

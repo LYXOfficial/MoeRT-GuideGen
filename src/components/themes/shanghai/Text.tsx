@@ -166,7 +166,8 @@ export default function Text({
   const zhSize = clamp(fontSizeZh, ZH_MIN, ZH_MAX, 28);
   const enSize = clamp(fontSizeEn, EN_MIN, EN_MAX, 13);
   const gap = Math.max(0, Number(lineGap) || 0);
-  const dy = Number(offsetY) || 0;
+  // 上下偏移：正数向上（和编辑器里的 ↑ 箭头一致）
+  const dy = -(Number(offsetY) || 0);
   const ls = Number(letterSpacing) || 0;
   const alignMode = align ?? "left";
 

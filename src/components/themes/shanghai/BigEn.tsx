@@ -146,7 +146,8 @@ export default function BigEn({
   const weightValue = weightCss(weight ?? "medium");
   const size = clamp(fontSize, SIZE_MIN, SIZE_MAX, 15);
   const lh = clamp(lineHeight, 0.8, 2, 1.2);
-  const dy = Number(offsetY) || 0;
+  // 上下偏移：正数向上（和编辑器里的 ↑ 箭头一致）
+  const dy = -(Number(offsetY) || 0);
   const ls = Number(letterSpacing) || 0;
   const alignMode = align ?? "left";
 
