@@ -515,7 +515,10 @@
             "background": "背景色",
             "foreground": "前景色",
             "iconFill": "图形色",
-            "rotation": "旋转角度"
+            "rotation": "旋转角度",
+            "showText": "显示文本",
+            "textZh": "中文文字",
+            "textEn": "英文文字"
           }
         },
         "LineNum": {
@@ -540,7 +543,7 @@
             "variant": {
               "displayName": "风格",
               "classic": "经典",
-              "block": "色块"
+              "block": "2026"
             },
             "foreground": "前景色",
             "background": "背景色"
@@ -560,6 +563,11 @@
               "displayName": "色块宽度",
               "default": "默认",
               "narrow": "窄"
+            },
+            "variant": {
+              "displayName": "风格",
+              "classic": "经典",
+              "block": "2026"
             },
             "lineColor": "线路颜色",
             "foreground": "前景色",

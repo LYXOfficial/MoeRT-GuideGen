@@ -515,7 +515,10 @@
             "background": "背景色",
             "foreground": "前景色",
             "iconFill": "圖形色",
-            "rotation": "旋轉角度"
+            "rotation": "旋轉角度",
+            "showText": "顯示文字",
+            "textZh": "中文文字",
+            "textEn": "英文文字"
           }
         },
         "LineNum": {
@@ -540,7 +543,7 @@
             "variant": {
               "displayName": "風格",
               "classic": "經典",
-              "block": "色塊"
+              "block": "2026"
             },
             "foreground": "前景色",
             "background": "背景色"
@@ -560,6 +563,11 @@
               "displayName": "色塊寬度",
               "default": "預設",
               "narrow": "窄"
+            },
+            "variant": {
+              "displayName": "風格",
+              "classic": "經典",
+              "block": "2026"
             },
             "lineColor": "綫路顏色",
             "foreground": "前景色",

@@ -516,7 +516,10 @@
             "background": "Cor de fundo",
             "foreground": "Cor de primeiro plano",
             "iconFill": "Cor do pictograma",
-            "rotation": "Ângulo de rotação"
+            "rotation": "Ângulo de rotação",
+            "showText": "Mostrar legenda",
+            "textZh": "Texto em chinês",
+            "textEn": "Texto em inglês"
           }
         },
         "LineNum": {
@@ -541,7 +544,7 @@
             "variant": {
               "displayName": "Estilo",
               "classic": "Clássico",
-              "block": "Bloco de cor"
+              "block": "2026"
             },
             "foreground": "Cor de primeiro plano",
             "background": "Cor de fundo"
@@ -561,6 +564,11 @@
               "displayName": "Largura do bloco",
               "default": "Predefinido",
               "narrow": "Estreito"
+            },
+            "variant": {
+              "displayName": "Estilo",
+              "classic": "Clássico",
+              "block": "2026"
             },
             "lineColor": "Cor da linha",
             "foreground": "Cor de primeiro plano",

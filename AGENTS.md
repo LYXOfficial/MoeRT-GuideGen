@@ -48,11 +48,19 @@ pnpm dev                                  # 开发服务器（5173 端口，常�
   重庆的 prominent 数字字号按 `30/22` 等比跟着中文字号走。老档缺这些字段会在
   `MIGRATIONS[2]`（v2→v3）里补上（否则编辑弹窗里是空输入框），同一迁移还按老默认值补
   `digitMode: "prominent"`。
-- ✅ **成都「线路标」新增「色块」风格**（2026-11-01，2026 版式）：`variant` = `classic`（经典，
-  左侧竖条 + 大号数字）/ `block`（色块：整块线路色圆角牌面，**把经典那套数字+文字整体缩
-  `BLOCK_SCALE = 0.8` 上下居中装进牌里**，牌内左右各留 `BLOCK_PAD = 9`；不另立一套字号）。
-  老档由 `MIGRATIONS[5]`（v5→v6）补 `variant: "classic"`。只做了数字线路标，
-  `LineText`（文字线路标）没动。
+- ✅ **成都「线路标 / 文字线路标」新增「2026」风格**（2026-11-01）：`variant` = `classic`（经典，
+  左侧竖条 + 大号数字/文字）/ `block`（**编辑器里显示为「2026」**，别写「色块」——会和经典样式
+  左边那条色块搞混）：整块线路色牌面，把经典那套内容缩一圈装进去。
+  做法：牌高 = **缩放后的墨迹高 + 上下各 `BLOCK_PAD_Y`**（不能用「64 × 缩放比」，那样内容框
+  上下会白出一大截），内容组再按墨迹顶对齐到牌顶；英文额外 ×`BLOCK_EN_SCALE(0.85)`，
+  数字↔文字间隙用 `BLOCK_TEXT_GAP(10)`（经典版是 5）。`LineNum` 和 `LineText` 各有一套常量。
+  切到 2026 后「是否显示色块 / 色块宽度 / 对齐」都用 `visible` 谓词隐藏（牌面就是色块）。
+  老档由 `MIGRATIONS[5]`（v5→v6）补 `variant: "classic"`，载入时还会幂等补一次
+  （文字线路标是后加的，早期 v6 存档缺这个键）。
+- ✅ **成都「图标」加「显示文本」开关**（2026-11-01）：开启后图形缩到 `ICON_BOX_WITH_TEXT = 38`
+  （原来 44，`p-2.5` 让位给栏目），下面两行居中小字（中文 9px / 英文 7px，颜色跟随 `foreground`
+  ＝图标底板色）；字段 `showText / textZh / textEn`，两个文本项用 `visible` 只在开关打开时出现。
+  默认关，老档渲染不变（纯追加式改动，没升存档版本）。
 - ✅ **北京新旧两个主题都拆出「文字线路标」**（2026-11-01）：原有线路标组件显示名改成
   **数字线路标**（`themes.beijing.components.LineNum` / `themes.beijingOld.components.Line`，
   组件 type 字符串没动，老存档照旧匹配），新增 **文字线路标**
@@ -320,7 +328,8 @@ python3 text_probe.py                                   # 解析 <use> 得到真
   `iconFill`（图形色：老 background 是真颜色就搬过来，否则成都 `exitbackground`）；
   `MIGRATIONS[4]` 给重庆 / 成都 `Text` 补 `alignV: "center"`（同一套 `fillTextLayoutDefaults`，
   v2→v3 也用它）；
-  `MIGRATIONS[5]` 给成都 `LineNum` 补 `variant: "classic"`（新老档都按经典渲染，色块风格要手动切）。
+  `MIGRATIONS[5]` 给成都 `LineNum` / `LineText` 补 `variant: "classic"`（新老档都按经典渲染，
+  2026 风格要手动切；载入时也幂等补一次，覆盖「文字线路标后加」造成的空字段）。
   三条都走同一个 `mapRowItems`，递归进容器 `props.children`；空串也当「没设」；rows 形状不对时原样
   留下给 `isSaveData` 拒收。**另外这个拆分在 `migrateSaveData` 里每次载入还会跑一次**
   （`splitChengduIconColors`，幂等：`iconFill` 已有有效颜色就跳过）——早期 v4 存档只跑过

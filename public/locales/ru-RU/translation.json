@@ -518,7 +518,10 @@
             "background": "Цвет фона",
             "foreground": "Цвет переднего плана",
             "iconFill": "Цвет пиктограммы",
-            "rotation": "Угол поворота"
+            "rotation": "Угол поворота",
+            "showText": "Показать подпись",
+            "textZh": "Китайский текст",
+            "textEn": "Английский текст"
           }
         },
         "LineNum": {
@@ -543,7 +546,7 @@
             "variant": {
               "displayName": "Стиль",
               "classic": "Классический",
-              "block": "Цветовой блок"
+              "block": "2026"
             },
             "foreground": "Цвет переднего плана",
             "background": "Цвет фона"
@@ -563,6 +566,11 @@
               "displayName": "Ширина блока",
               "default": "Обычная",
               "narrow": "Узкая"
+            },
+            "variant": {
+              "displayName": "Стиль",
+              "classic": "Классический",
+              "block": "2026"
             },
             "lineColor": "Цвет линии",
             "foreground": "Цвет переднего плана",

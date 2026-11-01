@@ -72,10 +72,13 @@ export const lineNumEditorConfig = (
       key: "showRect",
       label: "themes.chengdu.components.LineNum.props.showRect",
       element: <Switch />,
+      // 2026 风格牌面本身就是色块，这三项没意义
+      visible: props => props.variant !== "block",
     },
     {
       key: "rectMode",
       label: "themes.chengdu.components.LineNum.props.rectMode.displayName",
+      visible: props => props.variant !== "block",
       element: (
         <RectModeSelect
 
@@ -103,6 +106,7 @@ export const lineNumEditorConfig = (
     {
       key: "align",
       label: "themes.chengdu.components.LineNum.props.align.displayName",
+      visible: props => props.variant !== "block",
       element: (
         <Select>
           <Select.Option value="left">
@@ -176,10 +180,10 @@ function LineNum({
   // 牌高不再按「64 × 缩放比」算 —— 那样内容框上下会白出一大截（用户嫌上下内边距大），
   // 改成按**墨迹高 + 上下留白**贴出来，见下方 BLOCK_H。
   const block = variant === "block";
-  const BLOCK_SCALE = 0.9;
+  const BLOCK_SCALE = 0.85;
   const BLOCK_EN_SCALE = 0.85; // 色块里英文再小一号（只有色块风格吃这个）
   const BLOCK_TEXT_GAP = 10; // 色块里「数字 ↔ 文字」的间隙（比经典版的 5 大一点）
-  const BLOCK_PAD = 5; // 牌面内左右留白
+  const BLOCK_PAD = 3; // 牌面内左右留白
   const BLOCK_PAD_Y = 5; // 牌面内上下留白（墨迹到牌边）
   const BLOCK_RADIUS = 0;
   // 只把制表/换行换成空格（首尾、中间的空格全部保留），渲染侧配 xmlSpace="preserve"

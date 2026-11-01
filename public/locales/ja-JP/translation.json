@@ -515,7 +515,10 @@
             "background": "背景色",
             "foreground": "前景色",
             "iconFill": "図記号の色",
-            "rotation": "回転角度"
+            "rotation": "回転角度",
+            "showText": "キャプションを表示",
+            "textZh": "中国語",
+            "textEn": "英語"
           }
         },
         "LineNum": {
@@ -540,7 +543,7 @@
             "variant": {
               "displayName": "スタイル",
               "classic": "クラシック",
-              "block": "カラーブロック"
+              "block": "2026"
             },
             "foreground": "前景色",
             "background": "背景色"
@@ -560,6 +563,11 @@
               "displayName": "色ブロック幅",
               "default": "既定",
               "narrow": "細め"
+            },
+            "variant": {
+              "displayName": "スタイル",
+              "classic": "クラシック",
+              "block": "2026"
             },
             "lineColor": "路線色",
             "foreground": "前景色",

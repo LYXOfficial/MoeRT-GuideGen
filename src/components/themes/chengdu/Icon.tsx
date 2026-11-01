@@ -1,5 +1,5 @@
 import { useContext, type FC } from "react";
-import { Select } from "@douyinfe/semi-ui";
+import { Input, Select, Switch } from "@douyinfe/semi-ui";
 import colors from "./define/colors";
 import type { EditorConfig } from "../../../interfaces/editor";
 import CustomColorPicker from "../../CustomColorPicker";
@@ -153,6 +153,10 @@ export interface IconProps {
   /** 底板色：图标方块的底色 */
   foreground?: string;
   rotation?: "0" | "90" | "180" | "270";
+  /** 显示图标下方的小字（开＝图形整体缩小，下面留出中英双行） */
+  showText?: boolean;
+  textZh?: string;
+  textEn?: string;
 }
 
 export const iconDefaultProps: IconProps = {
@@ -165,7 +169,10 @@ export const iconDefaultProps: IconProps = {
   background: colors.transparent,
   iconFill: colors.exitbackground,
   foreground: colors.exitforeground,
-  rotation: "0"
+  rotation: "0",
+  showText: false,
+  textZh: "",
+  textEn: "",
 };
 
 // 下拉框里的图标预览：颜色取自正在编辑的那个组件（没有则用默认值）
@@ -184,6 +191,23 @@ function OptionPreview({ component }: { component: FC<any> }) {
 
 export const iconEditorConfig = (t: (key: string) => string): EditorConfig => ({
   forms: [
+    {
+      key: "showText",
+      label: "themes.chengdu.components.Icon.props.showText",
+      element: <Switch />,
+    },
+    {
+      key: "textZh",
+      label: "themes.chengdu.components.Icon.props.textZh",
+      element: <Input />,
+      visible: props => props.showText === true,
+    },
+    {
+      key: "textEn",
+      label: "themes.chengdu.components.Icon.props.textEn",
+      element: <Input />,
+      visible: props => props.showText === true,
+    },
     {
       key: "rotation",
       label: "themes.chengdu.components.Icon.props.rotation",
@@ -230,27 +254,56 @@ export const iconEditorConfig = (t: (key: string) => string): EditorConfig => ({
   ],
 });
 
+/** 显示小字时图形缩到这一档，给下面两行字腾地方 */
+const ICON_BOX_WITH_TEXT = 38;
+
 function Icon({
   icon = iconDefaultProps.icon,
   background = iconDefaultProps.background,
   iconFill = iconDefaultProps.iconFill,
   foreground = iconDefaultProps.foreground,
-  rotation = iconDefaultProps.rotation
+  rotation = iconDefaultProps.rotation,
+  showText = iconDefaultProps.showText,
+  textZh = iconDefaultProps.textZh,
+  textEn = iconDefaultProps.textEn,
 }: IconProps) {
   const IconComponent = regicons.find(i => i.label === icon)?.component as FC<IconProps>;
+  const withText = showText === true;
+  const boxSize = withText ? ICON_BOX_WITH_TEXT : 64;
+  const zh = (textZh ?? "").trim();
+  const en = (textEn ?? "").trim();
 
   return (
     <div
-      className="h-16 w-16 p-2.5"
+      className="flex h-16 w-16 flex-col items-center justify-center"
       style={{ backgroundColor: background }}
     >
-      {IconComponent ? (
-        <IconComponent
-          icon={icon}
-          background={iconFill}
-          foreground={foreground}
-          rotation={rotation}
-        />
+      <div
+        className={withText ? "" : "p-2.5"}
+        style={{ width: boxSize, height: boxSize }}
+      >
+        {IconComponent ? (
+          <IconComponent
+            icon={icon}
+            background={iconFill}
+            foreground={foreground}
+            rotation={rotation}
+          />
+        ) : null}
+      </div>
+      {withText ? (
+        // 图标下方的小字：中英双行、居中，颜色跟随前景色（跟图标底板同色）
+        <div
+          className="flex flex-col items-center leading-none"
+          style={{ color: foreground }}
+        >
+          {zh ? (
+            <span style={{ fontSize: 9, lineHeight: "11px" }}>{zh}</span>
+          ) : null}
+          {en ? (
+            <span style={{ fontSize: 7, lineHeight: "9px" }}>{en}</span>
+          ) : null}
+        </div>
       ) : null}
     </div>
   );

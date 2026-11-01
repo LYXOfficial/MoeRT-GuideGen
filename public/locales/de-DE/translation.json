@@ -516,7 +516,10 @@
             "background": "Hintergrundfarbe",
             "foreground": "Vordergrundfarbe",
             "iconFill": "Piktogrammfarbe",
-            "rotation": "Drehwinkel"
+            "rotation": "Drehwinkel",
+            "showText": "Beschriftung anzeigen",
+            "textZh": "Chinesischer Text",
+            "textEn": "Englischer Text"
           }
         },
         "LineNum": {
@@ -541,7 +544,7 @@
             "variant": {
               "displayName": "Stil",
               "classic": "Klassisch",
-              "block": "Farbblock"
+              "block": "2026"
             },
             "foreground": "Vordergrundfarbe",
             "background": "Hintergrundfarbe"
@@ -561,6 +564,11 @@
               "displayName": "Blockbreite",
               "default": "Standard",
               "narrow": "Schmal"
+            },
+            "variant": {
+              "displayName": "Stil",
+              "classic": "Klassisch",
+              "block": "2026"
             },
             "lineColor": "Linienfarbe",
             "foreground": "Vordergrundfarbe",

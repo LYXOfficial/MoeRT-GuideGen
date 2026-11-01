@@ -146,15 +146,19 @@ function mapRowItems(
   ) as SaveRow;
 }
 
+/** 成都两种线路标（数字 / 文字）的存档标识 —— 它们都有「风格」档 */
+const CHENGDU_LINE_TYPES = ["themes.chengdu.components.LineNum", "themes.chengdu.components.LineText"];
+
 /**
- * 给成都「线路标」补 `variant`（经典 / 色块），老档缺就补 "classic"（幂等）。
+ * 给成都「线路标 / 文字线路标」补 `variant`（classic / block），老档缺就补 "classic"（幂等）。
+ * 文字线路标是后加的，早期 v6 存档只有数字线路标被补过，所以载入时也会再跑一次。
  */
 function fillChengduLineVariant(data: VersionedData): VersionedData {
   if (!Array.isArray(data.rows)) return data;
   return {
     ...data,
     rows: mapRowItems(data.rows, item => {
-      if (item.type !== "themes.chengdu.components.LineNum") return item;
+      if (!CHENGDU_LINE_TYPES.includes(item.type)) return item;
       if (typeof item.props.variant === "string" && item.props.variant) return item;
       return { ...item, props: { ...item.props, variant: "classic" } };
     }),
@@ -223,6 +227,10 @@ export function migrateSaveData(parsed: unknown): unknown {
   // 幂等修补：早期 v4 存档只跑过「补颜色」那版迁移，缺 iconFill，这里补上
   if (typeof data.version === "number" && data.version >= 4) {
     data = splitChengduIconColors(data);
+  }
+  // 同理：文字线路标是 v6 之后才加的风格档，早期 v6 存档缺这个键，补成「经典」
+  if (typeof data.version === "number" && data.version >= 6) {
+    data = fillChengduLineVariant(data);
   }
   return data;
 }

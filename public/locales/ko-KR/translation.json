@@ -515,7 +515,10 @@
             "background": "배경색",
             "foreground": "전경색",
             "iconFill": "픽토그램 색",
-            "rotation": "회전 각도"
+            "rotation": "회전 각도",
+            "showText": "캡션 표시",
+            "textZh": "중국어",
+            "textEn": "영어"
           }
         },
         "LineNum": {
@@ -540,7 +543,7 @@
             "variant": {
               "displayName": "스타일",
               "classic": "클래식",
-              "block": "컬러 블록"
+              "block": "2026"
             },
             "foreground": "전경색",
             "background": "배경색"
@@ -560,6 +563,11 @@
               "displayName": "색상 블록 너비",
               "default": "기본",
               "narrow": "좁게"
+            },
+            "variant": {
+              "displayName": "스타일",
+              "classic": "클래식",
+              "block": "2026"
             },
             "lineColor": "노선 색상",
             "foreground": "전경색",

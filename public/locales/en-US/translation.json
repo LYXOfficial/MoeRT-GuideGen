@@ -516,7 +516,10 @@
             "background": "Background Color",
             "foreground": "Foreground Color",
             "iconFill": "Glyph color",
-            "rotation": "Rotation Angle"
+            "rotation": "Rotation Angle",
+            "showText": "Show caption",
+            "textZh": "Chinese text",
+            "textEn": "English text"
           }
         },
         "LineNum": {
@@ -541,7 +544,7 @@
             "variant": {
               "displayName": "Style",
               "classic": "Classic",
-              "block": "Color block"
+              "block": "2026"
             },
             "foreground": "Foreground",
             "background": "Background Color"
@@ -561,6 +564,11 @@
               "displayName": "Block width",
               "default": "Default",
               "narrow": "Narrow"
+            },
+            "variant": {
+              "displayName": "Style",
+              "classic": "Classic",
+              "block": "2026"
             },
             "lineColor": "Line Color",
             "foreground": "Foreground",
