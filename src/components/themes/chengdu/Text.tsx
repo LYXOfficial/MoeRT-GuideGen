@@ -137,6 +137,9 @@ export default function Text({
   /** 贴顶 / 贴底时与行上下边留的余量（跟左右 ml-1.25 的 5px 对齐） */
 const V_PAD = 5;
 
+/** 右对齐时英文的左缩量（px），抵消拉丁末字的墨迹外凸 */
+const EN_INSET = 1;
+
 const clampNum = (v: unknown, min: number, max: number, fallback: number) => {
     const n = Number(v);
     return Math.min(max, Math.max(min, Number.isFinite(n) ? n : fallback));
@@ -222,7 +225,14 @@ const clampNum = (v: unknown, min: number, max: number, fallback: number) => {
             <text x={0} y={zhY} fontSize={zhSize} fill={foreground} xmlSpace="preserve">
               {zhText}
             </text>
-            <text x={0} y={enY} fontSize={enSize} fill={foreground} xmlSpace="preserve">
+            <text
+              // 右对齐时英文左移 1px：拉丁末字（如「3」）的墨迹会比排字宽度探出 0.2–1px，
+              // 按排字原点贴边会看着「英文比中文多出一点」，内缩 1px 最省事
+              x={align === "right" ? -EN_INSET : 0}
+              y={enY}
+              fontSize={enSize}
+              fill={foreground}
+              xmlSpace="preserve">
               {enText}
             </text>
           </g>

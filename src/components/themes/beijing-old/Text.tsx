@@ -82,6 +82,9 @@ const measure = (text: string, font: string): number => {
   return measureCtx.measureText(text).width;
 };
 
+/** 边缘对齐 / 右对齐时英文的左缩量（px），抵消拉丁末字的墨迹外凸 */
+const EN_INSET = 1;
+
 /**
  * 墨迹度量（相对排字原点）：拉丁字形的左右边距和汉字不一样，
  * 边缘对齐要贴着「首字墨迹左缘 / 尾字墨迹右缘」，所以得知道墨迹起止。
@@ -449,7 +452,12 @@ export default function Text({
                 return (
                   <tspan
                     key={index}
-                    x={placed.x}
+                    // 边缘对齐 / 右对齐时英文左移 1px：拉丁末字的墨迹会比排字宽度探出一点点，
+                    // 按排字原点贴边会看着「英文比中文多出一点」
+                    x={
+                      placed.x -
+                      (align === "justify" || align === "right" ? EN_INSET : 0)
+                    }
                     y={enStart + index * layout.enStepValue}
                     letterSpacing={placed.spacing}
                   >
