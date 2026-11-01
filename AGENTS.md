@@ -41,7 +41,9 @@ pnpm dev                                  # 开发服务器（5173 端口，常�
   `fontSizeZh`（默认 22，钳 8–64）/ `fontSizeEn`（默认 14，钳 6–48）/ `lineGap`（默认 16，
   **中英两行基线之间的距离**，不是墨迹间隙）/ `offsetY`（默认 0，**正数向上**，两行一起动）。
   中文基线锚在 y=32、英文 = 中文基线 + lineGap，所以默认 22/14/16/0 与改动前逐像素一致；
-  重庆的 prominent 数字字号按 `30/22` 等比跟着中文字号走。追加式 props，不升存档版本。
+  重庆的 prominent 数字字号按 `30/22` 等比跟着中文字号走。老档缺这些字段会在
+  `MIGRATIONS[2]`（v2→v3）里补上（否则编辑弹窗里是空输入框），同一迁移还按老默认值补
+  `digitMode: "prominent"`。
 - ✅ 编辑器交互（PC + 移动端）：拖拽/点按判定、触屏长按、小元件热区、删除区可见矩形、
   编辑菜单稳定性、整页缩放禁用等，全部修复并提交（见 §7/§8）。
 - ✅ **全应用深色/浅色模式**（2026-10-25）：初始跟随浏览器 `prefers-color-scheme`，
@@ -288,8 +290,13 @@ python3 text_probe.py                                   # 解析 <use> 得到真
   element，`JSON.stringify` 不相等 → 被当新操作 push 并 `splice` 掉 redo。
 - 存档版本号：唯一取值点 `saveMigrations.ts` 的 `LATEST_SAVE_VERSION`；`isSaveData` 校验用**区间**；
   **追加式改动不升版本号**，破坏性改动才升 + 在 `MIGRATIONS` 里补迁移（迁移结果不写回 localStorage）。
-  当前 **2**：`MIGRATIONS[1]` 把北京旧版 `Text` 的旧 `letterSpacing` 拆成 `letterSpacingZh/En`（老值双份回填、
-  旧键删除，递归进容器 `props.children`）；rows 形状不对时原样留下给 `isSaveData` 拒收。
+  当前 **3**：
+  `MIGRATIONS[1]` 把北京旧版 `Text` 的旧 `letterSpacing` 拆成 `letterSpacingZh/En`（老值双份回填、旧键删除）；
+  `MIGRATIONS[2]` 给重庆 / 成都 `Text` 补 `fontSizeZh/fontSizeEn/lineGap/offsetY`（渲染层本来有兜底，
+  但**编辑弹窗读的是 props**，不补就显示空输入框），并按**当时的**默认值补 `digitMode: "prominent"`
+  （这个键是后来才加的，以前只有「突出」一种行为；现在的默认是「持平」，不能拿它去填老档）。
+  两条都走同一个 `mapRowItems`，递归进容器 `props.children`；空串也当「没设」；rows 形状不对时原样
+  留下给 `isSaveData` 拒收。
   索引 `INDEX_VERSION` 是另一套，版本不匹配会 `return null` → 「存档全部消失」，改它必须补迁移。
 
 ## 8. 用户反馈（历史 36 条已全部落实，细节见 git log）
