@@ -265,26 +265,30 @@ html[lang="pt-PT"] {
   background: #a4c4f494;
 }
 
-/* 全站 Switch 统一放大（Semi 默认 40×24、small 26×16 都太小，编辑弹窗里尤其难按），
-   但别放太大：现在大号 48×28、小号 40×24（上一版 56×32 / 44×26 偏大）。
+/* 全站 Switch 略放大（Semi 官方 40×24、small 26×16 在弹窗里太小），但别放太大：
+   现在大号 44×26、小号 36×22（最初那版 56×32 / 44×26 太大）。
    只改几何不动颜色（深色/浅色两套 token 照吃）；body 前缀提一级特异度，
-   压过组件自带样式且与加载顺序无关；不用 !important。尺寸公式：
-   钮上下各留 2px（所以钮高 = 轨道高 − 4）；checked 位移 = 轨道宽 − 钮宽 − 4；
-   active 时钮会变宽（大号 30、小号 26），checked+active 的位移同样按该公式算。 */
+   压过组件自带样式且与加载顺序无关；不用 !important。
+
+   几何沿用 Semi 自己的公式（switch.scss / variables.scss）：
+   轨道是 border-box + 1px 边框，所以可用区 = 尺寸 − 2；
+   钮上下各留 2px（钮高 = 轨道高 − 6，top = 2）；checked 位移 = 可用宽 − 钮宽 − 2；
+   active 时钮 +6px 宽，checked + active 的位移同样按该公式算。
+   ⚠️ 上一版把钮高设成「轨道高 − 4」、top 仍写 2，钮在轨道里偏下 1px（用户说「歪了」）。 */
 body .semi-switch {
-  width: 48px;
-  height: 28px;
-  border-radius: 14px;
+  width: 44px;
+  height: 26px;
+  border-radius: 13px;
 }
 body .semi-switch .semi-switch-knob {
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   top: 2px;
-  border-radius: 12px;
+  border-radius: 10px;
   transform: translateX(2px);
 }
 body .semi-switch:active .semi-switch-knob {
-  width: 30px;
+  width: 26px;
 }
 body .semi-switch-checked .semi-switch-knob {
   transform: translateX(20px);
@@ -293,19 +297,19 @@ body .semi-switch-checked:active .semi-switch-knob {
   transform: translateX(14px);
 }
 body .semi-switch-small {
-  width: 40px;
-  height: 24px;
-  border-radius: 12px;
+  width: 36px;
+  height: 22px;
+  border-radius: 11px;
 }
 body .semi-switch-small .semi-switch-knob {
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   top: 2px;
-  border-radius: 10px;
+  border-radius: 8px;
   transform: translateX(2px);
 }
 body .semi-switch-small:active .semi-switch-knob {
-  width: 26px;
+  width: 22px;
 }
 body .semi-switch-small.semi-switch-checked .semi-switch-knob {
   transform: translateX(16px);
