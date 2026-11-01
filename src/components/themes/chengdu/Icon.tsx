@@ -255,9 +255,9 @@ export const iconEditorConfig = (t: (key: string) => string): EditorConfig => ({
 });
 
 /** 显示小字时图形缩到这一档，给下面两行字腾地方 */
-const ICON_BOX_WITH_TEXT = 38;
+const ICON_BOX_WITH_TEXT = 36;
 /** 图形与下面小字之间的间距 */
-const CAPTION_GAP = 3;
+const CAPTION_GAP = 2;
 
 function Icon({
   icon = iconDefaultProps.icon,
@@ -277,7 +277,10 @@ function Icon({
 
   return (
     <div
-      className="flex h-16 w-16 flex-col items-center justify-center"
+      // 不带小字时保持 64×64 方块；带小字时宽度收成内容宽（不然图标两侧空一大截，
+      // 虚线框还会跟上面图标对不齐）
+      // 带小字时宽度收成「内容 + 两侧各 6px」，既不空一大截、也不至于贴着边框
+      className={`flex h-16 flex-col items-center justify-center ${withText ? "px-1.5" : "w-16"}`}
       style={{ backgroundColor: background }}
     >
       <div
@@ -301,7 +304,7 @@ function Icon({
           style={{ color: foreground, marginTop: CAPTION_GAP }}
         >
           {zh ? (
-            <span style={{ fontSize: 9, lineHeight: "10px" }}>{zh}</span>
+            <span style={{ fontSize: 8, lineHeight: "9px" }}>{zh}</span>
           ) : null}
           {en ? (
             <span style={{ fontSize: 6, lineHeight: "7px" }}>{en}</span>
