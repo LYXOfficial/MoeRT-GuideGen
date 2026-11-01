@@ -38,6 +38,8 @@ const TEXT_LAYOUT_DEFAULTS: Record<string, Record<string, any>> = {
     fontSizeEn: 14,
     lineGap: 16,
     offsetY: 0,
+    alignV: "center",
+    // digitMode 见上方说明：老档要按当时的默认值「突出」补
     digitMode: "prominent",
   },
   "themes.chengdu.components.Text": {
@@ -45,8 +47,33 @@ const TEXT_LAYOUT_DEFAULTS: Record<string, Record<string, any>> = {
     fontSizeEn: 14,
     lineGap: 16,
     offsetY: 0,
+    alignV: "center",
   },
 };
+
+/**
+ * 给重庆 / 成都「文字」补齐缺的版式字段（幂等，空串也当「没设」）。
+ * 渲染层本来有默认值兜底，但**编辑弹窗读的是 props**，不补就是空输入框。
+ */
+function fillTextLayoutDefaults(data: VersionedData): VersionedData {
+  if (!Array.isArray(data.rows)) return data;
+  return {
+    ...data,
+    rows: mapRowItems(data.rows, item => {
+      const defaults = TEXT_LAYOUT_DEFAULTS[item.type];
+      if (!defaults) return item;
+      const props: Record<string, any> = { ...item.props };
+      let changed = false;
+      for (const [key, value] of Object.entries(defaults)) {
+        if (props[key] === undefined || props[key] === "") {
+          props[key] = value;
+          changed = true;
+        }
+      }
+      return changed ? { ...item, props } : item;
+    }),
+  };
+}
 
 /** 成都图标的存档标识 */
 const CHENGDU_ICON_TYPE = "themes.chengdu.components.Icon";
@@ -156,33 +183,14 @@ const MIGRATIONS: Record<number, Migration> = {
   // 整个图标变成一块纯色方块。拆分后：图形色独立可设、底衬跟底板（透明）。
   3: data => ({ ...splitChengduIconColors(data), version: 4 }),
   // v2 → v3：重庆 / 成都「文字」新增中英字号、中英行距、上下偏移。
-  // 渲染层本来就会用默认值兜底，但**编辑弹窗读的是 props**，老档缺字段就显示成空输入框，
-  // 所以在迁移里补齐（已手动设过的不动）。
-  2: data => ({
-    ...data,
-    version: 3,
-    ...(Array.isArray(data.rows)
-      ? {
-          rows: mapRowItems(data.rows, item => {
-            const defaults = TEXT_LAYOUT_DEFAULTS[item.type];
-            if (!defaults) return item;
-            const props: Record<string, any> = { ...item.props };
-            let changed = false;
-            for (const [key, value] of Object.entries(defaults)) {
-              // 空串也当「没设」：InputNumber 清空后存下来就是空串
-              if (props[key] === undefined || props[key] === "") {
-                props[key] = value;
-                changed = true;
-              }
-            }
-            return changed ? { ...item, props } : item;
-          }),
-        }
-      : {}),
-  }),
+  2: data => ({ ...fillTextLayoutDefaults(data), version: 3 }),
+  // v4 → v5：同一批「文字」又加了纵向对齐（alignV），老档补成「居中」——
+  // 编辑弹窗读 props，不补就是个空下拉框。
+  4: data => ({ ...fillTextLayoutDefaults(data), version: 5 }),
+
 };
 
-export const LATEST_SAVE_VERSION = 4;
+export const LATEST_SAVE_VERSION = 5;
 
 /** 把解析结果按注册表逐级迁移到最新版本；识别不了的结构原样返回，交给上层校验 */
 export function migrateSaveData(parsed: unknown): unknown {

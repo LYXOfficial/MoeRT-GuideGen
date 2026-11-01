@@ -134,7 +134,10 @@ export default function Text({
   const zhText = normalizeSvgLine(chinese);
   const enText = normalizeSvgLine(english);
   // 字号/行距/偏移：非法值兜底到默认（字号钳在合理区间，避免 0 号或离谱大号把行撑坏）
-  const clampNum = (v: unknown, min: number, max: number, fallback: number) => {
+  /** 贴顶 / 贴底时与行上下边留的余量（跟左右 ml-1.25 的 5px 对齐） */
+const V_PAD = 5;
+
+const clampNum = (v: unknown, min: number, max: number, fallback: number) => {
     const n = Number(v);
     return Math.min(max, Math.max(min, Number.isFinite(n) ? n : fallback));
   };
@@ -142,15 +145,15 @@ export default function Text({
   const enSize = clampNum(fontSizeEn, 6, 48, 14);
   const gap = clampNum(lineGap, 0, 48, 16);
   // 纵向对齐（相对 64px 行）：以「居中」为基准（中文基线 32，跟改动前一模一样），
-  // 贴顶 = 把整块墨迹推到行顶，贴底 = 推到行底。
+  // 贴顶 = 把整块墨迹推到行顶，贴底 = 推到行底；两头都留 V_PAD 的余量，别真的贴边。
   // 墨迹高：中文 ink ≈ 0.88em（坐在基线上）+ 行距 + 英文下伸部 ≈ 0.25em。
   const zhInkH = zhSize * 0.88;
   const enDescH = enSize * 0.25;
   const vAlignDelta =
     alignV === "top"
-      ? -(32 - zhInkH)
+      ? V_PAD - (32 - zhInkH)
       : alignV === "bottom"
-        ? 64 - (32 + gap + enDescH)
+        ? 64 - V_PAD - (32 + gap + enDescH)
         : 0;
   // 上下偏移：正数向上（和编辑器里的 ↑ 一致），两行一起动；与纵向对齐叠加
   const dy = -(Number(offsetY) || 0) + vAlignDelta;

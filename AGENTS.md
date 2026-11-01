@@ -41,8 +41,9 @@ pnpm dev                                  # 开发服务器（5173 端口，常�
   `fontSizeZh`（默认 22，钳 8–64）/ `fontSizeEn`（默认 14，钳 6–48）/ `lineGap`（默认 16，
   **中英两行基线之间的距离**，不是墨迹间隙）/ `offsetY`（默认 0，**正数向上**，两行一起动）。
   另有 `alignV`（纵向对齐：贴顶/居中/贴底，默认居中）——以「居中」为基准做整块墨迹位移：
-  贴顶 = 中文墨迹顶贴到 0（`-(32 - zhSize*0.88)`）、贴底 = 英文下伸部贴到 64
-  （`64 - (32 + lineGap + enSize*0.25)`），和 `offsetY` 叠加；原「对齐」文案改成「横向对齐」。
+  贴顶 = 中文墨迹顶落在 `V_PAD = 5`、贴底 = 英文下伸部落到 `64 - V_PAD`（**两头各留 5px**，
+  跟左右 `ml-1.25` 的 5px 对齐；不要真的贴边），和 `offsetY` 叠加；
+  原「对齐」文案改成「横向对齐」。
   中文基线锚在 y=32、英文 = 中文基线 + lineGap，所以默认 22/14/16/0 与改动前逐像素一致；
   重庆的 prominent 数字字号按 `30/22` 等比跟着中文字号走。老档缺这些字段会在
   `MIGRATIONS[2]`（v2→v3）里补上（否则编辑弹窗里是空输入框），同一迁移还按老默认值补
@@ -305,13 +306,15 @@ python3 text_probe.py                                   # 解析 <use> 得到真
   element，`JSON.stringify` 不相等 → 被当新操作 push 并 `splice` 掉 redo。
 - 存档版本号：唯一取值点 `saveMigrations.ts` 的 `LATEST_SAVE_VERSION`；`isSaveData` 校验用**区间**；
   **追加式改动不升版本号**，破坏性改动才升 + 在 `MIGRATIONS` 里补迁移（迁移结果不写回 localStorage）。
-  当前 **4**：
+  当前 **5**：
   `MIGRATIONS[1]` 把北京旧版 `Text` 的旧 `letterSpacing` 拆成 `letterSpacingZh/En`（老值双份回填、旧键删除）；
   `MIGRATIONS[2]` 给重庆 / 成都 `Text` 补 `fontSizeZh/fontSizeEn/lineGap/offsetY`（渲染层本来有兜底，
   但**编辑弹窗读的是 props**，不补就显示空输入框），并按**当时的**默认值补 `digitMode: "prominent"`
   （这个键是后来才加的，以前只有「突出」一种行为；现在的默认是「持平」，不能拿它去填老档）；
   `MIGRATIONS[3]` 把成都 `Icon` 的 `background` 拆成 `background`（底衬：透明/板色）+
-  `iconFill`（图形色：老 background 是真颜色就搬过来，否则成都 `exitbackground`）。
+  `iconFill`（图形色：老 background 是真颜色就搬过来，否则成都 `exitbackground`）；
+  `MIGRATIONS[4]` 给重庆 / 成都 `Text` 补 `alignV: "center"`（同一套 `fillTextLayoutDefaults`，
+  v2→v3 也用它）。
   三条都走同一个 `mapRowItems`，递归进容器 `props.children`；空串也当「没设」；rows 形状不对时原样
   留下给 `isSaveData` 拒收。**另外这个拆分在 `migrateSaveData` 里每次载入还会跑一次**
   （`splitChengduIconColors`，幂等：`iconFill` 已有有效颜色就跳过）——早期 v4 存档只跑过
