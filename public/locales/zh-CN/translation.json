@@ -342,6 +342,10 @@
               "prominent": "突出",
               "flat": "持平"
             },
+            "fontSizeZh": "中文字号",
+            "fontSizeEn": "英文字号",
+            "lineGap": "中英行距",
+            "offsetY": "上下偏移",
             "background": "背景色",
             "foreground": "前景色"
           }
@@ -596,6 +600,10 @@
               "right": "右",
               "center": "中"
             },
+            "fontSizeZh": "中文字号",
+            "fontSizeEn": "英文字号",
+            "lineGap": "中英行距",
+            "offsetY": "上下偏移",
             "background": "背景色",
             "foreground": "前景色"
           }

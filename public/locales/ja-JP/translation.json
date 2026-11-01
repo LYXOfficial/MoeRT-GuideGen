@@ -342,6 +342,10 @@
               "prominent": "強調",
               "flat": "フラット"
             },
+            "fontSizeZh": "中国語のサイズ",
+            "fontSizeEn": "英語のサイズ",
+            "lineGap": "中英の行間",
+            "offsetY": "上下オフセット",
             "background": "背景色",
             "foreground": "前景色"
           }
@@ -596,6 +600,10 @@
               "right": "右",
               "center": "中央"
             },
+            "fontSizeZh": "中国語のサイズ",
+            "fontSizeEn": "英語のサイズ",
+            "lineGap": "中英の行間",
+            "offsetY": "上下オフセット",
             "background": "背景色",
             "foreground": "前景色"
           }

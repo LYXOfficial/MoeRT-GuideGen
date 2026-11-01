@@ -343,6 +343,10 @@
               "prominent": "Prominent",
               "flat": "Flat"
             },
+            "fontSizeZh": "Chinese size",
+            "fontSizeEn": "English size",
+            "lineGap": "Line spacing",
+            "offsetY": "Vertical offset",
             "background": "Background Color",
             "foreground": "Foreground Color"
           }
@@ -597,6 +601,10 @@
               "right": "Right",
               "center": "Center"
             },
+            "fontSizeZh": "Chinese size",
+            "fontSizeEn": "English size",
+            "lineGap": "Line spacing",
+            "offsetY": "Vertical offset",
             "background": "Background Color",
             "foreground": "Foreground Color"
           }

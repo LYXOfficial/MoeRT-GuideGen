@@ -342,6 +342,10 @@
               "prominent": "강조",
               "flat": "동일"
             },
+            "fontSizeZh": "중국어 크기",
+            "fontSizeEn": "영어 크기",
+            "lineGap": "중영문 행간",
+            "offsetY": "상하 오프셋",
             "background": "배경색",
             "foreground": "전경색"
           }
@@ -596,6 +600,10 @@
               "right": "오른쪽",
               "center": "중앙"
             },
+            "fontSizeZh": "중국어 크기",
+            "fontSizeEn": "영어 크기",
+            "lineGap": "중영문 행간",
+            "offsetY": "상하 오프셋",
             "background": "배경색",
             "foreground": "전경색"
           }

@@ -343,6 +343,10 @@
               "prominent": "Realçado",
               "flat": "Plano"
             },
+            "fontSizeZh": "Tamanho chinês",
+            "fontSizeEn": "Tamanho inglês",
+            "lineGap": "Entrelinha",
+            "offsetY": "Deslocamento vertical",
             "background": "Cor de fundo",
             "foreground": "Cor de primeiro plano"
           }
@@ -597,6 +601,10 @@
               "right": "Direita",
               "center": "Centro"
             },
+            "fontSizeZh": "Tamanho chinês",
+            "fontSizeEn": "Tamanho inglês",
+            "lineGap": "Entrelinha",
+            "offsetY": "Deslocamento vertical",
             "background": "Cor de fundo",
             "foreground": "Cor de primeiro plano"
           }
