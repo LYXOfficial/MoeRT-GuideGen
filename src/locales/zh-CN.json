@@ -1023,9 +1023,27 @@
           }
         },
         "LineNum": {
-          "displayName": "线路标",
+          "displayName": "数字线路标",
           "props": {
             "lineId": "线路号",
+            "colorKey": {
+              "displayName": "线路色"
+            },
+            "textZh": "中文文字",
+            "textEn": "英文文字",
+            "size": {
+              "displayName": "尺寸"
+            },
+            "extendLeft": "左侧色块延长",
+            "extendRight": "右侧色块延长",
+            "foreground": "前景色",
+            "background": "背景色（第一行）",
+            "background2": "背景色（第二行）"
+          }
+        },
+        "TextLineNum": {
+          "displayName": "文字线路标",
+          "props": {
             "colorKey": {
               "displayName": "线路色"
             },
@@ -1390,7 +1408,7 @@
           }
         },
         "Line": {
-          "displayName": "线路标",
+          "displayName": "数字线路标",
           "props": {
             "lineId": "线路号",
             "colorKey": {
@@ -1401,6 +1419,18 @@
             "size": {
               "displayName": "尺寸"
             },
+            "foreground": "前景色",
+            "background": "背景色"
+          }
+        },
+        "TextLineNum": {
+          "displayName": "文字线路标",
+          "props": {
+            "colorKey": {
+              "displayName": "线路色"
+            },
+            "textZh": "中文文字",
+            "textEn": "英文文字",
             "foreground": "前景色",
             "background": "背景色"
           }

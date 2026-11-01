@@ -1024,9 +1024,27 @@
           }
         },
         "LineNum": {
-          "displayName": "Placa de línea",
+          "displayName": "Placa de número de línea",
           "props": {
             "lineId": "Número de línea",
+            "colorKey": {
+              "displayName": "Color de línea"
+            },
+            "textZh": "Texto en chino",
+            "textEn": "Texto en inglés",
+            "size": {
+              "displayName": "Tamaño"
+            },
+            "extendLeft": "Extensión del bloque a la izquierda",
+            "extendRight": "Extensión del bloque a la derecha",
+            "foreground": "Color de primer plano",
+            "background": "Color de fondo (primera línea)",
+            "background2": "Color de fondo (segunda línea)"
+          }
+        },
+        "TextLineNum": {
+          "displayName": "Placa de nombre de línea",
+          "props": {
             "colorKey": {
               "displayName": "Color de línea"
             },
@@ -1391,7 +1409,7 @@
           }
         },
         "Line": {
-          "displayName": "Placa de línea",
+          "displayName": "Placa de número de línea",
           "props": {
             "lineId": "Número de línea",
             "colorKey": {
@@ -1402,6 +1420,18 @@
             "size": {
               "displayName": "Tamaño"
             },
+            "foreground": "Color de primer plano",
+            "background": "Color de fondo"
+          }
+        },
+        "TextLineNum": {
+          "displayName": "Placa de nombre de línea",
+          "props": {
+            "colorKey": {
+              "displayName": "Color de línea"
+            },
+            "textZh": "Texto en chino",
+            "textEn": "Texto en inglés",
             "foreground": "Color de primer plano",
             "background": "Color de fondo"
           }

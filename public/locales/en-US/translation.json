@@ -1024,9 +1024,27 @@
           }
         },
         "LineNum": {
-          "displayName": "Line Plate",
+          "displayName": "Line number plate",
           "props": {
             "lineId": "Line number",
+            "colorKey": {
+              "displayName": "Line color"
+            },
+            "textZh": "Chinese text (e.g. 号线)",
+            "textEn": "English text (e.g. Line 1)",
+            "size": {
+              "displayName": "Size"
+            },
+            "extendLeft": "Left block extension",
+            "extendRight": "Right block extension",
+            "foreground": "Foreground",
+            "background": "Background",
+            "background2": "Background (second row)"
+          }
+        },
+        "TextLineNum": {
+          "displayName": "Line name plate",
+          "props": {
             "colorKey": {
               "displayName": "Line color"
             },
@@ -1391,7 +1409,7 @@
           }
         },
         "Line": {
-          "displayName": "Line Plate",
+          "displayName": "Line number plate",
           "props": {
             "lineId": "Line number",
             "colorKey": {
@@ -1402,6 +1420,18 @@
             "size": {
               "displayName": "Size"
             },
+            "foreground": "Foreground",
+            "background": "Background"
+          }
+        },
+        "TextLineNum": {
+          "displayName": "Line name plate",
+          "props": {
+            "colorKey": {
+              "displayName": "Line color"
+            },
+            "textZh": "Chinese text (e.g. 号线)",
+            "textEn": "English text (e.g. Line 1)",
             "foreground": "Foreground",
             "background": "Background"
           }

@@ -4,6 +4,7 @@ import "./fonts/arial.css";
 
 import Text, { textDefaultProps } from "./Text.tsx";
 import Line, { lineDefaultProps } from "./Line.tsx";
+import TextLineNum, { textLineNumDefaultProps } from "./TextLineNum.tsx";
 import Arrow, { arrowDefaultProps } from "./Arrow.tsx";
 import ToTrain, { toTrainDefaultProps } from "./ToTrain.tsx";
 import DualText, { dualTextDefaultProps } from "./DualText.tsx";
@@ -36,6 +37,11 @@ const theme: Theme = {
       displayName: "themes.beijingOld.components.Line",
       component: Line,
       defaultProps: lineDefaultProps,
+    },
+    {
+      displayName: "themes.beijingOld.components.TextLineNum",
+      component: TextLineNum,
+      defaultProps: textLineNumDefaultProps,
     },
     {
       displayName: "themes.beijingOld.components.Text",

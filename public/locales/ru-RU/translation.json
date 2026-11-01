@@ -1026,9 +1026,27 @@
           }
         },
         "LineNum": {
-          "displayName": "Табличка линии",
+          "displayName": "Табличка номера линии",
           "props": {
             "lineId": "Номер линии",
+            "colorKey": {
+              "displayName": "Цвет линии"
+            },
+            "textZh": "Китайский текст",
+            "textEn": "Английский текст",
+            "size": {
+              "displayName": "Размер"
+            },
+            "extendLeft": "Удлинение блока слева",
+            "extendRight": "Удлинение блока справа",
+            "foreground": "Цвет переднего плана",
+            "background": "Цвет фона (первая строка)",
+            "background2": "Цвет фона (вторая строка)"
+          }
+        },
+        "TextLineNum": {
+          "displayName": "Табличка названия линии",
+          "props": {
             "colorKey": {
               "displayName": "Цвет линии"
             },
@@ -1393,7 +1411,7 @@
           }
         },
         "Line": {
-          "displayName": "Табличка линии",
+          "displayName": "Табличка номера линии",
           "props": {
             "lineId": "Номер линии",
             "colorKey": {
@@ -1404,6 +1422,18 @@
             "size": {
               "displayName": "Размер"
             },
+            "foreground": "Цвет переднего плана",
+            "background": "Цвет фона"
+          }
+        },
+        "TextLineNum": {
+          "displayName": "Табличка названия линии",
+          "props": {
+            "colorKey": {
+              "displayName": "Цвет линии"
+            },
+            "textZh": "Китайский текст",
+            "textEn": "Английский текст",
             "foreground": "Цвет переднего плана",
             "background": "Цвет фона"
           }

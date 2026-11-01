@@ -3,6 +3,7 @@ import "./fonts/arial.css"
 
 import Text, { textDefaultProps } from "./Text.tsx";
 import LineNum, { lineNumDefaultProps } from "./LineNum.tsx";
+import TextLineNum, { textLineNumDefaultProps } from "./TextLineNum.tsx";
 import Arrow, { arrowDefaultProps } from "./Arrow.tsx";
 import TrainDirection, {
   trainDirectionDefaultProps,
@@ -38,6 +39,11 @@ const theme: Theme = {
       displayName: "themes.beijing.components.LineNum",
       component: LineNum,
       defaultProps: lineNumDefaultProps,
+    },
+    {
+      displayName: "themes.beijing.components.TextLineNum",
+      component: TextLineNum,
+      defaultProps: textLineNumDefaultProps,
     },
     {
       displayName: "themes.beijing.components.Text",

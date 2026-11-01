@@ -60,10 +60,11 @@ export const LINE_COLOR_KEYS: string[] = Array.from(
 
 /** 唯一的线路色下拉（选项文案复用 themes.beijingOld.colors.<key>） */
 const lineColorFormItem = (
-  t: (key: string) => string
+  t: (key: string) => string,
+  scope = "themes.beijingOld.components.Line.props"
 ): EditorConfig["forms"][number] => ({
   key: "colorKey",
-  label: "themes.beijingOld.components.Line.props.colorKey.displayName",
+  label: `${scope}.colorKey.displayName`,
   element: (
     <Select>
       {LINE_COLOR_KEYS.map(key => (
@@ -90,7 +91,26 @@ export const lineEditorConfig = (
   return {
     forms: [
       digitFormItem(scope, "lineId", 2),
-      lineColorFormItem(t),
+      lineColorFormItem(t, scope),
+      textFormItem(scope, "textZh"),
+      textFormItem(scope, "textEn"),
+      foregroundFormItem(scope),
+      ...backgroundFormItems(scope),
+    ],
+  };
+};
+
+/**
+ * 文字线路标 = 数字线路标去掉数字（牌面/字号/圆角/间隙全部同一套），
+ * 编辑器只比数字线路标少一个「线路号」表单。
+ */
+export const textLineNumEditorConfig = (
+  t: (key: string) => string
+): EditorConfig => {
+  const scope = "themes.beijingOld.components.TextLineNum.props";
+  return {
+    forms: [
+      lineColorFormItem(t, scope),
       textFormItem(scope, "textZh"),
       textFormItem(scope, "textEn"),
       foregroundFormItem(scope),

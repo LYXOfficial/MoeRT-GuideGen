@@ -1024,9 +1024,27 @@
           }
         },
         "LineNum": {
-          "displayName": "Linienplatte",
+          "displayName": "Liniennummer-Platte",
           "props": {
             "lineId": "Liniennummer",
+            "colorKey": {
+              "displayName": "Linienfarbe"
+            },
+            "textZh": "Chinesischer Text",
+            "textEn": "Englischer Text",
+            "size": {
+              "displayName": "Größe"
+            },
+            "extendLeft": "Linke Blockverlängerung",
+            "extendRight": "Rechte Blockverlängerung",
+            "foreground": "Vordergrundfarbe",
+            "background": "Hintergrundfarbe (1. Zeile)",
+            "background2": "Hintergrundfarbe (2. Zeile)"
+          }
+        },
+        "TextLineNum": {
+          "displayName": "Linienname-Platte",
+          "props": {
             "colorKey": {
               "displayName": "Linienfarbe"
             },
@@ -1391,7 +1409,7 @@
           }
         },
         "Line": {
-          "displayName": "Linienplatte",
+          "displayName": "Liniennummer-Platte",
           "props": {
             "lineId": "Liniennummer",
             "colorKey": {
@@ -1402,6 +1420,18 @@
             "size": {
               "displayName": "Größe"
             },
+            "foreground": "Vordergrundfarbe",
+            "background": "Hintergrundfarbe"
+          }
+        },
+        "TextLineNum": {
+          "displayName": "Linienname-Platte",
+          "props": {
+            "colorKey": {
+              "displayName": "Linienfarbe"
+            },
+            "textZh": "Chinesischer Text",
+            "textEn": "Englischer Text",
             "foreground": "Vordergrundfarbe",
             "background": "Hintergrundfarbe"
           }

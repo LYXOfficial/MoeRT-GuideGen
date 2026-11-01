@@ -78,10 +78,11 @@ export const LINE_COLOR_KEYS: string[] = Array.from(
 
 /** 唯一的线路色下拉（选项文案复用 themes.beijing.colors.<key>） */
 const lineColorFormItem = (
-  t: (key: string) => string
+  t: (key: string) => string,
+  scope: string
 ): EditorConfig["forms"][number] => ({
   key: "colorKey",
-  label: "themes.beijing.components.LineNum.props.colorKey.displayName",
+  label: `${scope}.colorKey.displayName`,
   element: (
     <Select>
       {LINE_COLOR_KEYS.map(key => (
@@ -101,6 +102,25 @@ const lineColorFormItem = (
   ),
 });
 
+/** 尺寸表单项（数字线路标 / 文字线路标共用） */
+const sizeFormItem = (
+  t: (key: string) => string,
+  scope: string
+): EditorConfig["forms"][number] => ({
+  key: "size",
+  label: `${scope}.size.displayName`,
+  element: (
+    <Select>
+      <Select.Option value="default">
+        {t("themes.beijing.common.size.default")}
+      </Select.Option>
+      <Select.Option value="small">
+        {t("themes.beijing.common.size.small")}
+      </Select.Option>
+    </Select>
+  ),
+});
+
 export const lineNumEditorConfig = (
   t: (key: string) => string
 ): EditorConfig => {
@@ -108,25 +128,34 @@ export const lineNumEditorConfig = (
   return {
     forms: [
       digitFormItem(scope, "lineId", 2),
-      lineColorFormItem(t),
+      lineColorFormItem(t, scope),
       textFormItem(scope, "textZh"),
       textFormItem(scope, "textEn"),
-      {
-        key: "size",
-        label: `${scope}.size.displayName`,
-        element: (
-          <Select>
-            <Select.Option value="default">
-              {t("themes.beijing.common.size.default")}
-            </Select.Option>
-            <Select.Option value="small">
-              {t("themes.beijing.common.size.small")}
-            </Select.Option>
-          </Select>
-        ),
-      },
+      sizeFormItem(t, scope),
       numberFormItem(scope, "extendLeft", "extendLeft", 20),
       numberFormItem(scope, "extendRight", "extendRight", 20),
+      foregroundFormItem(scope),
+      ...backgroundFormItems(scope),
+    ],
+  };
+};
+
+/**
+ * 文字线路标 = 数字线路标去掉数字（版式、字号、色带、尺寸档全部同一套），
+ * 所以它的编辑器只比数字线路标少一个「线路号」表单。
+ */
+export const textLineNumEditorConfig = (
+  t: (key: string) => string
+): EditorConfig => {
+  const scope = "themes.beijing.components.TextLineNum.props";
+  return {
+    forms: [
+      lineColorFormItem(t, scope),
+      textFormItem(scope, "textZh"),
+      textFormItem(scope, "textEn"),
+      sizeFormItem(t, scope),
+      numberFormItem(scope, "extendLeft", "extendLeft", 10),
+      numberFormItem(scope, "extendRight", "extendRight", 10),
       foregroundFormItem(scope),
       ...backgroundFormItems(scope),
     ],

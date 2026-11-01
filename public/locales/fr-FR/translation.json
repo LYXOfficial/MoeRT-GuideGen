@@ -1024,9 +1024,27 @@
           }
         },
         "LineNum": {
-          "displayName": "Plaque de ligne",
+          "displayName": "Plaque de numéro de ligne",
           "props": {
             "lineId": "Numéro de ligne",
+            "colorKey": {
+              "displayName": "Couleur de ligne"
+            },
+            "textZh": "Texte chinois",
+            "textEn": "Texte anglais",
+            "size": {
+              "displayName": "Taille"
+            },
+            "extendLeft": "Extension du bloc à gauche",
+            "extendRight": "Extension du bloc à droite",
+            "foreground": "Couleur d'avant-plan",
+            "background": "Couleur d'arrière-plan (1re ligne)",
+            "background2": "Couleur d'arrière-plan (2e ligne)"
+          }
+        },
+        "TextLineNum": {
+          "displayName": "Plaque de nom de ligne",
+          "props": {
             "colorKey": {
               "displayName": "Couleur de ligne"
             },
@@ -1391,7 +1409,7 @@
           }
         },
         "Line": {
-          "displayName": "Plaque de ligne",
+          "displayName": "Plaque de numéro de ligne",
           "props": {
             "lineId": "Numéro de ligne",
             "colorKey": {
@@ -1402,6 +1420,18 @@
             "size": {
               "displayName": "Taille"
             },
+            "foreground": "Couleur d'avant-plan",
+            "background": "Couleur d'arrière-plan"
+          }
+        },
+        "TextLineNum": {
+          "displayName": "Plaque de nom de ligne",
+          "props": {
+            "colorKey": {
+              "displayName": "Couleur de ligne"
+            },
+            "textZh": "Texte chinois",
+            "textEn": "Texte anglais",
             "foreground": "Couleur d'avant-plan",
             "background": "Couleur d'arrière-plan"
           }
