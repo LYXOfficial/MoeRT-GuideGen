@@ -205,10 +205,10 @@ python3 text_probe.py                                   # 解析 <use> 得到真
   多存档都自动跟随（已实测：拖完 Ctrl+Z 回原序、Ctrl+Shift+Z 再换回来）。
 - 拖拽路径实测 60fps（4 行 × 3 组件，最长帧 16.8ms）：**不要**在 pointermove 里做
   `getBoundingClientRect` 之类的强制布局读，也别每次 move 都改 DOM 结构。
-- **拖拽幽灵的底衬一律用「当前底板色」**（`boardBackground ?? 主题默认背景色`，前景同理）：
-  组件背景多半是 `transparent`，DragOverlay 的幽灵和悬浮行不铺底衬就会透出页面灰底；
-  用主题默认色而不是底板色时，改过底板色的画板上会显示成另一种颜色（Editor 的
-  `DragOverlay` + `GuideBoard` 的 `isDraggingRow` 两处都要跟着底板色）。
+- **行把手拖起来的悬浮行要铺「当前底板色」**（`boardBackground ?? 主题默认背景色`）：
+  行里组件背景多半是 `transparent`，不铺底衬拖出画板边缘 / 压到别的行上会透出页面灰底。
+  **组件拖拽的 DragOverlay 幽灵不要铺底板色**（用户明确要求：只有行把手拖动才铺，
+  组件幽灵保持主题默认背景色 + 默认前景色），别「顺手统一」成底板色。
 
 **双行容器（成都 `TwoRowContainer`，Frame 复用同一套契约）**
 - 宽度 `W = max(30, minWidth, 最宽行跨度 × 0.5 + 1)`；两行等宽；内层 `.two-row-inner` 宽写死
