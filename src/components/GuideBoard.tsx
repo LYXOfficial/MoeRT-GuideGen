@@ -1036,6 +1036,138 @@ const GuideBoardCols = memo(forwardRef<GuideBoardRef, GuideBoardProps>(
       });
     };
 
+    // ===== 行把手：拖左侧把手上下移动，实时换行序 =====
+    // 行序就是存档里的 rows 数组顺序，所以换序只动 state，
+    // 落盘 / 撤销历史统一走 onConfigChange（拖动过程中不落盘，松手才提交一次）。
+    //
+    // 动画走「让位」模型（和 dnd-kit 同一个思路）：
+    //  · 被拖的那一行跟着指针走（transform，不参与布局，也不带过渡）；
+    //  · 其它行按目标位整体上下平移一格（transform + 过渡），实时把空位让出来；
+    //  · 松手时才真正 arrayMove，此时各行的布局位移与撤销掉的 transform 刚好抵消，
+    //    只有被拖行从浮空位置「落」回槽位，走一次 200ms 过渡。
+    // 位置判定一律用 offsetTop/offsetHeight（局部坐标、不含 transform），
+    // 否则行之间的过渡动画会被当成真实位置，目标位会抖。
+    const rowDragRef = useRef<{
+      from: number;
+      to: number;
+      startY: number;
+      /** 被拖行中线在画板局部坐标里的起点 */
+      startCenter: number;
+      /** 跟手位移（局部 px，已按缩放折算） */
+      dy: number;
+      pointerId: number;
+    } | null>(null);
+    const [rowDrag, setRowDrag] = useState<{
+      from: number;
+      to: number;
+      /** 跟手位移（画板局部 px） */
+      dy: number;
+      /** 被拖行的整块高度（含分隔线），其它行让位就挪这么多 */
+      pitch: number;
+    } | null>(null);
+    // 落位动画：松手那一帧先给被拖行一个「浮空偏移」，下一帧清掉让它过渡回 0
+    const [rowDrop, setRowDrop] = useState<{
+      index: number;
+      offset: number;
+    } | null>(null);
+    const [rowDropSettling, setRowDropSettling] = useState(false);
+
+    /** 行块（含分隔线）元素，下标即当前行序 */
+    const rowWrapEls = () =>
+      Array.from(
+        boardContentRef.current?.querySelectorAll<HTMLElement>(
+          "[data-row-wrap]"
+        ) ?? []
+      );
+
+    const handleRowDragStart =
+      (index: number) => (event: React.PointerEvent<HTMLButtonElement>) => {
+        if (event.pointerType === "mouse" && event.button !== 0) return;
+        // 别让浏览器开始选字 / 原生拖拽，也别把事件漏给画布平移
+        event.preventDefault();
+        event.stopPropagation();
+        try {
+          event.currentTarget.setPointerCapture(event.pointerId);
+        } catch {
+          // 拿不到指针捕获的环境退化成普通 move 监听
+        }
+        const el = rowWrapEls()[index];
+        rowDragRef.current = {
+          from: index,
+          to: index,
+          startY: event.clientY,
+          startCenter: el ? el.offsetTop + el.offsetHeight / 2 : 0,
+          dy: 0,
+          pointerId: event.pointerId,
+        };
+        setRowDrag({
+          from: index,
+          to: index,
+          dy: 0,
+          pitch: el?.offsetHeight ?? 64,
+        });
+      };
+
+    const handleRowDragMove = (event: React.PointerEvent<HTMLButtonElement>) => {
+      const drag = rowDragRef.current;
+      if (!drag || drag.pointerId !== event.pointerId) return;
+      const els = rowWrapEls();
+      if (!els[drag.from]) return;
+      const dy = (event.clientY - drag.startY) / (zoom || 1);
+      // 目标位 = 被拖行中线越过了多少「其它行」的中线。
+      // 自身不计入，所以上下两个方向手感对称（不会差一格）。
+      const center = drag.startCenter + dy;
+      let to = 0;
+      els.forEach((el, i) => {
+        if (i === drag.from) return;
+        if (center > el.offsetTop + el.offsetHeight / 2) to += 1;
+      });
+      drag.to = to;
+      drag.dy = dy;
+      setRowDrag({
+        from: drag.from,
+        to,
+        dy,
+        pitch: els[drag.from].offsetHeight,
+      });
+    };
+
+    const finishRowDrag = (event?: React.PointerEvent<HTMLButtonElement>) => {
+      const drag = rowDragRef.current;
+      if (!drag) return;
+      if (event && drag.pointerId !== event.pointerId) return;
+      rowDragRef.current = null;
+      const { from, to, dy } = drag;
+      setRowDrag(null);
+      if (to === from) return;
+      // 落位动画的起始偏移 = 浮空位置 − 该行在新顺序里的真实位置
+      const els = rowWrapEls();
+      const heights = els.map(el => el.offsetHeight);
+      const order = els.map((_, i) => i);
+      order.splice(to, 0, ...order.splice(from, 1));
+      const newTop = order.slice(0, to).reduce((sum, i) => sum + heights[i], 0);
+      const floatingTop = (els[from]?.offsetTop ?? 0) + dy;
+      setRowDrop({ index: to, offset: floatingTop - newTop });
+      setRowDropSettling(false);
+      setRows(prev => (to < prev.length ? arrayMove(prev, from, to) : prev));
+      // 只有真的换了序才落盘 + 记一次撤销（拖动中间态不进历史）
+      if (onConfigChange && !isRestoring) onConfigChange(true);
+    };
+
+    // 落位动画：第一帧保持浮空偏移（无过渡）→ 下一帧过渡回 0
+    useEffect(() => {
+      if (!rowDrop) return;
+      const raf = requestAnimationFrame(() => setRowDropSettling(true));
+      const timer = window.setTimeout(() => {
+        setRowDrop(null);
+        setRowDropSettling(false);
+      }, 260);
+      return () => {
+        cancelAnimationFrame(raf);
+        window.clearTimeout(timer);
+      };
+    }, [rowDrop]);
+
     return (
       <div className="flex flex-col items-center">
         {/* GuideBoard 区域 */}
@@ -1061,124 +1193,209 @@ const GuideBoardCols = memo(forwardRef<GuideBoardRef, GuideBoardProps>(
               themes[currentTheme][1].colors.defaultForeground,
             fontFamily: themes[currentTheme][1].fontFamily,
             transition: "width 0.2s cubic-bezier(0.4,0,0.2,1)",
+            // 行把手 / 行的动画都相对画板定位（padding box）
+            position: "relative",
           }}
         >
-          {rows.map((row, idx) => (
-            <React.Fragment key={`row-wrap-${idx}`}>
-              <div className="flex items-center">
-                <div className="w-full overflow-hidden">
-                  <SortableContext
-                    id={`row${idx + 1}`}
-                    items={row.map(i => i.id)}
-                    strategy={horizontalListSortingStrategy}
-                  >
-                    <GuideBoard id={`row${idx + 1}`}>
-                      {row.length > 0 ? (
-                        row.map((item, itemIndex) => (
-                          <DraggableItem
-                            key={item.id}
-                            id={item.id}
-                            zoom={zoom}
-                            // 行首/行尾取消那侧的 -1px 负边距：
-                            // 否则它会被行容器的 overflow:hidden 裁掉 1px，
-                            // 组件背景与底板不同色时就会在边上露出底板色
-                            flushLeft={itemIndex === 0}
-                            flushRight={itemIndex === row.length - 1}
-                            selected={editingItem?.item.id === item.id}
-                            data={{
-                              type: "guide-item",
-                              rowId: `row${idx + 1}`,
-                              // 供 DragOverlay 渲染拖拽副本（不能叫 item，
-                              // 那是「从组件列表拖入」的标记字段）
-                              boardItem: item,
-                            }}
-                            onClick={e => {
-                              const rect = (
-                                e.currentTarget as HTMLElement
-                              ).getBoundingClientRect();
-                              setEditingItem({
-                                item,
-                                position: {
-                                  x: rect.right,
-                                  y: rect.top,
-                                },
-                                anchor: {
-                                  left: rect.left,
-                                  right: rect.right,
-                                  top: rect.top,
-                                  bottom: rect.bottom,
-                                },
-                              });
-                            }}
-                          >
-                            {/* 主题内容 memo 化：zoom 只影响外层 DraggableItem，
-                                这里 props 不变就不重建（见 BoardItemContent） */}
-                            <BoardItemContent
-                              item={item}
-                              selectedId={editingItem?.item.id}
-                            />
-                          </DraggableItem>
-                        ))
-                      ) : (
-                        // 虚拟占位项
-                        <div
-                          key={`empty-${idx}`}
-                          id={`empty-${idx}`}
-                          style={{
-                            flex: 1,
-                            minHeight: 40,
-                            opacity: 0.6,
-                            color:
-                              boardForeground ??
-                              themes[currentTheme][1].colors
-                                .defaultForeground,
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            pointerEvents: "none", // 不影响拖拽
-                          }}
-                        >
-                          {t("board.emptyRowHint")}
-                        </div>
-                      )}
-                    </GuideBoard>
-                  </SortableContext>
-                </div>
+          {rows.map((row, idx) => {
+            const isDraggingRow = rowDrag?.from === idx;
+            // 让位：被拖行要落到的位置之外，夹在中间的行整体挪一格
+            const shift = (() => {
+              if (!rowDrag || isDraggingRow) return 0;
+              const { from, to, pitch } = rowDrag;
+              if (to > from && idx > from && idx <= to) return -pitch;
+              if (to < from && idx >= to && idx < from) return pitch;
+              return 0;
+            })();
+            // 落位：松手后这一行先停在浮空位置，下一帧再过渡回槽位
+            const isDropping = rowDrop?.index === idx && !isDraggingRow;
+            const offset = isDraggingRow
+              ? (rowDrag?.dy ?? 0)
+              : isDropping
+                ? rowDropSettling
+                  ? 0
+                  : rowDrop.offset
+                : shift;
+            return (
+              <React.Fragment key={`row-wrap-${idx}`}>
                 <div
+                  data-row-wrap={idx}
                   style={{
+                    position: "relative",
                     display: "flex",
                     flexDirection: "column",
-                    gap: 4,
-                    marginLeft: 8,
-                    marginRight: -48,
+                    transform: offset ? `translateY(${offset}px)` : undefined,
+                    zIndex: isDraggingRow ? 30 : undefined,
+                    // 跟手的行不能带过渡（否则追不上指针）；
+                    // 让位 / 落位才有过渡；平时不设，避免无谓动画
+                    transition: isDraggingRow
+                      ? "none"
+                      : isDropping
+                        ? rowDropSettling
+                          ? "transform 200ms cubic-bezier(0.2, 0, 0, 1)"
+                          : "none"
+                        : rowDrag
+                          ? "transform 160ms cubic-bezier(0.2, 0, 0, 1)"
+                          : undefined,
+                    boxShadow: isDraggingRow
+                      ? "0 6px 18px rgba(0, 0, 0, 0.35)"
+                      : undefined,
+                    borderRadius: isDraggingRow ? 2 : undefined,
                   }}
                 >
-                  {/* 只要不是只剩一行，每行（含第一行）都能删 */}
-                  {rows.length > 1 && (
-                    <Button
-                      type="danger"
-                      size="small"
-                      onClick={() => handleRemoveRow(idx)}
-                      className="operation-btn"
+                  <div className="flex items-center">
+                    {rows.length > 1 && (
+                      // 行把手：挂在画板左侧（absolute，不占行内布局，不会挪动组件）。
+                      // guide-item-hint 会被导出流程过滤掉，不会烘进导出图。
+                      <button
+                        type="button"
+                        className="row-drag-handle guide-item-hint"
+                        aria-label={t("board.dragRow")}
+                        title={t("board.dragRow")}
+                        onPointerDown={handleRowDragStart(idx)}
+                        onPointerMove={handleRowDragMove}
+                        onPointerUp={finishRowDrag}
+                        onPointerCancel={() => finishRowDrag()}
+                        // 指针捕获被系统收走（切窗口 / 手势被接管）时也要落位，
+                        // 否则会卡在「一直是拖动中」
+                        onLostPointerCapture={() => finishRowDrag()}
+                        onContextMenu={event => event.preventDefault()}
+                        style={{
+                          cursor: rowDrag ? "grabbing" : "grab",
+                          opacity: rowDrag?.from === idx ? 1 : undefined,
+                        }}
+                      >
+                        <svg
+                          width="8"
+                          height="16"
+                          viewBox="0 0 8 16"
+                          aria-hidden="true"
+                          focusable="false"
+                        >
+                          {[2, 8, 14].map(cy => (
+                            <g key={cy}>
+                              <circle cx="2" cy={cy} r="1.2" fill="currentColor" />
+                              <circle cx="6" cy={cy} r="1.2" fill="currentColor" />
+                            </g>
+                          ))}
+                        </svg>
+                      </button>
+                    )}
+                    <div className="w-full overflow-hidden">
+                      <SortableContext
+                        id={`row${idx + 1}`}
+                        items={row.map(i => i.id)}
+                        strategy={horizontalListSortingStrategy}
+                      >
+                        <GuideBoard id={`row${idx + 1}`}>
+                          {row.length > 0 ? (
+                            row.map((item, itemIndex) => (
+                              <DraggableItem
+                                key={item.id}
+                                id={item.id}
+                                zoom={zoom}
+                                // 行首/行尾取消那侧的 -1px 负边距：
+                                // 否则它会被行容器的 overflow:hidden 裁掉 1px，
+                                // 组件背景与底板不同色时就会在边上露出底板色
+                                flushLeft={itemIndex === 0}
+                                flushRight={itemIndex === row.length - 1}
+                                selected={editingItem?.item.id === item.id}
+                                data={{
+                                  type: "guide-item",
+                                  rowId: `row${idx + 1}`,
+                                  // 供 DragOverlay 渲染拖拽副本（不能叫 item，
+                                  // 那是「从组件列表拖入」的标记字段）
+                                  boardItem: item,
+                                }}
+                                onClick={e => {
+                                  const rect = (
+                                    e.currentTarget as HTMLElement
+                                  ).getBoundingClientRect();
+                                  setEditingItem({
+                                    item,
+                                    position: {
+                                      x: rect.right,
+                                      y: rect.top,
+                                    },
+                                    anchor: {
+                                      left: rect.left,
+                                      right: rect.right,
+                                      top: rect.top,
+                                      bottom: rect.bottom,
+                                    },
+                                  });
+                                }}
+                              >
+                                {/* 主题内容 memo 化：zoom 只影响外层 DraggableItem，
+                                    这里 props 不变就不重建（见 BoardItemContent） */}
+                                <BoardItemContent
+                                  item={item}
+                                  selectedId={editingItem?.item.id}
+                                />
+                              </DraggableItem>
+                            ))
+                          ) : (
+                            // 虚拟占位项
+                            <div
+                              key={`empty-${idx}`}
+                              id={`empty-${idx}`}
+                              style={{
+                                flex: 1,
+                                minHeight: 40,
+                                opacity: 0.6,
+                                color:
+                                  boardForeground ??
+                                  themes[currentTheme][1].colors
+                                    .defaultForeground,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                pointerEvents: "none", // 不影响拖拽
+                              }}
+                            >
+                              {t("board.emptyRowHint")}
+                            </div>
+                          )}
+                        </GuideBoard>
+                      </SortableContext>
+                    </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 4,
+                        marginLeft: 8,
+                        marginRight: -48,
+                      }}
                     >
-                      -
-                    </Button>
+                      {/* 只要不是只剩一行，每行（含第一行）都能删 */}
+                      {rows.length > 1 && (
+                        <Button
+                          type="danger"
+                          size="small"
+                          onClick={() => handleRemoveRow(idx)}
+                          className="operation-btn"
+                        >
+                          -
+                        </Button>
+                      )}
+                      <Button
+                        type="primary"
+                        size="small"
+                        onClick={() => handleAddRow(idx)}
+                        className="operation-btn"
+                      >
+                        +
+                      </Button>
+                    </div>
+                  </div>
+                  {showDividers && idx < rows.length - 1 && (
+                    <LineEnd currentTheme={currentTheme} />
                   )}
-                  <Button
-                    type="primary"
-                    size="small"
-                    onClick={() => handleAddRow(idx)}
-                    className="operation-btn"
-                  >
-                    +
-                  </Button>
                 </div>
-              </div>
-              {showDividers && idx < rows.length - 1 && (
-                <LineEnd currentTheme={currentTheme} />
-              )}
-            </React.Fragment>
-          ))}
+              </React.Fragment>
+            );
+          })}
         </div>
         {/* 主题选择器和宽度调节器，居中显示 */}
         <div

@@ -188,6 +188,24 @@ python3 text_probe.py                                   # 解析 <use> 得到真
 - DragOverlay 位移要除以真实屏幕缩放；`DraggableItem` 用 `useLayoutEffect`+ResizeObserver 绘制前量。
 - 拖拽期间忽略画布手势；document 上非被动 `touchmove` preventDefault；viewport 已禁整页缩放。
 
+**画板行序拖动（`GuideBoard.tsx` 的 `.row-drag-handle`）**
+- 每行左侧一个把手（`position:absolute; right:100%`，挂在画板外，**不占行内布局**、
+  不会挪动组件），只在 rows 数 > 1 时出现；类名 `row-drag-handle guide-item-hint`，
+  导出流程按 `guide-item-hint` 过滤，所以**不会烘进导出图**。
+- 换序是「让位」动画（同 dnd-kit 思路，但**没走 dnd-kit**，怕和行 droppable 的
+  `row1..rowN` id 打架、抢 collision）：被拖行 `translateY` 跟手，其它行按目标位整体
+  平移一格（`transform` + 160ms 过渡），松手才 `arrayMove`；落位再补一次 200ms 过渡。
+- **位置判定必须用 `offsetTop/offsetHeight`（局部坐标、不含 transform）**：用
+  `getBoundingClientRect` 会把正在过渡的行当成真实位置，目标位会抖。
+- 行块 = 行 + 它下面的分隔线（`data-row-wrap` 是 `flex-direction: column` 的外层），
+  这样让位时分隔线跟着行一起走；行块高度不同（末行没有分隔线），落位偏移要按
+  `arrayMove` 之后的新顺序重新累加，否则会差 5px。
+- 存档：行序就是 `rows` 数组顺序，换序只改 state，**松手才 `onConfigChange(true)`**
+  （经过 500ms 防抖 → 落盘 + 记一次撤销），拖动中间态不进历史；撤销/重做、导出、
+  多存档都自动跟随（已实测：拖完 Ctrl+Z 回原序、Ctrl+Shift+Z 再换回来）。
+- 拖拽路径实测 60fps（4 行 × 3 组件，最长帧 16.8ms）：**不要**在 pointermove 里做
+  `getBoundingClientRect` 之类的强制布局读，也别每次 move 都改 DOM 结构。
+
 **双行容器（成都 `TwoRowContainer`，Frame 复用同一套契约）**
 - 宽度 `W = max(30, minWidth, 最宽行跨度 × 0.5 + 1)`；两行等宽；内层 `.two-row-inner` 宽写死
   `W / SCALE` —— **间距能撑开的前提就是内层有确定宽度**（fit-content 时间距必收成 0）。

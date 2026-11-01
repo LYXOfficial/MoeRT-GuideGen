@@ -35,6 +35,7 @@
     "showDividers": "区切り線を表示",
     "twoRowEmpty": "空行",
     "twoRowGrab": "コンテナをドラッグ",
+    "dragRow": "ドラッグして行を並べ替え",
     "removeRow": {
       "title": "この行を削除",
       "confirm": "この行を削除しますか？行内のコンポーネントは消去されます。",

@@ -35,6 +35,7 @@
     "showDividers": "Show dividers",
     "twoRowEmpty": "Empty row",
     "twoRowGrab": "Drag container",
+    "dragRow": "Drag to reorder rows",
     "removeRow": {
       "title": "Delete this row",
       "confirm": "Delete this row? The components in it will be removed.",

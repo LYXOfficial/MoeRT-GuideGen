@@ -35,6 +35,7 @@
     "showDividers": "Afficher les séparateurs",
     "twoRowEmpty": "Ligne vide",
     "twoRowGrab": "Faire glisser le conteneur",
+    "dragRow": "Glisser pour réordonner les lignes",
     "removeRow": {
       "title": "Supprimer cette ligne",
       "confirm": "Voulez-vous vraiment supprimer cette ligne ? Les composants qu'elle contient seront effacés.",

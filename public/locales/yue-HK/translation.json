@@ -35,6 +35,7 @@
     "showDividers": "顯示分隔綫",
     "twoRowEmpty": "空行",
     "twoRowGrab": "拖曳容器",
+    "dragRow": "拖動調整行序",
     "removeRow": {
       "title": "要刪咗呢行？",
       "confirm": "真係要？呢行入面啲元件會一齊冇埋。",

@@ -35,6 +35,7 @@
     "showDividers": "显示分隔线",
     "twoRowEmpty": "空行",
     "twoRowGrab": "拖拽容器",
+    "dragRow": "拖动调整行序",
     "removeRow": {
       "title": "删除此行",
       "confirm": "真的要删除此行吗？行内的组件将被清空。",

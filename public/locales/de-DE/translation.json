@@ -35,6 +35,7 @@
     "showDividers": "Trennlinien anzeigen",
     "twoRowEmpty": "Leere Zeile",
     "twoRowGrab": "Container ziehen",
+    "dragRow": "Ziehen, um Zeilen umzusortieren",
     "removeRow": {
       "title": "Diese Zeile löschen",
       "confirm": "Diese Zeile wirklich löschen? Die Komponenten darin werden entfernt.",

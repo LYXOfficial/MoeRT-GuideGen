@@ -35,6 +35,7 @@
     "showDividers": "Mostrar separadores",
     "twoRowEmpty": "Fila vacía",
     "twoRowGrab": "Arrastrar el contenedor",
+    "dragRow": "Arrastrar para reordenar las filas",
     "removeRow": {
       "title": "Eliminar esta fila",
       "confirm": "¿Seguro que quieres eliminar esta fila? Se quitarán sus componentes.",

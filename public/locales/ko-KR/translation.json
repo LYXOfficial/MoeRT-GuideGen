@@ -35,6 +35,7 @@
     "showDividers": "구분선 표시",
     "twoRowEmpty": "빈 행",
     "twoRowGrab": "컨테이너 끌기",
+    "dragRow": "드래그하여 행 순서 변경",
     "removeRow": {
       "title": "이 행 삭제",
       "confirm": "이 행을 삭제할까요? 행 안의 구성 요소가 지워집니다.",
