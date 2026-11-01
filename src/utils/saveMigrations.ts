@@ -16,6 +16,8 @@
  * 「校验不过」拒收或清空。
  */
 
+import chengduColors from "../components/themes/chengdu/define/colors";
+
 type VersionedData = { version: number } & Record<string, unknown>;
 type Migration = (data: VersionedData) => VersionedData;
 
@@ -45,6 +47,12 @@ const TEXT_LAYOUT_DEFAULTS: Record<string, Record<string, any>> = {
     offsetY: 0,
   },
 };
+
+/** 老档里「背景色 = 透明」可能存成的几种值（各主题的 transparent 常量都是这个字面量） */
+const themesTransparentValues: unknown[] = ["transparent", ""];
+
+/** 成都图标的存档标识：它的 `background` 是「图形挖空处」的颜色，不是组件底色 */
+const CHENGDU_ICON_TYPE = "themes.chengdu.components.Icon";
 
 type SaveRow = Array<{ id: string; type: string; props: Record<string, any> }>;
 
@@ -107,6 +115,33 @@ const MIGRATIONS: Record<number, Migration> = {
         }
       : {}),
   }),
+  // v3 → v4：修回成都图标被写成 transparent 的「背景色」。
+  // 图标的 `background` 是图形挖空处的颜色（底板是 foreground），写成 transparent
+  // 会让挖空处露出底板 → 整块纯色方块。老档里凡是 transparent 的都按「有板色跟随板色、
+  // 没有就回成都默认」修正（用户在弹窗里自己改成别的颜色的不动）。
+  3: data => {
+    const config = (data.config ?? {}) as Record<string, any>;
+    const boardBg =
+      typeof config.boardBackground === "string" && config.boardBackground.length > 0
+        ? config.boardBackground
+        : null;
+    const fallback = boardBg ?? chengduColors.exitbackground;
+    return {
+      ...data,
+      version: 4,
+      ...(Array.isArray(data.rows)
+        ? {
+            rows: mapRowItems(data.rows, item => {
+              if (item.type !== CHENGDU_ICON_TYPE) return item;
+              const transparent =
+                themesTransparentValues.includes(item.props.background);
+              if (!transparent) return item;
+              return { ...item, props: { ...item.props, background: fallback } };
+            }),
+          }
+        : {}),
+    };
+  },
   // v2 → v3：重庆 / 成都「文字」新增中英字号、中英行距、上下偏移。
   // 渲染层本来就会用默认值兜底，但**编辑弹窗读的是 props**，老档缺字段就显示成空输入框，
   // 所以在迁移里补齐（已手动设过的不动）。
@@ -134,7 +169,7 @@ const MIGRATIONS: Record<number, Migration> = {
   }),
 };
 
-export const LATEST_SAVE_VERSION = 3;
+export const LATEST_SAVE_VERSION = 4;
 
 /** 把解析结果按注册表逐级迁移到最新版本；识别不了的结构原样返回，交给上层校验 */
 export function migrateSaveData(parsed: unknown): unknown {

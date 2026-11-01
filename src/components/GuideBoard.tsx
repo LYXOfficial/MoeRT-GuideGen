@@ -491,13 +491,20 @@ const GuideBoardCols = memo(forwardRef<GuideBoardRef, GuideBoardProps>(
       // 透明常量取当前主题 colors.ts（各主题定义一致），别写字面量
       const transparent = themes[currentTheme][1].colors.colors.transparent;
       const gapLike = isGapLike(itemType);
+      // 成都的图标（pictogram）是「底板 = foreground + 图形 = background」的画法，
+      // 它的 `background` 其实是**图形里挖空的那块**，不是组件底色：
+      // 固化成 transparent 就等于把挖空处变成透明的，露出的还是下面那层底板，
+      // 于是整个图标成一块纯色方块（用户报过「所有图标都变成方块」）。
+      // 所以它跟「重庆那档」一样处理：有板色就跟板色，没有就保留自己的默认值。
+      const knockoutPictogram = itemType === "themes.chengdu.components.Icon";
+      const followsBoardColor =
+        knockoutPictogram ||
+        currentTheme === 0 ||
+        currentTheme === 3 ||
+        currentTheme === 5 ||
+        currentTheme === 6;
       if (colorKeys.has("background") && !gapLike) {
-        if (
-          currentTheme === 0 ||
-          currentTheme === 3 ||
-          currentTheme === 5 ||
-          currentTheme === 6
-        ) {
+        if (followsBoardColor) {
           if (boardBackground) {
             finalProps.background = boardBackground;
           }
@@ -506,12 +513,7 @@ const GuideBoardCols = memo(forwardRef<GuideBoardRef, GuideBoardProps>(
         }
       }
       if (colorKeys.has("background2") && !gapLike) {
-        if (
-          currentTheme === 0 ||
-          currentTheme === 3 ||
-          currentTheme === 5 ||
-          currentTheme === 6
-        ) {
+        if (followsBoardColor) {
           if (boardBackground) {
             finalProps.background2 = boardBackground;
           }

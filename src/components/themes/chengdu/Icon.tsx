@@ -153,7 +153,10 @@ export interface IconProps {
 
 export const iconDefaultProps: IconProps = {
   icon: "themes.chengdu.components.Icon.props.icon.exit2",
-  background: colors.transparent,
+  // 注意：图标的「背景色」是**图形里挖空的那一块**（SVG 里 `fill={background}`），
+  // 不是组件底色（底板是 `foreground`）。所以这里不能给 transparent：
+  // 挖空处一透明，露出的就是它下面那层底板，整个图标变成一块纯色方块。
+  background: colors.exitbackground,
   foreground: colors.exitforeground,
   rotation: "0"
 };
