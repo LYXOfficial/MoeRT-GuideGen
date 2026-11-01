@@ -509,6 +509,7 @@
             },
             "background": "Cor de fundo",
             "foreground": "Cor de primeiro plano",
+            "iconFill": "Cor do pictograma",
             "rotation": "Ângulo de rotação"
           }
         },

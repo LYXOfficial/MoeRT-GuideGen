@@ -176,11 +176,12 @@ python3 text_probe.py                                   # 解析 <use> 得到真
   细则：① 间距/空格/分隔线全主题背景永远透明且不固化板色；② 成都/香港/北京旧 默认 transparent；
   ③ 重庆/北京新/东京/上海 保留局部默认，全局板色有设定才覆盖；④ 前景色全局覆盖局部、**默认色不能为空**；
   ⑤ 其它默认值不介入；⑥ 透明一律用各主题 `colors.transparent` 常量，禁写字面量。
-  **例外 · 图标（`*.components.Icon`）的 `background` 不是组件底色**：成都那套 SVG 是
-  「底板 = `foreground` + 图形 = `background`」，`background` 是图形里**挖空的那块**。
-  固化成 `transparent` → 挖空处露出下面那层底板 → 整个图标变成一块纯色方块
-  （d83bf6c 把所有主题的 background 默认改成 transparent 时就是这么坏的，用户报过
-  「所有图标都变成方块」）。所以成都 Icon 跟重庆那档一样：有板色跟板色，没有就保留默认。
+  **成都图标（`themes.chengdu.components.Icon`）的颜色拆成三个**（v4 起）：
+  `foreground` = 底板（那个圆角方块）、`iconFill` = **图形本身的颜色**、`background` = 图标外圈那层底衬。
+  以前 `background` 一个字段同时当「底衬」和「图形色」用，被固化成 `transparent` 后挖空处
+  露出下面的底板 → 整个图标变成一块纯色方块（d83bf6c 就是这么坏的，用户报过「所有图标都
+  变成方块」）。拆分后 `background` 恢复成真正的底衬（成都那档：透明/跟板色），
+  `iconFill` 不参与底板配色固化。
 - `background` / `background2` 必须成对处理（北京两行分色，只改一个 = 只有第一行变）。自查：
   `grep -rn '"transparent"' src/components/themes/ | grep -v define/colors.ts`（应无输出）。
 
@@ -300,10 +301,12 @@ python3 text_probe.py                                   # 解析 <use> 得到真
   `MIGRATIONS[2]` 给重庆 / 成都 `Text` 补 `fontSizeZh/fontSizeEn/lineGap/offsetY`（渲染层本来有兜底，
   但**编辑弹窗读的是 props**，不补就显示空输入框），并按**当时的**默认值补 `digitMode: "prominent"`
   （这个键是后来才加的，以前只有「突出」一种行为；现在的默认是「持平」，不能拿它去填老档）；
-  `MIGRATIONS[3]` 修回成都 `Icon` 被写成 `transparent` 的 `background`（有板色→板色，否则成都
-  `exitbackground`；用户手改成别的颜色的不动）。
+  `MIGRATIONS[3]` 把成都 `Icon` 的 `background` 拆成 `background`（底衬：透明/板色）+
+  `iconFill`（图形色：老 background 是真颜色就搬过来，否则成都 `exitbackground`）。
   三条都走同一个 `mapRowItems`，递归进容器 `props.children`；空串也当「没设」；rows 形状不对时原样
-  留下给 `isSaveData` 拒收。
+  留下给 `isSaveData` 拒收。**另外这个拆分在 `migrateSaveData` 里每次载入还会跑一次**
+  （`splitChengduIconColors`，幂等：`iconFill` 已有有效颜色就跳过）——早期 v4 存档只跑过
+  「补颜色」那版迁移，缺 `iconFill`，靠这一步补。
   索引 `INDEX_VERSION` 是另一套，版本不匹配会 `return null` → 「存档全部消失」，改它必须补迁移。
 
 ## 8. 用户反馈（历史 36 条已全部落实，细节见 git log）

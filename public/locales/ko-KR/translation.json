@@ -508,6 +508,7 @@
             },
             "background": "배경색",
             "foreground": "전경색",
+            "iconFill": "픽토그램 색",
             "rotation": "회전 각도"
           }
         },

@@ -509,6 +509,7 @@
             },
             "background": "Hintergrundfarbe",
             "foreground": "Vordergrundfarbe",
+            "iconFill": "Piktogrammfarbe",
             "rotation": "Drehwinkel"
           }
         },

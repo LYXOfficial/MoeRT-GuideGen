@@ -146,17 +146,24 @@ export const regicons = [
 
 export interface IconProps {
   icon?: string;
+  /** 底衬：图标方块周围那一圈（透明 = 露出底板） */
   background?: string;
+  /** 图形色：图标里画图形的那一笔（SVG 里挖空的那块） */
+  iconFill?: string;
+  /** 底板色：图标方块的底色 */
   foreground?: string;
   rotation?: "0" | "90" | "180" | "270";
 }
 
 export const iconDefaultProps: IconProps = {
   icon: "themes.chengdu.components.Icon.props.icon.exit2",
-  // 注意：图标的「背景色」是**图形里挖空的那一块**（SVG 里 `fill={background}`），
-  // 不是组件底色（底板是 `foreground`）。所以这里不能给 transparent：
-  // 挖空处一透明，露出的就是它下面那层底板，整个图标变成一块纯色方块。
-  background: colors.exitbackground,
+  // background / iconFill 必须分开：
+  //  · background 是图标外圈那层底衬（透明就跟底板走）；
+  //  · iconFill 才是图形本身（SVG 里 `fill` 挖空的那一块）。
+  // 以前一个 background 同时当这两件事用，一旦被固化成 transparent，
+  // 挖空处就露出下面那层底板 → 整个图标变成一块纯色方块。
+  background: colors.transparent,
+  iconFill: colors.exitbackground,
   foreground: colors.exitforeground,
   rotation: "0"
 };
@@ -168,7 +175,7 @@ function OptionPreview({ component }: { component: FC<any> }) {
   return (
     <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center [&>svg]:h-full [&>svg]:w-full">
       <Component
-        background={editing.background ?? iconDefaultProps.background}
+        background={editing.iconFill ?? iconDefaultProps.iconFill}
         foreground={editing.foreground ?? iconDefaultProps.foreground}
       />
     </span>
@@ -211,6 +218,11 @@ export const iconEditorConfig = (t: (key: string) => string): EditorConfig => ({
       element: <CustomColorPicker currentTheme={1} />,
     },
     {
+      key: "iconFill",
+      label: "themes.chengdu.components.Icon.props.iconFill",
+      element: <CustomColorPicker currentTheme={1} />,
+    },
+    {
       key: "background",
       label: "themes.chengdu.components.Icon.props.background",
       element: <CustomColorPicker currentTheme={1} />,
@@ -221,6 +233,7 @@ export const iconEditorConfig = (t: (key: string) => string): EditorConfig => ({
 function Icon({
   icon = iconDefaultProps.icon,
   background = iconDefaultProps.background,
+  iconFill = iconDefaultProps.iconFill,
   foreground = iconDefaultProps.foreground,
   rotation = iconDefaultProps.rotation
 }: IconProps) {
@@ -234,7 +247,7 @@ function Icon({
       {IconComponent ? (
         <IconComponent
           icon={icon}
-          background={background}
+          background={iconFill}
           foreground={foreground}
           rotation={rotation}
         />

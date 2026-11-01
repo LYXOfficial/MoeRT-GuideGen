@@ -48,11 +48,47 @@ const TEXT_LAYOUT_DEFAULTS: Record<string, Record<string, any>> = {
   },
 };
 
-/** 老档里「背景色 = 透明」可能存成的几种值（各主题的 transparent 常量都是这个字面量） */
-const themesTransparentValues: unknown[] = ["transparent", ""];
-
-/** 成都图标的存档标识：它的 `background` 是「图形挖空处」的颜色，不是组件底色 */
+/** 成都图标的存档标识 */
 const CHENGDU_ICON_TYPE = "themes.chengdu.components.Icon";
+
+/** 有效颜色：非空串、不是透明 */
+const isRealColor = (v: unknown): v is string =>
+  typeof v === "string" && v.length > 0 && v !== "transparent";
+
+/**
+ * 成都图标拆分 background / iconFill（幂等）。
+ *
+ * 拆分前 `background` 同时当「外圈底衬」和「图形色」用；拆分后：
+ *  · `iconFill` = 图形色（原来那个 background 如果是真颜色就搬过来，否则用成都默认）；
+ *  · `background` = 底衬（有板色跟板色，没有就透明，按成都那档规则）。
+ * 已经拆过的条目再跑一遍不会有任何变化，所以除了迁移，存档载入时也会跑一次
+ * （早期 v4 存档可能只跑过「补颜色」那版，缺 iconFill）。
+ */
+function splitChengduIconColors(data: VersionedData): VersionedData {
+  if (!Array.isArray(data.rows)) return data;
+  const config = (data.config ?? {}) as Record<string, any>;
+  const boardBg =
+    typeof config.boardBackground === "string" && config.boardBackground.length > 0
+      ? config.boardBackground
+      : null;
+  const backdrop = boardBg ?? "transparent";
+  return {
+    ...data,
+    rows: mapRowItems(data.rows, item => {
+      if (item.type !== CHENGDU_ICON_TYPE) return item;
+      const props: Record<string, any> = { ...item.props };
+      // 「还没拆过」= iconFill 没有有效颜色。拆完 iconFill 一定是个真颜色，
+      // 所以这一步幂等：拆过的条目（哪怕用户后来改了 bottom 的底衬色）不会再动。
+      if (isRealColor(props.iconFill)) return item;
+      props.iconFill = isRealColor(props.background)
+        ? props.background
+        : chengduColors.exitbackground;
+      // 老的 background 已经搬去 iconFill 了，底衬按成都那档规则回到板色/透明
+      props.background = backdrop;
+      return { ...item, props };
+    }),
+  };
+}
 
 type SaveRow = Array<{ id: string; type: string; props: Record<string, any> }>;
 
@@ -115,33 +151,10 @@ const MIGRATIONS: Record<number, Migration> = {
         }
       : {}),
   }),
-  // v3 → v4：修回成都图标被写成 transparent 的「背景色」。
-  // 图标的 `background` 是图形挖空处的颜色（底板是 foreground），写成 transparent
-  // 会让挖空处露出底板 → 整块纯色方块。老档里凡是 transparent 的都按「有板色跟随板色、
-  // 没有就回成都默认」修正（用户在弹窗里自己改成别的颜色的不动）。
-  3: data => {
-    const config = (data.config ?? {}) as Record<string, any>;
-    const boardBg =
-      typeof config.boardBackground === "string" && config.boardBackground.length > 0
-        ? config.boardBackground
-        : null;
-    const fallback = boardBg ?? chengduColors.exitbackground;
-    return {
-      ...data,
-      version: 4,
-      ...(Array.isArray(data.rows)
-        ? {
-            rows: mapRowItems(data.rows, item => {
-              if (item.type !== CHENGDU_ICON_TYPE) return item;
-              const transparent =
-                themesTransparentValues.includes(item.props.background);
-              if (!transparent) return item;
-              return { ...item, props: { ...item.props, background: fallback } };
-            }),
-          }
-        : {}),
-    };
-  },
+  // v3 → v4：成都图标的 background 拆成 background（底衬）+ iconFill（图形色）。
+  // 以前一个 background 同时当这两件事用，被固化成 transparent 后挖空处露出底板，
+  // 整个图标变成一块纯色方块。拆分后：图形色独立可设、底衬跟底板（透明）。
+  3: data => ({ ...splitChengduIconColors(data), version: 4 }),
   // v2 → v3：重庆 / 成都「文字」新增中英字号、中英行距、上下偏移。
   // 渲染层本来就会用默认值兜底，但**编辑弹窗读的是 props**，老档缺字段就显示成空输入框，
   // 所以在迁移里补齐（已手动设过的不动）。
@@ -180,6 +193,10 @@ export function migrateSaveData(parsed: unknown): unknown {
   while (data.version < LATEST_SAVE_VERSION && MIGRATIONS[data.version]) {
     data = MIGRATIONS[data.version](data);
     if (++guard > 16) break; // 迁移表配置成环时的保险丝
+  }
+  // 幂等修补：早期 v4 存档只跑过「补颜色」那版迁移，缺 iconFill，这里补上
+  if (typeof data.version === "number" && data.version >= 4) {
+    data = splitChengduIconColors(data);
   }
   return data;
 }

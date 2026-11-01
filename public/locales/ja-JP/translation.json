@@ -508,6 +508,7 @@
             },
             "background": "背景色",
             "foreground": "前景色",
+            "iconFill": "図記号の色",
             "rotation": "回転角度"
           }
         },

@@ -508,6 +508,7 @@
             },
             "background": "背景色",
             "foreground": "前景色",
+            "iconFill": "圖形色",
             "rotation": "旋轉角度"
           }
         },

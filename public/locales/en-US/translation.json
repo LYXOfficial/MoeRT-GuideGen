@@ -509,6 +509,7 @@
             },
             "background": "Background Color",
             "foreground": "Foreground Color",
+            "iconFill": "Glyph color",
             "rotation": "Rotation Angle"
           }
         },
