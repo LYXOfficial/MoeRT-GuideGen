@@ -186,6 +186,10 @@ python3 text_probe.py                                   # 解析 <use> 得到真
 - 删除区 droppable 用**可见矩形**（`visibleRect.ts` + `data-trash-root`），否则「拖出画布」误判成删除。
 - 拖到双行容器边缘时 collision 可能清空 `pool` → `pool[0].id` 白屏（已加空兜底；**改 collision 前先读双行容器那节**）。
 - DragOverlay 位移要除以真实屏幕缩放；`DraggableItem` 用 `useLayoutEffect`+ResizeObserver 绘制前量。
+- **幽灵的配色注入只给「从侧栏拖入」的**（`renderDragPreview(item, fromBoard)`）：板色只在新组件
+  落板那一刻 `bakeDropColors` 写进 props，板内搬家是原样搬运，所以画板上的组件拖起来必须
+  原样显示自己的 props。否则改过底板前景色之后，板上明明是黄色的号码，幽灵却变成白色
+  （被全局前景色盖掉，用户报过）。
 - 拖拽期间忽略画布手势；document 上非被动 `touchmove` preventDefault；viewport 已禁整页缩放。
 
 **画板行序拖动（`GuideBoard.tsx` 的 `.row-drag-handle`）**
@@ -209,6 +213,9 @@ python3 text_probe.py                                   # 解析 <use> 得到真
   行里组件背景多半是 `transparent`，不铺底衬拖出画板边缘 / 压到别的行上会透出页面灰底。
   **组件拖拽的 DragOverlay 幽灵不要铺底板色**（用户明确要求：只有行把手拖动才铺，
   组件幽灵保持主题默认背景色 + 默认前景色），别「顺手统一」成底板色。
+- 悬浮行 / 落位中的行 `z-index` 要用 **200**：行里的组件自己带层级（`.guide-item-frame:hover`
+  是 40、小元件热区 `.guide-item-hit-expand` 是 50），中间没有别的层叠上下文，
+  所以 30 会被下面的行反盖住（用户反馈「下面的却盖住了悬浮行」）。
 
 **双行容器（成都 `TwoRowContainer`，Frame 复用同一套契约）**
 - 宽度 `W = max(30, minWidth, 最宽行跨度 × 0.5 + 1)`；两行等宽；内层 `.two-row-inner` 宽写死

@@ -1225,7 +1225,11 @@ const GuideBoardCols = memo(forwardRef<GuideBoardRef, GuideBoardProps>(
                     display: "flex",
                     flexDirection: "column",
                     transform: offset ? `translateY(${offset}px)` : undefined,
-                    zIndex: isDraggingRow ? 30 : undefined,
+                    // 悬浮行必须压在所有行之上：行里的组件带 z-index（hover 的
+                    // .guide-item-frame 是 40、小元件热区 .guide-item-hit-expand 是 50），
+                    // 它们没有中间的层叠上下文，所以按 40/50 直接和这一层比大小；
+                    // 用 30 会被下面的行反盖住（用户反馈过「下面的却盖住了悬浮行」）
+                    zIndex: isDraggingRow || isDropping ? 200 : undefined,
                     // 跟手的行不能带过渡（否则追不上指针）；
                     // 让位 / 落位才有过渡；平时不设，避免无谓动画
                     transition: isDraggingRow
@@ -1244,10 +1248,11 @@ const GuideBoardCols = memo(forwardRef<GuideBoardRef, GuideBoardProps>(
                     // 悬浮起来的那一行铺上「当前底板色」：行里组件多半背景透明，
                     // 不铺底衬的话拖出画板边缘（或压到别的行上）会透出灰底，
                     // 看着像一块跟画板对不上的幽灵
-                    backgroundColor: isDraggingRow
-                      ? (boardBackground ??
-                        themes[currentTheme][1].colors.defaultBackground)
-                      : undefined,
+                    backgroundColor:
+                      isDraggingRow || isDropping
+                        ? (boardBackground ??
+                          themes[currentTheme][1].colors.defaultBackground)
+                        : undefined,
                   }}
                 >
                   <div className="flex items-center">

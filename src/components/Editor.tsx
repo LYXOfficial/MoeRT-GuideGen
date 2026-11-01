@@ -1497,7 +1497,7 @@ export default function Editor({
 
   // DragOverlay 里的副本：双行容器要切到预览模式，
   // 否则副本内部会用同样的 id 抢注册可拖放区域，导致真身拖过一次后失效
-  const renderDragPreview = (item: GuideItem) => {
+  const renderDragPreview = (item: GuideItem, fromBoard = false) => {
     if (!isValidElement(item.element)) return item.element;
 
     // 底板配色跟随：与落板渲染（boardColorOverrides）、侧栏预览同一规则——
@@ -1513,16 +1513,21 @@ export default function Editor({
         : [];
     const keys = new Set(forms.map((f: { key: string }) => f.key));
     const inject: Record<string, any> = {};
-    // 幽灵要和「拖上板后的样子」一致：底板背景色设置后全主题跟随显示
-    // （落板固化透明/底板色的组件，视觉上都是底板色）。
-    if (boardBackground && keys.has("background")) {
-      inject.background = boardBackground;
-    }
-    if (boardBackground && keys.has("background2")) {
-      inject.background2 = boardBackground;
-    }
-    if (boardForeground && keys.has("foreground")) {
-      inject.foreground = boardForeground;
+    // 只有「从侧栏新拖入」的组件才按当前底板色注入：落板那一刻会 bakeDropColors
+    // 把板色写进 props，幽灵提前按板色预览才对得上。
+    // 画板上的组件在板内搬家是**原样搬运、不重新固化**（§7 底板配色铁律），
+    // 所以它的幽灵必须原样显示自己的 props —— 否则改过底板色之后，
+    // 明明在板上是黄色的号码，拖起来却变成白色（被全局前景色盖掉）。
+    if (!fromBoard) {
+      if (boardBackground && keys.has("background")) {
+        inject.background = boardBackground;
+      }
+      if (boardBackground && keys.has("background2")) {
+        inject.background2 = boardBackground;
+      }
+      if (boardForeground && keys.has("foreground")) {
+        inject.foreground = boardForeground;
+      }
     }
 
     const isSpacing = item.type?.includes("Spacing");
@@ -2871,7 +2876,7 @@ export default function Editor({
                 fontFamily: themes[currentTheme][1].fontFamily,
               }}
             >
-              {renderDragPreview(activeDrag.item)}
+              {renderDragPreview(activeDrag.item, activeDrag.fromBoard)}
             </div>
           </div>
         ) : null}
