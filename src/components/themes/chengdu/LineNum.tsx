@@ -177,8 +177,10 @@ function LineNum({
   // 改成按**墨迹高 + 上下留白**贴出来，见下方 BLOCK_H。
   const block = variant === "block";
   const BLOCK_SCALE = 0.9;
-  const BLOCK_PAD = 2; // 牌面内左右留白
-  const BLOCK_PAD_Y = 4; // 牌面内上下留白（墨迹到牌边）
+  const BLOCK_EN_SCALE = 0.85; // 色块里英文再小一号（只有色块风格吃这个）
+  const BLOCK_TEXT_GAP = 10; // 色块里「数字 ↔ 文字」的间隙（比经典版的 5 大一点）
+  const BLOCK_PAD = 5; // 牌面内左右留白
+  const BLOCK_PAD_Y = 5; // 牌面内上下留白（墨迹到牌边）
   const BLOCK_RADIUS = 0;
   // 只把制表/换行换成空格（首尾、中间的空格全部保留），渲染侧配 xmlSpace="preserve"
   // 量宽和渲染必须用同一个串，否则空格数对不上（多空格被折叠/被丢掉的老毛病）
@@ -199,8 +201,9 @@ function LineNum({
   const inkTopBadge = showText
     ? Math.min(numBadgeBase - numBadgeSize * 0.716, RS.zhY - RS.zhFont * 0.88)
     : numBadgeBase - numBadgeSize * 0.716;
+  const blockEnFont = RS.enFont * BLOCK_EN_SCALE;
   const inkBottomBadge = showText
-    ? Math.max(numBadgeBase, RS.enY + RS.enFont * 0.25)
+    ? Math.max(numBadgeBase, RS.enY + blockEnFont * 0.25)
     : numBadgeBase;
   const inkHBadge = Math.max(1, inkBottomBadge - inkTopBadge);
   const blockInkH = inkHBadge * BLOCK_SCALE; // 缩放后的墨迹高
@@ -227,10 +230,11 @@ function LineNum({
         if (block) {
           // 色块风格：内容（数字 + 文字）按无色块的方式从左排起，整组缩 BLOCK_SCALE，
           // 牌宽 = 两侧留白 + 缩放后的内容宽
-          const contentW = numBBox.width + (showText ? GAP + textBBox.width : 0);
+          const contentW =
+            numBBox.width + (showText ? BLOCK_TEXT_GAP + textBBox.width : 0);
           setRectX(0);
           setNumX(0);
-          setTextOffsetX(showText ? numBBox.width + GAP : 0);
+          setTextOffsetX(showText ? numBBox.width + BLOCK_TEXT_GAP : 0);
           setTextAnchor("start");
           totalWidth = BLOCK_PAD * 2 + BLOCK_SCALE * contentW;
           setSvgWidth(totalWidth);
@@ -361,7 +365,7 @@ function LineNum({
                   <text
                     x={0}
                     y={RS.enY}
-                    fontSize={RS.enFont}
+                    fontSize={blockEnFont}
                     textAnchor={textAnchor}
                     fill={foreground}
                     xmlSpace="preserve">
