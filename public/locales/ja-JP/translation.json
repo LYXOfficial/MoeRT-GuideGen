@@ -332,10 +332,16 @@
             "chinese": "中国語テキスト",
             "english": "英語テキスト",
             "align": {
-              "displayName": "配置",
+              "displayName": "横位置",
               "left": "左",
               "right": "右",
               "center": "中央"
+            },
+            "alignV": {
+              "displayName": "縦位置",
+              "top": "上寄せ",
+              "center": "中央",
+              "bottom": "下寄せ"
             },
             "digitMode": {
               "displayName": "数字スタイル",
@@ -596,10 +602,16 @@
             "chinese": "中国語テキスト",
             "english": "英語テキスト",
             "align": {
-              "displayName": "配置",
+              "displayName": "横位置",
               "left": "左",
               "right": "右",
               "center": "中央"
+            },
+            "alignV": {
+              "displayName": "縦位置",
+              "top": "上寄せ",
+              "center": "中央",
+              "bottom": "下寄せ"
             },
             "fontSizeZh": "中国語のサイズ",
             "fontSizeEn": "英語のサイズ",

@@ -333,10 +333,16 @@
             "chinese": "Chinesischer Text",
             "english": "Englischer Text",
             "align": {
-              "displayName": "Ausrichtung",
+              "displayName": "Horizontale Ausrichtung",
               "left": "Links",
               "right": "Rechts",
               "center": "Mitte"
+            },
+            "alignV": {
+              "displayName": "Vertikale Ausrichtung",
+              "top": "Oben",
+              "center": "Mitte",
+              "bottom": "Unten"
             },
             "digitMode": {
               "displayName": "Ziffernverhalten",
@@ -597,10 +603,16 @@
             "chinese": "Chinesischer Text",
             "english": "Englischer Text",
             "align": {
-              "displayName": "Ausrichtung",
+              "displayName": "Horizontale Ausrichtung",
               "left": "Links",
               "right": "Rechts",
               "center": "Mitte"
+            },
+            "alignV": {
+              "displayName": "Vertikale Ausrichtung",
+              "top": "Oben",
+              "center": "Mitte",
+              "bottom": "Unten"
             },
             "fontSizeZh": "Chinesisch-Größe",
             "fontSizeEn": "Englisch-Größe",

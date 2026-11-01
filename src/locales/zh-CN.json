@@ -332,10 +332,16 @@
             "chinese": "中文文本",
             "english": "英文文本",
             "align": {
-              "displayName": "对齐",
+              "displayName": "横向对齐",
               "left": "左",
               "right": "右",
               "center": "中"
+            },
+            "alignV": {
+              "displayName": "纵向对齐",
+              "top": "贴顶",
+              "center": "居中",
+              "bottom": "贴底"
             },
             "digitMode": {
               "displayName": "数字行为",
@@ -596,10 +602,16 @@
             "chinese": "中文文本",
             "english": "英文文本",
             "align": {
-              "displayName": "对齐",
+              "displayName": "横向对齐",
               "left": "左",
               "right": "右",
               "center": "中"
+            },
+            "alignV": {
+              "displayName": "纵向对齐",
+              "top": "贴顶",
+              "center": "居中",
+              "bottom": "贴底"
             },
             "fontSizeZh": "中文字号",
             "fontSizeEn": "英文字号",

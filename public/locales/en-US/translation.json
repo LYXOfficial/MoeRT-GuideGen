@@ -333,10 +333,16 @@
             "chinese": "Chinese Text",
             "english": "English Text",
             "align": {
-              "displayName": "Alignment",
+              "displayName": "Horizontal alignment",
               "left": "Left",
               "right": "Right",
               "center": "Center"
+            },
+            "alignV": {
+              "displayName": "Vertical alignment",
+              "top": "Top",
+              "center": "Middle",
+              "bottom": "Bottom"
             },
             "digitMode": {
               "displayName": "Digit behavior",
@@ -597,10 +603,16 @@
             "chinese": "Chinese Text",
             "english": "English Text",
             "align": {
-              "displayName": "Alignment",
+              "displayName": "Horizontal alignment",
               "left": "Left",
               "right": "Right",
               "center": "Center"
+            },
+            "alignV": {
+              "displayName": "Vertical alignment",
+              "top": "Top",
+              "center": "Middle",
+              "bottom": "Bottom"
             },
             "fontSizeZh": "Chinese size",
             "fontSizeEn": "English size",

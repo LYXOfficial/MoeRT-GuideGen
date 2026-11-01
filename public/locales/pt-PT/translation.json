@@ -333,10 +333,16 @@
             "chinese": "Texto em chinês",
             "english": "Texto em inglês",
             "align": {
-              "displayName": "Alinhamento",
+              "displayName": "Alinhamento horizontal",
               "left": "Esquerda",
               "right": "Direita",
               "center": "Centro"
+            },
+            "alignV": {
+              "displayName": "Alinhamento vertical",
+              "top": "Topo",
+              "center": "Centro",
+              "bottom": "Fundo"
             },
             "digitMode": {
               "displayName": "Comportamento dos dígitos",
@@ -597,10 +603,16 @@
             "chinese": "Texto em chinês",
             "english": "Texto em inglês",
             "align": {
-              "displayName": "Alinhamento",
+              "displayName": "Alinhamento horizontal",
               "left": "Esquerda",
               "right": "Direita",
               "center": "Centro"
+            },
+            "alignV": {
+              "displayName": "Alinhamento vertical",
+              "top": "Topo",
+              "center": "Centro",
+              "bottom": "Fundo"
             },
             "fontSizeZh": "Tamanho chinês",
             "fontSizeEn": "Tamanho inglês",

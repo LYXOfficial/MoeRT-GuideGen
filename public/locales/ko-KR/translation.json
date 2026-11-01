@@ -332,10 +332,16 @@
             "chinese": "중국어 텍스트",
             "english": "영어 텍스트",
             "align": {
-              "displayName": "정렬",
+              "displayName": "가로 정렬",
               "left": "왼쪽",
               "right": "오른쪽",
               "center": "중앙"
+            },
+            "alignV": {
+              "displayName": "세로 정렬",
+              "top": "위",
+              "center": "가운데",
+              "bottom": "아래"
             },
             "digitMode": {
               "displayName": "숫자 스타일",
@@ -596,10 +602,16 @@
             "chinese": "중국어 텍스트",
             "english": "영어 텍스트",
             "align": {
-              "displayName": "정렬",
+              "displayName": "가로 정렬",
               "left": "왼쪽",
               "right": "오른쪽",
               "center": "중앙"
+            },
+            "alignV": {
+              "displayName": "세로 정렬",
+              "top": "위",
+              "center": "가운데",
+              "bottom": "아래"
             },
             "fontSizeZh": "중국어 크기",
             "fontSizeEn": "영어 크기",

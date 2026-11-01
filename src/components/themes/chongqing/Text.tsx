@@ -8,7 +8,10 @@ import { normalizeSvgLine } from "../../../utils/svgText";
 export interface TextProps {
   chinese: string;
   english: string;
+  /** 横向对齐 */
   align?: "left" | "center" | "right";
+  /** 纵向对齐：贴顶 / 居中 / 贴底（相对 64px 行） */
+  alignV?: "top" | "center" | "bottom";
   /** 数字行为：prominent = 数字放大用 Frutiger；flat = 数字与文字同大，用 Helvetica */
   digitMode?: "prominent" | "flat";
   /** 中文字号（px） */
@@ -24,6 +27,7 @@ export interface TextProps {
 }
 export const textDefaultProps: TextProps = {
   align: "left",
+  alignV: "center",
   chinese: "乘车",
   english: "Train",
   digitMode: "flat",
@@ -60,6 +64,23 @@ export const textEditorConfig = (t: (key: string) => string): EditorConfig => ({
           </Select.Option>
           <Select.Option value="right">
             {t("themes.chongqing.components.Text.props.align.right")}
+          </Select.Option>
+        </Select>
+      ),
+    },
+    {
+      key: "alignV",
+      label: "themes.chongqing.components.Text.props.alignV.displayName",
+      element: (
+        <Select>
+          <Select.Option value="top">
+            {t("themes.chongqing.components.Text.props.alignV.top")}
+          </Select.Option>
+          <Select.Option value="center">
+            {t("themes.chongqing.components.Text.props.alignV.center")}
+          </Select.Option>
+          <Select.Option value="bottom">
+            {t("themes.chongqing.components.Text.props.alignV.bottom")}
           </Select.Option>
         </Select>
       ),
@@ -115,6 +136,7 @@ export default function Text({
   chinese = textDefaultProps.chinese,
   english = textDefaultProps.english,
   align = textDefaultProps.align,
+  alignV = textDefaultProps.alignV,
   digitMode = "flat",
   fontSizeZh = textDefaultProps.fontSizeZh,
   fontSizeEn = textDefaultProps.fontSizeEn,
@@ -138,9 +160,20 @@ export default function Text({
   const zhSize = clampNum(fontSizeZh, 8, 64, 22);
   const enSize = clampNum(fontSizeEn, 6, 48, 14);
   const gap = clampNum(lineGap, 0, 48, 16);
-  // 上下偏移：正数向上（和编辑器里的 ↑ 一致），两行一起动
-  const dy = -(Number(offsetY) || 0);
-  // 中文基线保持原位（默认 32），英文 = 中文基线 + 行距（默认 16 → 48，与改动前一致）
+  // 纵向对齐（相对 64px 行）：以「居中」为基准（中文基线 32，跟改动前一模一样），
+  // 贴顶 = 把整块墨迹推到行顶，贴底 = 推到行底。
+  // 墨迹高：中文 ink ≈ 0.88em（坐在基线上）+ 行距 + 英文下伸部 ≈ 0.25em。
+  const zhInkH = zhSize * 0.88;
+  const enDescH = enSize * 0.25;
+  const vAlignDelta =
+    alignV === "top"
+      ? -(32 - zhInkH)
+      : alignV === "bottom"
+        ? 64 - (32 + gap + enDescH)
+        : 0;
+  // 上下偏移：正数向上（和编辑器里的 ↑ 一致），两行一起动；与纵向对齐叠加
+  const dy = -(Number(offsetY) || 0) + vAlignDelta;
+  // 中文基线：默认 32（居中），英文 = 中文基线 + 行距（默认 16 → 48，与改动前一致）
   const zhY = 32 + dy;
   const enY = zhY + gap;
   // 突出显示的数字跟着中文字号等比放大（默认 22 → 30）
