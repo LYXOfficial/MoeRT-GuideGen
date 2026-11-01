@@ -172,13 +172,13 @@ function LineNum({
   // 当前色块档位的尺寸/字号
   const RS = RECT_STYLES[rectMode ?? "narrow"];
   // ===== 色块风格（2026）：整块圆角牌面，数字/文字缩小一圈装进去 =====
-  // 直接把「经典」那套数字+文字的排法整体缩 BLOCK_SCALE，上下居中放进牌里，
-  // 字号/基线全部沿用上面 RECT_STYLES 的值，不另立一套。
+  // 排法还是「经典」那套（数字 + 号线/Line，字号基线全用 RECT_STYLES），外面套一层整体缩放。
+  // 牌高不再按「64 × 缩放比」算 —— 那样内容框上下会白出一大截（用户嫌上下内边距大），
+  // 改成按**墨迹高 + 上下留白**贴出来，见下方 BLOCK_H。
   const block = variant === "block";
-  const BLOCK_SCALE = 0.6;
-  const BLOCK_PAD = 9; // 牌面内左右留白
-  const BLOCK_H = 64 * BLOCK_SCALE; // 内容整体高度（缩放后）
-  const BLOCK_Y = (64 - BLOCK_H) / 2; // 上下居中
+  const BLOCK_SCALE = 0.9;
+  const BLOCK_PAD = 2; // 牌面内左右留白
+  const BLOCK_PAD_Y = 4; // 牌面内上下留白（墨迹到牌边）
   const BLOCK_RADIUS = 0;
   // 只把制表/换行换成空格（首尾、中间的空格全部保留），渲染侧配 xmlSpace="preserve"
   // 量宽和渲染必须用同一个串，否则空格数对不上（多空格被折叠/被丢掉的老毛病）
@@ -191,6 +191,23 @@ function LineNum({
   const numEmpty = !numText.trim();
   const textEmptyBoth = !zhText.trim() && !enText.trim();
   const collapsed = numEmpty && (!showText || textEmptyBoth);
+
+  // 色块风格的牌高/竖向位移：按经典版坐标里的「内容墨迹」算
+  // （汉字 ink ≈0.88em、拉丁 cap ≈0.716em、下伸 0.25em）
+  const numBadgeSize = isChinese ? RS.numFontZh : RS.numFontLatn;
+  const numBadgeBase = isChinese ? RS.numYZh : RS.numYLatn;
+  const inkTopBadge = showText
+    ? Math.min(numBadgeBase - numBadgeSize * 0.716, RS.zhY - RS.zhFont * 0.88)
+    : numBadgeBase - numBadgeSize * 0.716;
+  const inkBottomBadge = showText
+    ? Math.max(numBadgeBase, RS.enY + RS.enFont * 0.25)
+    : numBadgeBase;
+  const inkHBadge = Math.max(1, inkBottomBadge - inkTopBadge);
+  const blockInkH = inkHBadge * BLOCK_SCALE; // 缩放后的墨迹高
+  const BLOCK_H = blockInkH + BLOCK_PAD_Y * 2; // 牌高 = 墨迹 + 上下留白
+  const BLOCK_Y = (64 - BLOCK_H) / 2; // 牌在行内上下居中
+  // 内容组位移：让墨迹顶刚好落在牌顶 + BLOCK_PAD_Y
+  const BLOCK_CONTENT_Y = BLOCK_Y + BLOCK_PAD_Y - BLOCK_SCALE * inkTopBadge;
 
   useEffect(() => {
     let mounted = true;
@@ -317,7 +334,7 @@ function LineNum({
             />
             {/* 数字 + 文字：经典版那套排法整体缩一圈，上下居中装进牌里 */}
             <g
-              transform={`translate(${BLOCK_PAD} ${BLOCK_Y}) scale(${BLOCK_SCALE})`}
+              transform={`translate(${BLOCK_PAD} ${BLOCK_CONTENT_Y}) scale(${BLOCK_SCALE})`}
             >
               <text
                 ref={numRef}
