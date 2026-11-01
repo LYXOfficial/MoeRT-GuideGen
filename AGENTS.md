@@ -254,6 +254,8 @@ python3 text_probe.py                                   # 解析 <use> 得到真
   element，`JSON.stringify` 不相等 → 被当新操作 push 并 `splice` 掉 redo。
 - 存档版本号：唯一取值点 `saveMigrations.ts` 的 `LATEST_SAVE_VERSION`；`isSaveData` 校验用**区间**；
   **追加式改动不升版本号**，破坏性改动才升 + 在 `MIGRATIONS` 里补迁移（迁移结果不写回 localStorage）。
+  当前 **2**：`MIGRATIONS[1]` 把北京旧版 `Text` 的旧 `letterSpacing` 拆成 `letterSpacingZh/En`（老值双份回填、
+  旧键删除，递归进容器 `props.children`）；rows 形状不对时原样留下给 `isSaveData` 拒收。
   索引 `INDEX_VERSION` 是另一套，版本不匹配会 `return null` → 「存档全部消失」，改它必须补迁移。
 
 ## 8. 用户反馈（历史 36 条已全部落实，细节见 git log）
@@ -294,6 +296,15 @@ python3 text_probe.py                                   # 解析 <use> 得到真
   （暗底/亮底复用同一套，靠前景/背景切换，**不做两套图标**）。
 - **旧版不做双行背景**：backgroundFormItems 只暴露一项背景色；组件 props 里的
   background2 保留但永不进编辑器。
+- **文字（Text）边缘对齐 + 中英字距分设**（2026-11-01）：`align` 在左/中/右后追加 `justify`，
+  文案叫「边缘对齐」（用户嫌「分散对齐」怪）。做法 = 把该行墨迹摊满块宽：canvas
+  `actualBoundingBoxLeft/Right`（`measureInk`）取首字墨迹左缘 / 尾字墨迹右缘，
+  `x = -inkLeft` 把首字墨迹贴 0，字距加 `(块宽 − 行墨迹宽)/(字符数−1)`（恒 ≥ 0，单字行不摊）。
+  **必须按墨迹而不是排字原点**：汉字 side bearing 与拉丁不同，按原点贴边会缩进 1–3px
+  （「出口/Way out」实测左 2.0 / 右 3.0 缩进 → 改后两行都是 1.0/63.0，逐像素对齐）。
+  字距拆成 `letterSpacingZh / letterSpacingEn`（em），旧 `letterSpacing` 已删；
+  存档 v1→v2 迁移把老值双份回填（见 §7「存档版本号」）。
+- 色板新增 `black: "#000000"`「纯黑」（排在 `white` 后；`textblue` 带蓝调，白底要真黑时用它）。
 - i18n：5 语言 `themes.beijingOld.*` 全套（components displayName 复制自新版同名组件，
   ToTrain 自带五语）；colors 按旧版 colors.ts 键集过滤（37 键）。
 

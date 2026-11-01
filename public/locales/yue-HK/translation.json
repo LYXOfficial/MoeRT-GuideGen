@@ -1237,6 +1237,7 @@
         "foreground": "前景色",
         "textblue": "文字藍",
         "white": "白色",
+        "black": "純黑",
         "border": "邊框",
         "divider": "分隔綫",
         "exit": "出口綠",
@@ -1331,7 +1332,8 @@
               "bold": "粗",
               "displayName": "字重"
             },
-            "letterSpacing": "字距",
+            "letterSpacingZh": "中文字距",
+            "letterSpacingEn": "英文字距",
             "fontSizeZh": "中文字號",
             "fontSizeEn": "英文字號",
             "lineGap": "中英間距",
@@ -1339,6 +1341,7 @@
               "left": "靠左",
               "center": "置中",
               "right": "靠右",
+              "justify": "邊緣對齊",
               "displayName": "對齊"
             },
             "foreground": "前景色",

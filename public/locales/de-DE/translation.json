@@ -1238,6 +1238,7 @@
         "foreground": "Vordergrund",
         "textblue": "Textblau",
         "white": "Weiß",
+        "black": "Reines Schwarz",
         "border": "Rahmen",
         "divider": "Trennlinie",
         "exit": "Ausgangsgrün",
@@ -1332,7 +1333,8 @@
               "bold": "Fett",
               "displayName": "Schriftstärke"
             },
-            "letterSpacing": "Zeichenabstand",
+            "letterSpacingZh": "Zeichenabstand Chinesisch",
+            "letterSpacingEn": "Zeichenabstand Englisch",
             "fontSizeZh": "Chinesische Schriftgröße",
             "fontSizeEn": "Englische Schriftgröße",
             "lineGap": "Abstand Chinesisch/Englisch",
@@ -1340,6 +1342,7 @@
               "left": "Links",
               "center": "Mitte",
               "right": "Rechts",
+              "justify": "Randbündig",
               "displayName": "Ausrichtung"
             },
             "foreground": "Vordergrundfarbe",

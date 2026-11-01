@@ -19,13 +19,57 @@
 type VersionedData = { version: number } & Record<string, unknown>;
 type Migration = (data: VersionedData) => VersionedData;
 
+/** 北京旧版「文字」组件的存档标识别名（存档里的 item.type = displayName 键） */
+const BEIJING_OLD_TEXT_TYPE = "themes.beijingOld.components.Text";
+
+type SaveRow = Array<{ id: string; type: string; props: Record<string, any> }>;
+
+/**
+ * v1 → v2：北京旧版「文字」的单一「字距」拆成「中文字距 / 英文字距」。
+ * 老值原样复制到两个新字段（老档视觉不跳），旧字段删掉。
+ * 递归进容器（Frame / 双行容器）的 props.children：容器里的文字也一并升级。
+ */
+function upgradeBeijingOldTextRows(rows: unknown): SaveRow {
+  if (!Array.isArray(rows)) return [];
+  const upgradeItem = (item: any): any => {
+    if (!item || typeof item !== "object") return item;
+    const props = item.props;
+    if (!props || typeof props !== "object") return item;
+    const nextProps: Record<string, any> = { ...props };
+    if (item.type === BEIJING_OLD_TEXT_TYPE && "letterSpacing" in nextProps) {
+      const legacy = nextProps.letterSpacing;
+      // 只在缺新字段时回填，避免覆盖已经手动设过的新值
+      if (nextProps.letterSpacingZh === undefined) {
+        nextProps.letterSpacingZh = legacy;
+      }
+      if (nextProps.letterSpacingEn === undefined) {
+        nextProps.letterSpacingEn = legacy;
+      }
+      delete nextProps.letterSpacing;
+    }
+    if (Array.isArray(nextProps.children)) {
+      nextProps.children = upgradeBeijingOldTextRows(nextProps.children);
+    }
+    return { ...item, props: nextProps };
+  };
+  return rows.map(row =>
+    Array.isArray(row) ? row.map(upgradeItem) : row
+  ) as SaveRow;
+}
+
 /** MIGRATIONS[1] 表示把 version 1 的存档迁到 2，以此类推 */
 const MIGRATIONS: Record<number, Migration> = {
-  // 示例（升级时改写）：
-  // 1: data => ({ ...data, version: 2, newField: 默认值 }),
+  1: data => ({
+    ...data,
+    version: 2,
+    // rows 形状不对就原样留着，交给 isSaveData 拒收，不要「修」成空画板
+    ...(Array.isArray(data.rows)
+      ? { rows: upgradeBeijingOldTextRows(data.rows) }
+      : {}),
+  }),
 };
 
-export const LATEST_SAVE_VERSION = 1;
+export const LATEST_SAVE_VERSION = 2;
 
 /** 把解析结果按注册表逐级迁移到最新版本；识别不了的结构原样返回，交给上层校验 */
 export function migrateSaveData(parsed: unknown): unknown {

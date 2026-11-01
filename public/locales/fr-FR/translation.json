@@ -1238,6 +1238,7 @@
         "foreground": "Avant-plan",
         "textblue": "Bleu du texte",
         "white": "Blanc",
+        "black": "Noir pur",
         "border": "Bordure",
         "divider": "Séparateur",
         "exit": "Vert sortie",
@@ -1332,7 +1333,8 @@
               "bold": "Gras",
               "displayName": "Graisse"
             },
-            "letterSpacing": "Interlettrage",
+            "letterSpacingZh": "Interlettrage chinois",
+            "letterSpacingEn": "Interlettrage anglais",
             "fontSizeZh": "Taille de police chinoise",
             "fontSizeEn": "Taille de police anglaise",
             "lineGap": "Espacement chinois-anglais",
@@ -1340,6 +1342,7 @@
               "left": "Gauche",
               "center": "Centre",
               "right": "Droite",
+              "justify": "Alignement sur les bords",
               "displayName": "Alignement"
             },
             "foreground": "Couleur d'avant-plan",

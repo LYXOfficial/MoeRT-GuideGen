@@ -19,6 +19,7 @@ const colors = {
   foreground: "#ffffff", // --mode-item 前景（文字/图形）
   textblue: "#002538", // --mode-clsdark 文字蓝（较深，亮底/方块内文字用）
   white: "#ffffff",
+  black: "#000000", // 纯黑：白底/亮底上要「真黑」而不带文字蓝的蓝调时用
   border: "#e5e7eb",
   // 经典样式没有新版黄色分隔线：分割线为单色（oth@bw.svg，深底白 / 浅底深蓝）
   divider: "#ffffff",

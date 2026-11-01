@@ -1238,6 +1238,7 @@
         "foreground": "Foreground",
         "textblue": "Text blue",
         "white": "White",
+        "black": "Pure black",
         "border": "Border",
         "divider": "Divider",
         "exit": "Exit green",
@@ -1332,7 +1333,8 @@
               "bold": "Bold",
               "displayName": "Weight"
             },
-            "letterSpacing": "Letter spacing",
+            "letterSpacingZh": "Chinese letter spacing",
+            "letterSpacingEn": "English letter spacing",
             "fontSizeZh": "Chinese font size",
             "fontSizeEn": "English font size",
             "lineGap": "Chinese-English gap",
@@ -1340,6 +1342,7 @@
               "left": "Left",
               "center": "Center",
               "right": "Right",
+              "justify": "Edge alignment",
               "displayName": "Align"
             },
             "foreground": "Foreground",

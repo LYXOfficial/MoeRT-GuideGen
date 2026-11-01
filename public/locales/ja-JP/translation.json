@@ -1237,6 +1237,7 @@
         "foreground": "前景色",
         "textblue": "文字用ブルー",
         "white": "白",
+        "black": "純黒",
         "border": "枠線",
         "divider": "分割線",
         "exit": "出口グリーン",
@@ -1331,7 +1332,8 @@
               "bold": "太字",
               "displayName": "ウェイト"
             },
-            "letterSpacing": "字間",
+            "letterSpacingZh": "中国語の字間",
+            "letterSpacingEn": "英語の字間",
             "fontSizeZh": "中国語の文字サイズ",
             "fontSizeEn": "英語の文字サイズ",
             "lineGap": "中国語と英語の間隔",
@@ -1339,6 +1341,7 @@
               "left": "左揃え",
               "center": "中央",
               "right": "右揃え",
+              "justify": "両端揃え",
               "displayName": "揃え"
             },
             "foreground": "前景色",

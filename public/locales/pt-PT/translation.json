@@ -1238,6 +1238,7 @@
         "foreground": "Cor de primeiro plano",
         "textblue": "Azul do texto",
         "white": "Branco",
+        "black": "Preto puro",
         "border": "Contorno",
         "divider": "Separador",
         "exit": "Verde das saídas",
@@ -1332,7 +1333,8 @@
               "bold": "Negrito",
               "displayName": "Peso do tipo de letra"
             },
-            "letterSpacing": "Espaçamento entre letras",
+            "letterSpacingZh": "Espaçamento chinês",
+            "letterSpacingEn": "Espaçamento inglês",
             "fontSizeZh": "Tamanho do texto em chinês",
             "fontSizeEn": "Tamanho do texto em inglês",
             "lineGap": "Espaço entre chinês e inglês",
@@ -1340,6 +1342,7 @@
               "left": "Esquerda",
               "center": "Centro",
               "right": "Direita",
+              "justify": "Alinhamento às margens",
               "displayName": "Alinhamento"
             },
             "foreground": "Cor de primeiro plano",

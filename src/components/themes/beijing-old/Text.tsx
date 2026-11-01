@@ -20,10 +20,17 @@ const WEIGHT_VALUE: Record<TextWeight, number> = {
 export interface TextProps {
   chinese: string;
   english: string;
-  align?: "left" | "center" | "right";
+  /**
+   * 对齐：左 / 中 / 右 / 边缘。
+   * 边缘（同 Word 的「分散对齐」）：较短的一行摊到块宽，首字贴左缘、尾字贴右缘 ——
+   * 英文比中文长时，中文首字与英文左缘对齐、尾字与英文右缘对齐。
+   */
+  align?: "left" | "center" | "right" | "justify";
   weight?: TextWeight;
-  /** 字距，单位 em */
-  letterSpacing?: number;
+  /** 中文字距，单位 em */
+  letterSpacingZh?: number;
+  /** 英文字距，单位 em */
+  letterSpacingEn?: number;
   /** 中文字号（px），限制在 8–48 */
   fontSizeZh?: number;
   /** 英文字号（px），限制在 8–48 */
@@ -40,7 +47,8 @@ export const textDefaultProps: TextProps = {
   english: "Transfer",
   align: "left",
   weight: "bold",
-  letterSpacing: 0.15,
+  letterSpacingZh: 0.15,
+  letterSpacingEn: 0.15,
   fontSizeZh: 23,
   fontSizeEn: 14,
   lineGap: 9,
@@ -72,6 +80,33 @@ const measure = (text: string, font: string): number => {
   if (!measureCtx) return text.length * 12;
   measureCtx.font = font;
   return measureCtx.measureText(text).width;
+};
+
+/**
+ * 墨迹度量（相对排字原点）：拉丁字形的左右边距和汉字不一样，
+ * 边缘对齐要贴着「首字墨迹左缘 / 尾字墨迹右缘」，所以得知道墨迹起止。
+ * advance 之外的这两个值来自 canvas 的 actualBoundingBox（拿不到时退化成 0 / advance）。
+ */
+const measureInk = (
+  text: string,
+  font: string
+): { advance: number; inkLeft: number; inkRight: number } => {
+  if (!measureCtx && typeof document !== "undefined") {
+    measureCtx = document.createElement("canvas").getContext("2d");
+  }
+  if (!measureCtx) {
+    const width = text.length * 12;
+    return { advance: width, inkLeft: 0, inkRight: width };
+  }
+  measureCtx.font = font;
+  const metrics = measureCtx.measureText(text);
+  const safe = (value: number, fallback: number) =>
+    Number.isFinite(value) ? value : fallback;
+  return {
+    advance: metrics.width,
+    inkLeft: safe(-metrics.actualBoundingBoxLeft, 0),
+    inkRight: safe(metrics.actualBoundingBoxRight, metrics.width),
+  };
 };
 
 /** 中文按字切分、拉丁按词切分，便于贪心换行 */
@@ -157,8 +192,13 @@ export const textEditorConfig = (
       ),
     },
     {
-      key: "letterSpacing",
-      label: "themes.beijingOld.components.Text.props.letterSpacing",
+      key: "letterSpacingZh",
+      label: "themes.beijingOld.components.Text.props.letterSpacingZh",
+      element: <InputNumber step={0.01} min={0} max={0.5} />,
+    },
+    {
+      key: "letterSpacingEn",
+      label: "themes.beijingOld.components.Text.props.letterSpacingEn",
       element: <InputNumber step={0.01} min={0} max={0.5} />,
     },
     {
@@ -174,6 +214,9 @@ export const textEditorConfig = (
           </Select.Option>
           <Select.Option value="right">
             {t("themes.beijingOld.components.Text.props.align.right")}
+          </Select.Option>
+          <Select.Option value="justify">
+            {t("themes.beijingOld.components.Text.props.align.justify")}
           </Select.Option>
         </Select>
       ),
@@ -215,7 +258,8 @@ export default function Text({
   english = textDefaultProps.english,
   align = textDefaultProps.align,
   weight = textDefaultProps.weight,
-  letterSpacing = textDefaultProps.letterSpacing,
+  letterSpacingZh = textDefaultProps.letterSpacingZh,
+  letterSpacingEn = textDefaultProps.letterSpacingEn,
   fontSizeZh = textDefaultProps.fontSizeZh,
   fontSizeEn = textDefaultProps.fontSizeEn,
   lineGap = textDefaultProps.lineGap,
@@ -251,25 +295,34 @@ export default function Text({
   const gap = Math.max(0, Number(lineGap) || 0);
   const zhFont = `${weightValue} ${zhSize}px ${fontFamilyZh}`;
   const enFont = `${weightValue} ${enSize}px ${fontFamilyEn}`;
-  const ls = letterSpacing ?? 0;
+  const lsZh = letterSpacingZh ?? 0;
+  const lsEn = letterSpacingEn ?? 0;
+  const justify = align === "justify";
   // 不按宽度自动折行：只认用户在输入框里敲的换行
   const limit = 0;
 
   const layout = useMemo(() => {
     const zhLines = wrapText(normalizeSvgLines(chinese).join("\n"), zhFont, limit);
     const enLines = wrapText(normalizeSvgLines(english).join("\n"), enFont, limit);
-    const widthOf = (lines: string[], font: string, size: number) =>
-      Math.max(
-        0,
-        ...lines.map(
-          line =>
-            measure(line, font) +
-            ls * size * Math.max(0, Array.from(line).length - 1)
-        )
-      );
+    // 行度量：块宽按排字宽度（与左/中/右一致，容器不会被墨迹外凸撑大）；
+    // 另外记下墨迹宽和首字墨迹左缘，边缘对齐用它贴边。
+    const lineMetrics = (line: string, font: string, size: number, ls: number) => {
+      const ink = measureInk(line, font);
+      const gaps = Math.max(0, Array.from(line).length - 1);
+      const base = ls * size * gaps;
+      return {
+        advance: ink.advance + base,
+        inkLeft: ink.inkLeft,
+        inkWidth: ink.inkRight - ink.inkLeft + base,
+        gaps,
+      };
+    };
+    const zhMetrics = zhLines.map(line => lineMetrics(line, zhFont, zhSize, lsZh));
+    const enMetrics = enLines.map(line => lineMetrics(line, enFont, enSize, lsEn));
     const width = Math.max(
-      widthOf(zhLines, zhFont, zhSize),
-      widthOf(enLines, enFont, enSize)
+      0,
+      ...zhMetrics.map(m => m.advance),
+      ...enMetrics.map(m => m.advance)
     );
     // 以「墨迹范围」而不是行距块高来定高度与居中：
     // 行距的留白本来只该体现在行与行之间，按块高算会把留白全堆到下方，视觉上就偏上了。
@@ -288,6 +341,8 @@ export default function Text({
     return {
       zhLines,
       enLines,
+      zhMetrics,
+      enMetrics,
       width: Math.max(1, Math.ceil(width)),
       height: Math.max(64, Math.ceil(contentHeight) + 2),
       zhInk,
@@ -297,7 +352,37 @@ export default function Text({
       enStepValue,
     };
     // fontsReady 参与依赖：字体就绪后重新量一遍
-  }, [chinese, english, zhFont, enFont, zhSize, enSize, gap, ls, limit, fontsReady]);
+  }, [
+    chinese,
+    english,
+    zhFont,
+    enFont,
+    zhSize,
+    enSize,
+    gap,
+    lsZh,
+    lsEn,
+    limit,
+    fontsReady,
+  ]);
+
+  // 每行的实际字距（px）与横向偏移：
+  //  · 左/中/右 → 基准字距（em × 字号），x = 0（按排字原点对齐，与改动前一致）；
+  //  · 边缘对齐 → 基准字距 + 把「块宽 − 该行墨迹宽」均摊到字间空隙，
+  //    并把首字挪到墨迹左缘贴 0（汉字/拉丁的左右边距不同，按原点对齐会缩进 1–3px）。
+  //    块宽已取整且 ≥ 各行墨迹宽，均摊量恒 ≥ 0；单字行没有字间空隙，保持基准字距。
+  const lineLayout = (
+    metrics: { inkLeft: number; inkWidth: number; gaps: number },
+    size: number,
+    ls: number
+  ): { x: number; spacing: number } => {
+    const base = ls * size;
+    const spacing =
+      justify && metrics.gaps > 0
+        ? base + Math.max(0, (layout.width - metrics.inkWidth) / metrics.gaps)
+        : base;
+    return { x: justify ? -metrics.inkLeft : 0, spacing };
+  };
 
   const anchor =
     align === "center" ? "middle" : align === "right" ? "end" : "start";
@@ -330,34 +415,48 @@ export default function Text({
               fontWeight={weightValue}
               fill={foreground}
               fontFamily={fontFamilyZh}
-              letterSpacing={`${ls}em`}
               xmlSpace="preserve">
-              {layout.zhLines.map((line, index) => (
-                <tspan
-                  key={index}
-                  x={0}
-                  y={zhStart + index * layout.zhStepValue}
-                >
-                  {line}
-                </tspan>
-              ))}
+              {layout.zhLines.map((line, index) => {
+                const placed = lineLayout(
+                  layout.zhMetrics[index],
+                  zhSize,
+                  lsZh
+                );
+                return (
+                  <tspan
+                    key={index}
+                    x={placed.x}
+                    y={zhStart + index * layout.zhStepValue}
+                    letterSpacing={placed.spacing}
+                  >
+                    {line}
+                  </tspan>
+                );
+              })}
             </text>
             <text
               fontSize={enSize}
               fontWeight={weightValue}
               fill={foreground}
               fontFamily={fontFamilyEn}
-              letterSpacing={`${ls}em`}
               xmlSpace="preserve">
-              {layout.enLines.map((line, index) => (
-                <tspan
-                  key={index}
-                  x={0}
-                  y={enStart + index * layout.enStepValue}
-                >
-                  {line}
-                </tspan>
-              ))}
+              {layout.enLines.map((line, index) => {
+                const placed = lineLayout(
+                  layout.enMetrics[index],
+                  enSize,
+                  lsEn
+                );
+                return (
+                  <tspan
+                    key={index}
+                    x={placed.x}
+                    y={enStart + index * layout.enStepValue}
+                    letterSpacing={placed.spacing}
+                  >
+                    {line}
+                  </tspan>
+                );
+              })}
             </text>
           </g>
         </svg>

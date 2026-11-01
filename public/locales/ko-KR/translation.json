@@ -1237,6 +1237,7 @@
         "foreground": "전경색",
         "textblue": "텍스트 블루",
         "white": "흰색",
+        "black": "순수 검정",
         "border": "테두리",
         "divider": "구분선",
         "exit": "출구 그린",
@@ -1331,7 +1332,8 @@
               "bold": "굵게",
               "displayName": "굵기"
             },
-            "letterSpacing": "자간",
+            "letterSpacingZh": "중국어 자간",
+            "letterSpacingEn": "영어 자간",
             "fontSizeZh": "중국어 글자 크기",
             "fontSizeEn": "영어 글자 크기",
             "lineGap": "중영어 간격",
@@ -1339,6 +1341,7 @@
               "left": "왼쪽",
               "center": "가운데",
               "right": "오른쪽",
+              "justify": "양끝 정렬",
               "displayName": "정렬"
             },
             "foreground": "전경색",
