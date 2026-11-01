@@ -537,6 +537,11 @@
               "default": "既定",
               "narrow": "細め"
             },
+            "variant": {
+              "displayName": "スタイル",
+              "classic": "クラシック",
+              "block": "カラーブロック"
+            },
             "foreground": "前景色",
             "background": "背景色"
           }

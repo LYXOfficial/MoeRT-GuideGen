@@ -538,6 +538,11 @@
               "default": "Predefinido",
               "narrow": "Estreito"
             },
+            "variant": {
+              "displayName": "Estilo",
+              "classic": "Clássico",
+              "block": "Bloco de cor"
+            },
             "foreground": "Cor de primeiro plano",
             "background": "Cor de fundo"
           }

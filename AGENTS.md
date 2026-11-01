@@ -48,6 +48,11 @@ pnpm dev                                  # 开发服务器（5173 端口，常�
   重庆的 prominent 数字字号按 `30/22` 等比跟着中文字号走。老档缺这些字段会在
   `MIGRATIONS[2]`（v2→v3）里补上（否则编辑弹窗里是空输入框），同一迁移还按老默认值补
   `digitMode: "prominent"`。
+- ✅ **成都「线路标」新增「色块」风格**（2026-11-01，2026 版式）：`variant` = `classic`（经典，
+  左侧竖条 + 大号数字）/ `block`（色块：整块线路色圆角牌面，**把经典那套数字+文字整体缩
+  `BLOCK_SCALE = 0.8` 上下居中装进牌里**，牌内左右各留 `BLOCK_PAD = 9`；不另立一套字号）。
+  老档由 `MIGRATIONS[5]`（v5→v6）补 `variant: "classic"`。只做了数字线路标，
+  `LineText`（文字线路标）没动。
 - ✅ **北京新旧两个主题都拆出「文字线路标」**（2026-11-01）：原有线路标组件显示名改成
   **数字线路标**（`themes.beijing.components.LineNum` / `themes.beijingOld.components.Line`，
   组件 type 字符串没动，老存档照旧匹配），新增 **文字线路标**
@@ -306,7 +311,7 @@ python3 text_probe.py                                   # 解析 <use> 得到真
   element，`JSON.stringify` 不相等 → 被当新操作 push 并 `splice` 掉 redo。
 - 存档版本号：唯一取值点 `saveMigrations.ts` 的 `LATEST_SAVE_VERSION`；`isSaveData` 校验用**区间**；
   **追加式改动不升版本号**，破坏性改动才升 + 在 `MIGRATIONS` 里补迁移（迁移结果不写回 localStorage）。
-  当前 **5**：
+  当前 **6**：
   `MIGRATIONS[1]` 把北京旧版 `Text` 的旧 `letterSpacing` 拆成 `letterSpacingZh/En`（老值双份回填、旧键删除）；
   `MIGRATIONS[2]` 给重庆 / 成都 `Text` 补 `fontSizeZh/fontSizeEn/lineGap/offsetY`（渲染层本来有兜底，
   但**编辑弹窗读的是 props**，不补就显示空输入框），并按**当时的**默认值补 `digitMode: "prominent"`
@@ -314,7 +319,8 @@ python3 text_probe.py                                   # 解析 <use> 得到真
   `MIGRATIONS[3]` 把成都 `Icon` 的 `background` 拆成 `background`（底衬：透明/板色）+
   `iconFill`（图形色：老 background 是真颜色就搬过来，否则成都 `exitbackground`）；
   `MIGRATIONS[4]` 给重庆 / 成都 `Text` 补 `alignV: "center"`（同一套 `fillTextLayoutDefaults`，
-  v2→v3 也用它）。
+  v2→v3 也用它）；
+  `MIGRATIONS[5]` 给成都 `LineNum` 补 `variant: "classic"`（新老档都按经典渲染，色块风格要手动切）。
   三条都走同一个 `mapRowItems`，递归进容器 `props.children`；空串也当「没设」；rows 形状不对时原样
   留下给 `isSaveData` 拒收。**另外这个拆分在 `migrateSaveData` 里每次载入还会跑一次**
   （`splitChengduIconColors`，幂等：`iconFill` 已有有效颜色就跳过）——早期 v4 存档只跑过

@@ -537,6 +537,11 @@
               "default": "默认",
               "narrow": "窄"
             },
+            "variant": {
+              "displayName": "风格",
+              "classic": "经典",
+              "block": "色块"
+            },
             "foreground": "前景色",
             "background": "背景色"
           }

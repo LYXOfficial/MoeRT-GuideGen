@@ -146,6 +146,21 @@ function mapRowItems(
   ) as SaveRow;
 }
 
+/**
+ * 给成都「线路标」补 `variant`（经典 / 色块），老档缺就补 "classic"（幂等）。
+ */
+function fillChengduLineVariant(data: VersionedData): VersionedData {
+  if (!Array.isArray(data.rows)) return data;
+  return {
+    ...data,
+    rows: mapRowItems(data.rows, item => {
+      if (item.type !== "themes.chengdu.components.LineNum") return item;
+      if (typeof item.props.variant === "string" && item.props.variant) return item;
+      return { ...item, props: { ...item.props, variant: "classic" } };
+    }),
+  };
+}
+
 /** MIGRATIONS[1] 表示把 version 1 的存档迁到 2，以此类推 */
 const MIGRATIONS: Record<number, Migration> = {
   // v1 → v2：北京旧版「文字」的单一「字距」拆成「中文字距 / 英文字距」
@@ -187,10 +202,13 @@ const MIGRATIONS: Record<number, Migration> = {
   // v4 → v5：同一批「文字」又加了纵向对齐（alignV），老档补成「居中」——
   // 编辑弹窗读 props，不补就是个空下拉框。
   4: data => ({ ...fillTextLayoutDefaults(data), version: 5 }),
+  // v5 → v6：成都「线路标」新增风格档（经典 / 色块），老档一律按「经典」——
+  // 编辑弹窗读 props，不补就是个空下拉框。
+  5: data => ({ ...fillChengduLineVariant(data), version: 6 }),
 
 };
 
-export const LATEST_SAVE_VERSION = 5;
+export const LATEST_SAVE_VERSION = 6;
 
 /** 把解析结果按注册表逐级迁移到最新版本；识别不了的结构原样返回，交给上层校验 */
 export function migrateSaveData(parsed: unknown): unknown {

@@ -540,6 +540,11 @@
               "default": "Обычный",
               "narrow": "Узкий"
             },
+            "variant": {
+              "displayName": "Стиль",
+              "classic": "Классический",
+              "block": "Цветовой блок"
+            },
             "foreground": "Цвет переднего плана",
             "background": "Цвет фона"
           }

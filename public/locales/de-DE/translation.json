@@ -538,6 +538,11 @@
               "default": "Standard",
               "narrow": "Schmal"
             },
+            "variant": {
+              "displayName": "Stil",
+              "classic": "Klassisch",
+              "block": "Farbblock"
+            },
             "foreground": "Vordergrundfarbe",
             "background": "Hintergrundfarbe"
           }

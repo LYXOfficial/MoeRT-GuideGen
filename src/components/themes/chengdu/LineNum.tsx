@@ -15,6 +15,11 @@ export interface LineNumProps {
   showRect?: boolean;
   /** 色块模式：default = 标准示例（满高宽块）；narrow = 窄色块（旧版式） */
   rectMode?: "default" | "narrow";
+  /**
+   * 风格：classic = 经典（左侧竖条 + 数字/文字）；block = 色块（2026 版，
+   * 整块圆角牌面，数字与文字缩小一圈装进牌里）
+   */
+  variant?: "classic" | "block";
   align?: string;
   foreground?: string;
   background?: string;
@@ -28,6 +33,7 @@ export const lineNumDefaultProps: LineNumProps = {
   showText: true,
   showRect: true,
   rectMode: "default",
+  variant: "classic",
   align: "left",
   foreground: colors.foreground,
   background: colors.transparent,
@@ -78,6 +84,20 @@ export const lineNumEditorConfig = (
           labelNarrow={t("themes.chengdu.components.LineNum.props.rectMode.narrow")}
 
         />
+      ),
+    },
+    {
+      key: "variant",
+      label: "themes.chengdu.components.LineNum.props.variant.displayName",
+      element: (
+        <Select>
+          <Select.Option value="classic">
+            {t("themes.chengdu.components.LineNum.props.variant.classic")}
+          </Select.Option>
+          <Select.Option value="block">
+            {t("themes.chengdu.components.LineNum.props.variant.block")}
+          </Select.Option>
+        </Select>
       ),
     },
     {
@@ -136,6 +156,7 @@ function LineNum({
   // 注意：不给默认值 —— 老存档里没有这个字段，要按「窄」渲染（迁移）；
   // 新拖入的组件带着 defaultProps 里的 "default"（宽），不受影响
   rectMode,
+  variant = "classic",
   align = lineNumDefaultProps.align,
   foreground = lineNumDefaultProps.foreground ?? colors.foreground,
   background = lineNumDefaultProps.background ?? colors.transparent,
@@ -150,6 +171,15 @@ function LineNum({
 
   // 当前色块档位的尺寸/字号
   const RS = RECT_STYLES[rectMode ?? "narrow"];
+  // ===== 色块风格（2026）：整块圆角牌面，数字/文字缩小一圈装进去 =====
+  // 直接把「经典」那套数字+文字的排法整体缩 BLOCK_SCALE，上下居中放进牌里，
+  // 字号/基线全部沿用上面 RECT_STYLES 的值，不另立一套。
+  const block = variant === "block";
+  const BLOCK_SCALE = 0.6;
+  const BLOCK_PAD = 9; // 牌面内左右留白
+  const BLOCK_H = 64 * BLOCK_SCALE; // 内容整体高度（缩放后）
+  const BLOCK_Y = (64 - BLOCK_H) / 2; // 上下居中
+  const BLOCK_RADIUS = 0;
   // 只把制表/换行换成空格（首尾、中间的空格全部保留），渲染侧配 xmlSpace="preserve"
   // 量宽和渲染必须用同一个串，否则空格数对不上（多空格被折叠/被丢掉的老毛病）
   const isChinese = /[\u4e00-\u9fa5]/.test(num);
@@ -176,6 +206,19 @@ function LineNum({
         const GAP = 5;
 
         let totalWidth: number;
+
+        if (block) {
+          // 色块风格：内容（数字 + 文字）按无色块的方式从左排起，整组缩 BLOCK_SCALE，
+          // 牌宽 = 两侧留白 + 缩放后的内容宽
+          const contentW = numBBox.width + (showText ? GAP + textBBox.width : 0);
+          setRectX(0);
+          setNumX(0);
+          setTextOffsetX(showText ? numBBox.width + GAP : 0);
+          setTextAnchor("start");
+          totalWidth = BLOCK_PAD * 2 + BLOCK_SCALE * contentW;
+          setSvgWidth(totalWidth);
+          return;
+        }
 
         if (collapsed) {
           totalWidth = showRect ? rectWidth : 0;
@@ -256,7 +299,65 @@ function LineNum({
         window.clearTimeout(t);
       });
     };
-  }, [numText, showText, showRect, zhText, enText, align, collapsed, rectMode]);
+  }, [numText, showText, showRect, zhText, enText, align, collapsed, rectMode, variant]);
+
+  if (block) {
+    return (
+      <div style={{ backgroundColor: background }}>
+        <div className="h-16 mr-1.25 ml-1.25" style={{ width: svgWidth }}>
+          <svg width={svgWidth} height={64}>
+            {/* 牌面：整块线路色圆角矩形 */}
+            <rect
+              x={0}
+              y={BLOCK_Y}
+              width={svgWidth}
+              height={BLOCK_H}
+              rx={BLOCK_RADIUS}
+              fill={lineColor}
+            />
+            {/* 数字 + 文字：经典版那套排法整体缩一圈，上下居中装进牌里 */}
+            <g
+              transform={`translate(${BLOCK_PAD} ${BLOCK_Y}) scale(${BLOCK_SCALE})`}
+            >
+              <text
+                ref={numRef}
+                x={numX}
+                y={isChinese ? RS.numYZh : RS.numYLatn}
+                fontSize={isChinese ? RS.numFontZh : RS.numFontLatn}
+                fontWeight={400}
+                style={{ letterSpacing: "-3px" }}
+                fill={foreground}
+                xmlSpace="preserve">
+                {numText}
+              </text>
+              {showText && (
+                <g ref={textRef} transform={`translate(${textOffsetX},0)`}>
+                  <text
+                    x={0}
+                    y={RS.zhY}
+                    fontSize={RS.zhFont}
+                    textAnchor={textAnchor}
+                    fill={foreground}
+                    xmlSpace="preserve">
+                    {zhText}
+                  </text>
+                  <text
+                    x={0}
+                    y={RS.enY}
+                    fontSize={RS.enFont}
+                    textAnchor={textAnchor}
+                    fill={foreground}
+                    xmlSpace="preserve">
+                    {enText}
+                  </text>
+                </g>
+              )}
+            </g>
+          </svg>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ backgroundColor: background }}>

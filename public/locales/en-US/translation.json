@@ -538,6 +538,11 @@
               "default": "Default",
               "narrow": "Narrow"
             },
+            "variant": {
+              "displayName": "Style",
+              "classic": "Classic",
+              "block": "Color block"
+            },
             "foreground": "Foreground",
             "background": "Background Color"
           }

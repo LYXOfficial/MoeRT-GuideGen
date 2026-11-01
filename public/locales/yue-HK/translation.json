@@ -537,6 +537,11 @@
               "default": "預設",
               "narrow": "窄"
             },
+            "variant": {
+              "displayName": "風格",
+              "classic": "經典",
+              "block": "色塊"
+            },
             "foreground": "前景色",
             "background": "背景色"
           }
