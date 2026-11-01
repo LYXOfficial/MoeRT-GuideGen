@@ -1241,6 +1241,13 @@ const GuideBoardCols = memo(forwardRef<GuideBoardRef, GuideBoardProps>(
                       ? "0 6px 18px rgba(0, 0, 0, 0.35)"
                       : undefined,
                     borderRadius: isDraggingRow ? 2 : undefined,
+                    // 悬浮起来的那一行铺上「当前底板色」：行里组件多半背景透明，
+                    // 不铺底衬的话拖出画板边缘（或压到别的行上）会透出灰底，
+                    // 看着像一块跟画板对不上的幽灵
+                    backgroundColor: isDraggingRow
+                      ? (boardBackground ??
+                        themes[currentTheme][1].colors.defaultBackground)
+                      : undefined,
                   }}
                 >
                   <div className="flex items-center">

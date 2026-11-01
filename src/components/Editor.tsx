@@ -2861,8 +2861,15 @@ export default function Editor({
                 transform: `scale(${activeDrag.scale})`,
                 transformOrigin: activeDrag.fromBoard ? "top left" : "center",
                 boxShadow: "0 0 8px rgba(0,0,0,0.12)",
-                background: themes[currentTheme][1].colors.defaultBackground,
-                color: themes[currentTheme][1].colors.defaultForeground,
+                // 幽灵的底衬必须用「当前底板色」而不是主题默认色：
+                // 间距/空格这类透明组件、以及背景设成透明的组件，拖起来只看得见这层底衬，
+                // 底板改过色时用主题默认色会跟画布对不上（看着像拖了一块别的颜色）。
+                background:
+                  boardBackground ??
+                  themes[currentTheme][1].colors.defaultBackground,
+                color:
+                  boardForeground ??
+                  themes[currentTheme][1].colors.defaultForeground,
                 display: "inline-flex",
                 alignItems: "center",
                 cursor: "grabbing",
