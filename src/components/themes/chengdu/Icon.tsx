@@ -256,6 +256,8 @@ export const iconEditorConfig = (t: (key: string) => string): EditorConfig => ({
 
 /** 显示小字时图形缩到这一档，给下面两行字腾地方 */
 const ICON_BOX_WITH_TEXT = 38;
+/** 图形与下面小字之间的间距 */
+const CAPTION_GAP = 3;
 
 function Icon({
   icon = iconDefaultProps.icon,
@@ -292,16 +294,17 @@ function Icon({
         ) : null}
       </div>
       {withText ? (
-        // 图标下方的小字：中英双行、居中，颜色跟随前景色（跟图标底板同色）
+        // 图标下方的小字：中英双行、居中，颜色跟随前景色（跟图标底板同色）。
+        // 与图标的间距用 CAPTION_GAP（别贴着图形），中英两行之间紧一点（lineHeight 只比字号大 1px）。
         <div
           className="flex flex-col items-center leading-none"
-          style={{ color: foreground }}
+          style={{ color: foreground, marginTop: CAPTION_GAP }}
         >
           {zh ? (
-            <span style={{ fontSize: 9, lineHeight: "11px" }}>{zh}</span>
+            <span style={{ fontSize: 9, lineHeight: "10px" }}>{zh}</span>
           ) : null}
           {en ? (
-            <span style={{ fontSize: 7, lineHeight: "9px" }}>{en}</span>
+            <span style={{ fontSize: 6, lineHeight: "7px" }}>{en}</span>
           ) : null}
         </div>
       ) : null}
