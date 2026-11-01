@@ -377,14 +377,24 @@ export default function Text({
   const lineLayout = (
     metrics: { inkLeft: number; inkWidth: number; gaps: number },
     size: number,
-    ls: number
+    ls: number,
+    // 边缘对齐时的左右各缩量（px）：英文那行传 EN_INSET 就「两边各收 1px」，
+    // 左缘也往里让，不然左边缘会比中文探出 1px
+    inset = 0
   ): { x: number; spacing: number } => {
     const base = ls * size;
     const spacing =
       justify && metrics.gaps > 0
-        ? base + Math.max(0, (layout.width - metrics.inkWidth) / metrics.gaps)
+        ? base +
+          Math.max(
+            0,
+            (layout.width - inset * 2 - metrics.inkWidth) / metrics.gaps
+          )
         : base;
-    return { x: justify ? -metrics.inkLeft : 0, spacing };
+    return {
+      x: justify ? -metrics.inkLeft + inset : 0,
+      spacing,
+    };
   };
 
   const anchor =
@@ -444,20 +454,19 @@ export default function Text({
               fontFamily={fontFamilyEn}
               xmlSpace="preserve">
               {layout.enLines.map((line, index) => {
+                // 边缘对齐：把右缘收进 1px（左缘不动）；右对齐：整行左移 1px
                 const placed = lineLayout(
                   layout.enMetrics[index],
                   enSize,
-                  lsEn
+                  lsEn,
+                  EN_INSET
                 );
                 return (
                   <tspan
                     key={index}
                     // 边缘对齐 / 右对齐时英文左移 1px：拉丁末字的墨迹会比排字宽度探出一点点，
                     // 按排字原点贴边会看着「英文比中文多出一点」
-                    x={
-                      placed.x -
-                      (align === "justify" || align === "right" ? EN_INSET : 0)
-                    }
+                    x={align === "right" ? placed.x - EN_INSET : placed.x}
                     y={enStart + index * layout.enStepValue}
                     letterSpacing={placed.spacing}
                   >
