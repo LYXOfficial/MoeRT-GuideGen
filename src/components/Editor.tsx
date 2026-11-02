@@ -229,17 +229,46 @@ export default function Editor({
 
   // 多标签互斥：另一个标签页持有编辑锁时，弹全屏提醒并冻结本页一切写路径
   // （自动保存/撤销/配置落盘都被 suspendSaveRef 拦下），防止互覆存档
-  const tabConflict = useTabConflict();
+  const {
+    conflict: tabConflict,
+    locked: tabLocked,
+    force: forceTakeOver,
+  } = useTabConflict();
   const tabConflictAppliedRef = useRef(false);
+  // 锁状态镜像：给定时器里的延迟解冻用（读 ref，不进依赖）
+  const tabLockedRef = useRef(tabLocked);
+  tabLockedRef.current = tabLocked;
+  // 存档切换/导入进行中标记：锁刚到手时如果切换还没走完，先别解冻
+  const transferRef = useRef(false);
   useEffect(() => {
     if (tabConflict && !tabConflictAppliedRef.current) {
       tabConflictAppliedRef.current = true;
       suspendSaveRef.current = true;
       skipAutoSaveRef.current = true;
     }
-    // 刻意不做解除：封锁只随「刷新本页」结束，否则本页内存里的旧画板
-    // 会在解锁后把对方标签页刚保存的内容覆盖掉
+    // 刻意不做自动解除：封锁只随「刷新本页」或用户点「强制接管」结束，
+    // 否则本页内存里的旧画板会在解锁后把对方标签页刚保存的内容覆盖掉
   }, [tabConflict]);
+
+  // 锁没到手就不写：覆盖「挂载后等锁的宽限期 / 强制接管等锁期 / HMR 重挂间隙」。
+  // 之前只在冲突层弹出来后才冻结，第二个标签页在 2.5s 宽限期内照样自动保存，
+  // 直接把第一个标签页的存档覆盖掉，锁形同虚设
+  useEffect(() => {
+    if (!tabLocked || tabConflictAppliedRef.current) {
+      suspendSaveRef.current = true;
+    } else if (!transferRef.current) {
+      suspendSaveRef.current = false;
+    }
+  }, [tabLocked, tabConflict]);
+
+  // 强制接管：对方标签页收到广播会让锁并停止保存，本页拿到锁后才恢复写入
+  // （这里只清闩锁、不解冻；解冻等上面的 [tabLocked] effect 在 locked=true 时做，
+  // 否则广播在路上、对方还没让锁的 1 秒里两边同时写存档）
+  const handleForceTakeOver = useCallback(() => {
+    forceTakeOver();
+    tabConflictAppliedRef.current = false;
+    skipAutoSaveRef.current = false;
+  }, [forceTakeOver]);
 
   // 底板背景色 / 默认前景色：单一数据源在这里（状态提升）。
   // GuideBoard 按 props 渲染、拖拽幽灵按同一 state 解析，
@@ -754,6 +783,7 @@ export default function Editor({
       suspendSaveRef.current = true;
       // 撤销/重做里挂着「切主题 150ms 后再灌数据」的定时器：切换存档/导入时
       // 必须先撤掉它，否则它稍后会把旧存档的历史快照灌进刚载入的新存档
+      transferRef.current = true;
       clearRestoreTimers();
       resumeHistory();
       try {
@@ -792,7 +822,11 @@ export default function Editor({
         return true;
       } finally {
         window.setTimeout(() => {
-          suspendSaveRef.current = false;
+          transferRef.current = false;
+          // 多标签封锁中不要解冻（冲突闩住 / 锁还没到手都算），否则冲掉冻结
+          if (!tabConflictAppliedRef.current && tabLockedRef.current) {
+            suspendSaveRef.current = false;
+          }
         }, 80);
       }
     },
@@ -2624,6 +2658,16 @@ export default function Editor({
               >
                 {t("editor.tabConflict.refresh")}
               </button>
+              <button
+                type="button"
+                className="w-full mt-2 py-2 rounded-md border text-sm transition-colors border-gray-300 text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-white/10"
+                onClick={handleForceTakeOver}
+              >
+                {t("editor.tabConflict.force")}
+              </button>
+              <p className="text-xs leading-relaxed mt-2 text-gray-500 dark:text-gray-400">
+                {t("editor.tabConflict.forceHint")}
+              </p>
             </div>
           </div>,
           document.body

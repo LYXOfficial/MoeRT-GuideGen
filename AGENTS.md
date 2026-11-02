@@ -338,6 +338,27 @@ python3 text_probe.py                                   # 解析 <use> 得到真
   （`splitChengduIconColors`，幂等：`iconFill` 已有有效颜色就跳过）——早期 v4 存档只跑过
   「补颜色」那版迁移，缺 `iconFill`，靠这一步补。
   索引 `INDEX_VERSION` 是另一套，版本不匹配会 `return null` → 「存档全部消失」，改它必须补迁移。
+- **多标签互斥 / 强制接管**（`src/hooks/useTabConflict.ts`）：有 Web Locks 走它拿锁；
+  无锁环境（旧浏览器 / 非安全上下文的局域网访问，`navigator.locks` 不存在）走
+  `localStorage` 心跳选主兜底（`moert-guidegen-editor-lock` = `{id,ts}`，持有方 1s 一跳、
+  2.5s 过期算掉线，抢锁先写、120ms 后读回验证，关页 `pagehide` 主动放锁；
+  同一浏览器里同样走兜底分支的标签页之间互斥正常生效）。拿不到锁 → 返回
+  `{ conflict, locked, force }`，Editor 弹全屏层并置 `suspendSaveRef/skipAutoSaveRef`。
+  Web Locks **不能抢锁**，所以「强制接管」靠 BroadcastChannel
+  （`moert-guidegen-editor-takeover`）协作：接管方广播 → 对方 `yieldLock()`
+  （清空自己持有的锁）后转入封锁（停止保存）→ 接管方重新申请。
+  被封锁的标签页**不再抢锁**（`schedule()` 里 `blocked` 直接返回），否则它会先把锁抓回去、
+  接管方永远抢不到。`blocked / forced` 是 effect 内的普通变量，不是 ref —— 别再混进
+  `conflictRef`（那会把「被封锁」和「已强制」搅成一团）。
+  写冻结看的是 **`locked`（是否持有锁），不是 `conflict`**：挂载等锁的 2.5s 宽限期 /
+  接管等锁期 / HMR 重挂间隙照样冻结，否则第二个标签页在宽限期内一保存就把首个标签页覆盖了；
+  Editor 侧 `handleForceTakeOver` 只清闩锁、不解冻，解冻等 `[tabLocked]` effect 在
+  `locked=true` 时做；`applySaveData` 收尾 80ms 定时器 + 锁刚到手的解冻都要让
+  `tabConflictAppliedRef / tabLockedRef / transferRef` 三者同时点头。
+  封锁闩用**模块级 `lastBlocked`** 扛过 HMR/StrictMode 重挂（完整刷新清掉，
+  「关掉旧页后刷新恢复」流程不受影响）。接管 6s 没拿到锁会把冲突层弹回来重试，
+  别让编辑器静默地不保存。注意：两个标签页必须**同源**（同协议同 host 同端口，
+  `localhost` 和 `127.0.0.1` 算不同源）互斥才生效。
 
 ## 8. 用户反馈（历史 36 条已全部落实，细节见 git log）
 
