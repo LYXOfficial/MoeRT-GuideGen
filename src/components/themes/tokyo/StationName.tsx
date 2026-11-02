@@ -4,6 +4,7 @@ import type { EditorConfig } from "../../../interfaces/editor";
 import CustomColorPicker from "../../CustomColorPicker";
 import { Background, backgroundFormItems, foregroundFormItem } from "./Background";
 import BadgeGlyph from "./define/BadgeGlyph";
+import { normalizeSvgLine } from "./define/text";
 import { langFormItems } from "./define/textForms";
 
 /**
@@ -217,10 +218,12 @@ function StationName({
   foreground = stationNameDefaultProps.foreground,
   background = stationNameDefaultProps.background,
 }: StationNameProps) {
+  // 单行渲染：换行/制表先规范成空格（和原来 nowrap 折叠后的效果一致），
+  // 空格原样保留，配 pre 才不会被吃掉
   const lines = [
-    { text: name, size: nameSize ?? 30, weight: nameWeight ?? 700, spacing: nameSpacing ?? 0, gap: nameLineGap ?? 2, family: "zh" },
-    { text: kana, size: kanaSize ?? 11, weight: kanaWeight ?? 500, spacing: kanaSpacing ?? 0, gap: kanaLineGap ?? 1, family: "zh" },
-    { text: en, size: enSize ?? 13, weight: enWeight ?? 500, spacing: enSpacing ?? 0, gap: enLineGap ?? 1, family: "en" },
+    { text: normalizeSvgLine(name), size: nameSize ?? 30, weight: nameWeight ?? 700, spacing: nameSpacing ?? 0, gap: nameLineGap ?? 2, family: "zh" },
+    { text: normalizeSvgLine(kana), size: kanaSize ?? 11, weight: kanaWeight ?? 500, spacing: kanaSpacing ?? 0, gap: kanaLineGap ?? 1, family: "zh" },
+    { text: normalizeSvgLine(en), size: enSize ?? 13, weight: enWeight ?? 500, spacing: enSpacing ?? 0, gap: enLineGap ?? 1, family: "en" },
   ].filter(l => (l.text ?? "").trim().length > 0);
 
   return (
@@ -278,7 +281,7 @@ function StationName({
               fontWeight: l.weight,
               letterSpacing: l.spacing,
               lineHeight: `${l.size + l.gap}px`,
-              whiteSpace: "nowrap",
+              whiteSpace: "pre",
             }}
           >
             {l.text}

@@ -3,6 +3,7 @@ import colors from "./define/colors";
 import type { EditorConfig } from "../../../interfaces/editor";
 import { fontFamilyEn, fontFamilyZh } from "./define/colors";
 import { langFormItems } from "./define/textForms";
+import { normalizeSvgLine } from "./define/text";
 import { backgroundFormItems, foregroundFormItem } from "./Background";
 
 /**
@@ -149,8 +150,11 @@ function TextQuad(props: TextQuadProps) {
   ) => {
     if ((text ?? "").trim().length === 0) return null;
     const fam = family === "en" ? fontFamilyEn : fontFamilyZh;
-    // 折行宽度已砍掉；需要多行就在 TextArea 里回车
-    const lines = (text ?? "").split("\n");
+    // 折行宽度已砍掉；需要多行就在 TextArea 里回车。
+    // 每行规范化（\t→空格）+ 空格原样保留，下面的 pre 才不会把空格折叠掉
+    const lines = (text ?? "")
+      .split("\n")
+      .map(l => normalizeSvgLine(l));
     return (
       <div style={{ color: foreground }}>
         {lines.map((l, i) => (
@@ -161,7 +165,7 @@ function TextQuad(props: TextQuadProps) {
               fontWeight: weight,
               letterSpacing: spacing,
               lineHeight: `${size + gap}px`,
-              whiteSpace: "nowrap",
+              whiteSpace: "pre",
               fontFamily: fam,
             }}
           >
@@ -197,11 +201,11 @@ function TextQuad(props: TextQuadProps) {
                 fontWeight: b.weight,
                 letterSpacing: b.spacing,
                 lineHeight: `${(b.size ?? 11) + (b.gap ?? 1)}px`,
-                whiteSpace: "nowrap",
+                whiteSpace: "pre",
                 color: foreground,
               }}
             >
-              {b.text}
+              {normalizeSvgLine(b.text)}
             </span>
           ))}
         </div>

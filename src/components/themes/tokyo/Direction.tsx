@@ -8,6 +8,7 @@ import {
 } from "./Background";
 import BadgeGlyph from "./define/BadgeGlyph";
 import BadgeListEditor, { type BadgeItem } from "./define/BadgeListEditor";
+import { normalizeSvgLine } from "./define/text";
 import { langFormItems } from "./define/textForms";
 
 /**
@@ -188,8 +189,16 @@ function Direction({
   foreground = directionDefaultProps.foreground,
   background = directionDefaultProps.background,
 }: DirectionProps) {
-  // 折行宽度已整体砍掉：多行靠 TextArea 里手动回车
-  const wrapStyle: React.CSSProperties = { whiteSpace: "nowrap" };
+  // 折行宽度已整体砍掉：多行靠 TextArea 里手动回车。
+  // 单行渲染：换行/制表先规范成空格（和原来 nowrap 折叠后的效果一致），
+  // 空格原样保留，配 pre 才不会被吃掉
+  const wrapStyle: React.CSSProperties = { whiteSpace: "pre" };
+  const destText = normalizeSvgLine(dest);
+  const suffixText = normalizeSvgLine(suffix);
+  const viaText = normalizeSvgLine(via);
+  const romajiText = normalizeSvgLine(romaji);
+  const romajiPrefixText = normalizeSvgLine(romajiPrefix);
+  const enViaText = normalizeSvgLine(enVia);
   const hasVia = (via ?? "").trim().length > 0;
   const hasEnVia = (enVia ?? "").trim().length > 0;
   const hasRomaji = (romaji ?? "").trim().length > 0;
@@ -217,7 +226,7 @@ function Direction({
           overflow: "visible",
         }}
       >
-        <span style={{ whiteSpace: "nowrap" }}>
+        <span style={{ whiteSpace: "pre" }}>
           <span
             style={{
               fontFamily: fontFamilyZh,
@@ -227,7 +236,7 @@ function Direction({
               marginRight: 2,
             }}
           >
-            {dest}
+            {destText}
           </span>
           <span
             style={{
@@ -237,7 +246,7 @@ function Direction({
               letterSpacing: suffixSpacing,
             }}
           >
-            {suffix}
+            {suffixText}
           </span>
         </span>
         {hasVia && (
@@ -250,7 +259,7 @@ function Direction({
               ...wrapStyle,
             }}
           >
-            {via}
+            {viaText}
           </span>
         )}
       </div>
@@ -264,13 +273,13 @@ function Direction({
             fontWeight: romajiWeight,
             letterSpacing: romajiSpacing,
             lineHeight: 1.15,
-            whiteSpace: "nowrap",
+            whiteSpace: "pre",
             height: romajiSize,
             overflow: "visible",
           }}
         >
-          {romajiPrefix ? `${romajiPrefix} ` : ""}
-          {romaji}
+          {romajiPrefixText ? `${romajiPrefixText} ` : ""}
+          {romajiText}
         </div>
       )}
 
@@ -312,7 +321,7 @@ function Direction({
               ...wrapStyle,
             }}
           >
-            {enVia}
+            {enViaText}
           </span>
         </div>
       )}

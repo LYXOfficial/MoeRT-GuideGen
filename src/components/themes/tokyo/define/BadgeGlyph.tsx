@@ -1,4 +1,5 @@
 import { fontFamilyFutura } from "./colors";
+import { normalizeSvgLine } from "./text";
 
 /**
  * BadgeGlyph —— 线路标图形本体（纯 SVG，无外层容器）。
@@ -82,8 +83,11 @@ export default function BadgeGlyph({
   shape = "circle",
   thickness = "normal",
 }: BadgeGlyphProps) {
-  const letterText = (letter ?? "").toUpperCase().slice(0, 3);
-  const numberText = (number ?? "").trim();
+  // 空格原样保留（量宽和渲染用同一个串，配 xmlSpace="preserve" 才对得上）；
+  // 是否有内容只用 trim 判空，渲染用原文
+  const letterText = normalizeSvgLine(letter).toUpperCase().slice(0, 3);
+  const numberRaw = normalizeSvgLine(number);
+  const numberText = numberRaw.trim() !== "" ? numberRaw : "";
 
   // 没有数字 → 字母放大；没有数字且只有一个字母 → 再放大一档
   const letterInk = numberText
@@ -145,6 +149,7 @@ export default function BadgeGlyph({
           fontSize={letterFont}
           fontWeight={700}
           style={{ fontFamily: fontFamilyFutura }}
+          xmlSpace="preserve"
         >
           {letterText}
         </text>
@@ -158,6 +163,7 @@ export default function BadgeGlyph({
           fontWeight={700}
           letterSpacing={numberSpacing}
           style={{ fontFamily: fontFamilyFutura }}
+          xmlSpace="preserve"
         >
           {numberText}
         </text>

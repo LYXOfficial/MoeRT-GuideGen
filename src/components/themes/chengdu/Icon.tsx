@@ -304,10 +304,10 @@ function Icon({
           style={{ color: foreground, marginTop: CAPTION_GAP }}
         >
           {zh ? (
-            <span style={{ fontSize: 8, lineHeight: "9px" }}>{zh}</span>
+            <span style={{ fontSize: 8, lineHeight: "9px", whiteSpace: "pre" }}>{zh}</span>
           ) : null}
           {en ? (
-            <span style={{ fontSize: 6, lineHeight: "7px" }}>{en}</span>
+            <span style={{ fontSize: 6, lineHeight: "7px", whiteSpace: "pre" }}>{en}</span>
           ) : null}
         </div>
       ) : null}

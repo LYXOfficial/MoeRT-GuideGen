@@ -1,6 +1,6 @@
 import { Input, Select } from "@douyinfe/semi-ui";
 import colors from "./define/colors";
-import { weightCss } from "./define/text";
+import { normalizeSvgLine, weightCss } from "./define/text";
 import type { EditorConfig } from "../../../interfaces/editor";
 import {
   Background,
@@ -96,10 +96,10 @@ function ExitNum({
           fontSize,
           letterSpacing,
           lineHeight: 1,
-          whiteSpace: "nowrap",
+          whiteSpace: "pre",
         }}
       >
-        {text}
+        {normalizeSvgLine(text)}
       </span>
     </Background>
   );

@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 import { fontFamilyEn, fontFamilyFutura, fontFamilyZh } from "./colors";
+import { normalizeSvgLine } from "./text";
 import themeColors from "./colors";
 
 /** 一个「语言块」：一种语言的一串文字 + 它自己的排版参数 */
@@ -66,7 +67,12 @@ export default function TextRenderer({
     >
       {visible.map((block, bi) => {
         const family = FAMILY[block.family ?? "zh"];
-        const lines = (block.text ?? "").toString().split("\n");
+        // 行结构保留（换行符不动），每行只做单行规范化；空格原样保留，
+        // 配下面的 whiteSpace: "pre" 才不会被 HTML 折叠掉
+        const lines = (block.text ?? "")
+          .toString()
+          .split("\n")
+          .map(line => normalizeSvgLine(line));
         const lineHeight = block.size + (block.lineGap ?? 0);
         const style: CSSProperties = {
           fontFamily: family,
@@ -75,7 +81,9 @@ export default function TextRenderer({
           lineHeight: `${lineHeight}px`,
           letterSpacing: block.spacing,
           color: block.color,
-          whiteSpace: "nowrap",
+          // 别用 nowrap：它只禁止换行，连续空格照样折叠、行首行尾空格照样丢。
+          // 行已经在上面拆好，这里的 pre 只保留空格、不引入额外换行
+          whiteSpace: "pre",
           textAlign: align,
         };
         return (
