@@ -41,7 +41,7 @@ export const lineNumDefaultProps: LineNumProps = {
   lineColor: colors.line1,
   border: colors.white,
   gapX: 7,
-  background: colors.background,
+  background: colors.transparent,
 };
 
 /** 徽章边长锁死（用户要求：没必要开放调整） */

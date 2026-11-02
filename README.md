@@ -6,12 +6,14 @@
 
 轨道交通导视牌（导向标识牌）Web 编辑器，所见即所得。
 
-- 内置重庆轨道交通、成都地铁、MTR、北京地铁（新版 / 旧样式）、东京地下铁、上海地铁七套主题风格，可随时切换；未来计划添加广州；
+- 内置重庆轨道交通、成都地铁、MTR、北京地铁（新版 / 旧样式）、东京地下铁、上海地铁、广州地铁八套主题风格，可随时切换；
 - 以「行 + 组件」自由拼搭：线路号、线路名、车站名、出口、方向箭头、服务设施图标（电梯 / 楼梯 / 洗手间等）以及双行容器；
 - 点击组件即可编辑属性，行可增删，牌面宽度、分隔线、组件虚线框均可调节；
 - 撤销 / 重做、localStorage 多存档管理与自动保存、工程 JSON 导入 / 单存档下载导出、导出高清 PNG；
-- 多语言（简体 / 繁体中文、English、日本語、한국어）；
-- 自适应桌面与移动 / 触屏：视口小于 1024px 自动切换为紧凑布局 + 底部组件抽屉。
+- 多语言 11 种（简体中文、繁體中文、粵語、English、日本語、한국어、Русский、Deutsch、Français、Español、Português）；
+- 自适应桌面与移动 / 触屏：视口小于 1024px 自动切换为紧凑布局 + 底部组件抽屉；
+- 同一浏览器多标签页互斥编辑（防止两个标签页互相覆盖存档），被占用的标签页可一键「强制接管」；
+- 深色 / 浅色模式，可跟随系统。
 
 ## Usage
 
@@ -31,7 +33,7 @@
 ## Development
 
 - 技术栈：React 18 + TypeScript + Vite；样式用 Tailwind CSS v4（`src/global.css`），中文字体 Blueaka 由 `src/blueaka.css` 按 unicode-range 分片引入；UI 组件 @douyinfe/semi-ui；拖拽 @dnd-kit；截图导出 modern-screenshot；多语言 i18next（翻译资源在 `public/locales/*/translation.json`）。
-- 主要文件：`src/components/Editor.tsx`（画布布局与拖拽编排）、`src/components/GuideBoard.tsx`（行与双行容器的状态、编辑弹窗）、`src/components/themes/<chongqing|chengdu|hongkong>/`（主题组件 / 配色 / 字体，注册于 `themereg.ts`）、`src/hooks/`（撤销重做、媒体查询）。
+- 主要文件：`src/components/Editor.tsx`（画布布局与拖拽编排）、`src/components/GuideBoard.tsx`（行与双行容器的状态、编辑弹窗）、`src/components/themes/<主题名>/`（主题组件 / 配色 / 字体，按数组顺序注册于 `themereg.ts`，数组下标即 THEME_INDEX）、`src/hooks/`（撤销重做、媒体查询）。
 - 双行容器说明：容器本身是行内 item，内部两行存在其 `props.children` 中，编辑 / 删除 / 拖拽进出 / 存档还原 / 宽度自适应在 GuideBoard 与主题组件中做了递归处理（对单行组件透明）。
 - 移动端适配：视口 < 1024px 进入紧凑布局（底部组件抽屉、手势平移、双指缩放）；拖拽使用统一指针传感器与距离激活；悬浮 hover 效果仅在支持 hover 的设备上显示。
 - 常用命令：`pnpm dev` 开发；`pnpm build` 先类型检查再构建到 `dist/`；`pnpm preview` 预览产物；`pnpm exec biome check src` 静态检查（仓库的 `eslint` 脚本暂未配置，日常以 biome 为准）。
@@ -51,6 +53,8 @@
 ![](https://img.0v0.my/2026/10/31/e25ebd52e80b0f55.webp)
 
 ![](https://img.0v0.my/2026/10/31/715947c670ea0969.webp)
+
+![](https://img.0v0.my/2026/11/02/b48d0eb3288f43c4.webp)
 
 ## 参考资料
 
@@ -80,6 +84,8 @@ MTR字体来源于MTR Sung和思源宋体调整对齐拼接后的字体，对于
 
 上海地铁参考：上海市地方标准 DB31/T 1104《城市轨道交通导向标识系统设计规范》（2018 首发，2025-11 修订征求意见稿），全文 PDF：https://upload.wikimedia.org/wikipedia/commons/c/c9/城市轨道交通导向标识系统设计规范（征求意见稿）.pdf ；官方网络示意图：http://www.smtdc.com/en/pdf/Shanghai%20Metro%20Network%20Map.pdf （原链已失效，取自 Wayback）；线路图另见上海地铁官网 https://www.shmetro.com 。底色深灰 / 出站黄 / 申通红 / 24 组线路色全部取自标准 6.4 条与附录 A 的 CMYK（ISO Coated 转 sRGB），图形符号按附录 B 的位图描摹（阈值 130），申通标志取自 https://commons.wikimedia.org/wiki/File:Shanghai_Metro_logo.svg 。字体为思源黑体 + Helvetica
 
+广州地铁参考：官方没有公开的 VI 包 / 规范 PDF，版式取自 2024–2025 年实拍（11 号线云台寺站台门盖板与内环导向、万胜围站 4 号线吊顶导向牌、五羊邨站 2025-06 导向柱，均来自广州市政府网 / 南方+ / Wikimedia Commons），另用社区复刻的 2016 版导向系统（`GZMetro_VI-Library` v2.1）做父本校验；线路名与线路色取自官方线网 API `apis.gzmtr.com/app-map/metroweb/linestation`（Wayback 快照，25 条含佛山 / 有轨 / 城际）；羊角标志取自 https://commons.wikimedia.org/wiki/File:GZMTR_Logo.svg ；图形符号以国标 GB/T 10001.1-2012《公共信息图形符号 第 1 部分：通用符号》与 GB/T 10001.3《客运货运符号》为底稿（39 项已收录）。字体为思源黑体 + Arial（数字 / 西文），站名用思源宋体
+
 
 ## 碎碎念
 
@@ -87,11 +93,12 @@ MTR字体来源于MTR Sung和思源宋体调整对齐拼接后的字体，对于
 
 ![](https://img.0v0.my/2026/09/09/c8774bfe8c5c1.webp)
 ![](https://img.0v0.my/2026/09/09/6ea767230c0ca.webp)
+![](https://img.0v0.my/2026/09/09/9fd04be0b323e.webp)
 
-但尽管CRT的这个新换乘槽点多多，我还是尽力做出来了，即数字略微放大并略微下沉，并且对站名元素也无影响
+回旋镖：还是做了（）
 
 ![](https://img.0v0.my/2026/09/09/5778c1b8f5468.webp)
-![](https://img.0v0.my/2026/09/09/9fd04be0b323e.webp)
+![](https://img.0v0.my/2026/11/02/5739d5f87717100f.webp)
 
 
 附CRT新规范DBJ50/T-274-2024《轨道交通客运服务标志标准》（仅供参考）：
@@ -100,7 +107,7 @@ https://www.kqqw.com/db50/452899.html
 
 ## 特别鸣谢
 
-除了早年 Copilot 里蹬到的 Claude GPT Gemini外，后来北京/东京/上海等使用的模型是
+除了早年 Copilot 里蹬到的 Claude GPT Gemini外，后来北京/东京/上海/广州等使用的模型是
 
 - GLM-5.3
 - GLM-5.3-Flash
@@ -112,4 +119,4 @@ https://www.kqqw.com/db50/452899.html
 
 以及工具 Claude Code、DeepSeek Harness、ZCode
 
-感谢Z/和k1s2y让我蹬到了虽然不太好用还有点慢但能用的GLM5.3F，感谢梁子开源的超便宜模型和 dsh，感谢OpenCode的超大碗订阅，10刀撬了60刀的MuseSpark和80刀（现在是100刀了）的DeepSeek。
+感谢Z/和k1s2y让我蹬到了虽然不太好用还有点慢但能用的GLM5.3F（悲：集群坠机三天了），感谢梁子开源的超便宜模型和 dsh，感谢OpenCode的超大碗订阅，10刀撬了60刀的MuseSpark和80刀（现在是100刀了）的DeepSeek。

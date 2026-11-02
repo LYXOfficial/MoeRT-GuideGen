@@ -157,7 +157,9 @@
     "tabConflict": {
       "title": "エディターは別のタブで開いています",
       "body": "セーブの上書きを防ぐため、同時に編集できるタブは 1 つだけです。別のタブを閉じてから、下のボタンでエディターに戻ってください。",
-      "refresh": "別のタブを閉じたので、このページを再読み込み"
+      "refresh": "別のタブを閉じたので、このページを再読み込み",
+      "force": "編集を強制引き継ぎ",
+      "forceHint": "引き継ぐと他のタブは即座にロックされ、保存も停止します。保存していない変更は失われます。"
     },
     "followTheme": "テーマ既定に従う"
   },
@@ -2423,6 +2425,311 @@
             "background": "背景色"
           }
         }
+      }
+    },
+    "guangzhou": {
+      "displayName": "広州地下鉄スタイル",
+      "colors": {
+        "transparent": "透明",
+        "background": "背景（黒）",
+        "foreground": "前景（白）",
+        "border": "枠（白）",
+        "white": "白",
+        "black": "黒",
+        "backgroundExit": "出口の背景（赤）",
+        "background18": "18号線の背景（灰）",
+        "brandRed": "ブランド赤（羊角）",
+        "specline": "区切り線（白）",
+        "line1": "1号線",
+        "line2": "2号線",
+        "line3": "3号線",
+        "line4": "4号線",
+        "line5": "5号線",
+        "line6": "6号線",
+        "line7": "7号線",
+        "line8": "8号線",
+        "line9": "9号線",
+        "line10": "10号線",
+        "line11": "11号線",
+        "line12": "12号線",
+        "line13": "13号線",
+        "line14": "14号線",
+        "line18": "18号線",
+        "line21": "21号線",
+        "line22": "22号線",
+        "lineGF": "広仏線",
+        "lineAPM": "APM線",
+        "lineTHZ1": "海珠路面電車1号線",
+        "lineTHP1": "黄埔路面電車1号線",
+        "line24": "24号線",
+        "line28": "28号線",
+        "line15": "15号線",
+        "line16": "16号線",
+        "line17": "17号線",
+        "line19": "19号線",
+        "line20": "20号線"
+      },
+      "lines": {
+        "1": "1号線",
+        "2": "2号線",
+        "3": "3号線",
+        "4": "4号線",
+        "5": "5号線",
+        "6": "6号線",
+        "7": "7号線",
+        "8": "8号線",
+        "9": "9号線",
+        "10": "10号線",
+        "11": "11号線",
+        "12": "12号線",
+        "13": "13号線",
+        "14": "14号線",
+        "18": "18号線",
+        "21": "21号線",
+        "22": "22号線",
+        "GF": "広仏線",
+        "APM": "APM線",
+        "THZ1": "海珠路面電車1号線",
+        "THP1": "黄埔路面電車1号線"
+      },
+      "common": {
+        "weight": {
+          "normal": "標準",
+          "medium": "中太",
+          "bold": "太字"
+        },
+        "align": {
+          "left": "左揃え",
+          "center": "中央",
+          "right": "右揃え"
+        },
+        "fontFamily": {
+          "serif": "明朝",
+          "sans": "ゴシック"
+        },
+        "logoVariant": {
+          "stacked": "縦並び",
+          "inline": "横並び",
+          "none": "文字なし"
+        }
+      },
+      "components": {
+        "LineBadge": {
+          "displayName": "路線記号",
+          "props": {
+            "textZh": "中国語",
+            "textEn": "英語",
+            "size": "サイズ",
+            "paddingX": "左右余白",
+            "color": "地色",
+            "textColor": "文字色",
+            "background": "背景色"
+          }
+        },
+        "PlatformNum": {
+          "displayName": "のりば番号",
+          "props": {
+            "number": "のりば番号",
+            "labelZh": "中国語ラベル",
+            "labelEn": "欧文ラベル",
+            "size": "サイズ",
+            "color": "ライン色",
+            "textColor": "文字色",
+            "background": "背景色",
+            "showCaption": {
+              "displayName": "中英文を表示"
+            },
+            "captionZh": "円下の中国語",
+            "captionEn": "円下の英語",
+            "captionColor": "円下の文字色"
+          }
+        },
+        "StationNum": {
+          "displayName": "駅番号",
+          "props": {
+            "items": "駅番号",
+            "fillColor": "塗り",
+            "textColor": "文字色",
+            "showPlateBorder": {
+              "displayName": "外枠を表示"
+            },
+            "plateColor": "下地の色",
+            "background": "背景色"
+          }
+        },
+        "Direction": {
+          "displayName": "次駅・方向",
+          "props": {
+            "showNext": {
+              "displayName": "「次は」を表示"
+            },
+            "nextLabelZh": "次は",
+            "nextLabelEn": "Next",
+            "stationZh": "駅名",
+            "stationEn": "欧文名",
+            "viaZh": "経由",
+            "viaEn": "経由欧文",
+            "align": {
+              "displayName": "左右位置"
+            },
+            "background": "背景色",
+            "fill": "文字色"
+          }
+        },
+        "StationName": {
+          "displayName": "駅名",
+          "props": {
+            "chinese": "中国語駅名",
+            "english": "英語駅名",
+            "fontFamily": {
+              "displayName": "書体"
+            },
+            "fontSizeZh": "中国語サイズ",
+            "fontSizeEn": "欧文サイズ",
+            "gap": "中英間隔",
+            "background": "背景色",
+            "fill": "文字色"
+          }
+        },
+        "Text": {
+          "displayName": "文字",
+          "props": {
+            "zh": "中国語",
+            "en": "欧文",
+            "fontSizeZh": "中国語サイズ",
+            "fontSizeEn": "欧文サイズ",
+            "gap": "中英間隔",
+            "align": {
+              "displayName": "左右位置"
+            },
+            "background": "背景色",
+            "fill": "文字色",
+            "weight": {
+              "displayName": "ウェイト"
+            },
+            "letterSpacing": "字間"
+          }
+        },
+        "Arrow": {
+          "displayName": "矢印",
+          "props": {
+            "type": {
+              "displayName": "方向",
+              "up": "上",
+              "down": "下",
+              "left": "左",
+              "right": "右",
+              "up-left": "左上",
+              "up-right": "右上",
+              "down-left": "左下",
+              "down-right": "右下"
+            },
+            "size": "サイズ",
+            "background": "背景色",
+            "fill": "文字色"
+          }
+        },
+        "SpecLine": {
+          "displayName": "区切り線",
+          "props": {
+            "width": "線幅",
+            "background": "背景色",
+            "fill": "文字色"
+          }
+        },
+        "Spacing": {
+          "displayName": "間隔",
+          "props": {
+            "background": "背景色"
+          }
+        },
+        "Blank": {
+          "displayName": "余白",
+          "props": {
+            "width": "幅",
+            "background": "背景色"
+          }
+        },
+        "OperatorLogo": {
+          "displayName": "羊角ロゴ",
+          "props": {
+            "variant": {
+              "displayName": "配置"
+            },
+            "size": "ロゴ高さ",
+            "gap": "間隔",
+            "background": "背景色",
+            "fill": "マークの色",
+            "foreground": "文字色",
+            "showText": {
+              "displayName": "中英文を表示"
+            }
+          }
+        },
+        "ExitNum": {
+          "displayName": "出口",
+          "props": {
+            "letters": "出口記号",
+            "fontSize": "文字サイズ",
+            "background": "背景色",
+            "fill": "色",
+            "bold": {
+              "displayName": "太字"
+            }
+          }
+        },
+        "Icon": {
+          "displayName": "アイコン",
+          "props": {
+            "icon": "アイコン",
+            "size": "サイズ",
+            "fill": "図形の色",
+            "plateColor": "塗り色",
+            "borderColor": "外枠の色",
+            "background": "背景色"
+          }
+        }
+      },
+      "pictograms": {
+        "002": "入口",
+        "003": "出口",
+        "004": "出入口",
+        "005": "階段（上り）",
+        "010": "エスカレーター（上り）",
+        "011": "エスカレーター（下り）",
+        "013": "エレベーター（客用）",
+        "015": "男子トイレ",
+        "016": "女子トイレ",
+        "017": "トイレ",
+        "029": "公園",
+        "032": "ショッピング",
+        "033": "スーパーマーケット",
+        "034": "ホテル",
+        "035": "病院",
+        "043": "郵便局",
+        "046": "ATM",
+        "047": "銀行",
+        "051": "手荷物預かり",
+        "055": "ベビーベッド",
+        "057": "待合室",
+        "058": "待ち合わせ場所",
+        "059": "警察",
+        "060": "きっぷ売り場",
+        "062": "案内所",
+        "064": "中国料理",
+        "065": "ファストフード",
+        "067": "カフェ",
+        "074": "案内",
+        "076": "忘れ物取扱所",
+        "078": "駐車場",
+        "079": "屋内駐車場",
+        "080": "駐輪場",
+        "082": "電話",
+        "094": "ベンチ",
+        "100": "非常電話",
+        "101": "通行禁止",
+        "111": "禁煙",
+        "115": "立入禁止"
       }
     }
   }

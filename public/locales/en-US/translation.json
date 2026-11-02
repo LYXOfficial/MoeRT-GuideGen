@@ -158,7 +158,9 @@
     "tabConflict": {
       "title": "Editor is already open in another tab",
       "body": "To keep saves from overwriting each other, only one tab may edit at a time. Close the other tab, then click the button below to return to the editor.",
-      "refresh": "Closed the other tab — reload this page"
+      "refresh": "Closed the other tab — reload this page",
+      "force": "Take over editing",
+      "forceHint": "Taking over locks the other tab out immediately and stops its saving — any unsaved changes there are lost."
     },
     "followTheme": "Follow theme default"
   },
@@ -2424,6 +2426,311 @@
             "background": "Background"
           }
         }
+      }
+    },
+    "guangzhou": {
+      "displayName": "Guangzhou Metro Style",
+      "colors": {
+        "transparent": "Transparent",
+        "background": "Background (black)",
+        "foreground": "Foreground (white)",
+        "border": "Border (white)",
+        "white": "White",
+        "black": "Black",
+        "backgroundExit": "Exit background (red)",
+        "background18": "Line 18 background (grey)",
+        "brandRed": "Brand red (ram horn)",
+        "specline": "Divider (white)",
+        "line1": "Line 1",
+        "line2": "Line 2",
+        "line3": "Line 3",
+        "line4": "Line 4",
+        "line5": "Line 5",
+        "line6": "Line 6",
+        "line7": "Line 7",
+        "line8": "Line 8",
+        "line9": "Line 9",
+        "line10": "Line 10",
+        "line11": "Line 11",
+        "line12": "Line 12",
+        "line13": "Line 13",
+        "line14": "Line 14",
+        "line18": "Line 18",
+        "line21": "Line 21",
+        "line22": "Line 22",
+        "lineGF": "Guangfo Line",
+        "lineAPM": "APM Line",
+        "lineTHZ1": "Haizhu Tram Line 1",
+        "lineTHP1": "Huangpu Tram Line 1",
+        "line24": "Line 24",
+        "line28": "Line 28",
+        "line15": "Line 15",
+        "line16": "Line 16",
+        "line17": "Line 17",
+        "line19": "Line 19",
+        "line20": "Line 20"
+      },
+      "lines": {
+        "1": "Line 1",
+        "2": "Line 2",
+        "3": "Line 3",
+        "4": "Line 4",
+        "5": "Line 5",
+        "6": "Line 6",
+        "7": "Line 7",
+        "8": "Line 8",
+        "9": "Line 9",
+        "10": "Line 10",
+        "11": "Line 11",
+        "12": "Line 12",
+        "13": "Line 13",
+        "14": "Line 14",
+        "18": "Line 18",
+        "21": "Line 21",
+        "22": "Line 22",
+        "GF": "Guangfo Line",
+        "APM": "APM Line",
+        "THZ1": "Haizhu Tram Line 1",
+        "THP1": "Huangpu Tram Line 1"
+      },
+      "common": {
+        "weight": {
+          "normal": "Normal",
+          "medium": "Medium",
+          "bold": "Bold"
+        },
+        "align": {
+          "left": "Left",
+          "center": "Center",
+          "right": "Right"
+        },
+        "fontFamily": {
+          "serif": "Serif",
+          "sans": "Sans"
+        },
+        "logoVariant": {
+          "stacked": "Stacked",
+          "inline": "Inline",
+          "none": "No text"
+        }
+      },
+      "components": {
+        "LineBadge": {
+          "displayName": "Line badge",
+          "props": {
+            "textZh": "Chinese",
+            "textEn": "English",
+            "size": "Size",
+            "paddingX": "Horizontal padding",
+            "color": "Fill",
+            "textColor": "Text color",
+            "background": "Background"
+          }
+        },
+        "PlatformNum": {
+          "displayName": "Platform number",
+          "props": {
+            "number": "Platform number",
+            "labelZh": "Chinese label",
+            "labelEn": "Latin label",
+            "size": "Size",
+            "color": "Line colour",
+            "textColor": "Text color",
+            "background": "Background",
+            "showCaption": {
+              "displayName": "Show Chinese and English"
+            },
+            "captionZh": "Caption (Chinese)",
+            "captionEn": "Caption (English)",
+            "captionColor": "Caption colour"
+          }
+        },
+        "StationNum": {
+          "displayName": "Station number",
+          "props": {
+            "items": "Station numbers",
+            "fillColor": "Fill",
+            "textColor": "Text color",
+            "showPlateBorder": {
+              "displayName": "Show outline"
+            },
+            "plateColor": "Plate color",
+            "background": "Background"
+          }
+        },
+        "Direction": {
+          "displayName": "Next/direction",
+          "props": {
+            "showNext": {
+              "displayName": "Show \"Next\""
+            },
+            "nextLabelZh": "Next",
+            "nextLabelEn": "Next",
+            "stationZh": "Name",
+            "stationEn": "Latin name",
+            "viaZh": "Via",
+            "viaEn": "Via Latin",
+            "align": {
+              "displayName": "Alignment"
+            },
+            "background": "Background",
+            "fill": "Text color"
+          }
+        },
+        "StationName": {
+          "displayName": "Station name",
+          "props": {
+            "chinese": "Chinese name",
+            "english": "English name",
+            "fontFamily": {
+              "displayName": "Typeface"
+            },
+            "fontSizeZh": "Chinese size",
+            "fontSizeEn": "Latin size",
+            "gap": "CJK/Latin gap",
+            "background": "Background",
+            "fill": "Text color"
+          }
+        },
+        "Text": {
+          "displayName": "Text",
+          "props": {
+            "zh": "Chinese",
+            "en": "Latin",
+            "fontSizeZh": "Chinese size",
+            "fontSizeEn": "Latin size",
+            "gap": "CJK/Latin gap",
+            "align": {
+              "displayName": "Alignment"
+            },
+            "background": "Background",
+            "fill": "Text color",
+            "weight": {
+              "displayName": "Weight"
+            },
+            "letterSpacing": "Letter spacing"
+          }
+        },
+        "Arrow": {
+          "displayName": "Arrow",
+          "props": {
+            "type": {
+              "displayName": "Direction",
+              "up": "Up",
+              "down": "Down",
+              "left": "Left",
+              "right": "Right",
+              "up-left": "Up-left",
+              "up-right": "Up-right",
+              "down-left": "Down-left",
+              "down-right": "Down-right"
+            },
+            "size": "Size",
+            "background": "Background",
+            "fill": "Text color"
+          }
+        },
+        "SpecLine": {
+          "displayName": "Divider",
+          "props": {
+            "width": "Line width",
+            "background": "Background",
+            "fill": "Text color"
+          }
+        },
+        "Spacing": {
+          "displayName": "Spacing",
+          "props": {
+            "background": "Background"
+          }
+        },
+        "Blank": {
+          "displayName": "Blank",
+          "props": {
+            "width": "Width",
+            "background": "Background"
+          }
+        },
+        "OperatorLogo": {
+          "displayName": "Ram-horn logo",
+          "props": {
+            "variant": {
+              "displayName": "Layout"
+            },
+            "size": "Logo height",
+            "gap": "Gap",
+            "background": "Background",
+            "fill": "Mark color",
+            "foreground": "Text color",
+            "showText": {
+              "displayName": "Show text"
+            }
+          }
+        },
+        "ExitNum": {
+          "displayName": "Exit",
+          "props": {
+            "letters": "Exit letters",
+            "fontSize": "Font size",
+            "background": "Background",
+            "fill": "Color",
+            "bold": {
+              "displayName": "Bold"
+            }
+          }
+        },
+        "Icon": {
+          "displayName": "Icon",
+          "props": {
+            "icon": "Icon",
+            "size": "Size",
+            "fill": "Glyph color",
+            "plateColor": "Fill",
+            "borderColor": "Frame color",
+            "background": "Background"
+          }
+        }
+      },
+      "pictograms": {
+        "002": "Entrance",
+        "003": "Exit",
+        "004": "Entrance / Exit",
+        "005": "Stairs, going up",
+        "010": "Escalator, up",
+        "011": "Escalator, down",
+        "013": "Passenger lift",
+        "015": "Men's restroom",
+        "016": "Women's restroom",
+        "017": "Restroom",
+        "029": "Park",
+        "032": "Shopping",
+        "033": "Supermarket",
+        "034": "Hotel",
+        "035": "Hospital",
+        "043": "Post office",
+        "046": "ATM",
+        "047": "Bank",
+        "051": "Left luggage",
+        "055": "Baby care table",
+        "057": "Waiting room",
+        "058": "Meeting point",
+        "059": "Police",
+        "060": "Ticket office",
+        "062": "Information desk",
+        "064": "Chinese restaurant",
+        "065": "Fast food",
+        "067": "Cafe",
+        "074": "Information",
+        "076": "Lost and found",
+        "078": "Parking",
+        "079": "Indoor parking",
+        "080": "Bicycle parking",
+        "082": "Telephone",
+        "094": "Seating",
+        "100": "Emergency call",
+        "101": "No entry",
+        "111": "No smoking",
+        "115": "No entry for persons"
       }
     }
   }

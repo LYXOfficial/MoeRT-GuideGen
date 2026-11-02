@@ -158,7 +158,9 @@
     "tabConflict": {
       "title": "O editor já está aberto noutra aba",
       "body": "Para evitar que as gravações se sobreponham entre abas, só é possível editar numa aba de cada vez. Feche a outra aba e clique no botão abaixo para voltar ao editor.",
-      "refresh": "Já fechei a outra aba — recarregar esta página"
+      "refresh": "Já fechei a outra aba — recarregar esta página",
+      "force": "Forçar edição",
+      "forceHint": "Ao forçar, o outro separador é bloqueado de imediato e deixa de guardar — as alterações não guardadas perdem-se."
     },
     "followTheme": "Seguir a predefinição do tema"
   },
@@ -2424,6 +2426,311 @@
             "background": "Fundo"
           }
         }
+      }
+    },
+    "guangzhou": {
+      "displayName": "Estilo metro de Guangzhou",
+      "colors": {
+        "transparent": "Transparente",
+        "background": "Fundo (preto)",
+        "foreground": "Primeiro plano (branco)",
+        "border": "Moldura (branca)",
+        "white": "Branco",
+        "black": "Preto",
+        "backgroundExit": "Fundo saída (vermelho)",
+        "background18": "Fundo linha 18 (cinzento)",
+        "brandRed": "Vermelho da marca",
+        "specline": "Separador (branco)",
+        "line1": "Linha 1",
+        "line2": "Linha 2",
+        "line3": "Linha 3",
+        "line4": "Linha 4",
+        "line5": "Linha 5",
+        "line6": "Linha 6",
+        "line7": "Linha 7",
+        "line8": "Linha 8",
+        "line9": "Linha 9",
+        "line10": "Linha 10",
+        "line11": "Linha 11",
+        "line12": "Linha 12",
+        "line13": "Linha 13",
+        "line14": "Linha 14",
+        "line18": "Linha 18",
+        "line21": "Linha 21",
+        "line22": "Linha 22",
+        "lineGF": "Linha Guangfo",
+        "lineAPM": "Linha APM",
+        "lineTHZ1": "Elétrico Haizhu 1",
+        "lineTHP1": "Elétrico Huangpu 1",
+        "line24": "Linha 24",
+        "line28": "Linha 28",
+        "line15": "Linha 15",
+        "line16": "Linha 16",
+        "line17": "Linha 17",
+        "line19": "Linha 19",
+        "line20": "Linha 20"
+      },
+      "lines": {
+        "1": "Linha 1",
+        "2": "Linha 2",
+        "3": "Linha 3",
+        "4": "Linha 4",
+        "5": "Linha 5",
+        "6": "Linha 6",
+        "7": "Linha 7",
+        "8": "Linha 8",
+        "9": "Linha 9",
+        "10": "Linha 10",
+        "11": "Linha 11",
+        "12": "Linha 12",
+        "13": "Linha 13",
+        "14": "Linha 14",
+        "18": "Linha 18",
+        "21": "Linha 21",
+        "22": "Linha 22",
+        "GF": "Linha Guangfo",
+        "APM": "Linha APM",
+        "THZ1": "Elétrico Haizhu 1",
+        "THP1": "Elétrico Huangpu 1"
+      },
+      "common": {
+        "weight": {
+          "normal": "Normal",
+          "medium": "Médio",
+          "bold": "Negrito"
+        },
+        "align": {
+          "left": "Esquerda",
+          "center": "Centro",
+          "right": "Direita"
+        },
+        "fontFamily": {
+          "serif": "Serif",
+          "sans": "Sans"
+        },
+        "logoVariant": {
+          "stacked": "Vertical",
+          "inline": "Horizontal",
+          "none": "Sem texto"
+        }
+      },
+      "components": {
+        "LineBadge": {
+          "displayName": "Distintivo de linha",
+          "props": {
+            "textZh": "Chinês",
+            "textEn": "Inglês",
+            "size": "Tamanho",
+            "paddingX": "Margem lateral",
+            "color": "Fundo",
+            "textColor": "Cor do texto",
+            "background": "Fundo"
+          }
+        },
+        "PlatformNum": {
+          "displayName": "Número de plataforma",
+          "props": {
+            "number": "Número de plataforma",
+            "labelZh": "Etiqueta chinesa",
+            "labelEn": "Etiqueta latina",
+            "size": "Tamanho",
+            "color": "Cor da linha",
+            "textColor": "Cor do texto",
+            "background": "Fundo",
+            "showCaption": {
+              "displayName": "Mostrar chinês e inglês"
+            },
+            "captionZh": "Legenda (chinês)",
+            "captionEn": "Legenda (inglês)",
+            "captionColor": "Cor da legenda"
+          }
+        },
+        "StationNum": {
+          "displayName": "Número de estação",
+          "props": {
+            "items": "Números de estação",
+            "fillColor": "Preenchimento",
+            "textColor": "Cor do texto",
+            "showPlateBorder": {
+              "displayName": "Mostrar contorno"
+            },
+            "plateColor": "Cor do fundo",
+            "background": "Fundo"
+          }
+        },
+        "Direction": {
+          "displayName": "Próxima estação",
+          "props": {
+            "showNext": {
+              "displayName": "Mostrar «Próxima»"
+            },
+            "nextLabelZh": "Próxima",
+            "nextLabelEn": "Next",
+            "stationZh": "Nome",
+            "stationEn": "Latim",
+            "viaZh": "Via",
+            "viaEn": "Via lat.",
+            "align": {
+              "displayName": "Alinhamento"
+            },
+            "background": "Fundo",
+            "fill": "Cor do texto"
+          }
+        },
+        "StationName": {
+          "displayName": "Nome da estação",
+          "props": {
+            "chinese": "Nome chinês",
+            "english": "Nome inglês",
+            "fontFamily": {
+              "displayName": "Tipo de letra"
+            },
+            "fontSizeZh": "Tamanho chinês",
+            "fontSizeEn": "Tamanho latino",
+            "gap": "Intervalo",
+            "background": "Fundo",
+            "fill": "Cor do texto"
+          }
+        },
+        "Text": {
+          "displayName": "Texto",
+          "props": {
+            "zh": "Chinês",
+            "en": "Latim",
+            "fontSizeZh": "Tamanho chinês",
+            "fontSizeEn": "Tamanho latino",
+            "gap": "Intervalo",
+            "align": {
+              "displayName": "Alinhamento"
+            },
+            "background": "Fundo",
+            "fill": "Cor do texto",
+            "weight": {
+              "displayName": "Espessura"
+            },
+            "letterSpacing": "Espaçamento"
+          }
+        },
+        "Arrow": {
+          "displayName": "Seta",
+          "props": {
+            "type": {
+              "displayName": "Direção",
+              "up": "Cima",
+              "down": "Baixo",
+              "left": "Esquerda",
+              "right": "Direita",
+              "up-left": "Cima esq.",
+              "up-right": "Cima dir.",
+              "down-left": "Baixo esq.",
+              "down-right": "Baixo dir."
+            },
+            "size": "Tamanho",
+            "background": "Fundo",
+            "fill": "Cor do texto"
+          }
+        },
+        "SpecLine": {
+          "displayName": "Separador",
+          "props": {
+            "width": "Espessura",
+            "background": "Fundo",
+            "fill": "Cor do texto"
+          }
+        },
+        "Spacing": {
+          "displayName": "Espaçamento",
+          "props": {
+            "background": "Fundo"
+          }
+        },
+        "Blank": {
+          "displayName": "Espaço",
+          "props": {
+            "width": "Largura",
+            "background": "Fundo"
+          }
+        },
+        "OperatorLogo": {
+          "displayName": "Logótipo corno",
+          "props": {
+            "variant": {
+              "displayName": "Disposição"
+            },
+            "size": "Altura do logótipo",
+            "gap": "Intervalo",
+            "background": "Fundo",
+            "fill": "Cor do símbolo",
+            "foreground": "Cor do texto",
+            "showText": {
+              "displayName": "Mostrar texto"
+            }
+          }
+        },
+        "ExitNum": {
+          "displayName": "Saída",
+          "props": {
+            "letters": "Letras de saída",
+            "fontSize": "Tamanho da letra",
+            "background": "Fundo",
+            "fill": "Cor",
+            "bold": {
+              "displayName": "Negrito"
+            }
+          }
+        },
+        "Icon": {
+          "displayName": "Ícone",
+          "props": {
+            "icon": "Ícone",
+            "size": "Tamanho",
+            "fill": "Cor do símbolo",
+            "plateColor": "Preenchimento",
+            "borderColor": "Cor da moldura",
+            "background": "Fundo"
+          }
+        }
+      },
+      "pictograms": {
+        "002": "Entrada",
+        "003": "Saída",
+        "004": "Entrada / Saída",
+        "005": "Escada (subida)",
+        "010": "Escada rolante (subida)",
+        "011": "Escada rolante (descida)",
+        "013": "Elevador (passageiros)",
+        "015": "WC masculino",
+        "016": "WC feminino",
+        "017": "WC",
+        "029": "Parque",
+        "032": "Compras",
+        "033": "Supermercado",
+        "034": "Hotel",
+        "035": "Hospital",
+        "043": "Correios",
+        "046": "Multibanco",
+        "047": "Banco",
+        "051": "Depósito de bagagem",
+        "055": "Fraldário",
+        "057": "Sala de espera",
+        "058": "Ponto de encontro",
+        "059": "Polícia",
+        "060": "Bilheteira",
+        "062": "Informações",
+        "064": "Restaurante chinês",
+        "065": "Fast food",
+        "067": "Cafetaria",
+        "074": "Informação",
+        "076": "Achados e perdidos",
+        "078": "Estacionamento",
+        "079": "Estacionamento coberto",
+        "080": "Estacionamento de bicicletas",
+        "082": "Telefone",
+        "094": "Assentos",
+        "100": "Chamada de emergência",
+        "101": "Passagem proibida",
+        "111": "Proibido fumar",
+        "115": "Entrada proibida"
       }
     }
   }

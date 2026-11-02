@@ -59,7 +59,7 @@ export const dualTextDefaultProps: DualTextProps = {
   pairGap: 4,
   offsetY: 0,
   foreground: colors.exitForeground,
-  background: colors.background,
+  background: colors.transparent,
 };
 
 const SCOPE = "themes.shanghai.components.DualText.props";

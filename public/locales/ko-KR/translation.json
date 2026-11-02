@@ -157,7 +157,9 @@
     "tabConflict": {
       "title": "편집기가 다른 탭에서 열려 있습니다",
       "body": "저장이 서로 덮어쓰이는 것을 막기 위해 한 번에 한 탭에서만 편집할 수 있습니다. 다른 탭을 닫은 후 아래 버튼으로 편집기로 돌아와 주세요.",
-      "refresh": "다른 탭을 닫았습니다. 이 페이지를 새로고침하세요"
+      "refresh": "다른 탭을 닫았습니다. 이 페이지를 새로고침하세요",
+      "force": "편집 강제 인수",
+      "forceHint": "인수하면 다른 탭은 즉시 잠기고 저장도 중단됩니다. 저장하지 않은 변경 사항은 사라집니다."
     },
     "followTheme": "테마 기본값 따름"
   },
@@ -2423,6 +2425,311 @@
             "background": "배경색"
           }
         }
+      }
+    },
+    "guangzhou": {
+      "displayName": "광저우 지하철 스타일",
+      "colors": {
+        "transparent": "투명",
+        "background": "배경(검정)",
+        "foreground": "전경(흰색)",
+        "border": "테두리(흰색)",
+        "white": "흰색",
+        "black": "검정",
+        "backgroundExit": "출구 배경(빨강)",
+        "background18": "18호선 배경(회색)",
+        "brandRed": "브랜드 레드(양각)",
+        "specline": "구분선(흰색)",
+        "line1": "1호선",
+        "line2": "2호선",
+        "line3": "3호선",
+        "line4": "4호선",
+        "line5": "5호선",
+        "line6": "6호선",
+        "line7": "7호선",
+        "line8": "8호선",
+        "line9": "9호선",
+        "line10": "10호선",
+        "line11": "11호선",
+        "line12": "12호선",
+        "line13": "13호선",
+        "line14": "14호선",
+        "line18": "18호선",
+        "line21": "21호선",
+        "line22": "22호선",
+        "lineGF": "광포선",
+        "lineAPM": "APM선",
+        "lineTHZ1": "하이주 트램 1호선",
+        "lineTHP1": "황푸 트램 1호선",
+        "line24": "24호선",
+        "line28": "28호선",
+        "line15": "15호선",
+        "line16": "16호선",
+        "line17": "17호선",
+        "line19": "19호선",
+        "line20": "20호선"
+      },
+      "lines": {
+        "1": "1호선",
+        "2": "2호선",
+        "3": "3호선",
+        "4": "4호선",
+        "5": "5호선",
+        "6": "6호선",
+        "7": "7호선",
+        "8": "8호선",
+        "9": "9호선",
+        "10": "10호선",
+        "11": "11호선",
+        "12": "12호선",
+        "13": "13호선",
+        "14": "14호선",
+        "18": "18호선",
+        "21": "21호선",
+        "22": "22호선",
+        "GF": "광포선",
+        "APM": "APM선",
+        "THZ1": "하이주 트램 1호선",
+        "THP1": "황푸 트램 1호선"
+      },
+      "common": {
+        "weight": {
+          "normal": "표준",
+          "medium": "중간",
+          "bold": "굵게"
+        },
+        "align": {
+          "left": "왼쪽",
+          "center": "가운데",
+          "right": "오른쪽"
+        },
+        "fontFamily": {
+          "serif": "명조",
+          "sans": "고딕"
+        },
+        "logoVariant": {
+          "stacked": "세로",
+          "inline": "가로",
+          "none": "문구 없음"
+        }
+      },
+      "components": {
+        "LineBadge": {
+          "displayName": "노선 표지",
+          "props": {
+            "textZh": "중국어",
+            "textEn": "영어",
+            "size": "크기",
+            "paddingX": "좌우 여백",
+            "color": "배경색",
+            "textColor": "글자색",
+            "background": "배경색"
+          }
+        },
+        "PlatformNum": {
+          "displayName": "승강장 번호",
+          "props": {
+            "number": "승강장 번호",
+            "labelZh": "중문 라벨",
+            "labelEn": "영문 라벨",
+            "size": "크기",
+            "color": "노선색",
+            "textColor": "글자색",
+            "background": "배경색",
+            "showCaption": {
+              "displayName": "중영문 표시"
+            },
+            "captionZh": "원 아래 중국어",
+            "captionEn": "원 아래 영어",
+            "captionColor": "원 아래 글자색"
+          }
+        },
+        "StationNum": {
+          "displayName": "역 번호",
+          "props": {
+            "items": "역 번호",
+            "fillColor": "채우기",
+            "textColor": "글자색",
+            "showPlateBorder": {
+              "displayName": "외곽선 표시"
+            },
+            "plateColor": "바탕 색",
+            "background": "배경색"
+          }
+        },
+        "Direction": {
+          "displayName": "다음역·방향",
+          "props": {
+            "showNext": {
+              "displayName": "「다음」표시"
+            },
+            "nextLabelZh": "다음",
+            "nextLabelEn": "Next",
+            "stationZh": "역명",
+            "stationEn": "영문명",
+            "viaZh": "경유",
+            "viaEn": "경유 영문",
+            "align": {
+              "displayName": "가로 정렬"
+            },
+            "background": "배경색",
+            "fill": "글자색"
+          }
+        },
+        "StationName": {
+          "displayName": "역명",
+          "props": {
+            "chinese": "중문 역명",
+            "english": "영문 역명",
+            "fontFamily": {
+              "displayName": "서체"
+            },
+            "fontSizeZh": "중문 크기",
+            "fontSizeEn": "영문 크기",
+            "gap": "중영 간격",
+            "background": "배경색",
+            "fill": "글자색"
+          }
+        },
+        "Text": {
+          "displayName": "텍스트",
+          "props": {
+            "zh": "중문",
+            "en": "영문",
+            "fontSizeZh": "중문 크기",
+            "fontSizeEn": "영문 크기",
+            "gap": "중영 간격",
+            "align": {
+              "displayName": "가로 정렬"
+            },
+            "background": "배경색",
+            "fill": "글자색",
+            "weight": {
+              "displayName": "굵기"
+            },
+            "letterSpacing": "자간"
+          }
+        },
+        "Arrow": {
+          "displayName": "화살표",
+          "props": {
+            "type": {
+              "displayName": "방향",
+              "up": "위",
+              "down": "아래",
+              "left": "왼쪽",
+              "right": "오른쪽",
+              "up-left": "좌상",
+              "up-right": "우상",
+              "down-left": "좌하",
+              "down-right": "우하"
+            },
+            "size": "크기",
+            "background": "배경색",
+            "fill": "글자색"
+          }
+        },
+        "SpecLine": {
+          "displayName": "구분선",
+          "props": {
+            "width": "선 두께",
+            "background": "배경색",
+            "fill": "글자색"
+          }
+        },
+        "Spacing": {
+          "displayName": "간격",
+          "props": {
+            "background": "배경색"
+          }
+        },
+        "Blank": {
+          "displayName": "여백",
+          "props": {
+            "width": "너비",
+            "background": "배경색"
+          }
+        },
+        "OperatorLogo": {
+          "displayName": "양각 로고",
+          "props": {
+            "variant": {
+              "displayName": "배치"
+            },
+            "size": "로고 높이",
+            "gap": "간격",
+            "background": "배경색",
+            "fill": "마크 색상",
+            "foreground": "글자색",
+            "showText": {
+              "displayName": "중영문 표시"
+            }
+          }
+        },
+        "ExitNum": {
+          "displayName": "출구",
+          "props": {
+            "letters": "출구 문자",
+            "fontSize": "글자 크기",
+            "background": "배경색",
+            "fill": "색상",
+            "bold": {
+              "displayName": "굵게"
+            }
+          }
+        },
+        "Icon": {
+          "displayName": "아이콘",
+          "props": {
+            "icon": "아이콘",
+            "size": "크기",
+            "fill": "그림 색",
+            "plateColor": "채움색",
+            "borderColor": "외곽선 색",
+            "background": "배경색"
+          }
+        }
+      },
+      "pictograms": {
+        "002": "입구",
+        "003": "출구",
+        "004": "출입구",
+        "005": "계단(위로)",
+        "010": "에스컬레이터(상행)",
+        "011": "에스컬레이터(하행)",
+        "013": "엘리베이터(승객용)",
+        "015": "남자 화장실",
+        "016": "여자 화장실",
+        "017": "화장실",
+        "029": "공원",
+        "032": "쇼핑",
+        "033": "슈퍼마켓",
+        "034": "호텔",
+        "035": "병원",
+        "043": "우체국",
+        "046": "ATM",
+        "047": "은행",
+        "051": "물품 보관소",
+        "055": "기저귀 교환대",
+        "057": "대합실",
+        "058": "만남의 장소",
+        "059": "경찰",
+        "060": "매표소",
+        "062": "안내소",
+        "064": "중식당",
+        "065": "패스트푸드",
+        "067": "카페",
+        "074": "안내",
+        "076": "유실물 센터",
+        "078": "주차장",
+        "079": "실내 주차장",
+        "080": "자전거 보관소",
+        "082": "전화",
+        "094": "좌석",
+        "100": "비상 호출",
+        "101": "통행 금지",
+        "111": "금연",
+        "115": "출입 금지"
       }
     }
   }

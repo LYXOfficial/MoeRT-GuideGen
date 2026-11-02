@@ -16,6 +16,7 @@ import BeijingSpecLine from "./themes/beijing/SpecLine";
 import BeijingOldSpecLine from "./themes/beijing-old/SpecLine";
 import TokyoSpecLine from "./themes/tokyo/SpecLine";
 import ShanghaiSpecLine from "./themes/shanghai/SpecLine";
+import GuangzhouSpecLine from "./themes/guangzhou/SpecLine";
 import ChongqingSpacing from "./themes/chongqing/Spacing";
 import ChengduSpacing from "./themes/chengdu/Spacing";
 import HongkongSpacing from "./themes/hongkong/Spacing";
@@ -23,6 +24,7 @@ import BeijingSpacing from "./themes/beijing/Spacing";
 import BeijingOldSpacing from "./themes/beijing-old/Spacing";
 import TokyoSpacing from "./themes/tokyo/Spacing";
 import ShanghaiSpacing from "./themes/shanghai/Spacing";
+import GuangzhouSpacing from "./themes/guangzhou/Spacing";
 
 export default function DraggableItem({
   id,
@@ -128,7 +130,8 @@ export default function DraggableItem({
     childType === BeijingSpacing ||
     childType === BeijingOldSpacing ||
     childType === TokyoSpacing ||
-    childType === ShanghaiSpacing;
+    childType === ShanghaiSpacing ||
+    childType === GuangzhouSpacing;
   const isSpecLine =
     (typeof boardItemType === "string" && boardItemType.includes("SpecLine")) ||
     childType === ChengduSpecLine ||
@@ -137,7 +140,8 @@ export default function DraggableItem({
     childType === BeijingSpecLine ||
     childType === BeijingOldSpecLine ||
     childType === TokyoSpecLine ||
-    childType === ShanghaiSpecLine;
+    childType === ShanghaiSpecLine ||
+    childType === GuangzhouSpecLine;
 
   // 组件之间为了压住 1px 接缝做了 -1px 相互挤压，而 hover / 选中又会把组件抬到邻居之上。
   // 命中测试同样按层级走，于是 1~3px 的分割线会被邻居整个盖住、基本点不到。

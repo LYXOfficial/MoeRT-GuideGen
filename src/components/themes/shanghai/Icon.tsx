@@ -31,7 +31,7 @@ export const iconDefaultProps: IconProps = {
   icon: "gate_in",
   rotation: 0,
   foreground: colors.foreground,
-  background: colors.background,
+  background: colors.transparent,
 };
 
 /** 图形边长与左右留白锁死（用户要求：没必要开放调整） */

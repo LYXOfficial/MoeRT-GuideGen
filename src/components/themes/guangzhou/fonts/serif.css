@@ -1,0 +1,9 @@
+/*
+ * 广州地铁主题：站名宋体。
+ *
+ * 出口门楣上的站名是宋体大字（实测汉字墨迹高 ≈ 0.47 × 牌高），
+ * 项目里香港主题引过 Noto Serif（思源宋体），但只带 700 一个字重；
+ * 出口牌笔画偏细，像 Regular/Medium，所以这里重引 400/500/600/700 四档。
+ * 与 beijing/fonts/sourcehansans.css 同一镜像（fonts.loli.net）。
+ */
+@import url("https://fonts.loli.net/css2?family=Noto+Serif+SC:wght@400;500;600;700&display=swap");

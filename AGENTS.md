@@ -1,8 +1,7 @@
 # AGENTS.md — 交接文档
 
-> 最后更新：2026-11-01。上海主题章节（§11）按东京那套结构重写：组件尺寸表 / 颜色 / 字体 /
-> 图形符号 / 背景与落板 / i18n / 坑，共 7 小节；四个卫生间图标重描参数也记在 §11.4。
-> 下一阶段目标：**深圳 / 广州主题**（未定，等用户拍板）；北京旧版已实现、遗留项见 §9。
+> 最后更新：2026-11-04。新增 **§13 广州地铁主题**；上海(§11.5)、广州都改成 **transparent 体系**
+> （见 §7 铁律 ②）。下一阶段目标：**深圳主题**（未定，等用户拍板）；北京旧版遗留项见 §9。
 
 ---
 
@@ -72,6 +71,11 @@ pnpm dev                                  # 开发服务器（5173 端口，常�
   旧版 八通线 / `line1`（八通线与 1 号线同色）。
 - ✅ 编辑器交互（PC + 移动端）：拖拽/点按判定、触屏长按、小元件热区、删除区可见矩形、
   编辑菜单稳定性、整页缩放禁用等，全部修复并提交（见 §7/§8）。
+- ✅ **广州地铁主题**（2026-11-04）：`src/components/themes/guangzhou/`，**THEME_INDEX 7**，
+  key `themes.guangzhou`（显示名「广州地铁风格」）。只做**悬挂吊顶导向牌**，13 个组件、
+  39 个 GB 图记 + 羊角标志，11 语言全量；要点见 **§13**。
+- ✅ **上海 / 广州改判为 transparent 体系**（2026-11-04）：`bakeDropColors` 的
+  `followsBoardColor` 只剩 `0 / 3 / 5`，6、7 落板一律写 `colors.transparent`（见 §7 铁律 ②）。
 - ✅ **全应用深色/浅色模式**（2026-10-25）：初始跟随浏览器 `prefers-color-scheme`，
   手动切换后写 `localStorage['guide-theme-mode']` 覆盖。实现要点见 §7 末尾「深色模式」。
 - ✅ **多存档管理**（2026-10-25）：`src/utils/archiveStore.ts` + `src/components/ArchiveDialog.tsx`。
@@ -80,8 +84,8 @@ pnpm dev                                  # 开发服务器（5173 端口，常�
 
 ## 3. 主题架构契约（新主题必须遵守）
 
-1. `src/components/themes/themereg.ts` 的数组**顺序即 THEME_INDEX**（当前 7 项）：
-   `chongqing 0 / chengdu 1 / hongkong 2 / beijing 3 / beijingOld 4 / tokyo-metro 5 / shanghai 6`。
+1. `src/components/themes/themereg.ts` 的数组**顺序即 THEME_INDEX**（当前 8 项）：
+   `chongqing 0 / chengdu 1 / hongkong 2 / beijing 3 / beijingOld 4 / tokyo-metro 5 / shanghai 6 / guangzhou 7`。
    新增主题要同步：`themereg.ts`、`Background.tsx` 里的 `THEME_INDEX` 常量（取色器用它读色板）、
    `GuideBoard.tsx` 的 `bakeDropColors` 分支（哪些主题落板固化板色）、`DraggableItem.tsx`
    的 Spacing/SpecLine 注册、11 个语言包、以及 `src/locales/zh-CN.json` 兜底副本。
@@ -199,8 +203,11 @@ python3 text_probe.py                                   # 解析 <use> 得到真
 - **底板配色铁律（用户逐条拍板：拖上去就定死）**：新拖入组件在落板那刻把当前生效色写进 props
   （`bakeDropColors`），之后改板色**绝不回头覆盖已上板组件**；渲染层只原样渲染，禁止按板色回写
   （加过一次又删，回归过一次）。只有侧栏新拖入才固化（`fresh` 参数），板内搬家原样搬运。
-  细则：① 间距/空格/分隔线全主题背景永远透明且不固化板色；② 成都/香港/北京旧 默认 transparent；
-  ③ 重庆/北京新/东京/上海 保留局部默认，全局板色有设定才覆盖；④ 前景色全局覆盖局部、**默认色不能为空**；
+  细则：① 间距/空格/分隔线全主题背景永远透明且不固化板色；
+  ② **transparent 体系**：成都 / 香港 / 北京旧 / **上海 / 广州** —— 组件 background 默认 transparent，
+  落板也一律写 transparent（`bakeDropColors` 的 `else` 分支），板色永远不进组件；
+  ③ **固化板色体系**：重庆 / 北京新 / 东京 —— 保留局部默认，全局板色有设定才覆盖；
+  ④ 前景色全局覆盖局部、**默认色不能为空**；
   ⑤ 其它默认值不介入；⑥ 透明一律用各主题 `colors.transparent` 常量，禁写字面量。
   **成都图标（`themes.chengdu.components.Icon`）的颜色拆成三个**（v4 起）：
   `foreground` = 底板（那个圆角方块）、`iconFill` = **图形本身的颜色**、`background` = 图标外圈那层底衬。
@@ -443,7 +450,8 @@ python3 text_probe.py                                   # 解析 <use> 得到真
 
 - key `themes.shanghai`，**THEME_INDEX = 6**，代码 `src/components/themes/shanghai/`；
   建主题时同步过：`themereg.ts`、`Background.tsx` 的 `THEME_INDEX`、
-  `GuideBoard.tsx` 的 `bakeDropColors`（`currentTheme === 6`）、`DraggableItem.tsx` 的
+  `GuideBoard.tsx` 的 `bakeDropColors`（**2026-11-04 起已移出该分支**，见 §11.5）、
+  `DraggableItem.tsx` 的
   `ShanghaiSpacing / ShanghaiSpecLine` 注册、11 份语言包 + `src/locales/zh-CN.json` 兜底副本。
 - **规范来源**：上海市地方标准 **DB31/T 1104《城市轨道交通导向标识系统设计规范》**
   （2018 首发，2025-11 修订征求意见稿）。
@@ -514,10 +522,11 @@ SpecLine / Spacing / Blank。行高 64px = 牌面高，**所有尺寸都按 64px
 - **背景彻底单色**（用户拍板 2026-11-01）：`shanghai/Background.tsx` **已删掉 `MultiRowBackground`**，
   只留 `BackgroundBox`（一个 div 直接铺 `backgroundColor`，`position: relative` 给绝对定位的牌面用）；
   所有组件 props 里**没有 `background2`**，编辑器只给一项「背景色」。
-- **背景色跟随底板**（用户拍板 2026-11-01）：上海归到「重庆 / 北京新 / 东京」那一档 ——
-  `GuideBoard.tsx` 的 `bakeDropColors` 里 `currentTheme === 6`：组件 defaultProps 的 background
-  默认是**主题深灰**（不是透明），落板时若有「底板背景色」就固化板色，没有就保留主题色。
-  间距 / 空格 / 分隔线仍永远透明、不固化。
+- **背景色 = transparent 体系**（用户 2026-11-04 改判，推翻了 2026-11-01 那版）：
+  上海从「落板固化板色」那一档移出，和成都 / 香港 / 北京旧 / 广州同档 ——
+  `GuideBoard.tsx` 的 `bakeDropColors` 里 `followsBoardColor` 现在只有 `0 / 3 / 5`，
+  上海(6)、广州(7) 都走 `else` 分支：落板把 `background` 写成 `colors.transparent`，
+  组件默认值也是 `colors.transparent`。间距 / 空格 / 分隔线照旧永远透明、不固化。
 - 面板文案**不带单位注释**（「字距」不写「（em）」，「尺寸」不写「（px）」）；
   「线路色（下段）」不写「可空」（填成和上段一样就是单色）。
 
@@ -603,3 +612,77 @@ SpecLine / Spacing / Blank。行高 64px = 牌面高，**所有尺寸都按 64px
   放大即拉伸→「糊着，点一下才清楚」。现在只在手势期间开（停手 160ms 关→重光栅化）；
   **完全去掉会让平移变卡**，所以是「手势开、静止关」。
 - 图记名走 `themes.tokyo-metro.pictograms.<id>`，缺键回退 `pictogramLabel(p, lang)`。
+
+## 13. 广州地铁主题（广州地铁风格）
+
+- key `themes.guangzhou`，**THEME_INDEX = 7**，代码 `src/components/themes/guangzhou/`；
+  同步过：`themereg.ts`、`Background.tsx` 的 `THEME_INDEX`、`GuideBoard.tsx` 的 `bakeDropColors`
+  （**不在 `followsBoardColor` 里**）、`DraggableItem.tsx` 的 `GuangzhouSpacing / GuangzhouSpecLine`、
+  11 份语言包 + `src/locales/zh-CN.json` 兜底副本。
+- **范围（用户反复强调）**：**只做悬挂吊顶导向牌**。站名墙、PSD 抬头带、导向柱、柱身字、
+  站台电视、屏蔽门附近的「外环/内环」那一套**一律不做**（外环已从「方向」里删掉）。
+- 资料/实测笔记在 `docs/guangzhou/`（整体 gitignore）：`notes/01_资料清单与结论.md`（三套官方配色
+  互斥的结论 + 25 条线路色）、`02_组件清单.md`、`03/04_图标总表.md`、`05_版式实测.md`；
+  原始素材 `raw/`（`linestation-official.json`、`gzmtr.css`、`MAP.jpg`、`ref/*` 实拍、`gbicons*/`）。
+
+### 13.1 组件（13 个）
+
+LineBadge / PlatformNum / StationNum / Direction / StationName / Text / OperatorLogo / ExitNum /
+Icon / Arrow / SpecLine / Spacing / Blank。
+
+| 组件 | 要点（🖐 = 用户亲手调过） |
+|---|---|
+| `LineBadge` 🖐 | **只有一个版式：中文 + 英文两行**，没有「主文字档 / 数字档」之分（用户 2026-11-04 明确「只有中英」）。中文里开头的线路号用正则拆出来单独渲染（`^([0-9]+(?:\s*[,、，/·-]\s*[0-9]+)*)\s*([\s\S]*)$`），字号 `0.58 × 盒高`，汉字 `0.5`、英文 `0.24`，**只比汉字大 3px 左右**，同基线（`items-baseline`）；全部 `fontWeight: 700`；字体统一 `fontFamilyEn`（Arial 打头，汉字自动回落思源黑体）。圆角写死 `RADIUS = 4`；`size` 默认 40；`paddingX` 单值；底色字段叫 **`color`**（不叫 background，见 §13.3）；`background` 是组件底板（默认 transparent） |
+| `PlatformNum` | 「站台编号」，圆内三行：大号数字 / 中文（默认「站台」）/ 英文（默认 Platform），中英可编辑。⌀ 默认 44（实拍 0.39 牌高）。颜色三分：**`color` = 圆底色（线路色）**、`textColor` = 字色、`background` = 组件底板。左右各留 3px |
+| `StationNum` | 「车站编号」白底胶囊：每枚**各自一块贴身白底**（外扩 `PLATE_PAD + 描边`，四向严格等距、圆角 = 高一半），多枚**挤一块不留缝**，正中间补小块白（`centerPatch`）；1/2/3/4 枚分别单行 / 竖排 / 品字（上二下一）/ 2×2；站序一位自动补 0。颜色四分：`background`（组件底板）/ `plateColor`（每枚白底）/ `fillColor`（胶囊内部）/ `textColor`；**描边色在每张卡片里逐枚设**（`item.color`，空则用 `colors.line1`，**不按输入线路名自动改色**）。外留白 = `PLATE_PAD + 描边 + 3` |
+| `Direction` 🖐 | 下站/站名两列（各自对齐），**第三、四行只有途经方向**，横跨整行 `gridColumn: 1 / -1`，起点跟「下站」左对齐（**不许缩到站名那一列**）；字号写死 22/11、小字 9/5；有「显示下站」开关 |
+| `StationName` | 站名，宋体（`fontFamilySerif`），居中写死 30/12 |
+| `Text` 🖐 | SVG `<text>` + 墨迹对齐（沿用上海那套 `measureInk/inkShift`），左右各 3px |
+| `OperatorLogo` | 羊角标志，两种形态：`stacked`（上下）/ `inline`（横排，更大更粗、左对齐） |
+| `ExitNum` 🖐 | 「出口」只放**英文大字母**（不带「出口/Exit」字样、不跟箭头），`letters` 默认 "A.B"；**`bold` 开关默认开**（700 / 400）；左右各 6px |
+| `Icon` | 39 个 GB 图记（脚本从素材 SVG 生成，`icons/gb-pictograms.tsx`）：外框常开、`BORDER_WIDTH 1.5`、`INNER_PADDING 2`；下拉选项**不带数字前缀**，名称走 i18n `themes.guangzhou.pictograms.<id>`（缺键回退 `nameZh`） |
+| `Arrow` | 造型语言照抄重庆（人字臂 + 矩形杆、臂端平行切），比例按 11 号线实拍重排：**`viewBox 141×158`**（总长:总宽 1.12）、臂切长 `33.6`、杆宽 `27`；默认 36px；8 个直行方向 |
+| `SpecLine` / `Spacing` / `Blank` | 透明，displayName 统一「分隔线 / 间距 / 空格」 |
+
+### 13.2 颜色 / 字体 / 图形符号
+
+- 底色 `background #252225`、`foreground #FFFFFF`；出口配色红底 `#D41627`、18 号线灰底 `#9E9F95`
+  （**只做成色板条目**，不做成「配色方案」UI）；羊角红 `#C51935`；37 个颜色键
+  （`line1`–`line28` + `lineGF/lineAPM/lineTHZ1/lineTHP1` + `white/black/transparent/…`）。
+- 线路色：1 `#EDCF3D`、4 `#01824A`、10 `#6E90B6`、11 `#F5BB17`、12 `#59621D`、18 `#364C9C`…
+  见 `notes/01_资料清单与结论.md` 的官方 25 条表。
+- 字体：中文思源黑体（`fonts/sourcehansans.css`，云端 Noto Sans SC）；西文/数字 **Arial**
+  （`fonts/arial.css` → `/fonts/Arial.ttf`，**只有 400，700 是合成粗体**）；站名宋体
+  （`fonts/serif.css`）。注意 `fontFamilyEn` 的写法是 `Arial, "Arial Unicode MS", Helvetica, <中文栈>`
+  —— 想「数字用 Arial、汉字回落思源黑体」直接用它，别只写 `fontFamilyZh`。
+- 图形符号：`icons/gb-pictograms.tsx` 脚本生成（剥白底、去原框、所有颜色 → `currentColor`、
+  tight viewBox），`icon-registry.ts` 里 id + 中英名。
+
+### 13.3 落板配色 & 坑
+
+- **广州是 transparent 体系**（用户 2026-11-04 点名）：`bakeDropColors` 的 `followsBoardColor`
+  只有 `0 / 3 / 5`，广州(7) 走 `else`：落板把 `background` 写成 `colors.transparent`；
+  组件默认值也是 `colors.transparent`。**别把「线路色 / 徽章底色」命名成 `background`** ——
+  那个键会被落板配色覆盖成板色。所以线路标用 `color`、站台编号用 `color`、车站编号用
+  `plateColor/fillColor`，三者都不参与板色固化。
+- **组件左右要留 3px**：线路标 / 站台编号 / 车站编号的外层容器都写了
+  `paddingLeft/Right: 3`（车站编号是 `PLATE_PAD + 描边 + 3`，因为白底本身向外溢出），
+  不然色块直接顶着相邻组件。
+- **箭头 SVG 的尺寸必须走内联样式**：Tailwind preflight 的 `img,video { height:auto }` 之外，
+  `width/height` 属性在非正方形 viewBox（141×158）下会被当作 100% 撑开，
+  所以写 `style={{ width: "100%", height: "100%", display: "block" }}`。
+- **箭头在人字臂与杆的交界处、小尺寸下会有一道细缝**（两个近切边的抗锯齿），
+  用户 2026-11-04 明确「别弄这个小细节了」，不要再改几何。
+- **线路标只有中英两行**、**没有「数字突出」字段**；数字是从中文里拆出来渲染的，
+  大一点点（3px 级），别再自作主张做成 `0.86 × 盒高`（被用户打回过）。
+- 图标下拉：Semi 的 `Select.Option` 只认 `label`（ReactNode），名字走
+  `themes.guangzhou.pictograms.<id>`；**选项文案不要数字前缀**。
+- **不做存档迁移**：广州主题还在联调期，用户明确「我都没推送」，字段改名（`background` → `color`、
+  删 `mode/line`）直接改，不升 `LATEST_SAVE_VERSION`、不写 `MIGRATIONS`；
+  老档多出来的键渲染层忽略即可。
+
+### 13.4 遗留
+
+- 箭头臂端是「平行切」（重庆那套），实拍里是**垂直于臂的斜切**（臂端收成尖），尚未改。
+- 只做了「悬挂牌」一种载体；`Distance`（距离牌）、方框版站台编号（0.58 牌高那档）未做。
+- 图标名称的 11 语言翻译是通用义译（`themes.guangzhou.pictograms.*`），没有官方对照表。

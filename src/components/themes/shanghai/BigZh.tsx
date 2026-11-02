@@ -47,7 +47,7 @@ export const bigZhDefaultProps: BigZhProps = {
   fontSize: 28,
   offsetY: 0,
   foreground: colors.foreground,
-  background: colors.background,
+  background: colors.transparent,
 };
 
 /** 左右边距写死 5px（用户要求） */

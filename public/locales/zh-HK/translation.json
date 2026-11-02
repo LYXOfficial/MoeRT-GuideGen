@@ -157,7 +157,9 @@
     "tabConflict": {
       "title": "編輯器已在其它分頁開啟",
       "body": "為了防止兩個分頁互相覆蓋存檔，同一時間只允許一個分頁編輯。請關閉其它分頁，再點擊下方按鈕回到編輯器。",
-      "refresh": "已關閉其它分頁，重新整理本頁"
+      "refresh": "已關閉其它分頁，重新整理本頁",
+      "force": "強制接管編輯",
+      "forceHint": "接管後另一個分頁會即時被鎖定並停止儲存，它未儲存的修改會失去。"
     },
     "followTheme": "跟隨主題預設"
   },
@@ -2423,6 +2425,311 @@
             "background": "背景色"
           }
         }
+      }
+    },
+    "guangzhou": {
+      "displayName": "廣州地鐵風格",
+      "colors": {
+        "transparent": "透明",
+        "background": "背景（黑）",
+        "foreground": "前景（白）",
+        "border": "描邊（白）",
+        "white": "純白",
+        "black": "純黑",
+        "backgroundExit": "出口底色（紅）",
+        "background18": "18 號綫底色（灰）",
+        "brandRed": "品牌紅（羊角）",
+        "specline": "分隔綫（白）",
+        "line1": "1 號綫",
+        "line2": "2 號綫",
+        "line3": "3 號綫",
+        "line4": "4 號綫",
+        "line5": "5 號綫",
+        "line6": "6 號綫",
+        "line7": "7 號綫",
+        "line8": "8 號綫",
+        "line9": "9 號綫",
+        "line10": "10 號綫",
+        "line11": "11 號綫",
+        "line12": "12 號綫",
+        "line13": "13 號綫",
+        "line14": "14 號綫",
+        "line18": "18 號綫",
+        "line21": "21 號綫",
+        "line22": "22 號綫",
+        "lineGF": "廣佛綫",
+        "lineAPM": "APM 綫",
+        "lineTHZ1": "海珠有軌 1 號綫",
+        "lineTHP1": "黃埔有軌 1 號綫",
+        "line24": "24 號綫",
+        "line28": "28 號綫",
+        "line15": "15 號綫",
+        "line16": "16 號綫",
+        "line17": "17 號綫",
+        "line19": "19 號綫",
+        "line20": "20 號綫"
+      },
+      "lines": {
+        "1": "1 號綫",
+        "2": "2 號綫",
+        "3": "3 號綫",
+        "4": "4 號綫",
+        "5": "5 號綫",
+        "6": "6 號綫",
+        "7": "7 號綫",
+        "8": "8 號綫",
+        "9": "9 號綫",
+        "10": "10 號綫",
+        "11": "11 號綫",
+        "12": "12 號綫",
+        "13": "13 號綫",
+        "14": "14 號綫",
+        "18": "18 號綫",
+        "21": "21 號綫",
+        "22": "22 號綫",
+        "GF": "廣佛綫",
+        "APM": "APM 綫",
+        "THZ1": "海珠有軌 1 號綫",
+        "THP1": "黃埔有軌 1 號綫"
+      },
+      "common": {
+        "weight": {
+          "normal": "標準",
+          "medium": "中黑",
+          "bold": "粗黑"
+        },
+        "align": {
+          "left": "左對齊",
+          "center": "居中",
+          "right": "右對齊"
+        },
+        "fontFamily": {
+          "serif": "宋體",
+          "sans": "黑體"
+        },
+        "logoVariant": {
+          "stacked": "直排",
+          "inline": "橫排",
+          "none": "無文字"
+        }
+      },
+      "components": {
+        "LineBadge": {
+          "displayName": "路綫標",
+          "props": {
+            "textZh": "中文",
+            "textEn": "英文",
+            "size": "尺寸",
+            "paddingX": "左右內邊距",
+            "color": "底色",
+            "textColor": "文字顏色",
+            "background": "背景色"
+          }
+        },
+        "PlatformNum": {
+          "displayName": "月台編號",
+          "props": {
+            "number": "月台編號",
+            "labelZh": "中文標籤",
+            "labelEn": "英文標籤",
+            "size": "尺寸",
+            "color": "路綫色",
+            "textColor": "文字顏色",
+            "background": "背景色",
+            "showCaption": {
+              "displayName": "顯示中英文字"
+            },
+            "captionZh": "圓下中文",
+            "captionEn": "圓下英文",
+            "captionColor": "圓下文字顏色"
+          }
+        },
+        "StationNum": {
+          "displayName": "車站編號",
+          "props": {
+            "items": "車站編號",
+            "fillColor": "填充色",
+            "textColor": "文字顏色",
+            "showPlateBorder": {
+              "displayName": "顯示外框"
+            },
+            "plateColor": "白底顏色",
+            "background": "背景色"
+          }
+        },
+        "Direction": {
+          "displayName": "下站方向",
+          "props": {
+            "showNext": {
+              "displayName": "顯示「下站」"
+            },
+            "nextLabelZh": "下站",
+            "nextLabelEn": "Next",
+            "stationZh": "站名",
+            "stationEn": "英文名",
+            "viaZh": "途經",
+            "viaEn": "英文途經",
+            "align": {
+              "displayName": "橫向對齊"
+            },
+            "background": "背景色",
+            "fill": "文字顏色"
+          }
+        },
+        "StationName": {
+          "displayName": "站名",
+          "props": {
+            "chinese": "中文站名",
+            "english": "英文站名",
+            "fontFamily": {
+              "displayName": "字體"
+            },
+            "fontSizeZh": "中文字號",
+            "fontSizeEn": "英文字號",
+            "gap": "中英間距",
+            "background": "背景色",
+            "fill": "文字顏色"
+          }
+        },
+        "Text": {
+          "displayName": "文字",
+          "props": {
+            "zh": "中文",
+            "en": "英文",
+            "fontSizeZh": "中文字號",
+            "fontSizeEn": "英文字號",
+            "gap": "中英間距",
+            "align": {
+              "displayName": "橫向對齊"
+            },
+            "background": "背景色",
+            "fill": "文字顏色",
+            "weight": {
+              "displayName": "字重"
+            },
+            "letterSpacing": "字距"
+          }
+        },
+        "Arrow": {
+          "displayName": "箭頭",
+          "props": {
+            "type": {
+              "displayName": "方向",
+              "up": "上",
+              "down": "下",
+              "left": "左",
+              "right": "右",
+              "up-left": "左上",
+              "up-right": "右上",
+              "down-left": "左下",
+              "down-right": "右下"
+            },
+            "size": "尺寸",
+            "background": "背景色",
+            "fill": "文字顏色"
+          }
+        },
+        "SpecLine": {
+          "displayName": "分隔綫",
+          "props": {
+            "width": "綫寬",
+            "background": "背景色",
+            "fill": "文字顏色"
+          }
+        },
+        "Spacing": {
+          "displayName": "間距",
+          "props": {
+            "background": "背景色"
+          }
+        },
+        "Blank": {
+          "displayName": "空格",
+          "props": {
+            "width": "寬度",
+            "background": "背景色"
+          }
+        },
+        "OperatorLogo": {
+          "displayName": "羊角 logo",
+          "props": {
+            "variant": {
+              "displayName": "排列方式"
+            },
+            "size": "標誌高度",
+            "gap": "間距",
+            "background": "背景色",
+            "fill": "標誌顏色",
+            "foreground": "文字顏色",
+            "showText": {
+              "displayName": "顯示中英文"
+            }
+          }
+        },
+        "ExitNum": {
+          "displayName": "出口",
+          "props": {
+            "letters": "出口字母",
+            "fontSize": "字號",
+            "background": "背景色",
+            "fill": "顏色",
+            "bold": {
+              "displayName": "粗體"
+            }
+          }
+        },
+        "Icon": {
+          "displayName": "圖標",
+          "props": {
+            "icon": "圖標",
+            "size": "尺寸",
+            "fill": "圖形顏色",
+            "plateColor": "填充色",
+            "borderColor": "外框顏色",
+            "background": "背景色"
+          }
+        }
+      },
+      "pictograms": {
+        "002": "入口",
+        "003": "出口",
+        "004": "出入口",
+        "005": "樓梯（上行）",
+        "010": "自動扶梯（上行）",
+        "011": "自動扶梯（下行）",
+        "013": "電梯（客用）",
+        "015": "男洗手間",
+        "016": "女洗手間",
+        "017": "洗手間",
+        "029": "公園",
+        "032": "購物",
+        "033": "超級市場",
+        "034": "酒店",
+        "035": "醫院",
+        "043": "郵局",
+        "046": "自動櫃員機",
+        "047": "銀行",
+        "051": "行李寄存",
+        "055": "育嬰台",
+        "057": "候車室",
+        "058": "集合點",
+        "059": "警務",
+        "060": "售票處",
+        "062": "詢問處",
+        "064": "中菜",
+        "065": "快餐",
+        "067": "咖啡廳",
+        "074": "資訊",
+        "076": "失物認領",
+        "078": "停車場",
+        "079": "室內停車場",
+        "080": "單車停放",
+        "082": "電話",
+        "094": "座椅",
+        "100": "緊急求助",
+        "101": "禁止通行",
+        "111": "禁止吸煙",
+        "115": "禁止進入"
       }
     }
   }
