@@ -1053,9 +1053,7 @@
           "displayName": "数字路線標",
           "props": {
             "lineId": "路線番号",
-            "colorKey": {
-              "displayName": "路線カラー"
-            },
+            "color": "路線カラー",
             "textZh": "中国語テキスト（例：号线）",
             "textEn": "英語テキスト（例：Line 1）",
             "size": {
@@ -1071,9 +1069,7 @@
         "TextLineNum": {
           "displayName": "文字路線標",
           "props": {
-            "colorKey": {
-              "displayName": "路線カラー"
-            },
+            "color": "路線カラー",
             "textZh": "中国語テキスト（例：号线）",
             "textEn": "英語テキスト（例：Line 1）",
             "size": {
@@ -1438,9 +1434,7 @@
           "displayName": "数字路線標",
           "props": {
             "lineId": "路線番号",
-            "colorKey": {
-              "displayName": "路線カラー"
-            },
+            "color": "路線カラー",
             "textZh": "中国語テキスト（例：号线）",
             "textEn": "英語テキスト（例：Line 1）",
             "size": {
@@ -1453,9 +1447,7 @@
         "TextLineNum": {
           "displayName": "文字路線標",
           "props": {
-            "colorKey": {
-              "displayName": "路線カラー"
-            },
+            "color": "路線カラー",
             "textZh": "中国語テキスト（例：号线）",
             "textEn": "英語テキスト（例：Line 1）",
             "foreground": "前景色",

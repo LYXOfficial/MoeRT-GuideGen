@@ -1,6 +1,5 @@
-import { Select } from "@douyinfe/semi-ui";
 import colors, { fontFamilyEn } from "./define/colors";
-import lines, { findLine } from "./define/lines";
+import { findLine } from "./define/lines";
 import {
   fontEn,
   fontZh,
@@ -14,6 +13,7 @@ import {
   backgroundFormItems,
   digitFormItem,
   foregroundFormItem,
+  lineColorFormItem,
   textFormItem,
 } from "./Background";
 
@@ -32,8 +32,8 @@ import {
 export interface LineProps {
   /** 线路号；留空则为文字线路牌（如「八通线 / Batong Line」） */
   lineId?: string;
-  /** 线路标志色（colors 的键），即牌面底色 */
-  colorKey?: string;
+  /** 线路标志色（hex 或色板常量），即牌面底色；留空回退 1 号线 */
+  color?: string;
   /** 中文文字，数字牌为「号线」，文字牌为线路名 */
   textZh?: string;
   /** 英文文字，如「Line 1」「Batong Line」 */
@@ -47,51 +47,21 @@ export interface LineProps {
 
 export const lineDefaultProps: LineProps = {
   lineId: "1",
-  colorKey: "line1",
+  color: colors.line1,
   textZh: "号线",
   textEn: "Line 1",
   foreground: colors.foreground,
   background: colors.transparent,
 };
 
-export const LINE_COLOR_KEYS: string[] = Array.from(
-  new Set(lines.map(line => line.colorKey))
-);
-
-/** 唯一的线路色下拉（选项文案复用 themes.beijingOld.colors.<key>） */
-const lineColorFormItem = (
-  t: (key: string) => string,
-  scope = "themes.beijingOld.components.Line.props"
-): EditorConfig["forms"][number] => ({
-  key: "colorKey",
-  label: `${scope}.colorKey.displayName`,
-  element: (
-    <Select>
-      {LINE_COLOR_KEYS.map(key => (
-        <Select.Option key={key} value={key}>
-          <span className="flex items-center gap-2">
-            <span
-              className="inline-block h-4 w-4 rounded-sm"
-              style={{
-                backgroundColor: (colors as Record<string, string>)[key],
-              }}
-            />
-            {t(`themes.beijingOld.colors.${key}`)}
-          </span>
-        </Select.Option>
-      ))}
-    </Select>
-  ),
-});
-
 export const lineEditorConfig = (
-  t: (key: string) => string
+  _t: (key: string) => string
 ): EditorConfig => {
   const scope = "themes.beijingOld.components.Line.props";
   return {
     forms: [
       digitFormItem(scope, "lineId", 2),
-      lineColorFormItem(t, scope),
+      lineColorFormItem(scope),
       textFormItem(scope, "textZh"),
       textFormItem(scope, "textEn"),
       foregroundFormItem(scope),
@@ -105,12 +75,12 @@ export const lineEditorConfig = (
  * 编辑器只比数字线路标少一个「线路号」表单。
  */
 export const textLineNumEditorConfig = (
-  t: (key: string) => string
+  _t: (key: string) => string
 ): EditorConfig => {
   const scope = "themes.beijingOld.components.TextLineNum.props";
   return {
     forms: [
-      lineColorFormItem(t, scope),
+      lineColorFormItem(scope),
       textFormItem(scope, "textZh"),
       textFormItem(scope, "textEn"),
       foregroundFormItem(scope),
@@ -159,7 +129,7 @@ const ZH_ASCENT_PX = 15.24;
 
 function Line({
   lineId = lineDefaultProps.lineId,
-  colorKey = lineDefaultProps.colorKey,
+  color = lineDefaultProps.color,
   textZh = lineDefaultProps.textZh,
   textEn = lineDefaultProps.textEn,
   foreground = lineDefaultProps.foreground,
@@ -167,8 +137,8 @@ function Line({
 }: LineProps) {
   const fontsReady = useFontsReady();
   const scale = 1;
-  const key = colorKey && colorKey in colors ? colorKey : "line1";
-  const plateColor = (colors as Record<string, string>)[key];
+  // 线路色是自由颜色（色板常量选出来也是 hex），空则回退 1 号线
+  const plateColor = color && color.length > 0 ? color : colors.line1;
   const bgColor =
     background && background.length > 0 ? background : colors.transparent;
 

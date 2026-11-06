@@ -1056,9 +1056,7 @@
           "displayName": "Табличка номера линии",
           "props": {
             "lineId": "Номер линии",
-            "colorKey": {
-              "displayName": "Цвет линии"
-            },
+            "color": "Цвет линии",
             "textZh": "Китайский текст",
             "textEn": "Английский текст",
             "size": {
@@ -1074,9 +1072,7 @@
         "TextLineNum": {
           "displayName": "Табличка названия линии",
           "props": {
-            "colorKey": {
-              "displayName": "Цвет линии"
-            },
+            "color": "Цвет линии",
             "textZh": "Китайский текст",
             "textEn": "Английский текст",
             "size": {
@@ -1441,9 +1437,7 @@
           "displayName": "Табличка номера линии",
           "props": {
             "lineId": "Номер линии",
-            "colorKey": {
-              "displayName": "Цвет линии"
-            },
+            "color": "Цвет линии",
             "textZh": "Китайский текст",
             "textEn": "Английский текст",
             "size": {
@@ -1456,9 +1450,7 @@
         "TextLineNum": {
           "displayName": "Табличка названия линии",
           "props": {
-            "colorKey": {
-              "displayName": "Цвет линии"
-            },
+            "color": "Цвет линии",
             "textZh": "Китайский текст",
             "textEn": "Английский текст",
             "foreground": "Цвет переднего плана",

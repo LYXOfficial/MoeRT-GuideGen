@@ -86,6 +86,16 @@ export const foregroundFormItem = (scope: string): PropForm => ({
   element: <CustomColorPicker currentTheme={THEME_INDEX} />,
 });
 
+/**
+ * 线路色表单项（数字线路标 / 文字线路标共用）。
+ * 线路色就是普通颜色字段：存 hex，编辑器走 `CustomColorPicker`（色板常量 + 拾色器 + 吸管）。
+ */
+export const lineColorFormItem = (scope: string): PropForm => ({
+  key: "color",
+  label: `${scope}.color`,
+  element: <CustomColorPicker currentTheme={THEME_INDEX} />,
+});
+
 /** 数值输入表单项的小工具 */
 export const numberFormItem = (
   scope: string,

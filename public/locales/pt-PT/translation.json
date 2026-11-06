@@ -1054,9 +1054,7 @@
           "displayName": "Placa de número de linha",
           "props": {
             "lineId": "Número da linha",
-            "colorKey": {
-              "displayName": "Cor da linha"
-            },
+            "color": "Cor da linha",
             "textZh": "Texto em chinês",
             "textEn": "Texto em inglês",
             "size": {
@@ -1072,9 +1070,7 @@
         "TextLineNum": {
           "displayName": "Placa de nome de linha",
           "props": {
-            "colorKey": {
-              "displayName": "Cor da linha"
-            },
+            "color": "Cor da linha",
             "textZh": "Texto em chinês",
             "textEn": "Texto em inglês",
             "size": {
@@ -1439,9 +1435,7 @@
           "displayName": "Placa de número de linha",
           "props": {
             "lineId": "Número da linha",
-            "colorKey": {
-              "displayName": "Cor da linha"
-            },
+            "color": "Cor da linha",
             "textZh": "Texto em chinês",
             "textEn": "Texto em inglês",
             "size": {
@@ -1454,9 +1448,7 @@
         "TextLineNum": {
           "displayName": "Placa de nome de linha",
           "props": {
-            "colorKey": {
-              "displayName": "Cor da linha"
-            },
+            "color": "Cor da linha",
             "textZh": "Texto em chinês",
             "textEn": "Texto em inglês",
             "foreground": "Cor de primeiro plano",

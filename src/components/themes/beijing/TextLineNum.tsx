@@ -16,7 +16,7 @@ import type { EditorConfig } from "../../../interfaces/editor";
 export type TextLineNumProps = Omit<LineNumProps, "lineId">;
 
 export const textLineNumDefaultProps: TextLineNumProps = {
-  colorKey: "linefangshan",
+  color: colors.linefangshan,
   textZh: "房山线",
   textEn: "Fangshan Line",
   size: "default",

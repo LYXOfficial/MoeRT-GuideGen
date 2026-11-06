@@ -16,6 +16,21 @@ interface CustomColorPickerProps {
 }
 
 /**
+ * 十六进制归一化：大小写统一、3 位补成 6 位。
+ * 不是 hex 的串（如 "transparent"）原样返回小写串，交给调用方自己判断。
+ */
+const normHex = (c: unknown): string => {
+  if (typeof c !== "string") return "";
+  const s = c.trim().toLowerCase();
+  const m = s.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/);
+  if (!m) return s;
+  if (m[1].length === 3) {
+    return `#${m[1].split("").map(ch => ch + ch).join("")}`;
+  }
+  return s;
+};
+
+/**
  * ColorPicker 弹出面板的大致高度（px，实测 296×344，alpha=false 时）。
  * 只用来判断"往下弹得下吗"，估大一点更安全。
  */
@@ -120,6 +135,27 @@ const CustomColorPicker: React.FC<CustomColorPickerProps> = ({
     [onChange]
   );
 
+  // 常量下拉的显示值：能对上常量键就显示键；对不上（= 自定义 hex）就留空，
+  // 由下面 placeholder 显示当前 hex —— 以前这里永远是「跟随主题默认」，
+  // 明明选了自定义色却看着像没设
+  const currentHex = value == null ? "" : normHex(value) || normHex(colorPickerValue);
+  const selectedKey = (() => {
+    if (!currentHex) return "";
+    const excluded = excludeKeys || [];
+    // 优先用「没被排除」的同色键（如底板背景色排除 foreground 后，
+    // #ffffff 仍能用「白色」这个键显示）；一个可用的都没有才显示十六进制
+    const sameValueKeys = Object.entries(colors)
+      .filter(([, v]) => normHex(v) === currentHex)
+      .map(([k]) => k);
+    const allowed = sameValueKeys.find(k => !excluded.includes(k));
+    if (allowed) return allowed;
+    if (sameValueKeys.length > 0) return currentHex;
+    return "";
+  })();
+  // 空值才提示「跟随主题默认」/「选择颜色变量」；自定义 hex 直接显示这个 hex
+  const emptyHint = placeholder || "选择颜色变量";
+  const shownPlaceholder = currentHex.startsWith("#") ? currentHex : emptyHint;
+
   return (
     <div
       ref={wrapRef}
@@ -146,37 +182,9 @@ const CustomColorPicker: React.FC<CustomColorPickerProps> = ({
         }}
       />
       <Select
-        value={(() => {
-          // value 为空 = 留空（跟随全局默认）：不匹配任何常量，显示占位文案
-          if (value == null) return "";
-          // 归一化比较：面板/存档里的十六进制可能大小写混用，
-          // 直接全等会误判成「没有对应常量」而显示原始值
-          const normHex = (c: unknown): string => {
-            if (typeof c !== "string") return "";
-            const s = c.trim().toLowerCase();
-            const m = s.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/);
-            if (!m) return s;
-            if (m[1].length === 3) {
-              return `#${m[1].split("").map(ch => ch + ch).join("")}`;
-            }
-            return s;
-          };
-          // 以受控 value 为准（内部 colorPickerValue 状态可能滞后一拍）
-          const current = normHex(value) || normHex(colorPickerValue);
-          if (!current) return "";
-          const excluded = excludeKeys || [];
-          const sameValueKeys = Object.entries(colors)
-            .filter(([, v]) => normHex(v) === current)
-            .map(([k]) => k);
-          // 优先用「没被排除」的同色键（如底板背景色排除 foreground 后，
-          // #ffffff 仍能用「白色」这个键显示）；一个可用的都没有才显示十六进制
-          const allowed = sameValueKeys.find(k => !excluded.includes(k));
-          if (allowed) return allowed;
-          if (sameValueKeys.length > 0) return current;
-          return "";
-        })()}
+        value={selectedKey}
         onChange={handleSelectChange}
-        placeholder={placeholder || "选择颜色变量"}
+        placeholder={shownPlaceholder}
         className="flex-1"
       >
         {Object.entries(colors)

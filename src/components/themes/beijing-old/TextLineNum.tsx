@@ -12,7 +12,7 @@ import type { EditorConfig } from "../../../interfaces/editor";
 export type TextLineNumProps = Omit<LineProps, "lineId">;
 
 export const textLineNumDefaultProps: TextLineNumProps = {
-  colorKey: "lineyizhuang",
+  color: colors.lineyizhuang,
   textZh: "亦庄线",
   textEn: "Yizhuang Line",
   foreground: colors.foreground,

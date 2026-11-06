@@ -1053,9 +1053,7 @@
           "displayName": "数字线路标",
           "props": {
             "lineId": "线路号",
-            "colorKey": {
-              "displayName": "线路色"
-            },
+            "color": "线路色",
             "textZh": "中文文字",
             "textEn": "英文文字",
             "size": {
@@ -1071,9 +1069,7 @@
         "TextLineNum": {
           "displayName": "文字线路标",
           "props": {
-            "colorKey": {
-              "displayName": "线路色"
-            },
+            "color": "线路色",
             "textZh": "中文文字",
             "textEn": "英文文字",
             "size": {
@@ -1438,9 +1434,7 @@
           "displayName": "数字线路标",
           "props": {
             "lineId": "线路号",
-            "colorKey": {
-              "displayName": "线路色"
-            },
+            "color": "线路色",
             "textZh": "中文文字",
             "textEn": "英文文字",
             "size": {
@@ -1453,9 +1447,7 @@
         "TextLineNum": {
           "displayName": "文字线路标",
           "props": {
-            "colorKey": {
-              "displayName": "线路色"
-            },
+            "color": "线路色",
             "textZh": "中文文字",
             "textEn": "英文文字",
             "foreground": "前景色",

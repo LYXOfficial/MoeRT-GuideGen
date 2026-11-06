@@ -329,7 +329,7 @@ python3 text_probe.py                                   # 解析 <use> 得到真
   element，`JSON.stringify` 不相等 → 被当新操作 push 并 `splice` 掉 redo。
 - 存档版本号：唯一取值点 `saveMigrations.ts` 的 `LATEST_SAVE_VERSION`；`isSaveData` 校验用**区间**；
   **追加式改动不升版本号**，破坏性改动才升 + 在 `MIGRATIONS` 里补迁移（迁移结果不写回 localStorage）。
-  当前 **6**：
+  当前 **7**：
   `MIGRATIONS[1]` 把北京旧版 `Text` 的旧 `letterSpacing` 拆成 `letterSpacingZh/En`（老值双份回填、旧键删除）；
   `MIGRATIONS[2]` 给重庆 / 成都 `Text` 补 `fontSizeZh/fontSizeEn/lineGap/offsetY`（渲染层本来有兜底，
   但**编辑弹窗读的是 props**，不补就显示空输入框），并按**当时的**默认值补 `digitMode: "prominent"`
@@ -339,7 +339,11 @@ python3 text_probe.py                                   # 解析 <use> 得到真
   `MIGRATIONS[4]` 给重庆 / 成都 `Text` 补 `alignV: "center"`（同一套 `fillTextLayoutDefaults`，
   v2→v3 也用它）；
   `MIGRATIONS[5]` 给成都 `LineNum` / `LineText` 补 `variant: "classic"`（新老档都按经典渲染，
-  2026 风格要手动切；载入时也幂等补一次，覆盖「文字线路标后加」造成的空字段）。
+  2026 风格要手动切；载入时也幂等补一次，覆盖「文字线路标后加」造成的空字段）；
+  `MIGRATIONS[6]` 把北京新 / 旧四种线路标（`LineNum` / `TextLineNum` / `Line`）的
+  `colorKey`（色板键）改成 `color`（hex）：线路色不再是「只能选色板常量」的下拉，
+  而是跟其它颜色字段一样的自由色（编辑器走 `CustomColorPicker`，常量也换算成 hex）；
+  老档按键查各自色板还原成 hex，颜色不变。
   三条都走同一个 `mapRowItems`，递归进容器 `props.children`；空串也当「没设」；rows 形状不对时原样
   留下给 `isSaveData` 拒收。**另外这个拆分在 `migrateSaveData` 里每次载入还会跑一次**
   （`splitChengduIconColors`，幂等：`iconFill` 已有有效颜色就跳过）——早期 v4 存档只跑过

@@ -1053,9 +1053,7 @@
           "displayName": "數字綫路標",
           "props": {
             "lineId": "綫路號",
-            "colorKey": {
-              "displayName": "綫路色"
-            },
+            "color": "綫路色",
             "textZh": "中文文字（如「號綫」）",
             "textEn": "英文文字（如「Line 1」）",
             "size": {
@@ -1071,9 +1069,7 @@
         "TextLineNum": {
           "displayName": "文字綫路標",
           "props": {
-            "colorKey": {
-              "displayName": "綫路色"
-            },
+            "color": "綫路色",
             "textZh": "中文文字（如「號綫」）",
             "textEn": "英文文字（如「Line 1」）",
             "size": {
@@ -1438,9 +1434,7 @@
           "displayName": "數字綫路標",
           "props": {
             "lineId": "綫路號",
-            "colorKey": {
-              "displayName": "綫路色"
-            },
+            "color": "綫路色",
             "textZh": "中文文字（如「號綫」）",
             "textEn": "英文文字（如「Line 1」）",
             "size": {
@@ -1453,9 +1447,7 @@
         "TextLineNum": {
           "displayName": "文字綫路標",
           "props": {
-            "colorKey": {
-              "displayName": "綫路色"
-            },
+            "color": "綫路色",
             "textZh": "中文文字（如「號綫」）",
             "textEn": "英文文字（如「Line 1」）",
             "foreground": "前景色",

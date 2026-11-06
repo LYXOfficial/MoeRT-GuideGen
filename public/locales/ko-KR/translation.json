@@ -1053,9 +1053,7 @@
           "displayName": "숫자 노선 판",
           "props": {
             "lineId": "노선 번호",
-            "colorKey": {
-              "displayName": "노선 색상"
-            },
+            "color": "노선 색상",
             "textZh": "중국어 텍스트(예: 号线)",
             "textEn": "영어 텍스트(예: Line 1)",
             "size": {
@@ -1071,9 +1069,7 @@
         "TextLineNum": {
           "displayName": "문자 노선 판",
           "props": {
-            "colorKey": {
-              "displayName": "노선 색상"
-            },
+            "color": "노선 색상",
             "textZh": "중국어 텍스트(예: 号线)",
             "textEn": "영어 텍스트(예: Line 1)",
             "size": {
@@ -1438,9 +1434,7 @@
           "displayName": "숫자 노선 판",
           "props": {
             "lineId": "노선 번호",
-            "colorKey": {
-              "displayName": "노선 색상"
-            },
+            "color": "노선 색상",
             "textZh": "중국어 텍스트(예: 号线)",
             "textEn": "영어 텍스트(예: Line 1)",
             "size": {
@@ -1453,9 +1447,7 @@
         "TextLineNum": {
           "displayName": "문자 노선 판",
           "props": {
-            "colorKey": {
-              "displayName": "노선 색상"
-            },
+            "color": "노선 색상",
             "textZh": "중국어 텍스트(예: 号线)",
             "textEn": "영어 텍스트(예: Line 1)",
             "foreground": "전경색",

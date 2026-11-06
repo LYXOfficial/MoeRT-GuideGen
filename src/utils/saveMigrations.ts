@@ -16,6 +16,8 @@
  * 「校验不过」拒收或清空。
  */
 
+import beijingColors from "../components/themes/beijing/define/colors";
+import beijingOldColors from "../components/themes/beijing-old/define/colors";
 import chengduColors from "../components/themes/chengdu/define/colors";
 
 type VersionedData = { version: number } & Record<string, unknown>;
@@ -165,6 +167,43 @@ function fillChengduLineVariant(data: VersionedData): VersionedData {
   };
 }
 
+/** 北京新旧主题四种线路标 → 它们各自的色板（老档 `colorKey` 存的是这里的键） */
+const BEIJING_LINE_PALETTES: Record<string, Record<string, string>> = {
+  "themes.beijing.components.LineNum": beijingColors,
+  "themes.beijing.components.TextLineNum": beijingColors,
+  "themes.beijingOld.components.Line": beijingOldColors,
+  "themes.beijingOld.components.TextLineNum": beijingOldColors,
+};
+
+/**
+ * 北京新旧线路标的 `colorKey`（色板键）→ `color`（hex）。
+ *
+ * 原来线路色是「色板键」的下拉，换不成自定义色；现在线路色跟其它颜色字段一样
+ * 存 hex、编辑器走取色器（色板常量也换算成 hex）。老档在这里把键还原成 hex，
+ * 颜色一点都不变（幂等：已经有 `color` 就不再动，`colorKey` 删掉）。
+ */
+function migrateBeijingLineColor(data: VersionedData): VersionedData {
+  if (!Array.isArray(data.rows)) return data;
+  return {
+    ...data,
+    rows: mapRowItems(data.rows, item => {
+      const palette = BEIJING_LINE_PALETTES[item.type];
+      const legacy = item.props.colorKey;
+      if (!palette || legacy === undefined) return item;
+      const props: Record<string, any> = { ...item.props };
+      if (props.color === undefined || props.color === "") {
+        // 认不出来的键就原样留着（渲染层空值会回退 1 号线，不会白屏）
+        props.color =
+          typeof legacy === "string" && legacy in palette
+            ? palette[legacy]
+            : legacy;
+      }
+      delete props.colorKey;
+      return { ...item, props };
+    }),
+  };
+}
+
 /** MIGRATIONS[1] 表示把 version 1 的存档迁到 2，以此类推 */
 const MIGRATIONS: Record<number, Migration> = {
   // v1 → v2：北京旧版「文字」的单一「字距」拆成「中文字距 / 英文字距」
@@ -209,10 +248,12 @@ const MIGRATIONS: Record<number, Migration> = {
   // v5 → v6：成都「线路标」新增风格档（经典 / 色块），老档一律按「经典」——
   // 编辑弹窗读 props，不补就是个空下拉框。
   5: data => ({ ...fillChengduLineVariant(data), version: 6 }),
-
+  // v6 → v7：北京新旧线路标的线路色从「色板键（colorKey）」改成「hex（color）」，
+  // 编辑器才能用取色器选自定义色。老档按键查色板还原成 hex，老标牌颜色不变。
+  6: data => ({ ...migrateBeijingLineColor(data), version: 7 }),
 };
 
-export const LATEST_SAVE_VERSION = 6;
+export const LATEST_SAVE_VERSION = 7;
 
 /** 把解析结果按注册表逐级迁移到最新版本；识别不了的结构原样返回，交给上层校验 */
 export function migrateSaveData(parsed: unknown): unknown {
