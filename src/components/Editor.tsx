@@ -466,7 +466,28 @@ export default function Editor({
   // 关掉那一刻浏览器会按当前倍率重新光栅化，于是「缩放后模糊」也不会常驻。
   const [isPanning, setIsPanning] = useState(false);
   const panEndTimerRef = useRef<number | null>(null);
+  // 用户是否已经自己动过视图（平移 / 缩放）：移动端进入时那次「延迟兜底适配」
+  // 只在他还没动过的时候执行，别把人家刚摆好的位置又推回去。
+  const viewTouchedRef = useRef(false);
+  // 打开组件抽屉时若为了「露出画板」自动平移过，记住打开前的位置，
+  // 收起抽屉时原样滑回去（只还原位置、不重新缩放）；用户中途自己动过就作废。
+  const sheetPanRef = useRef<{ x: number; y: number } | null>(null);
+  // 程序化平移（适配画板 / 给底部抽屉让位）才开 CSS 过渡；
+  // 手势期间必须关掉，否则每帧都在补间、跟手会变粘。
+  const [panAnimating, setPanAnimating] = useState(false);
+  const panAnimTimerRef = useRef<number | null>(null);
+  const stopPanAnimation = () => {
+    if (panAnimTimerRef.current === null) return;
+    window.clearTimeout(panAnimTimerRef.current);
+    panAnimTimerRef.current = null;
+    setPanAnimating(false);
+  };
   const writePanLive = (p: { x: number; y: number }) => {
+    viewTouchedRef.current = true;
+    // 用户自己挪过画布：抽屉收起时就别替他把位置还原了
+    sheetPanRef.current = null;
+    // 手势一旦开始，立刻掐掉正在播放的「程序化平移」过渡，保证跟手
+    stopPanAnimation();
     panRef.current = p;
     const el = panLayerRef.current;
     if (el) el.style.transform = `translate(${p.x}px, ${p.y}px)`;
@@ -481,6 +502,29 @@ export default function Editor({
     panRef.current = p;
     setPan(p);
   }, []);
+  // 平滑地挪到目标位置（一次性的程序化定位用；手势不走这里）
+  const animatePan = useCallback(
+    (next: { x: number; y: number }) => {
+      setPanAnimating(true);
+      commitPan(next);
+      if (panAnimTimerRef.current !== null) {
+        window.clearTimeout(panAnimTimerRef.current);
+      }
+      panAnimTimerRef.current = window.setTimeout(() => {
+        panAnimTimerRef.current = null;
+        setPanAnimating(false);
+      }, 260);
+    },
+    [commitPan]
+  );
+  useEffect(
+    () => () => {
+      if (panAnimTimerRef.current !== null) {
+        window.clearTimeout(panAnimTimerRef.current);
+      }
+    },
+    []
+  );
 
   // 连续缩放（滑块拖动/滚轮/双指）：每 tick 都改 scale，transition 留着只会
   // 每帧重启补间又重光栅化一遍。手势中关掉（跟手），停 150ms 后恢复
@@ -494,6 +538,9 @@ export default function Editor({
     }
   };
   const handleZoomLive = useCallback((value: number) => {
+    viewTouchedRef.current = true;
+    // 用户自己缩放过：抽屉收起时不还原平移位置
+    sheetPanRef.current = null;
     setZoom(value);
     setIsZooming(true);
     clearZoomEndTimer();
@@ -512,6 +559,41 @@ export default function Editor({
   const isCoarsePointer = useMediaQuery("(any-pointer: coarse)");
   // 移动端底部「组件抽屉」开关
   const [paletteOpen, setPaletteOpen] = useState(false);
+  // 抽屉是否还挂在 DOM 上（关闭时留到滑出动画结束）
+  const [paletteRendered, setPaletteRendered] = useState(false);
+
+  // 抽屉高度上限：**按设备实际可用高度**算，而不是写死 50vh。
+  // 高屏按 56% 多露一些组件；矮屏 / 横屏自动收窄，保证上方总留得下能看见画布的
+  // 一条带（至少 22% 视口且不低于 140px）；560px 封顶（再高也只是多露几项）。
+  const computePaletteMaxHeight = useCallback(() => {
+    const vh = window.visualViewport?.height ?? window.innerHeight;
+    const headerH =
+      document.querySelector("header")?.getBoundingClientRect().height ?? 0;
+    const preferred = Math.max(180, Math.min(560, Math.round(vh * 0.56)));
+    const reserve = Math.max(140, Math.round(vh * 0.22));
+    const byCanvas = Math.max(180, Math.round(vh - headerH - reserve));
+    return Math.min(preferred, byCanvas);
+  }, []);
+  const [paletteMaxHeight, setPaletteMaxHeight] = useState(() =>
+    computePaletteMaxHeight()
+  );
+  useEffect(() => {
+    if (!isCompact) return;
+    const update = () => {
+      const next = computePaletteMaxHeight();
+      setPaletteMaxHeight(prev => (Math.abs(prev - next) < 4 ? prev : next));
+    };
+    update();
+    window.addEventListener("resize", update);
+    window.addEventListener("orientationchange", update);
+    const vv = window.visualViewport;
+    vv?.addEventListener("resize", update);
+    return () => {
+      window.removeEventListener("resize", update);
+      window.removeEventListener("orientationchange", update);
+      vv?.removeEventListener("resize", update);
+    };
+  }, [isCompact, computePaletteMaxHeight]);
 
   // 添加全局指针位置跟踪（mouse + touch + pen 都用 pointermove，
   // 这样触屏拖拽时 drop 指示线的插入点也能用真实坐标计算）
@@ -2228,56 +2310,110 @@ export default function Editor({
 
   // ===== 移动端画布「适配 + 手势」 =====
 
+  // 编辑区里「没被底部组件抽屉盖住」的那条可见带（视口坐标）。
+  // 抽屉是 fixed 覆盖层，滑出/收起动画只改 transform、不改高度，
+  // 所以用「视口高 − 抽屉高」直接算它停稳后的顶边，不用等动画结束。
+  const measureVisibleBand = useCallback(() => {
+    const area = editorAreaRef.current;
+    if (!area) return null;
+    const a = area.getBoundingClientRect();
+    let bottom = a.bottom;
+    const sheet = document.querySelector(
+      ".mobile-palette-sheet"
+    ) as HTMLElement | null;
+    if (sheet) {
+      const s = sheet.getBoundingClientRect();
+      const viewportH = window.visualViewport?.height ?? window.innerHeight;
+      // 滑出/收起动画途中 s.top 不是它停稳后的位置（动画只改 transform），
+      // 取更保守的那个，保证算出来的可见带不会比实际大
+      const sheetTop = Math.min(s.top, viewportH - s.height);
+      bottom = Math.min(bottom, sheetTop - 8);
+    }
+    const height = Math.max(0, bottom - a.top);
+    return {
+      top: a.top,
+      bottom,
+      width: a.width,
+      height,
+      areaTop: a.top,
+      areaHeight: a.height,
+    };
+  }, []);
+
   // 计算把画板放进「当前可见区域」所需的缩放与纵向位移。
   // 若底部组件抽屉打开，可见区域只剩抽屉上方那一截，画板需要上移进这段区域。
   const computeFit = useCallback(() => {
-    const area = editorAreaRef.current;
     const board = document.querySelector(".guide-board") as HTMLElement | null;
-    const drawer = document.querySelector(
-      ".mobile-palette-sheet"
-    ) as HTMLElement | null;
-    if (!area || !board) return null;
-    const aRect = area.getBoundingClientRect();
+    const band = measureVisibleBand();
+    if (!band || !board) return null;
     const bw = board.offsetWidth;
     const bh = board.offsetHeight;
-    const availW = aRect.width;
-    if (!availW || !bw || !bh) return null;
-    let availH = aRect.height;
-    if (drawer) {
-      const dTop = drawer.getBoundingClientRect().top;
-      availH = Math.min(availH, Math.max(0, dTop - aRect.top - 8));
-    }
+    if (!band.width || !bw || !bh || !band.height) return null;
     const scale = Math.min(
       2,
-      Math.max(0.2, Math.min((availW - 24) / bw, (availH - 24) / bh))
+      Math.max(0.2, Math.min((band.width - 24) / bw, (band.height - 24) / bh))
     );
-    // 内容绕编辑区中心缩放；当抽屉占掉下方后，把画板上移进可见带（translate 在 scale 之前生效，
-    // 视觉位移 = scale × 平移量，因此要除以 scale 换算回布局位移）
-    const panY = drawer
-      ? -Math.max(0, (aRect.height - availH) / 2) / scale
-      : 0;
-    return { scale, panX: 0, panY };
-  }, []);
+    // 画板所在的容器 = 画板 + 下面那排「主题 / 宽度」控件，整体在编辑区里居中，
+    // 所以画板自己的中心比容器中心高 (容器高 − 画板高)/2（布局像素，随缩放一起缩）。
+    const holder = board.parentElement;
+    const holderH = holder?.offsetHeight ?? bh;
+    const boardAboveCenter = Math.max(0, (holderH - bh) / 2);
+    const contentCenterY = band.areaTop + band.areaHeight / 2;
+    const boardCenterY = contentCenterY - boardAboveCenter * scale;
+    const bandCenterY = band.top + band.height / 2;
+    // 外层 translate 用的是**屏幕像素**，直接加减即可：以前这里又除了一次 scale，
+    // 缩放越小位移被放得越大 —— 窄屏/宽画板时抽屉一开，画布直接被推出顶部看不见。
+    return { scale, panX: 0, panY: bandCenterY - boardCenterY };
+  }, [measureVisibleBand]);
 
   // 「适配画板」按钮
   const fitToView = useCallback(() => {
+    // 用户主动重新适配了，就不要在收起抽屉时再还原旧位置
+    sheetPanRef.current = null;
     const fit = computeFit();
     if (!fit) return;
     setZoom(fit.scale);
     // 程序化定位：直接落账；同时关掉连续缩放态，保证过渡动画正常播放
     clearZoomEndTimer();
     setIsZooming(false);
-    commitPan({ x: fit.panX, y: fit.panY });
-  }, [computeFit, commitPan]);
+    animatePan({ x: fit.panX, y: fit.panY });
+  }, [computeFit, animatePan]);
 
-  // 适配只在进入移动端布局、或打开组件抽屉（可见区域变小）时执行一次，
-  // 之后改宽度/加减行/分割线等都不会重置用户当前的缩放与位置。
-  // 初次进入时额外延后一次，等存档/字体恢复完成再按最终尺寸适配。
+  // 打开组件抽屉时「把画板露出来」：只在画板确实被抽屉/顶部挡住时做**最小位移**，
+  // 绝不改缩放 —— 用户当前的查看比例不该因为开一次抽屉就被重置。
+  const revealBoard = useCallback(() => {
+    const band = measureVisibleBand();
+    const board = document.querySelector(".guide-board") as HTMLElement | null;
+    if (!band || !board || !band.height) return;
+    const r = board.getBoundingClientRect();
+    if (!r.width || !r.height) return;
+    const margin = 12;
+    let dy = 0;
+    if (r.bottom > band.bottom - margin) {
+      dy = band.bottom - margin - r.bottom;
+      // 画板比可见带还高（用户放大过）：优先保住顶边，剩下的他自己平移
+      if (r.top + dy < band.top + margin) dy = band.top + margin - r.top;
+    } else if (r.top < band.top + margin) {
+      dy = band.top + margin - r.top;
+    }
+    if (Math.abs(dy) < 0.5) return;
+    const current = panRef.current;
+    // 只记第一次（打开抽屉前的原位），供收起时还原
+    if (!sheetPanRef.current) {
+      sheetPanRef.current = { x: current.x, y: current.y };
+    }
+    animatePan({ x: current.x, y: current.y + dy });
+  }, [measureVisibleBand, animatePan]);
+
+  // 适配只在「进入移动端布局」时自动做一次：之后再增减行、拖入组件、开关组件抽屉
+  // 都不再自动重新适配（以前开/关一次抽屉就整块重新缩放，等于反复打断用户）。
+  // 延迟那一次是等存档 / 字体恢复完再按最终尺寸对一次；用户已自己动过视图就不抢镜头。
   useEffect(() => {
     if (!isCompact) return;
     let cancelled = false;
+    viewTouchedRef.current = false;
     const run = () => {
-      if (!cancelled) fitToView();
+      if (!cancelled && !viewTouchedRef.current) fitToView();
     };
     const rafId = requestAnimationFrame(run);
     const timerId = window.setTimeout(run, 800);
@@ -2288,12 +2424,29 @@ export default function Editor({
     };
   }, [isCompact, fitToView]);
 
-  // 打开组件抽屉：等滑出动画结束后，把画板对进抽屉上方的可见区域
+  // 打开组件抽屉 / 抽屉高度变化：等它挂上 DOM 后，让画板露出到抽屉上方
+  // （只平移、不缩放）。收起抽屉时不再做任何适配，保留用户当前位置。
   useEffect(() => {
-    if (!isCompact || !paletteOpen) return;
-    const id = window.setTimeout(() => fitToView(), 320);
-    return () => window.clearTimeout(id);
-  }, [isCompact, paletteOpen, fitToView]);
+    if (!isCompact || !paletteOpen || !paletteRendered) return;
+    const rafId = requestAnimationFrame(() => revealBoard());
+    return () => cancelAnimationFrame(rafId);
+  }, [isCompact, paletteOpen, paletteRendered, paletteMaxHeight, revealBoard]);
+
+  // 收起抽屉：如果打开时是为了露出画板自动平移过（且用户中途没自己动），
+  // 和抽屉滑出同步把画板滑回原位 —— 只还原位置，不做任何重新缩放。
+  useEffect(() => {
+    if (!isCompact) {
+      // 切回桌面布局：抽屉记录的位置已无意义，别带过去
+      sheetPanRef.current = null;
+      return;
+    }
+    if (paletteOpen) return;
+    const saved = sheetPanRef.current;
+    sheetPanRef.current = null;
+    if (!saved) return;
+    const rafId = requestAnimationFrame(() => animatePan(saved));
+    return () => cancelAnimationFrame(rafId);
+  }, [isCompact, paletteOpen, animatePan]);
 
   // 触屏手势状态机：单指在空白处平移画布，双指缩放（以画布中心为基准）。
   // 任意带触摸的屏幕（含桌面布局的触屏平板）都启用
@@ -2407,7 +2560,6 @@ export default function Editor({
   }, [activeDrag]);
 
   // 组件抽屉显隐（带滑出动画：关→延迟卸载）
-  const [paletteRendered, setPaletteRendered] = useState(false);
   const paletteCloseTimerRef = useRef<number | null>(null);
   useEffect(() => {
     if (paletteOpen) {
@@ -2420,8 +2572,8 @@ export default function Editor({
       paletteCloseTimerRef.current = window.setTimeout(() => {
         paletteCloseTimerRef.current = null;
         setPaletteRendered(false);
-        // 抽屉已从 DOM 移除，把画板按整区重新适配
-        requestAnimationFrame(() => fitToView());
+        // 抽屉收起后**不再重新适配**：保留用户当前的位置和缩放，
+        // 只把它从 DOM 里摘掉（以前这里会 fitToView，关一次抽屉就打断一次）
       }, 240);
     }
     return () => {
@@ -2429,7 +2581,7 @@ export default function Editor({
         window.clearTimeout(paletteCloseTimerRef.current);
       }
     };
-  }, [paletteOpen, paletteRendered, fitToView]);
+  }, [paletteOpen, paletteRendered]);
 
   // 切换主题（桌面侧栏与移动端组件抽屉共用；换主题即清空画板）
   const handleThemeRequest = (theme: number) => {
@@ -2735,12 +2887,20 @@ export default function Editor({
               ref={panLayerRef}
               style={{
                 transform: `translate(${panRef.current.x}px, ${panRef.current.y}px)`,
+                // 程序化定位（适配画板 / 给抽屉让位）走 220ms 补间；
+                // 手势期间为 none，保证 1:1 跟手
+                transition: panAnimating
+                  ? "transform 0.22s cubic-bezier(0.2, 0.7, 0.2, 1)"
+                  : "none",
                 // 提升为独立合成层：平移只做合成器偏移，不重绘整块画板
                 // （否则 200% 缩放下每帧要重新光栅化整棵 SVG 子树，掉到 ~30fps）
                 // 缩放刚变过的那一帧先摘掉，逼合成层按新倍率重光栅化，避免「放大后一直糊」
                 // 只在手势期间提升合成层：手势一结束就摘掉，
                 // 合成层缓存的是手势开始那一刻的位图，常驻就会「放大后一直糊」
-                willChange: isDragging || isZooming || isPanning || reRaster ? "transform" : "auto",
+                willChange:
+                  isDragging || isZooming || isPanning || panAnimating || reRaster
+                    ? "transform"
+                    : "auto",
               }}
             >
               {/* 内层只负责缩放：变换/补间与改动前完全一致，缩放行为零变化。
@@ -2850,7 +3010,10 @@ export default function Editor({
             className={`mobile-palette-sheet fixed inset-x-0 bottom-0 z-50 flex flex-col rounded-t-2xl bg-white dark:bg-[#16161a] shadow-2xl border-t border-gray-200 dark:border-[#2e2e35] overflow-hidden ${
               paletteOpen ? "" : "moert-sheet-closing"
             }`}
-            style={{ maxHeight: "50vh", paddingBottom: "env(safe-area-inset-bottom)" }}
+            style={{
+              maxHeight: paletteMaxHeight,
+              paddingBottom: "env(safe-area-inset-bottom)",
+            }}
           >
             <div className="shrink-0 flex items-center justify-between gap-3 pl-4 pr-2 pt-2 pb-1">
               <span className="font-sans font-bold text-sm text-gray-700 dark:text-gray-200">
