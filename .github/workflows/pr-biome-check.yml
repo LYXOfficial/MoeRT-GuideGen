@@ -19,7 +19,10 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v3
         with:
-          version: 8
+          # 仓库的 pnpm-lock.yaml 是 lockfileVersion 9.0，pnpm-workspace.yaml 也用了
+          # 新版才认的 allowBuilds —— pnpm 8 走不到 lint 就挂在 install 上。
+          # 版本要跟仓库实际使用的 pnpm（10+）对齐。
+          version: 10
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       - name: Run Biome check
