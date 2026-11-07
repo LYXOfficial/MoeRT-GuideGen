@@ -168,6 +168,12 @@
     "toDark": "Passer au mode sombre",
     "toLight": "Passer au mode clair"
   },
+  "links": {
+    "title": "Liens",
+    "project": "GitHub du projet",
+    "friends": "Liens amis",
+    "railmapgen": "Générateur de plans de métro"
+  },
   "themes": {
     "chongqing": {
       "displayName": "Style du métro de Chongqing",

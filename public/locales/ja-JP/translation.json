@@ -167,6 +167,12 @@
     "toDark": "ダークモードに切り替え",
     "toLight": "ライトモードに切り替え"
   },
+  "links": {
+    "title": "関連リンク",
+    "project": "プロジェクト GitHub",
+    "friends": "友情リンク",
+    "railmapgen": "地下鉄路線図ジェネレーター"
+  },
   "themes": {
     "chongqing": {
       "displayName": "重慶軌道交通風",

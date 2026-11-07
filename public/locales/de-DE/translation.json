@@ -168,6 +168,12 @@
     "toDark": "Zum dunklen Modus wechseln",
     "toLight": "Zum hellen Modus wechseln"
   },
+  "links": {
+    "title": "Links",
+    "project": "Projekt-GitHub",
+    "friends": "Freundeslinks",
+    "railmapgen": "U-Bahn-Linienplan-Generator"
+  },
   "themes": {
     "chongqing": {
       "displayName": "Chongqing-Bahn-Stil",

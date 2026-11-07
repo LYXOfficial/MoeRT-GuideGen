@@ -167,6 +167,12 @@
     "toDark": "切換到深色模式",
     "toLight": "切換到淺色模式"
   },
+  "links": {
+    "title": "相關連結",
+    "project": "項目 GitHub",
+    "friends": "友情連結",
+    "railmapgen": "地鐵綫路圖生成器"
+  },
   "themes": {
     "chongqing": {
       "displayName": "重慶軌道交通風格",

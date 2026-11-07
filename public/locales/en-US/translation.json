@@ -168,6 +168,12 @@
     "toDark": "Switch to dark mode",
     "toLight": "Switch to light mode"
   },
+  "links": {
+    "title": "Links",
+    "project": "Project GitHub",
+    "friends": "Friends",
+    "railmapgen": "Rail Map Generator"
+  },
   "themes": {
     "chongqing": {
       "displayName": "Chongqing Rail Transit Style",

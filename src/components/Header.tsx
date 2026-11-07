@@ -1,6 +1,7 @@
 import {
   IconFolderOpen,
   IconGithubLogo,
+  IconLink,
   IconImage,
   IconLanguage,
   IconUndo,
@@ -113,6 +114,33 @@ export default function Header({
     </div>
   );
 
+  // 相关链接（含项目 GitHub + 友链）：Link 图标弹出菜单
+  const linksContent = (
+    <div className="p-1 w-56 font-sans">
+      <a
+        href="https://github.com/lyxofficial/moert-guidegen"
+        target="_blank"
+        rel="noreferrer"
+        className="flex items-center gap-2 !px-2 !py-2 rounded-sm text-sm hover:bg-gray-100 hover:text-blue-500 dark:hover:bg-white/10 dark:hover:text-blue-300 text-gray-700 dark:text-gray-200"
+      >
+        <IconGithubLogo />
+        <span>{t("links.project")}</span>
+      </a>
+      <div className="px-2 pt-2 pb-1 text-[11px] text-gray-400 dark:text-gray-500">
+        {t("links.friends")}
+      </div>
+      <a
+        href="https://railmapgen.org"
+        target="_blank"
+        rel="noreferrer"
+        className="flex items-center gap-2 !px-2 !py-2 rounded-sm text-sm hover:bg-gray-100 hover:text-blue-500 dark:hover:bg-white/10 dark:hover:text-blue-300 text-gray-700 dark:text-gray-200"
+      >
+        <IconLink />
+        <span>{t("links.railmapgen")}</span>
+      </a>
+    </div>
+  );
+
   // 移动端：品牌行 + 工具条（撤销/缩放/适配/加组件）+ “更多”溢出菜单
   if (isCompact) {
     const btn =
@@ -161,13 +189,17 @@ export default function Header({
                 {__APP_VERSION__}
               </span>
             </span>
-            <a
-              href="https://github.com/lyxofficial/moert-guidegen"
-              className={`${btn} p-0`}
-              title="GitHub"
+            <Popover
+              content={linksContent}
+              trigger="click"
+              position="bottomRight"
+              spacing={6}
+              clickToHide
             >
-              <IconGithubLogo size="large" />
-            </a>
+              <button type="button" className={`${btn} p-0`} title={t("links.title")}>
+                <IconLink size="large" />
+              </button>
+            </Popover>
             <Popover
               content={languageSelector}
               trigger="click"
@@ -411,13 +443,14 @@ export default function Header({
           >
             <IconImage size="extra-large" />
           </a>
-          <a
-            href="https://github.com/lyxofficial/moert-guidegen"
-            className="transition duration-300 hover:text-blue-400 flex items-center"
-            title="GitHub"
-          >
-            <IconGithubLogo size="extra-large" />
-          </a>
+          <Popover content={linksContent} trigger="hover" position="bottomRight">
+            <a
+              className="transition duration-300 hover:text-blue-400 flex items-center"
+              title={t("links.title")}
+            >
+              <IconLink size="extra-large" />
+            </a>
+          </Popover>
           {/* 深色/浅色切换（最右）：浅色时显示月亮，深色时显示太阳 */}
           <button
             type="button"

@@ -168,6 +168,12 @@
     "toDark": "Cambiar al modo oscuro",
     "toLight": "Cambiar al modo claro"
   },
+  "links": {
+    "title": "Enlaces",
+    "project": "GitHub del proyecto",
+    "friends": "Enlaces amigos",
+    "railmapgen": "Generador de mapas de metro"
+  },
   "themes": {
     "chongqing": {
       "displayName": "Estilo del Metro de Chongqing",

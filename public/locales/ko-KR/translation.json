@@ -167,6 +167,12 @@
     "toDark": "다크 모드로 전환",
     "toLight": "라이트 모드로 전환"
   },
+  "links": {
+    "title": "관련 링크",
+    "project": "프로젝트 GitHub",
+    "friends": "친구 링크",
+    "railmapgen": "지하철 노선도 생성기"
+  },
   "themes": {
     "chongqing": {
       "displayName": "충칭 궤도교통 스타일",

@@ -167,6 +167,12 @@
     "toDark": "切换到深色模式",
     "toLight": "切换到浅色模式"
   },
+  "links": {
+    "title": "相关链接",
+    "project": "项目 GitHub",
+    "friends": "友情链接",
+    "railmapgen": "地铁线路图生成器"
+  },
   "themes": {
     "chongqing": {
       "displayName": "重庆轨道交通风格",
