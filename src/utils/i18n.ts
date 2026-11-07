@@ -2,13 +2,9 @@ import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import Backend from "i18next-http-backend";
-// public/ 下的文件不能被 JS import（Vite 会直接报错），所以 src 里留一份副本做兜底。
-// 改 public/locales/zh-CN/translation.json 后请同步这份（见 AGENTS.md 的 i18n 约定）。
-import bundledZhCNJson from "../locales/zh-CN.json";
-
-// zh-CN 打包进产物做兜底资源：locales 请求 404 / 断网时简中界面照常可用，
-// 其它语言加载失败时缺键也回落到中文而不是裸 key
-const bundledZhCN = bundledZhCNJson as Record<string, unknown>;
+// 11 种语言（含 zh-CN）统一走 public/locales/ 的 http-backend 后端加载，唯一真源就是那里。
+// 不要再把 zh-CN 内联进 bundle「省一次请求」：public/ 下的文件不能被 JS import，
+// 内联就必须在 src/locales/ 复制一份，两份还得手工同步（历史上漏同步就会显示裸 key）。
 
 const SUPPORTED_LNGS = [
   "zh-CN",
@@ -68,20 +64,12 @@ i18n
   .use(LanguageDetector) // 检测浏览器语言
   .use(initReactI18next) // 绑定 React
   .init({
-    fallbackLng: "zh-CN", // 默认语言
+    fallbackLng: "zh-CN", // 缺键时的兜底语言（同样由后端按需加载）
     // 别名码也登记进来：不登记的话 i18next 会在 supportedLngs 过滤阶段就把
     // navigator 探到的 zh-TW 回落成 zh-CN，下面的路由钩子根本等不到它
     supportedLngs: [...SUPPORTED_LNGS, ...ALIAS_LNGS],
     lowerCaseLng: false,
     debug: false,
-    // 内联 zh-CN 资源：init 时就存在于 store，zh 用户不再发起 locale 请求
-    resources: {
-      "zh-CN": { translation: bundledZhCN },
-    },
-    // 必须！资源只打包了一部分（zh-CN 兜底）。不声明 partial 的话，
-    // i18next 会认为「所有语言都已打包」而跳过后端加载——切换语言后
-    // 永远拿不到对应语言包，全部回落中文（实测复现过）
-    partialBundledLanguages: true,
     interpolation: {
       escapeValue: false, // React 已经自动转义
     },

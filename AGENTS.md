@@ -88,7 +88,7 @@ pnpm dev                                  # 开发服务器（5173 端口，常�
    `chongqing 0 / chengdu 1 / hongkong 2 / beijing 3 / beijingOld 4 / tokyo-metro 5 / shanghai 6 / guangzhou 7`。
    新增主题要同步：`themereg.ts`、`Background.tsx` 里的 `THEME_INDEX` 常量（取色器用它读色板）、
    `GuideBoard.tsx` 的 `bakeDropColors` 分支（哪些主题落板固化板色）、`DraggableItem.tsx`
-   的 Spacing/SpecLine 注册、11 个语言包、以及 `src/locales/zh-CN.json` 兜底副本。
+   的 Spacing/SpecLine 注册、11 个语言包（`public/locales/<lang>/translation.json`，唯一真源）。
 2. 每个组件文件导出形状：`XxxProps`、`xxxDefaultProps`、`xxxEditorConfig(t): EditorConfig`、
    组件上挂静态 `Xxx.getEditorConfig = t => xxxEditorConfig(t)`。
 3. **`Spacing` 和 `SpecLine` 必须在 `src/components/DraggableItem.tsx` 里注册**
@@ -314,7 +314,10 @@ python3 text_probe.py                                   # 解析 <use> 得到真
   俄语要 `_one/_few/_many/_other`，其余 `_one/_other`，中文只有 `_other`。
 - **Blueaka 是 GBK 字体**：「é/è」和西里尔字母都是全角 → `global.css` 已按 `html[lang]` 给
   ru/de/fr/es/pt 换系统字体；**新增拉丁/西里尔语言必须加进那条选择器**。
-- **改简中必须同步 `src/locales/zh-CN.json`**（打包兜底副本），否则界面显示裸 key。其它 10 语言走后端加载。
+- **11 语言（含简中）全部走 `public/locales/<lang>/translation.json` 后端加载**，唯一真源就是那里，
+  改语言只改这一处。简中**不再**内联进 bundle（原来的 `src/locales/zh-CN.json` 副本 + `resources` +
+  `partialBundledLanguages` 已删，2026-11-07 由用户决定）：`public/` 不能被 JS import，内联就得复制一份
+  再手工同步，漏同步界面就显示裸 key —— 别为了省一次 locale 请求把它加回来。
 - 「组件虚线框」开关在**侧栏主题下方**（别挪回顶栏，法德俄标签会把顶栏顶爆）。
 - 版本号徽标：`v26.10.30.127` = `v`+日期+总提交数（`vite.config.ts` 的 `__APP_VERSION__`）；
   dev 固定 `v.dev`。生产按序取：**写死的仓库** `LYXOfficial/MoeRT-GuideGen` 的 GitHub API
@@ -462,7 +465,7 @@ python3 text_probe.py                                   # 解析 <use> 得到真
   建主题时同步过：`themereg.ts`、`Background.tsx` 的 `THEME_INDEX`、
   `GuideBoard.tsx` 的 `bakeDropColors`（**2026-11-04 起已移出该分支**，见 §11.5）、
   `DraggableItem.tsx` 的
-  `ShanghaiSpacing / ShanghaiSpecLine` 注册、11 份语言包 + `src/locales/zh-CN.json` 兜底副本。
+  `ShanghaiSpacing / ShanghaiSpecLine` 注册、11 份语言包。
 - **规范来源**：上海市地方标准 **DB31/T 1104《城市轨道交通导向标识系统设计规范》**
   （2018 首发，2025-11 修订征求意见稿）。
   和北京不同，**上海没有公开的 VI 包 / vitool 等价物**：标准正文 + 附录 A（线路色）+
@@ -543,9 +546,8 @@ SpecLine / Spacing / Blank。行高 64px = 牌面高，**所有尺寸都按 64px
 ### 11.6 i18n
 
 键布局 `themes.shanghai.*`（`displayName` / `components.<Comp>.props.*` / `colors.*`），
-11 语言全量。**坑（踩过两次）**：`public/locales/zh-CN/translation.json` 改完必须同步
-**`src/locales/zh-CN.json`**（打包兜底资源），否则简中界面里主题名会显示成裸 key
-`themes.shanghai.displayName`。其它 10 种语言走 `public/locales/` 的后端加载，不用同步。
+11 语言全量。语言包唯一真源是 `public/locales/<lang>/translation.json`（11 份都要同步加键）；
+简中不再有打包兜底副本，改完刷新即可，没有第二处要同步。
 
 ### 11.7 上海主题的坑
 
@@ -616,8 +618,8 @@ SpecLine / Spacing / Blank。行高 64px = 牌面高，**所有尺寸都按 64px
 - **Frame 复用双行容器契约**：行 droppable `type: "two-row-container-row"` + `rowIndex: 0`、
   子项 `context: "two-row"`、内层挂 `two-row-inner`。**不要再注册 `two-row-container` 层**：
   两个矩形重合时指针可能命中容器本身、拿不到 rowIndex，会静默退回主行。
-- **`public/` 不能被 JS import**（Vite 报错白屏）：简中兜底改 `src/locales/zh-CN.json`，
-  **改 `public/locales/zh-CN/translation.json` 后必须同步这份副本**（同 §11 那条坑）。
+- **`public/` 不能被 JS import**（Vite 报错白屏）：语言包别往 `src/` 里搬（早期为内联简中
+  复制过一份，已删），统一走 `public/locales/` 的后端加载（同 §7「工程 / i18n」）。
 - **缩放后发糊**：平移层/缩放层/卡片曾常驻 `will-change: transform`，合成层缓存 1× 位图，
   放大即拉伸→「糊着，点一下才清楚」。现在只在手势期间开（停手 160ms 关→重光栅化）；
   **完全去掉会让平移变卡**，所以是「手势开、静止关」。
@@ -628,7 +630,7 @@ SpecLine / Spacing / Blank。行高 64px = 牌面高，**所有尺寸都按 64px
 - key `themes.guangzhou`，**THEME_INDEX = 7**，代码 `src/components/themes/guangzhou/`；
   同步过：`themereg.ts`、`Background.tsx` 的 `THEME_INDEX`、`GuideBoard.tsx` 的 `bakeDropColors`
   （**不在 `followsBoardColor` 里**）、`DraggableItem.tsx` 的 `GuangzhouSpacing / GuangzhouSpecLine`、
-  11 份语言包 + `src/locales/zh-CN.json` 兜底副本。
+  11 份语言包。
 - **范围（用户反复强调）**：**只做悬挂吊顶导向牌**。站名墙、PSD 抬头带、导向柱、柱身字、
   站台电视、屏蔽门附近的「外环/内环」那一套**一律不做**（外环已从「方向」里删掉）。
 - 资料/实测笔记在 `docs/guangzhou/`（整体 gitignore）：`notes/01_资料清单与结论.md`（三套官方配色
