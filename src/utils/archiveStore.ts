@@ -100,7 +100,7 @@ export function isSaveData(value: unknown): value is SaveData {
 export function createEmptySaveData(theme: string): SaveData {
   return {
     version: SAVE_VERSION,
-    config: { width: 512, showSpecLine: true, theme },
+    config: { width: 512, showSpecLine: false, theme },
     rows: [[]],
   };
 }

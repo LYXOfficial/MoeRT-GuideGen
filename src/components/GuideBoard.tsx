@@ -183,7 +183,8 @@ const GuideBoardCols = memo(forwardRef<GuideBoardRef, GuideBoardProps>(
     // 动态行数组，每行是 DraggableItem[]
     const [rows, setRows] = useState<GuideItem[][]>([[]]);
     const [boardWidth, setBoardWidth] = useState(DEFAULT_WIDTH);
-    const [showDividers, setShowDividers] = useState(true);
+    // 行间分隔线默认关闭（用户 2026-11-12 要求），开关状态本身仍会存进存档
+    const [showDividers, setShowDividers] = useState(false);
     const [isRestoring, setIsRestoring] = useState(false);
     const [editingItem, setEditingItem] = useState<{
       item: GuideItem;
@@ -597,7 +598,8 @@ const GuideBoardCols = memo(forwardRef<GuideBoardRef, GuideBoardProps>(
           // 给兜底值，别让 undefined 流进布局计算
           const restoredWidth = Number(state.config.width);
           setBoardWidth(Number.isFinite(restoredWidth) && restoredWidth > 0 ? restoredWidth : DEFAULT_WIDTH);
-          setShowDividers(state.config.showSpecLine !== false);
+          // 缺字段的旧存档按新默认（关）处理；明确存过 true 的仍沿用
+          setShowDividers(state.config.showSpecLine === true);
           // 底板背景色/默认前景色覆盖：状态提升在 Editor（applySaveData /
           // applyHistorySnapshot 会 set），这里不再持有内部副本
 

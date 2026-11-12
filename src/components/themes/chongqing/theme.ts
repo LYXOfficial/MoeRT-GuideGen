@@ -1,3 +1,4 @@
+import "./fonts/sourcehansans.css";
 import "./fonts/frutiger.css";
 import "./fonts/helvetica.css";
 
@@ -12,7 +13,7 @@ import StationName, { stationNameDefaultProps } from "./StationName.tsx";
 import SpecLine, { specLineDefaultProps } from "./SpecLine.tsx";
 import Blank, { blankDefaultProps } from "./Blank.tsx";
 
-import colors from "./define/colors.ts";
+import colors, { fontFamilyEn } from "./define/colors.ts";
 import type Theme from "../../../interfaces/theme.ts";
 import DirectionLoop, { directionLoopDefaultProps } from "./DirectionLoop.tsx";
 import ExitName, { exitNameDefaultProps } from "./ExitName.tsx";
@@ -24,7 +25,7 @@ const theme: Theme = {
     defaultBorder: colors.border,
     colors,
   },
-  fontFamily: "Helvetica, sans-serif",
+  fontFamily: fontFamilyEn,
   components: [
     {
       displayName: "themes.chongqing.components.LineNum",

@@ -285,7 +285,7 @@ export default function Editor({
   // 撤销/重做状态管理
   const initialState: EditorState = {
     rows: [[]],
-    config: { width: 512, showSpecLine: true },
+    config: { width: 512, showSpecLine: false },
     currentTheme: 0,
   };
   const {

@@ -66,3 +66,10 @@ const colors = {
 };
 
 export default colors;
+
+/** 汉字字体：思源黑体（Noto Sans SC，见 fonts/sourcehansans.css） */
+export const fontFamilyZh =
+  '"Noto Sans SC", "Source Han Sans SC", "PingFang SC", "Microsoft YaHei", SimHei, sans-serif';
+
+/** 西文与数字：Segoe UI（本地）；汉字回落到思源黑体 */
+export const fontFamilyEn = `"Segoe UI", ${fontFamilyZh}`;

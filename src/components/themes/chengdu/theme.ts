@@ -1,3 +1,4 @@
+import "./fonts/sourcehansans.css";
 import "./fonts/segoeui.css";
 import "./fonts/helvetica.css";
 
@@ -15,7 +16,7 @@ import TwoRowContainer, {
   twoRowContainerDefaultProps,
 } from "./TwoRowContainer.tsx";
 
-import colors from "./define/colors.ts";
+import colors, { fontFamilyEn } from "./define/colors.ts";
 import type Theme from "../../../interfaces/theme.ts";
 import Direction, { directionDefaultProps } from "./Direction.tsx";
 import StationNumber from "./StationNumber.tsx";
@@ -28,7 +29,7 @@ const theme: Theme = {
     defaultBorder: colors.border,
     colors,
   },
-  fontFamily: "'Segoe UI', sans-serif",
+  fontFamily: fontFamilyEn,
   components: [
     {
       displayName: "themes.chengdu.components.LineNum",
