@@ -2729,6 +2729,276 @@
         "111": "禁止吸烟",
         "115": "禁止进入"
       }
+    },
+    "singapore": {
+      "displayName": "新加坡 MRT 风格",
+      "common": {
+        "align": {
+          "left": "左对齐",
+          "center": "居中",
+          "right": "右对齐"
+        },
+        "weight": {
+          "normal": "常规",
+          "medium": "中黑",
+          "bold": "粗体",
+          "black": "特粗"
+        },
+        "font": {
+          "identity": "LTA Identity",
+          "sans": "Segoe UI（sans）"
+        },
+        "exit": {
+          "closed": "闭合框",
+          "door": "门框（开底）",
+          "wayout": "门框 WAY OUT",
+          "code": "出口码"
+        },
+        "dir": {
+          "left": "左",
+          "right": "右",
+          "up": "上",
+          "upLeft": "斜上左",
+          "upRight": "斜上右",
+          "down": "下",
+          "downRight": "斜下右",
+          "downLeft": "斜下左",
+          "turnLeft": "左转",
+          "uTurnLeft": "掉头（左）",
+          "turnUpLeft": "上折（左）",
+          "uTurnRight": "掉头（右）",
+          "turnRight": "右转",
+          "turnUpRight": "上折（右）"
+        },
+        "plate": {
+          "none": "无底板",
+          "solid": "实心底板",
+          "outline": "描边底板"
+        },
+        "lineCaplet": {
+          "joined": "换乘（拼接）",
+          "tapOut": "出站换乘（断开）",
+          "codes": "站码配置",
+          "code": "站码",
+          "color": "线路色"
+        },
+        "platform": {
+          "circle": "圆形",
+          "square": "方形"
+        }
+      },
+      "components": {
+        "LineBand": {
+          "displayName": "线路名条",
+          "props": {
+            "text": "线路名",
+            "color": "线路色",
+            "textColor": "文字色",
+            "align": "对齐",
+            "height": "高度",
+            "size": "字号",
+            "background": "背景色",
+            "padLeft": "左内边距",
+            "padRight": "右内边距"
+          }
+        },
+        "Arrow": {
+          "displayName": "箭头",
+          "props": {
+            "dir": "方向",
+            "size": "高度",
+            "color": "颜色",
+            "background": "背景色"
+          }
+        },
+        "Text": {
+          "displayName": "文字",
+          "props": {
+            "text": "文字（可换行）",
+            "font": "字体",
+            "align": "对齐",
+            "weight": "字重",
+            "fontSize": "字号",
+            "letterSpacing": "字距",
+            "lineHeight": "行距",
+            "color": "颜色",
+            "background": "背景色",
+            "offsetY": "上下偏移"
+          }
+        },
+        "TransferBlock": {
+          "displayName": "换乘提示",
+          "props": {
+            "station": "换乘站",
+            "code": "站码",
+            "lineColor": "线路色",
+            "platform": "站台",
+            "showPlatform": "显示站台",
+            "size": "字号",
+            "textColor": "文字色",
+            "background": "背景色"
+          }
+        },
+        "StationName": {
+          "displayName": "三语站名",
+          "props": {
+            "en": "英文",
+            "zh": "中文",
+            "ta": "泰米尔文",
+            "ms": "马来文",
+            "showZh": "显示中文",
+            "showTa": "显示泰米尔文",
+            "showMs": "显示马来文",
+            "sizeEn": "英文字号",
+            "sizeZh": "中文字号",
+            "sizeTa": "泰米尔字号",
+            "lineGap": "行距",
+            "color": "颜色",
+            "background": "背景色"
+          }
+        },
+        "ExitBadge": {
+          "displayName": "出口标识",
+          "props": {
+            "variant": "形态",
+            "codes": "出口码",
+            "showExitLabel": "显示 Exit 贴纸",
+            "showBorder": "显示白框",
+            "size": "尺寸",
+            "background": "背景色",
+            "text": "字母/数字"
+          }
+        },
+        "ModeLogo": {
+          "displayName": "PT 标志",
+          "props": {
+            "height": "高度",
+            "color": "黄色",
+            "windowColor": "左窗底色",
+            "textColor": "MRT 字色",
+            "showText": "显示 MRT",
+            "background": "背景色"
+          }
+        },
+        "Icon": {
+          "displayName": "图标",
+          "props": {
+            "icon": "图标",
+            "size": "尺寸",
+            "color": "颜色",
+            "plate": "底板",
+            "plateColor": "底板色",
+            "background": "背景色",
+            "borderColor": "边框色",
+            "borderWidth": "边框宽度"
+          }
+        },
+        "Spacing": {
+          "displayName": "间距",
+          "props": {
+            "background": "背景色"
+          }
+        },
+        "Blank": {
+          "displayName": "空格",
+          "props": {
+            "width": "宽度",
+            "background": "背景色"
+          }
+        },
+        "SpecLine": {
+          "displayName": "分隔线",
+          "props": {
+            "width": "线宽",
+            "insetY": "上下留白",
+            "fill": "颜色",
+            "background": "背景色"
+          }
+        },
+        "LineCaplet": {
+          "displayName": "线路胶囊",
+          "props": {
+            "codes": "站码",
+            "mode": "形态",
+            "height": "高度",
+            "textColor": "文字色",
+            "borderColor": "描边色",
+            "background": "背景色",
+            "minWidth": "最小宽度"
+          }
+        },
+        "PlatformNum": {
+          "displayName": "站台编号",
+          "props": {
+            "number": "编号",
+            "shape": "形态",
+            "font": "字体",
+            "color": "底色",
+            "textColor": "文字色",
+            "borderColor": "描边色",
+            "size": "直径",
+            "background": "背景色"
+          }
+        },
+        "TwoRowContainer": {
+          "displayName": "双行容器",
+          "props": {
+            "minWidth": "最小宽度",
+            "background": "背景色"
+          }
+        }
+      },
+      "colors": {
+        "panelNavy": "导向牌深藏青",
+        "rainforest": "站名牌深绿",
+        "legacyNavy": "旧版深蓝",
+        "platformDark": "门板深色",
+        "sunYellow": "阳光黄",
+        "foreground": "前景色",
+        "ink": "墨色",
+        "white": "白",
+        "black": "黑",
+        "border": "边框",
+        "background": "背景",
+        "transparent": "透明",
+        "lineNS": "南北线 NSL",
+        "lineEW": "东西线 EWL",
+        "lineNE": "东北线 NEL",
+        "lineCC": "环线 CCL",
+        "lineDT": "市区线 DTL",
+        "lineTE": "汤申—东海岸线 TEL",
+        "lineJR": "裕廊区域线 JRL",
+        "lineCR": "跨岛线 CRL",
+        "lineLRT": "轻轨 LRT",
+        "specline": "分隔线"
+      },
+      "icons": {
+        "toilets": "厕所",
+        "family-toilet": "家庭厕所",
+        "accessible-toilet": "无障碍厕所",
+        "child-cubicle": "儿童隔间",
+        "baby-care-room": "母婴室",
+        "passenger-service-centre": "乘客服务中心",
+        "information-point": "信息点",
+        "service-kiosks": "服务柜员机",
+        "top-up-kiosk": "充值机",
+        "general-ticket-machine": "普通售票机",
+        "ticket-office": "售票处",
+        "atm": "ATM",
+        "retail-stellar": "零售",
+        "baggage": "行李",
+        "bicycle-parking": "自行车停放",
+        "first-aid-room": "急救室",
+        "lift": "电梯",
+        "accessible-icon": "无障碍标识",
+        "stair-lift": "楼梯升降机",
+        "ambulant-cubicle": "无障碍隔间",
+        "mobility": "无障碍通行",
+        "you-are-here": "您所在位置",
+        "emergency-exits": "紧急出口",
+        "fire-extinguisher": "灭火器",
+        "fire-hosereel": "消防水带"
+      }
     }
   }
 }

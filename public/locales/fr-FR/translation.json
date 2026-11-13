@@ -2730,6 +2730,276 @@
         "111": "Interdit de fumer",
         "115": "Accès interdit"
       }
+    },
+    "singapore": {
+      "displayName": "Singapore MRT",
+      "common": {
+        "align": {
+          "left": "Left",
+          "center": "Center",
+          "right": "Right"
+        },
+        "weight": {
+          "normal": "Normal",
+          "medium": "Medium",
+          "bold": "Bold",
+          "black": "Black"
+        },
+        "font": {
+          "identity": "LTA Identity",
+          "sans": "Segoe UI (sans)"
+        },
+        "exit": {
+          "closed": "Closed frame",
+          "door": "Door (open bottom)",
+          "wayout": "Door WAY OUT",
+          "code": "Exit code"
+        },
+        "dir": {
+          "left": "Left",
+          "right": "Right",
+          "up": "Up",
+          "upLeft": "Diagonal up-left",
+          "upRight": "Diagonal up-right",
+          "down": "Down",
+          "downRight": "Diagonal down-right",
+          "downLeft": "Diagonal down-left",
+          "turnLeft": "Turn left",
+          "uTurnLeft": "U-turn (left)",
+          "turnUpLeft": "Up-bend (left)",
+          "uTurnRight": "U-turn (right)",
+          "turnRight": "Turn right",
+          "turnUpRight": "Up-bend (right)"
+        },
+        "plate": {
+          "none": "None",
+          "solid": "Solid",
+          "outline": "Outline"
+        },
+        "lineCaplet": {
+          "joined": "Interchange (joined)",
+          "tapOut": "Tap-Out (split)",
+          "codes": "Codes",
+          "code": "Code",
+          "color": "Line colour"
+        },
+        "platform": {
+          "circle": "Circle",
+          "square": "Square"
+        }
+      },
+      "components": {
+        "LineBand": {
+          "displayName": "Line Band",
+          "props": {
+            "text": "Line name",
+            "color": "Line colour",
+            "textColor": "Text colour",
+            "align": "Align",
+            "height": "Height",
+            "size": "Font size",
+            "background": "Background",
+            "padLeft": "Padding left",
+            "padRight": "Padding right"
+          }
+        },
+        "Arrow": {
+          "displayName": "Arrow",
+          "props": {
+            "dir": "Direction",
+            "size": "Height",
+            "color": "Colour",
+            "background": "Background"
+          }
+        },
+        "Text": {
+          "displayName": "Text",
+          "props": {
+            "text": "Text (multiline)",
+            "font": "Font",
+            "align": "Align",
+            "weight": "Weight",
+            "fontSize": "Font size",
+            "letterSpacing": "Letter spacing",
+            "lineHeight": "Line height",
+            "color": "Colour",
+            "background": "Background",
+            "offsetY": "Vertical offset"
+          }
+        },
+        "TransferBlock": {
+          "displayName": "Transfer Block",
+          "props": {
+            "station": "Station",
+            "code": "Station code",
+            "lineColor": "Line colour",
+            "platform": "Platform",
+            "showPlatform": "Show platform",
+            "size": "Font size",
+            "textColor": "Text colour",
+            "background": "Background"
+          }
+        },
+        "StationName": {
+          "displayName": "Station Name (trilingual)",
+          "props": {
+            "en": "English",
+            "zh": "Chinese",
+            "ta": "Tamil",
+            "ms": "Malay",
+            "showZh": "Show Chinese",
+            "showTa": "Show Tamil",
+            "showMs": "Show Malay",
+            "sizeEn": "English size",
+            "sizeZh": "Chinese size",
+            "sizeTa": "Tamil size",
+            "lineGap": "Line gap",
+            "color": "Colour",
+            "background": "Background"
+          }
+        },
+        "ExitBadge": {
+          "displayName": "Exit Badge",
+          "props": {
+            "variant": "Variant",
+            "codes": "Exit codes",
+            "showExitLabel": "Exit label",
+            "showBorder": "White border",
+            "size": "Size",
+            "background": "Background",
+            "text": "Letter/number"
+          }
+        },
+        "ModeLogo": {
+          "displayName": "Mode Logo",
+          "props": {
+            "height": "Height",
+            "color": "Yellow",
+            "windowColor": "Window colour",
+            "textColor": "MRT colour",
+            "showText": "Show MRT",
+            "background": "Background"
+          }
+        },
+        "Icon": {
+          "displayName": "Icon",
+          "props": {
+            "icon": "Icon",
+            "size": "Size",
+            "color": "Colour",
+            "plate": "Plate",
+            "plateColor": "Plate colour",
+            "background": "Background",
+            "borderColor": "Border colour",
+            "borderWidth": "Border width"
+          }
+        },
+        "Spacing": {
+          "displayName": "Spacing",
+          "props": {
+            "background": "Background"
+          }
+        },
+        "Blank": {
+          "displayName": "Blank",
+          "props": {
+            "width": "Width",
+            "background": "Background"
+          }
+        },
+        "SpecLine": {
+          "displayName": "Divider",
+          "props": {
+            "width": "Width",
+            "insetY": "Vertical inset",
+            "fill": "Colour",
+            "background": "Background"
+          }
+        },
+        "LineCaplet": {
+          "displayName": "Line Caplet",
+          "props": {
+            "codes": "Codes",
+            "mode": "Mode",
+            "height": "Height",
+            "textColor": "Text colour",
+            "borderColor": "Border colour",
+            "background": "Background",
+            "minWidth": "Min width"
+          }
+        },
+        "PlatformNum": {
+          "displayName": "Platform number",
+          "props": {
+            "number": "Number",
+            "shape": "Shape",
+            "font": "Font",
+            "color": "Colour",
+            "textColor": "Text colour",
+            "borderColor": "Border colour",
+            "size": "Diameter",
+            "background": "Background"
+          }
+        },
+        "TwoRowContainer": {
+          "displayName": "Two-Row Container",
+          "props": {
+            "minWidth": "Min width",
+            "background": "Background"
+          }
+        }
+      },
+      "colors": {
+        "panelNavy": "Panel navy",
+        "rainforest": "Rainforest green",
+        "legacyNavy": "Legacy navy",
+        "platformDark": "Platform dark",
+        "sunYellow": "Sun yellow",
+        "foreground": "Foreground",
+        "ink": "Ink",
+        "white": "White",
+        "black": "Black",
+        "border": "Border",
+        "background": "Background",
+        "transparent": "Transparent",
+        "lineNS": "North–South Line (NSL)",
+        "lineEW": "East–West Line (EWL)",
+        "lineNE": "North East Line (NEL)",
+        "lineCC": "Circle Line (CCL)",
+        "lineDT": "Downtown Line (DTL)",
+        "lineTE": "Thomson–East Coast Line (TEL)",
+        "lineJR": "Jurong Region Line (JRL)",
+        "lineCR": "Cross Island Line (CRL)",
+        "lineLRT": "LRT",
+        "specline": "Divider"
+      },
+      "icons": {
+        "toilets": "Toilets",
+        "family-toilet": "Family Toilet",
+        "accessible-toilet": "Accessible Toilet",
+        "child-cubicle": "Child Cubicle",
+        "baby-care-room": "Baby Care Room",
+        "passenger-service-centre": "Passenger Service Centre",
+        "information-point": "Information Point",
+        "service-kiosks": "Service Kiosks",
+        "top-up-kiosk": "Top-Up Kiosk",
+        "general-ticket-machine": "General Ticket Machine",
+        "ticket-office": "Ticket Office",
+        "atm": "ATM",
+        "retail-stellar": "Retail (Stellar)",
+        "baggage": "Baggage",
+        "bicycle-parking": "Bicycle Parking",
+        "first-aid-room": "First Aid Room",
+        "lift": "Lift",
+        "accessible-icon": "Accessible Icon",
+        "stair-lift": "Stair Lift",
+        "ambulant-cubicle": "Ambulant Cubicle",
+        "mobility": "Mobility & Luggage-Friendly Access",
+        "you-are-here": "You Are Here",
+        "emergency-exits": "Emergency Exits",
+        "fire-extinguisher": "Fire Extinguisher",
+        "fire-hosereel": "Fire Hosereel"
+      }
     }
   }
 }

@@ -1,0 +1,24 @@
+/* LTA Identity —— 新加坡 LTA 自有字体（自官方 PDF 提取，版权归 LTA/URW++）
+   仅本地/研究用途；缺失时回落到 Segoe UI / 系统 sans。 */
+@font-face {
+  font-family: "LTA Identity";
+  src: url("/fonts/LTA-Identity.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --font-lta: "LTA Identity", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --font-lta-zh: "LTA Identity", "Segoe UI", "Noto Sans SC", "Source Han Sans SC", sans-serif;
+  --font-lta-ta: "LTA Identity", "Segoe UI", "Noto Sans Tamil", sans-serif;
+}
+
+/* 普通 sans：项目自带 Segoe UI（与成都同一份文件），保证没装 Segoe 的机器也能还原 */
+@font-face {
+  font-family: "Segoe UI";
+  src: url("/fonts/SegoeUI.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
