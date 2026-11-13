@@ -674,7 +674,8 @@
           "displayName": "Contenedor de dos filas",
           "props": {
             "minWidth": "Ancho mínimo",
-            "background": "Color de fondo"
+            "background": "Color de fondo",
+            "paddingY": "Vertical padding"
           }
         },
         "ExitName": {
@@ -2945,7 +2946,8 @@
           "displayName": "Two-Row Container",
           "props": {
             "minWidth": "Min width",
-            "background": "Background"
+            "background": "Background",
+            "paddingY": "Vertical padding"
           }
         }
       },

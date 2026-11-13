@@ -676,7 +676,8 @@
           "displayName": "Двухрядный контейнер",
           "props": {
             "minWidth": "Минимальная ширина",
-            "background": "Цвет фона"
+            "background": "Цвет фона",
+            "paddingY": "Vertical padding"
           }
         },
         "ExitName": {
@@ -2947,7 +2948,8 @@
           "displayName": "Two-Row Container",
           "props": {
             "minWidth": "Min width",
-            "background": "Background"
+            "background": "Background",
+            "paddingY": "Vertical padding"
           }
         }
       },

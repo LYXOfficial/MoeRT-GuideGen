@@ -673,7 +673,8 @@
           "displayName": "2行コンテナ",
           "props": {
             "minWidth": "最小幅",
-            "background": "背景色"
+            "background": "背景色",
+            "paddingY": "Vertical padding"
           }
         },
         "ExitName": {
@@ -2944,7 +2945,8 @@
           "displayName": "Two-Row Container",
           "props": {
             "minWidth": "Min width",
-            "background": "Background"
+            "background": "Background",
+            "paddingY": "Vertical padding"
           }
         }
       },

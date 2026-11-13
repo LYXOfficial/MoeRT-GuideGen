@@ -673,7 +673,8 @@
           "displayName": "双行容器",
           "props": {
             "minWidth": "最小宽度",
-            "background": "背景色"
+            "background": "背景色",
+            "paddingY": "上下内边距"
           }
         },
         "ExitName": {
@@ -2944,7 +2945,8 @@
           "displayName": "双行容器",
           "props": {
             "minWidth": "最小宽度",
-            "background": "背景色"
+            "background": "背景色",
+            "paddingY": "上下内边距"
           }
         }
       },
