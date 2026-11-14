@@ -1,7 +1,8 @@
 # AGENTS.md — 交接文档
 
-> 最后更新：2026-11-04。新增 **§13 广州地铁主题**；上海(§11.5)、广州都改成 **transparent 体系**
-> （见 §7 铁律 ②）。下一阶段目标：**深圳主题**（未定，等用户拍板）；北京旧版遗留项见 §9。
+> 最后更新：2026-11-14。新增 **§14 新加坡 MRT 主题**（LTA Identity 字体、官方矢量、双行容器通用化），
+> 上一版是 2026-11-04 的 §13 广州；上海(§11.5)、广州、新加坡都是 **transparent 体系**（见 §7 铁律 ②）。
+> 下一阶段目标：**深圳主题**（未定，等用户拍板）；北京旧版遗留项见 §9。
 
 ---
 
@@ -22,70 +23,23 @@ pnpm dev                                  # 开发服务器（5173 端口，常�
 
 ## 2. 当前进度
 
-- ✅ 北京**新版**主题（`src/components/themes/beijing/`，`THEME_INDEX = 3`）全部完成：
-  LineNum / Text / DualText / LoopNextStation / Arrow / TrainDirection / ExitNum /
-  ExitIcon / Icon / SpecLine / Spacing / Blank，`tsc -b`、biome、build 全绿，已提交。
-- ✅ **M8 北京旧版（2015 / 经典样式）主题已完成**（2026-10-24）：
-  `src/components/themes/beijing-old/`，THEME_INDEX 4，key `themes.beijingOld`，
-  tsc / biome / build 三绿已提交。要点见 §4 末尾「旧版主题」，遗留项见 §9。
-- ✅ **上海地铁主题**（2026-11-01）：`src/components/themes/shanghai/`，THEME_INDEX 6，
-  key `themes.shanghai`（显示名「上海地铁风格」）。依据 DB31/T 1104（2025-11 修订征求意见稿）建成 12 个组件
-  （LineNum / TextLineNum / Text / BigZh / BigEn / NumAlphabet / DualText / Arrow / Icon /
-  SpecLine / Spacing / Blank），图形符号 28 个 + 申通标志，线路色 24 组全部来自标准 CMYK。
-  资料与实测笔记在 `docs/shanghai/`（见 §11），tsc / biome / build 三绿。
-- ✅ **东京地铁主题（第二版）**（2026-10-31）：`src/components/themes/tokyo/`，
-  **THEME_INDEX 5**，key `themes.tokyo-metro`（显示名「东京地铁风格」）。16 个组件、
-  157 项官方图记、73 条线路色、11 语言全量；要点与踩坑见 **§12**。
-- ✅ **重庆 / 成都「文字」支持中英字号分设、中英行距、上下偏移**（2026-11-01）：
-  `fontSizeZh`（默认 22，钳 8–64）/ `fontSizeEn`（默认 14，钳 6–48）/ `lineGap`（默认 16，
-  **中英两行基线之间的距离**，不是墨迹间隙）/ `offsetY`（默认 0，**正数向上**，两行一起动）。
-  另有 `alignV`（纵向对齐：贴顶/居中/贴底，默认居中）——以「居中」为基准做整块墨迹位移：
-  贴顶 = 中文墨迹顶落在 `V_PAD = 5`、贴底 = 英文下伸部落到 `64 - V_PAD`（**两头各留 5px**，
-  跟左右 `ml-1.25` 的 5px 对齐；不要真的贴边），和 `offsetY` 叠加；
-  原「对齐」文案改成「横向对齐」。
-  中文基线锚在 y=32、英文 = 中文基线 + lineGap，所以默认 22/14/16/0 与改动前逐像素一致；
-  重庆的 prominent 数字字号按 `30/22` 等比跟着中文字号走。老档缺这些字段会在
-  `MIGRATIONS[2]`（v2→v3）里补上（否则编辑弹窗里是空输入框），同一迁移还按老默认值补
-  `digitMode: "prominent"`。
-- ✅ **成都「线路标 / 文字线路标」新增「2026」风格**（2026-11-01）：`variant` = `classic`（经典，
-  左侧竖条 + 大号数字/文字）/ `block`（**编辑器里显示为「2026」**，别写「色块」——会和经典样式
-  左边那条色块搞混）：整块线路色牌面，把经典那套内容缩一圈装进去。
-  做法：牌高 = **缩放后的墨迹高 + 上下各 `BLOCK_PAD_Y`**（不能用「64 × 缩放比」，那样内容框
-  上下会白出一大截），内容组再按墨迹顶对齐到牌顶；英文额外 ×`BLOCK_EN_SCALE(0.85)`，
-  数字↔文字间隙用 `BLOCK_TEXT_GAP(10)`（经典版是 5）。`LineNum` 和 `LineText` 各有一套常量。
-  切到 2026 后「是否显示色块 / 色块宽度 / 对齐」都用 `visible` 谓词隐藏（牌面就是色块）。
-  老档由 `MIGRATIONS[5]`（v5→v6）补 `variant: "classic"`，载入时还会幂等补一次
-  （文字线路标是后加的，早期 v6 存档缺这个键）。
-- ✅ **成都「图标」加「显示文本」开关**（2026-11-01）：开启后图形缩到 `ICON_BOX_WITH_TEXT = 38`
-  （原来 44），下面两行居中小字：中文 9px / 英文 **6px**（行高 10 / 7，两行贴紧）、
-  `CAPTION_GAP = 3` 与图形拉开；颜色跟随 `foreground`（＝图标底板色）。
-  **开小字时盒子宽度收成「内容 + 两侧各 6px」**（`px-1.5`，不再固定 64 方块）——用户嫌
-  方块两侧空太多、虚线框跟图标对不齐；但也不能收到 0（会贴着边框）。
-  字段 `showText / textZh / textEn`，两个文本项用 `visible` 只在开关打开时出现。
-  默认关，老档渲染不变（纯追加式改动，没升存档版本）。
-- ✅ **北京新旧两个主题都拆出「文字线路标」**（2026-11-01）：原有线路标组件显示名改成
-  **数字线路标**（`themes.beijing.components.LineNum` / `themes.beijingOld.components.Line`，
-  组件 type 字符串没动，老存档照旧匹配），新增 **文字线路标**
-  （`TextLineNum.tsx` = 薄包装 `lineId=""`，版式/字号/色带/尺寸档全部复用原型组件，
-  编辑器只少一项「线路号」）。两个默认值：新版 房山线 / `linefangshan`、
-  旧版 八通线 / `line1`（八通线与 1 号线同色）。
-- ✅ 编辑器交互（PC + 移动端）：拖拽/点按判定、触屏长按、小元件热区、删除区可见矩形、
-  编辑菜单稳定性、整页缩放禁用等，全部修复并提交（见 §7/§8）。
-- ✅ **广州地铁主题**（2026-11-04）：`src/components/themes/guangzhou/`，**THEME_INDEX 7**，
-  key `themes.guangzhou`（显示名「广州地铁风格」）。只做**悬挂吊顶导向牌**，13 个组件、
-  39 个 GB 图记 + 羊角标志，11 语言全量；要点见 **§13**。
-- ✅ **上海 / 广州改判为 transparent 体系**（2026-11-04）：`bakeDropColors` 的
-  `followsBoardColor` 只剩 `0 / 3 / 5`，6、7 落板一律写 `colors.transparent`（见 §7 铁律 ②）。
-- ✅ **全应用深色/浅色模式**（2026-10-25）：初始跟随浏览器 `prefers-color-scheme`，
-  手动切换后写 `localStorage['guide-theme-mode']` 覆盖。实现要点见 §7 末尾「深色模式」。
-- ✅ **多存档管理**（2026-10-25）：`src/utils/archiveStore.ts` + `src/components/ArchiveDialog.tsx`。
-  顶栏文件夹入口 + 当前存档名；新建 / 切换 / 重命名 / 创建副本 / 下载 / 删除 / 导入（单个存档 JSON）/
-  清除全部；自动保存只写活动存档；旧单存档自动迁移。要点见 §7 末尾「多存档」。
+- ✅ **新加坡 MRT 主题**（2026-11-13/14）：`themes/singapore/`，**THEME_INDEX = 8**，13 组件 + 通用双行容器、
+  25 个官方图记、14 种官方箭头、LTA Identity 字体（自官方 PDF 提取）。资料/矢量/笔记在 `docs/singapore/`，
+  要点与坑见 **§14**。
+- ✅ 北京新版（3）/ 北京旧版（4）/ 东京（5）/ 上海（6）/ 广州（7）主题均已完成并三绿；
+  各自要点见 §4 / §9 / §12 / §11 / §13。
+- ✅ 重庆 / 成都「文字」支持中英字号分设、中英行距（基线距）、上下偏移（**正数向上**）、`alignV`；
+  老档由 `MIGRATIONS[2]` 补字段（编辑弹窗读 props，不补就是空输入框）。
+- ✅ 成都线路标新增「2026」风格（`variant: block`），老档 `MIGRATIONS[5]` 补 `classic`；
+  成都图标「显示文本」开关（图形缩到 38、下方中 9 / 英 6 小字）。
+- ✅ 北京新旧主题都拆出「文字线路标」（薄包装 `lineId=""`，type 字符串不变，老存档照旧）。
+- ✅ 编辑器交互（拖拽/点按判定、触屏长按、小元件热区、删除区可见矩形、菜单稳定性、整页缩放禁用）。
+- ✅ 全应用深浅色模式、多存档管理（`utils/archiveStore.ts` + `ArchiveDialog.tsx`）——要点见 §7 末尾。
 
 ## 3. 主题架构契约（新主题必须遵守）
 
-1. `src/components/themes/themereg.ts` 的数组**顺序即 THEME_INDEX**（当前 8 项）：
-   `chongqing 0 / chengdu 1 / hongkong 2 / beijing 3 / beijingOld 4 / tokyo-metro 5 / shanghai 6 / guangzhou 7`。
+1. `src/components/themes/themereg.ts` 的数组**顺序即 THEME_INDEX**（当前 9 项）：
+   `chongqing 0 / chengdu 1 / hongkong 2 / beijing 3 / beijingOld 4 / tokyo-metro 5 / shanghai 6 / guangzhou 7 / singapore 8`。
    新增主题要同步：`themereg.ts`、`Background.tsx` 里的 `THEME_INDEX` 常量（取色器用它读色板）、
    `GuideBoard.tsx` 的 `bakeDropColors` 分支（哪些主题落板固化板色）、`DraggableItem.tsx`
    的 Spacing/SpecLine 注册、11 个语言包（`public/locales/<lang>/translation.json`，唯一真源）。
@@ -358,27 +312,11 @@ python3 text_probe.py                                   # 解析 <use> 得到真
   （`splitChengduIconColors`，幂等：`iconFill` 已有有效颜色就跳过）——早期 v4 存档只跑过
   「补颜色」那版迁移，缺 `iconFill`，靠这一步补。
   索引 `INDEX_VERSION` 是另一套，版本不匹配会 `return null` → 「存档全部消失」，改它必须补迁移。
-- **多标签互斥 / 强制接管**（`src/hooks/useTabConflict.ts`）：有 Web Locks 走它拿锁；
-  无锁环境（旧浏览器 / 非安全上下文的局域网访问，`navigator.locks` 不存在）走
-  `localStorage` 心跳选主兜底（`moert-guidegen-editor-lock` = `{id,ts}`，持有方 1s 一跳、
-  2.5s 过期算掉线，抢锁先写、120ms 后读回验证，关页 `pagehide` 主动放锁；
-  同一浏览器里同样走兜底分支的标签页之间互斥正常生效）。拿不到锁 → 返回
-  `{ conflict, locked, force }`，Editor 弹全屏层并置 `suspendSaveRef/skipAutoSaveRef`。
-  Web Locks **不能抢锁**，所以「强制接管」靠 BroadcastChannel
-  （`moert-guidegen-editor-takeover`）协作：接管方广播 → 对方 `yieldLock()`
-  （清空自己持有的锁）后转入封锁（停止保存）→ 接管方重新申请。
-  被封锁的标签页**不再抢锁**（`schedule()` 里 `blocked` 直接返回），否则它会先把锁抓回去、
-  接管方永远抢不到。`blocked / forced` 是 effect 内的普通变量，不是 ref —— 别再混进
-  `conflictRef`（那会把「被封锁」和「已强制」搅成一团）。
-  写冻结看的是 **`locked`（是否持有锁），不是 `conflict`**：挂载等锁的 2.5s 宽限期 /
-  接管等锁期 / HMR 重挂间隙照样冻结，否则第二个标签页在宽限期内一保存就把首个标签页覆盖了；
-  Editor 侧 `handleForceTakeOver` 只清闩锁、不解冻，解冻等 `[tabLocked]` effect 在
-  `locked=true` 时做；`applySaveData` 收尾 80ms 定时器 + 锁刚到手的解冻都要让
-  `tabConflictAppliedRef / tabLockedRef / transferRef` 三者同时点头。
-  封锁闩用**模块级 `lastBlocked`** 扛过 HMR/StrictMode 重挂（完整刷新清掉，
-  「关掉旧页后刷新恢复」流程不受影响）。接管 6s 没拿到锁会把冲突层弹回来重试，
-  别让编辑器静默地不保存。注意：两个标签页必须**同源**（同协议同 host 同端口，
-  `localhost` 和 `127.0.0.1` 算不同源）互斥才生效。
+- **多标签互斥 / 强制接管**（`src/hooks/useTabConflict.ts`）：有 Web Locks 走它；无锁环境走
+  `localStorage` 心跳兜底（`moert-guidegen-editor-lock`，1s 一跳 / 2.5s 过期，抢锁先写、120ms 回读校验）。
+  拿不到锁弹全屏层并冻结保存；「强制接管」靠 BroadcastChannel 让原标签 `yieldLock()` 转入封锁
+  （**被封锁后不再抢锁**，否则接管方永远抢不到）。**写冻结看 `locked` 而不是 `conflict`**；
+  封锁闩用模块级 `lastBlocked` 扛 HMR；接管 6s 失败要重弹冲突层。两标签页必须**同源**才互斥。
 
 ## 8. 用户反馈（历史 36 条已全部落实，细节见 git log）
 
@@ -394,55 +332,24 @@ python3 text_probe.py                                   # 解析 <use> 得到真
   被当成新操作 push 并 `splice` 掉 redo 分支。修法见 §7「撤销/重做」。
 - 导出「字体有细微差别」不是字体问题，是导出流程（origin 丢失 / border 盒 / 倍率），见 §7。
 
-## 9. 北京旧版（2015 / 经典样式）主题 —— 已完成，遗留项如下
+## 9. 北京旧版（2015 / 经典样式）主题
 
-**已完成**（2026-10-24）：`src/components/themes/beijing-old/`，THEME_INDEX 4，key `themes.beijingOld`。
-- 底色 `#092f52`（vitool 经典模式 --mode-bg）；线路色沿用 vitool 官方 32 色板 hex；
-  「出口绿」#25aa41 与新版一致（visys p7 实测）。
-- **素材提取**：`docs/beijing/raw/extract_p7.py`（p7 专用提取器）+ `jobs-p7-old.json` /
-  `jobs-p5-old.json`（走 gen_batch.py）→ `beijing-old/icons/{arrow,exit,train,facilities}-real.tsx`。
-  燕尾箭头 ×8（左右 56.6×35.4pt、斜 43.4×43.5pt）、方形直角出口牌、乘车车头标
-  （实心 TrainSolid / 线稿 TrainOutline / 外框环 TrainFrame 三形态，可拆拼）、
-  方框设施图标 ×17（p5 第 13–29 格，图形自带圆角方框描边）。
-- **布局语境**：官方 DB11/T 657.2—2024 示例图（官方原版 PDF 已下载到 /tmp/bjold/，
-  docs/ 不入库）校准：**行高 = 1.5a、方形模块（车头标方块/线路牌/字母牌/设施框）= 1a ≈ 42.7px、
-  EXIT 绿块满行、元素间距 ≈ 0.25–0.4a、中文 ink ≈ 0.5a**。visys p7 手册网格是另一个语境
-  （行 = 1.4a，a = 56.6pt），两套 a 不要混用。
-- 组件差异：LineNum = 线路色圆角矩形（rx 0.075a、1.85a/1.95a 宽、数字 ink 0.742a 居中、
-  号线 0.4a + Line 0.188a 互相居中、墨迹间隙 0.303a/0.065a —— 用 canvas
-  actualBoundingBox 扣 bearing）；**无色带、无 small 档（有 size=small 缩放）**；
-  Arrow 只有 8 方向；**ToTrain 新组件**（图案=前景色、方块/描边颜色独立可空，
-  编辑器用 `nullableColorFormItem` + `NullableColorField`）；ExitNum = 白底圆角块
-  + 深蓝字母数字（块 1a、字母 ink 0.45H，完整版式待用户参考图校准）；
-  SpecLine = 单色白线（经典无黄线）；Icon = 17 个方框图标跟随前景色
-  （暗底/亮底复用同一套，靠前景/背景切换，**不做两套图标**）。
-- **旧版不做双行背景**：backgroundFormItems 只暴露一项背景色；组件 props 里的
-  background2 保留但永不进编辑器。
-- **文字（Text）边缘对齐 + 中英字距分设**（2026-11-01）：`align` 在左/中/右后追加 `justify`，
-  文案叫「边缘对齐」（用户嫌「分散对齐」怪）。做法 = 把该行墨迹摊满块宽：canvas
-  `actualBoundingBoxLeft/Right`（`measureInk`）取首字墨迹左缘 / 尾字墨迹右缘，
-  `x = -inkLeft` 把首字墨迹贴 0，字距加 `(块宽 − 行墨迹宽)/(字符数−1)`（恒 ≥ 0，单字行不摊）。
-  **必须按墨迹而不是排字原点**：汉字 side bearing 与拉丁不同，按原点贴边会缩进 1–3px
-  （「出口/Way out」实测左 2.0 / 右 3.0 缩进 → 改后两行都是 1.0/63.0，逐像素对齐）。
-  字距拆成 `letterSpacingZh / letterSpacingEn`（em），旧 `letterSpacing` 已删；
-  存档 v1→v2 迁移把老值双份回填（见 §7「存档版本号」）。
-- 色板新增 `black: "#000000"`「纯黑」（排在 `white` 后；`textblue` 带蓝调，白底要真黑时用它）。
-- i18n：5 语言 `themes.beijingOld.*` 全套（components displayName 复制自新版同名组件，
-  ToTrain 自带五语）；colors 按旧版 colors.ts 键集过滤（37 键）。
-
-**遗留 / 待用户输入**：
-1. ExitNum 完整版式（块尺寸/字号/间距）等用户发参考图后校准（当前是官方图 36 近似值）。
-2. 旧版禁止/警告类图标（visys p7 无此内容）——需要用户指路素材或按官方标准图近似。
-3. TrainDirection / LoopNextStation / DualText / Text 沿用新版字号体系，未按旧版标准复核。
-4. 旧版数字字体疑似窄体（p7「1」ink 宽高比 0.367 vs Arial 0.49），用户若提出再换 Helvetica/
-   其它窄体并调 numSpacing。
-
-**工具备忘**：
-- visual-reviewer subagent 识图仅供参考，矢量以 SVG 提取为准；官方 PDF 示例是位图
-  （pdfimages 确认），布局用「识图量比例 → a 模数换算」。
-- 网页验收：IAB 截图可用 `document.documentElement.style.zoom` 临时放大；
-  cua.drag 大概率触发页面刷新（zoom 等内存态会丢）；高清组件截图用页面内
-  `import("/node_modules/.vite/deps/modern-screenshot.js").domToPng(el, { scale })`。
+`themes/beijing-old/`，THEME_INDEX 4，key `themes.beijingOld`（已完成，三绿）。
+- 底色 `#092f52`；线路色用 vitool 官方 32 色板 hex；出口绿 `#25aa41` 与新版本一致（visys p7 实测）。
+- 素材：`docs/beijing/raw/extract_p7.py` + `jobs-p7-old.json`/`jobs-p5-old.json`（走 `gen_batch.py`）→
+  `icons/{arrow,exit,train,facilities}-real.tsx`：燕尾箭头 ×8、方形直角出口牌、
+  乘车车头标三形态（实心 / 线稿 / 外框环，可拆拼）、方框设施图标 ×17。
+- 布局语境（官方标准示例图校准）：**行高 1.5a、方形模块 1a ≈ 42.7px、EXIT 绿块满行、
+  元素间距 0.25–0.4a、中文 ink ≈ 0.5a**；visys p7 手册网格是另一套 a，别混用。
+- 组件差异：LineNum 是线路色圆角矩形（无色带、无 small 档，有 `size=small` 缩放）；Arrow 8 方向；
+  **ToTrain**（图案=前景色，方块/描边色独立可空，`nullableColorFormItem`）；ExitNum 白底圆角块 +
+  深蓝字母数字；SpecLine 单色白线；Icon 17 个方框图标跟随前景色（暗/亮底同一套）。
+- 旧版**不做双行背景**：只暴露一项背景色，`background2` 保留但不进编辑器。
+- Text 支持 `align: justify`（「边缘对齐」，按墨迹摊满块宽，不能按排字原点）；字距分
+  `letterSpacingZh/En`；老档 v1→v2 双份回填。色板新增 `black`。
+- 遗留：ExitNum 完整版式待参考图；旧版禁止/警告图标缺素材；TrainDirection / LoopNextStation /
+  DualText / Text 沿用新版字号体系未复核；数字字体疑似窄体（待用户确认）。
+- 备忘：官方示例是位图，布局用「识图量比例 → a 模数换算」；网页验收用 `domToPng(el,{scale})`。
 
 ## 10. 协作方式（重要）
 
@@ -457,6 +364,8 @@ python3 text_probe.py                                   # 解析 <use> 得到真
   不要为了验证去重建场景、连点几十次、反复 reload —— 有那时间早该去改下一处了。
   另一个 agent 并发改文件时尤其别硬耗：dev server 被它改崩了，验证必然超时，直接收手。
 - 图标几何永远走提取管线，别手绘。
+- **本文件有 64KB 指令预算**（DSH 只加载前 65536 字节，超出部分模型看不到）：
+  新增章节要克制，优先把细节放各主题的 notes 里，这里只留结论与指针；目前约 64.6KB，余量很小。
 - 不要在根目录新建任何测试文件/临时文件/截图文件/占位文件（.playwright-mcp下的文件除外，它们是被gitignore了的），应该放到系统的 temp 目录，如`/tmp/` `C:\Users\xxx\Appdata\Local\temp`
 
 ## 11. 上海地铁主题（上海地铁风格 / DB31/T 1104）
@@ -698,3 +607,83 @@ Icon / Arrow / SpecLine / Spacing / Blank。
 - 箭头臂端是「平行切」（重庆那套），实拍里是**垂直于臂的斜切**（臂端收成尖），尚未改。
 - 只做了「悬挂牌」一种载体；`Distance`（距离牌）、方框版站台编号（0.58 牌高那档）未做。
 - 图标名称的 11 语言翻译是通用义译（`themes.guangzhou.pictograms.*`），没有官方对照表。
+
+## 14. 新加坡 MRT 主题（新加坡 MRT 风格 / LTA 导视）
+
+- key `themes.singapore`，**THEME_INDEX = 8**，代码 `src/components/themes/singapore/`；
+  同步过 `themereg.ts`、`Background.tsx` 的 `THEME_INDEX`、`DraggableItem.tsx` 的
+  `SingaporeSpacing / SingaporeSpecLine`、11 份语言包；`bakeDropColors` 走 `else`（transparent 体系）。
+- 资料 / 官方矢量 / 实测在 `docs/singapore/`（gitignore，不入库）：
+  `notes/00–08`（资料清单、线路色、导视体系、版式实测、字体与语言、方案草案、组件总表、配色规则、
+  MRT 标志几何）、`raw/assets/`（arrows / caplets / icons / exit-door / pt-symbol）、
+  `raw/fonts/LTA-Identity-Regular.ttf`、`raw/mockups/`（A–G 对照图）。
+- **一手资料**：LTA《Transit Signage Manual》Vol 1（2025-08，186 页，InDesign 矢量，规范级）：
+  §1.2 MRT Logo、§3 箭头、§4 Caplet/出口码/图记、§5 站名牌、§9.1 出口标识、§7.5 DP 模数；
+  另有《RE:think》2018、官方线网图 PDF、CCL Wayfinding App 的官方 caplet SVG、2024-11-30 媒体答复。
+  手册 PDF 直链见 `docs/singapore/notes/00_资料清单与结论.md`。
+- **线路色**（官方 PDF 专色 → sRGB）：NSL `#E2261B` / EWL `#009645` / NEL `#9E28B6` / CCL `#FF9F19` /
+  DTL `#0056B8` / TEL `#9D5A18` / LRT `#718473`；**JRL/CRL 未公开**，暂用 `#008996` / `#94D600`。
+
+### 14.1 字体
+
+- **LTA Identity**（URW++ 1999，v1.05）：从上面那份官方 PDF `extract_font` 直接抽出（`sub no` 整字体），
+  放 `public/fonts/LTA-Identity.ttf`；**CSS 只在主题里**（`singapore/fonts/lta-identity.css`，
+  `theme.ts` 首行 import，`public/` 不放 CSS），同文件还注册 **Segoe UI**（`/fonts/SegoeUI.ttf`）。
+- 字体栈：`identity = "LTA Identity","Segoe UI","Helvetica Neue",Arial`；中文落 Noto Sans SC；泰米尔 Noto Sans Tamil。
+- cmap 缺 J/X/Y/Z 等（`WAY OUT` 的 Y 会掉字），所以 `wayout` 变体直接用 **Segoe UI Semibold**
+  （官方样张本来是 Stroudley Bold）。版权归 LTA/URW++，仅本地研究用。
+
+### 14.2 组件（13 个 + 通用双行容器）
+
+`LineBand / PlatformNum / Arrow / Text / TransferBlock / LineCaplet / StationName / ExitBadge /
+ModeLogo / Icon / SpecLine / Spacing / Blank`（+ `TwoRowContainer`，见 14.3）。
+
+| 组件 | 要点（🖐 = 用户亲手定过） |
+|---|---|
+| `LineBand` 🖐 | 线路色横条 + 线路名；左右内边距拆成 **`padLeft`/`padRight`**（默认 16，旧的 `padX` 已删） |
+| `PlatformNum` 🖐 | 「站台编号」。`shape`：`circle`（线路色圆）/ `square`（**竖版牌**：宽 0.70H、白描边 0.031H、圆角 0.045H、字母 cap 0.44H、下方白横杠 0.755W×0.094H、距底 0.11H；`size` 指牌高、左右 8px）；**只允许 1 字符**；`font` identity/sans，**sans 时 ×0.86** |
+| `Arrow` | 官方箭头矢量，**14 种**（直行 4 / 斜向 4 / 转弯 4 / 掉头 2；「上(B)/下(B)」已按用户要求删除）。`icons/arrows.ts` 勿手改 |
+| `Text` 🖐 | TextArea 多行、**不 trim、保留多空格**；字号/字重/字体(identity·sans)/字距/**行距**/**`offsetY`（正数向上）**/对齐/颜色 |
+| `TransferBlock` | `Transfer at` + 小胶囊 + 站名 + `(Platform B)`；小胶囊与 LineCaplet **同几何**，但高 = 1.2×字号、字 0.72×高、宽 = 文字宽 + 0.3×高 |
+| `LineCaplet` 🖐 | 「线路胶囊」（原 `Caplet`）。`codes: {code,color}[]` 自由增减（≤4，卡片编辑器 +/−，**key 用索引否则打字失焦**）；`mode` joined / tapOut；官方几何 **椭圆端 rx=0.286h**、白描边 5.5%、段间无白线；**`minWidth`：joined 作用于整条，tapOut 作用于每一枚** |
+| `StationName` 🖐 | 三语站名：英 30 / 中泰 12 / 行距 4，中/泰/马来文各自开关 |
+| `ExitBadge` 🖐 | `door`（默认：黄板 + ∩ 开底门框 + 出口码，**只有它可自由增减码**，每码一个门框、框宽按各自字符数，可选黄色 `Exit` 贴纸）/ `closed`（闭合框 + 单字母，可关白框）/ `wayout`（单方牌 + 门框 + WAY OUT，不画出口码）。**黄与门框色写死** |
+| `ModeLogo` 🖐 | 官方 Logotype **110.27×45.03（2.449:1）**、描边 1.4、绿窗 0.608W、椭圆端 rx=0.313h、PT Symbol 0.533h、MRT cap 0.249h；`showText=false` = Logomark（**1.537:1**） |
+| `Icon` | **25 个**官方设施图记（§4.5 按编号标签重抽、viewBox 紧致裁切）；宽度按比例自动放宽；`plate`：none / solid / **outline**（边框色 + 线宽）；底板高 `min(size×1.15, 64)` |
+| `SpecLine` / `Spacing` / `Blank` | 分隔线 width 3 / insetY 8（z-10，已注册）；间距、空格透明 |
+
+- **边距**：`EDGE_PAD = 3`（所有组件左右 3px）、`ARROW_EDGE_PAD = 6`（箭头 6px）。
+- **出口门框**用 `exitDoorPath(w,h)` 按**高度**换算线宽（竖框 4.04k、顶栏 8.664k、顶角 3.352k），
+  横向只延长中段 —— 别用 `scale()` 横向拉伸（会把竖框拉粗，被用户打回过）。
+- **DP 模数**：DP1 280 / DP2 400 / DP3 520 / DP4 640（单行均 320），宽 1600mm；行高 260 / 320；
+  同行顺序 **Line Caplet → Exit Code → Landmark Icon → Amenities**。
+
+### 14.3 双行容器已通用化（`src/components/theme-kit/TwoRowContainer.tsx`）
+
+- 工厂 `createTwoRowContainer(themeIndex, themeKey)` → `{ component, defaultProps }`；
+  成都 / 新加坡 主题文件只剩 13 行 wrapper（`(1,"themes.chengdu")` / `(8,"themes.singapore")`）。
+- 新增 **`paddingY`（0–24，默认 0）**：总高恒 64，两行按 `(32−paddingY)/64` 缩放、宽度不变；
+  `0` 时与旧实现逐像素一致。以后新主题**不要再复制那 400 行**。
+
+### 14.4 颜色与落板
+
+- `panelNavy #12242E`（导向牌）、`rainforest #0B3B33`（新站名牌，**官方未公开，照片取样**）、
+  `legacyNavy #172D3C`（旧站名牌，仅常量）、`platformDark`、`sunYellow #FFD141`、`ink #141414`。
+- **transparent 体系**；线路色字段永远不叫 `background`（用 `color` / `lineColor`）。
+- 只有四种配色组合：深底白字 / 绿底白字+黄 / 黄底黑字 / 线路色底白字（**不自动反色**）。
+
+### 14.5 坑
+
+- 官方矢量优先（Caplet / Logo / 箭头 / 门框 / 图记全部来自手册或官方 App），**别按照片手绘**；
+  照片只用于配色与年代差异（旧站名牌深蓝 vs 新站名牌深绿）。
+- i18n 漏键会在取色器/下拉里显示裸 key（`specline` 漏过一次）；新增颜色键 11 份同步。
+- 容器契约同成都（`isContainerItemType()` 字符串匹配），**别另注册 `two-row-container` 层**（见 §12.1）。
+
+### 14.6 遗留
+
+1. Rainforest Green / 导向牌底色的官方 hex 未公开（现为取样值）。
+2. JRL / CRL 官方色未公开。
+3. 站名牌精确几何、以及 2026 版入口牌出口块用 `closed` 还是 `door`，待正面照。
+4. `Icon` 的 `accessible-icon`/`mobility`/`ambulant-cubicle` 自带底板（官方画法）；`priority-users`
+   因把 "Priority" 文字一起切进去已整条删除。手册 §4.6 Transport Modes 尚未做进 `Icon`。
+5. `Text` 用 flex + `pre-wrap`，没有「按墨迹对齐」的左右裁切。
