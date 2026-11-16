@@ -1,4 +1,4 @@
-import { Input, InputNumber, Select } from "@douyinfe/semi-ui";
+import { Input, InputNumber } from "@douyinfe/semi-ui";
 import colors, { fontFamilyEn } from "./define/colors";
 import type { EditorConfig } from "../../../interfaces/editor";
 import { THEME_INDEX } from "./Background";
@@ -6,12 +6,11 @@ import CustomColorPicker from "../../CustomColorPicker";
 import { ROW_H } from "./define/layout";
 import { weightCss, type TextWeight } from "./define/text";
 
-/** 线路名条：线路色横条 + 白色线路全名（官方：横条右对齐） */
+/** 线路名条：线路色横条 + 白色线路全名 */
 export interface LineBandProps {
   text?: string;
   color?: string;
   textColor?: string;
-  align?: "left" | "center" | "right";
   height?: number;
   padLeft?: number;
   padRight?: number;
@@ -24,7 +23,6 @@ export const lineBandDefaultProps: LineBandProps = {
   text: "Circle Line",
   color: colors.lineCC,
   textColor: colors.foreground,
-  align: "right",
   height: 36,
   padLeft: 16,
   padRight: 16,
@@ -35,22 +33,11 @@ export const lineBandDefaultProps: LineBandProps = {
 
 const SCOPE = "themes.singapore.components.LineBand.props";
 
-export const lineBandEditorConfig = (t: (key: string) => string): EditorConfig => ({
+export const lineBandEditorConfig = (_t: (key: string) => string): EditorConfig => ({
   forms: [
     { key: "text", label: `${SCOPE}.text`, element: <Input /> },
     { key: "color", label: `${SCOPE}.color`, element: <CustomColorPicker currentTheme={THEME_INDEX} /> },
     { key: "textColor", label: `${SCOPE}.textColor`, element: <CustomColorPicker currentTheme={THEME_INDEX} /> },
-    {
-      key: "align",
-      label: `${SCOPE}.align`,
-      element: (
-        <Select>
-          <Select.Option value="left">{t("themes.singapore.common.align.left")}</Select.Option>
-          <Select.Option value="center">{t("themes.singapore.common.align.center")}</Select.Option>
-          <Select.Option value="right">{t("themes.singapore.common.align.right")}</Select.Option>
-        </Select>
-      ),
-    },
     { key: "height", label: `${SCOPE}.height`, element: <InputNumber min={20} max={64} /> },
     { key: "padLeft", label: `${SCOPE}.padLeft`, element: <InputNumber min={0} max={1000} step={10} /> },
     { key: "padRight", label: `${SCOPE}.padRight`, element: <InputNumber min={0} max={1000} step={10} /> },
@@ -63,7 +50,6 @@ function LineBand({
   text = lineBandDefaultProps.text,
   color = lineBandDefaultProps.color,
   textColor = lineBandDefaultProps.textColor,
-  align = lineBandDefaultProps.align,
   height = lineBandDefaultProps.height,
   padLeft = lineBandDefaultProps.padLeft,
   padRight = lineBandDefaultProps.padRight,
@@ -99,7 +85,6 @@ function LineBand({
             fontSize: size,
             fontWeight: weightCss(weight ?? "normal"),
             color: textColor,
-            textAlign: align,
             whiteSpace: "pre",
           }}
         >

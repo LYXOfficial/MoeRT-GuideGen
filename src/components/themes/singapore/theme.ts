@@ -22,7 +22,8 @@ import type Theme from "../../../interfaces/theme.ts";
  * 新加坡 MRT 主题（LTA 导视体系）。
  *
  * 范围（用户 2026-11-13 拍板）：只做「吊顶多行导向牌 + 站名牌（按行拼）+ 站台门板站名条」，
- * 不做 Board / StationPlate / PlateFrame / SpecLine；Arrow 一个组件装下官方 16 种箭头。
+ * 不做 Board / StationPlate / PlateFrame。共 14 个组件（含可选 SpecLine / Spacing / Blank / 双行容器）；
+ * Arrow 一个组件装下官方 14 种箭头。
  * 资料、官方矢量与实测见 docs/singapore/。
  */
 const theme: Theme = {

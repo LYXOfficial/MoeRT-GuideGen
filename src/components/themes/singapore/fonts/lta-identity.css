@@ -1,3 +1,6 @@
+/* 泰米尔文：与思源黑体同一镜像（fonts.loli.net），供三语站名回落使用 */
+@import url("https://fonts.loli.net/css2?family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap");
+
 /* LTA Identity —— 新加坡 LTA 自有字体（自官方 PDF 提取，版权归 LTA/URW++）
    仅本地/研究用途；缺失时回落到 Segoe UI / 系统 sans。 */
 @font-face {

@@ -10,7 +10,7 @@ import { ROW_H } from "./define/layout";
 
 /**
  * 分隔线（LTA 官方 DP 系列里用来切「上/下两行方向」的那道横线）。
- * 用户 2026-11-13：加回来。线体上下各留 8px（同上海/广州），背景永远透明。
+ * 用户 2026-11-13：加回来。背景永远透明。
  */
 export interface SpecLineProps {
   /** 线宽（px） */
