@@ -2517,6 +2517,7 @@
         "LineBadge": {
           "displayName": "Line badge",
           "props": {
+            "variant": "Style",
             "textZh": "Chinese",
             "textEn": "English",
             "size": "Size",
@@ -2524,6 +2525,10 @@
             "color": "Fill",
             "textColor": "Text color",
             "background": "Background"
+          },
+          "variants": {
+            "classic": "Classic",
+            "sunken": "Full-height number"
           }
         },
         "PlatformNum": {

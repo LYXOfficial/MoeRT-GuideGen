@@ -2517,6 +2517,7 @@
         "LineBadge": {
           "displayName": "Distintivo de línea",
           "props": {
+            "variant": "Estilo",
             "textZh": "Chino",
             "textEn": "Inglés",
             "size": "Tamaño",
@@ -2524,6 +2525,10 @@
             "color": "Fondo",
             "textColor": "Color del texto",
             "background": "Fondo"
+          },
+          "variants": {
+            "classic": "Clásico",
+            "sunken": "Número de dos líneas de alto"
           }
         },
         "PlatformNum": {

@@ -2517,6 +2517,7 @@
         "LineBadge": {
           "displayName": "Cartouche de ligne",
           "props": {
+            "variant": "Style",
             "textZh": "Chinois",
             "textEn": "Anglais",
             "size": "Taille",
@@ -2524,6 +2525,10 @@
             "color": "Fond",
             "textColor": "Couleur du texte",
             "background": "Fond"
+          },
+          "variants": {
+            "classic": "Classique",
+            "sunken": "Numéro sur deux lignes"
           }
         },
         "PlatformNum": {

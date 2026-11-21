@@ -2516,6 +2516,7 @@
         "LineBadge": {
           "displayName": "路線記号",
           "props": {
+            "variant": "スタイル",
             "textZh": "中国語",
             "textEn": "英語",
             "size": "サイズ",
@@ -2523,6 +2524,10 @@
             "color": "地色",
             "textColor": "文字色",
             "background": "背景色"
+          },
+          "variants": {
+            "classic": "従来型",
+            "sunken": "番号を2行分の高さで表示"
           }
         },
         "PlatformNum": {

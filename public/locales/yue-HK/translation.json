@@ -2516,6 +2516,7 @@
         "LineBadge": {
           "displayName": "路綫標",
           "props": {
+            "variant": "款式",
             "textZh": "中文",
             "textEn": "英文",
             "size": "尺寸",
@@ -2523,6 +2524,10 @@
             "color": "底色",
             "textColor": "文字顏色",
             "background": "背景色"
+          },
+          "variants": {
+            "classic": "傳統",
+            "sunken": "下沉"
           }
         },
         "PlatformNum": {

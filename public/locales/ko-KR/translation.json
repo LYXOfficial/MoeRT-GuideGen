@@ -2516,6 +2516,7 @@
         "LineBadge": {
           "displayName": "노선 표지",
           "props": {
+            "variant": "스타일",
             "textZh": "중국어",
             "textEn": "영어",
             "size": "크기",
@@ -2523,6 +2524,10 @@
             "color": "배경색",
             "textColor": "글자색",
             "background": "배경색"
+          },
+          "variants": {
+            "classic": "기본형",
+            "sunken": "번호 두 줄 높이"
           }
         },
         "PlatformNum": {

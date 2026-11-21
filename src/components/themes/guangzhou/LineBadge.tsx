@@ -1,4 +1,5 @@
-import { Input, InputNumber } from "@douyinfe/semi-ui";
+import { Input, InputNumber, Select } from "@douyinfe/semi-ui";
+import { measureInk, normalizeSvgLine, useFontsReady } from "./define/text";
 import colors, { fontFamilyEn } from "./define/colors";
 import type { EditorConfig } from "../../../interfaces/editor";
 import { THEME_INDEX } from "./Background";
@@ -7,8 +8,8 @@ import CustomColorPicker from "../../CustomColorPicker";
 /**
  * 线路标。
  *
- * 用户 2026-11-04：**没有「主文字 / 数字突出」这回事，只有中文 + 英文两行**。
- * 线路号就写在中文里（「6 号线」），英文写「Line 6」，两行居中；底色直接选颜色（`color`）。
+ * 两种版式共用中英文字段：传统版把号码放在中文行内，下沉版把号码放在两行左侧。
+ * 线路号仍写在中文开头（「6 号线」），英文写「Line 6」；线路色由 `color` 指定。
  *
  * 旧要求仍然有效：不自动切文字颜色（`textColor` 手选）、左右内边距同一个值（`paddingX`）、
  * 圆角写死。
@@ -16,8 +17,11 @@ import CustomColorPicker from "../../CustomColorPicker";
 
 /** 圆角写死（用户 2026-11-04：不给调，编辑器里没有这个字段） */
 const RADIUS = 4;
+const SCOPE = "themes.guangzhou.components.LineBadge";
 
 export interface LineBadgeProps {
+  /** 下沉版让开头的线路号跨中英两行。 */
+  variant?: "classic" | "sunken";
   /** 中文（如「6 号线」「广佛线」） */
   textZh?: string;
   /** 英文（如「Line 6」「Guangfo Line」） */
@@ -35,6 +39,7 @@ export interface LineBadgeProps {
 }
 
 export const lineBadgeDefaultProps: LineBadgeProps = {
+  variant: "classic",
   textZh: "8 号线",
   textEn: "Line 8",
   size: 40,
@@ -44,10 +49,38 @@ export const lineBadgeDefaultProps: LineBadgeProps = {
   background: colors.transparent,
 };
 
+function VariantSelect({
+  t,
+  value = lineBadgeDefaultProps.variant,
+  onChange,
+}: {
+  t: (key: string) => string;
+  value?: LineBadgeProps["variant"];
+  onChange?: (value: NonNullable<LineBadgeProps["variant"]>) => void;
+}) {
+  return (
+    <Select
+      value={value}
+      onChange={next => {
+        if (next === "classic" || next === "sunken") onChange?.(next);
+      }}
+      optionList={[
+        { value: "classic", label: t(`${SCOPE}.variants.classic`) },
+        { value: "sunken", label: t(`${SCOPE}.variants.sunken`) },
+      ]}
+    />
+  );
+}
+
 export const lineBadgeEditorConfig = (
-  _t: (key: string) => string
+  t: (key: string) => string
 ): EditorConfig => ({
   forms: [
+    {
+      key: "variant",
+      label: `${SCOPE}.props.variant`,
+      element: <VariantSelect t={t} />,
+    },
     {
       key: "textZh",
       label: "themes.guangzhou.components.LineBadge.props.textZh",
@@ -86,7 +119,62 @@ export const lineBadgeEditorConfig = (
   ],
 });
 
+interface SunkenBadgeProps {
+  number: string;
+  zh: string;
+  en: string;
+  height: number;
+  padding: number;
+}
+
+function SunkenBadge({ number, zh, en, height, padding }: SunkenBadgeProps) {
+  // 实拍色块高约 128px：数字墨迹 84px，中文 44px，英文 26px。
+  // 统一按墨迹定位，避免字体基线导致左侧数字和右侧两行看起来偏心。
+  useFontsReady();
+  const measure = (text: string, ratio: number, weight: number, tracking = 0) => {
+    const fontSize = height * ratio;
+    return {
+      text,
+      fontSize,
+      weight,
+      tracking,
+      ...measureInk(text, `${weight} ${fontSize}px ${fontFamilyEn}`, tracking, fontSize),
+    };
+  };
+  const digit = measure(number, 0.9, 400);
+  const chinese = measure(zh, 0.4, 700, 0.12);
+  const english = measure(en, 0.29, 700);
+  const hasLabels = zh !== "" || en !== "";
+  const gap = number !== "" && hasLabels ? height * 0.16 : 0;
+  const labelWidth = Math.max(chinese.inkWidth, english.inkWidth);
+  const labelLeft = padding + digit.inkWidth + gap;
+  const width = Math.max(1, labelLeft + labelWidth + padding);
+  const draw = (ink: typeof digit, left: number, center: number) =>
+    ink.text !== "" && (
+      <text
+        x={left + ink.inkLeft}
+        y={height * center + (ink.inkAscent - ink.inkDescent) / 2}
+        fontFamily={fontFamilyEn}
+        fontSize={ink.fontSize}
+        fontWeight={ink.weight}
+        letterSpacing={`${ink.tracking}em`}
+        xmlSpace="preserve"
+      >
+        {ink.text}
+      </text>
+    );
+
+  return (
+    <svg width={width} height={height} fill="currentColor">
+      {draw(digit, padding, 0.5)}
+      {draw(chinese, labelLeft, en ? 0.35 : 0.5)}
+      {draw(english, labelLeft, zh ? 0.74 : 0.5)}
+    </svg>
+  );
+}
+
 function LineBadge({
+  variant = lineBadgeDefaultProps.variant,
   textZh = lineBadgeDefaultProps.textZh,
   textEn = lineBadgeDefaultProps.textEn,
   size = lineBadgeDefaultProps.size,
@@ -114,6 +202,7 @@ function LineBadge({
   );
   const numText = matched ? matched[1] : "";
   const zhText = matched ? matched[2] : upper;
+  const sunken = variant === "sunken";
 
   return (
     // 整块徽章在板子上左右各留 3px，别贴着相邻组件
@@ -125,15 +214,24 @@ function LineBadge({
         className="flex flex-col justify-center"
         style={{
           height: boxH,
-          paddingLeft: padX,
-          paddingRight: padX - 1,
-          borderRadius: RADIUS,
+          paddingLeft: sunken ? 0 : padX,
+          paddingRight: sunken ? 0 : padX - 1,
+          borderRadius: sunken ? boxH * 0.14 : RADIUS,
           backgroundColor: bg,
           color: textColor,
           rowGap,
         }}
       >
-        {upper !== "" && (
+        {sunken && (
+          <SunkenBadge
+            number={numText}
+            zh={normalizeSvgLine(zhText)}
+            en={normalizeSvgLine(lower)}
+            height={boxH}
+            padding={padX}
+          />
+        )}
+        {!sunken && upper !== "" && (
           <span
             className="flex items-baseline"
             style={{
@@ -169,7 +267,7 @@ function LineBadge({
             )}
           </span>
         )}
-        {lower !== "" && (
+        {!sunken && lower !== "" && (
           <span
             style={{
               fontFamily: fontFamilyEn,

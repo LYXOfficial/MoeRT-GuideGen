@@ -2519,6 +2519,7 @@
         "LineBadge": {
           "displayName": "Метка линии",
           "props": {
+            "variant": "Стиль",
             "textZh": "Китайский",
             "textEn": "Английский",
             "size": "Размер",
@@ -2526,6 +2527,10 @@
             "color": "Фон",
             "textColor": "Цвет текста",
             "background": "Фон"
+          },
+          "variants": {
+            "classic": "Классический",
+            "sunken": "Номер на высоту двух строк"
           }
         },
         "PlatformNum": {

@@ -2517,6 +2517,7 @@
         "LineBadge": {
           "displayName": "Linienzeichen",
           "props": {
+            "variant": "Stil",
             "textZh": "Chinesisch",
             "textEn": "Englisch",
             "size": "Größe",
@@ -2524,6 +2525,10 @@
             "color": "Fläche",
             "textColor": "Textfarbe",
             "background": "Hintergrund"
+          },
+          "variants": {
+            "classic": "Klassisch",
+            "sunken": "Nummer über zwei Zeilen"
           }
         },
         "PlatformNum": {

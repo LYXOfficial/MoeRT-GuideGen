@@ -2516,6 +2516,7 @@
         "LineBadge": {
           "displayName": "线路标",
           "props": {
+            "variant": "样式",
             "textZh": "中文",
             "textEn": "英文",
             "size": "尺寸",
@@ -2523,6 +2524,10 @@
             "color": "底色",
             "textColor": "文字颜色",
             "background": "背景色"
+          },
+          "variants": {
+            "classic": "传统",
+            "sunken": "下沉"
           }
         },
         "PlatformNum": {
