@@ -1901,6 +1901,14 @@
             "background": "背景色",
             "marginX": "左右间距"
           }
+        },
+        "TwoRowContainer": {
+          "displayName": "双行容器",
+          "props": {
+            "minWidth": "最小宽度",
+            "background": "背景色",
+            "paddingY": "上下内边距"
+          }
         }
       },
       "colors": {

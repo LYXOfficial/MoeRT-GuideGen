@@ -1902,6 +1902,14 @@
             "background": "Background",
             "marginX": "Side margin"
           }
+        },
+        "TwoRowContainer": {
+          "displayName": "Contentor de duas linhas",
+          "props": {
+            "minWidth": "Largura mínima",
+            "background": "Cor de fundo",
+            "paddingY": "Vertical padding"
+          }
         }
       },
       "colors": {

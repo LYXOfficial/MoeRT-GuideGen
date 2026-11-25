@@ -1904,6 +1904,14 @@
             "background": "Background",
             "marginX": "Side margin"
           }
+        },
+        "TwoRowContainer": {
+          "displayName": "Двухрядный контейнер",
+          "props": {
+            "minWidth": "Минимальная ширина",
+            "background": "Цвет фона",
+            "paddingY": "Vertical padding"
+          }
         }
       },
       "colors": {

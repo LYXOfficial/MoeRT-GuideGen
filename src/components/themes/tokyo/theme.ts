@@ -17,6 +17,9 @@ import SpecLine, { specLineDefaultProps } from "./SpecLine.tsx";
 import Spacing, { spacingDefaultProps } from "./Spacing.tsx";
 import Blank, { blankDefaultProps } from "./Blank.tsx";
 import Frame, { frameDefaultProps } from "./Frame.tsx";
+import TwoRowContainer, {
+  twoRowContainerDefaultProps,
+} from "./TwoRowContainer.tsx";
 
 import colors from "./define/colors.ts";
 import type Theme from "../../../interfaces/theme.ts";
@@ -113,6 +116,11 @@ const theme: Theme = {
       displayName: "themes.tokyo-metro.components.Frame",
       component: Frame,
       defaultProps: frameDefaultProps,
+    },
+    {
+      displayName: "themes.tokyo-metro.components.TwoRowContainer",
+      component: TwoRowContainer,
+      defaultProps: twoRowContainerDefaultProps,
     },
   ],
 };

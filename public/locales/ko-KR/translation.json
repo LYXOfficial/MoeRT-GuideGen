@@ -1901,6 +1901,14 @@
             "background": "Background",
             "marginX": "Side margin"
           }
+        },
+        "TwoRowContainer": {
+          "displayName": "2행 컨테이너",
+          "props": {
+            "minWidth": "최소 너비",
+            "background": "배경색",
+            "paddingY": "Vertical padding"
+          }
         }
       },
       "colors": {

@@ -1902,6 +1902,14 @@
             "background": "Background",
             "marginX": "Side margin"
           }
+        },
+        "TwoRowContainer": {
+          "displayName": "Two-Row Container",
+          "props": {
+            "minWidth": "Min Width",
+            "background": "Background Color",
+            "paddingY": "Vertical padding"
+          }
         }
       },
       "colors": {

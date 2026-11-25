@@ -1901,6 +1901,14 @@
             "background": "背景色",
             "marginX": "左右の余白"
           }
+        },
+        "TwoRowContainer": {
+          "displayName": "2行コンテナ",
+          "props": {
+            "minWidth": "最小幅",
+            "background": "背景色",
+            "paddingY": "Vertical padding"
+          }
         }
       },
       "colors": {
